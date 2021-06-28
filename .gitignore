@@ -1,0 +1,10 @@
+# Default ignored files
+.idea/shelf/
+.idea/workspace.xml
+
+# Other intelliJ files
+.idea/usage.statistics.xml
+.idea/sonarlint
+
+#MacOs files
+.DS_Store
