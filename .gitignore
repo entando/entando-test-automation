@@ -8,3 +8,6 @@
 
 #MacOs files
 .DS_Store
+
+# Node files
+ui-tests/node_modules
