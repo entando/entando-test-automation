@@ -9,6 +9,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "cypress": "^7.6.0"
+    "@4tw/cypress-drag-drop": "^1.6.0",
+    "cypress": "^7.6.0",
+    "cypress-file-upload": "^5.0.8",
+    "uuid": "^8.3.2"
   }
 }
