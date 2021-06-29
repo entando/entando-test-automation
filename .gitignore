@@ -11,3 +11,6 @@
 
 # Node files
 ui-tests/node_modules
+
+# Cypress files
+ui-tests/cypress/screenshots
