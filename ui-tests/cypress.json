@@ -1,9 +1,9 @@
 {
   "baseUrl": "http://localhost:3000/",
-  "oauth2": {
-    "url": "http://localhost:8081",
-    "realm": "entando",
-    "clientId": "entando-web"
+  "env": {
+    "auth_base_url": "http://localhost:8081/auth",
+    "auth_realm": "entando",
+    "auth_client_id": "entando-web"
   },
   "testFiles": "**/*.spec.js",
   "video": false,

@@ -4,12 +4,15 @@
 Cypress.Commands.add('getOauth2Data', () => {
   Cypress.log({ name: 'oauth2Data' });
 
-  const { url, realm, clientId } = Cypress.config('oauth2');
+  const url = Cypress.env("auth_base_url");
+  const realm = Cypress.env("auth_realm");
+  const clientId = Cypress.env("auth_client_id");
+
   const data = {
     url,
-    realmPath: `${url}/auth/realms/${realm}`,
+    realmPath: `${url}/realms/${realm}`,
     realm,
-    clientId,
+    clientId
   };
 
   cy.wrap(data).as('oauth2Data');
