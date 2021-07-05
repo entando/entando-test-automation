@@ -26,4 +26,7 @@ import './command/page-designer-command';
 import './command/page-management-command';
 import './command/content-types-command';
 import './command/widget-form-command';
+
+import './restAPI/rolesAPI.js';
+
 import './exception-handler';
