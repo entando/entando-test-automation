@@ -12,6 +12,7 @@
     "@4tw/cypress-drag-drop": "^1.6.0",
     "cypress": "^7.6.0",
     "cypress-file-upload": "^5.0.8",
+    "cypress-keycloak-commands": "^1.2.0",
     "uuid": "^8.3.2"
   }
 }

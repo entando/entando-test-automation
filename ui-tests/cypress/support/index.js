@@ -14,6 +14,7 @@
 // ***********************************************************
 
 import '@4tw/cypress-drag-drop';
+import 'cypress-keycloak-commands';
 import './keycloak-oauth2';
 import './command/command';
 import './command/upload-command';
@@ -25,4 +26,7 @@ import './command/page-designer-command';
 import './command/page-management-command';
 import './command/content-types-command';
 import './command/widget-form-command';
+
+import './restAPI/rolesAPI.js';
+
 import './exception-handler';
