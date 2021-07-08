@@ -25,8 +25,9 @@ export const htmlElements = {
   input: "input",
   button: "button",
   fieldset: "fieldset",
-  legend: "legend"
-}
+  legend: "legend",
+  span: "span",
+};
 
 export class WebElement {
 

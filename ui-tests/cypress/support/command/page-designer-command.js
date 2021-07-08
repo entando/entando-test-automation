@@ -42,6 +42,18 @@ Cypress.Commands.add('getPageStatus', () => {
 });
 
 /**
+  Opens the widget settings contained in the selected frame
+  @param frameName - the exact frame name displayed in the UI e.g. "Frame 1", "Logo"
+ */
+  Cypress.Commands.add('openPageWidgetSettingsByFrame', (frameName) => {
+    cy.getByTestId(`WidgetFrame__${frameName.replace(/\s/g, '_')}`).contains(frameName)
+      .parent().find('button')
+      .click();
+    cy.getByTestId(TEST_ID_WIDGET_FRAME.ACTIONS).filter(':visible').contains(/^Settings$/i).click();
+  });
+  
+
+/**
   Delete the widget contained in the selected frame
   @param frameName - the exact frame name displayed in the UI e.g. "Frame 1", "Logo"
  */

@@ -7,6 +7,8 @@ import {
   WIDGET_FORM_HEADER_CLASSNAME,
 } from '../test-const/components-test-const';
 
+import HomePage from "../support/pageObjects/HomePage.js";
+
 import { TEST_ID_PAGE_DESIGNER } from '../test-const/page-designer-test-const';
 
 const SAMPLE_BASIC_WIDGET_ID = 'my_widget';
@@ -18,16 +20,22 @@ const PAGE = {
 };
 
 describe('Microfrontends and Widgets', () => {
+  let currentPage;
+
   beforeEach(() => {
-    cy.appBuilderLogin();
-    cy.closeWizardAppTour();
+    cy.kcLogin("admin").as("tokens");
+
+    cy.visit('/');
+    currentPage = new HomePage();
+    currentPage = currentPage.getMenu().getPages().open();
+    currentPage = currentPage.openDesigner();
   });
 
   afterEach(() => {
-    cy.appBuilderLogout();
+    cy.kcLogout();
   });
 
-  describe('Widgets CRUD', () => {
+  /* describe('Widgets CRUD', () => {
     it('Adding a basic widget with icon', () => {
       cy.openPageFromMenu(['Components', 'MFE & Widgets']);
       cy.validateUrlChanged('/widget');
@@ -66,7 +74,7 @@ describe('Microfrontends and Widgets', () => {
       cy.getButtonByText('Delete').click();
       cy.get('table').should('not.contain', SAMPLE_BASIC_WIDGET_ID);
     });
-  });
+  }); */
 
   describe('Widget Usage for CMS Content Widget', () => {
     const WIDGET_FRAME = {
@@ -90,6 +98,27 @@ describe('Microfrontends and Widgets', () => {
       cy.get('.modal-dialog').contains('Choose').click();
       cy.wait(500);
       cy.get('.modal-dialog').should('not.exist');
+      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Save').click();
+      cy.wait(500);
+
+      cy.getPageStatus().should('match', /^Published, with pending changes$/);
+      cy.publishPageClick();
+      cy.getPageStatus().should('match', /^Published$/);
+    });
+
+    it('Basic edit with widget settings', () => {
+      cy.openPageViaPageDesigner(PAGE);
+      cy.wait(500);
+
+      cy.openPageWidgetSettingsByFrame(WIDGET_FRAME.frameName);
+      cy.wait(500);
+      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Change content').click();
+      cy.getModalDialogByTitle('Select one content item').should('be.visible');
+      cy.wait(4500);
+      cy.get('#selectNWS4').click({ force: true });
+      cy.get('.modal-dialog').contains('Choose').click();
+      cy.wait(500);
+      
       cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Save').click();
       cy.wait(500);
 
