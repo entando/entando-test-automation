@@ -6,22 +6,23 @@ import ContentWidgetConfigPage from "./widgetconfigs/ContentWidgetConfigPage.js"
 
 export default class DesignerPage extends Content {
 
-  grid = `${htmlElements.div}[${TEST_ID_KEY}=config_PageConfigPage_Grid]`;
-  container = `${htmlElements.div}[${TEST_ID_KEY}=config_PageConfigPage_Row]`;
-  contents = `${htmlElements.div}[${TEST_ID_KEY}=config_PageConfigPage_Col]`;
-  configTabs = `${htmlElements.ul}[${TEST_ID_KEY}=config_ToolbarPageConfig_Tabs]`;
-  designerDiv = `${htmlElements.div}[${TEST_ID_KEY}=config_PageConfigPage_div]`;
-  widgetItem = `${htmlElements.div}[${TEST_ID_KEY}=config_WidgetGroupingItem_div]`;
-  frameMenuItem = `${htmlElements.a}[${TEST_ID_KEY}=config_WidgetFrame_MenuItem]`;
-  frameMenuLink = `${htmlElements.a}[${TEST_ID_KEY}=config_WidgetFrame_Link]`;
-  pageGridTab = `${htmlElements.div}[${TEST_ID_KEY}=config_PageConfigPage_Tab]`;
-  pageGridMain = `${htmlElements.div}[${TEST_ID_KEY}=config_PageConfigGridCol_div]`;
-  pageGridRow = `${htmlElements.div}[${TEST_ID_KEY}=config_PageConfigGridRow_div]`;
-  pageTreeTable = `${htmlElements.table}[${TEST_ID_KEY}=common_PageTreeCompact_table]`;
-  pageTreeTbody = `${htmlElements.tbody}[${TEST_ID_KEY}=common_PageTreeCompact_tbody]`;
-  pageTreeRow = `${htmlElements.tr}[${TEST_ID_KEY}=common_PageTreeCompact_tr]`;
-  widgetGroupings = `${htmlElements.div}[${TEST_ID_KEY}=config_WidgetGroupings_div]`;
-  widgetGrouping = `${htmlElements.div}[${TEST_ID_KEY}=config_WidgetGrouping_div]`;
+  grid = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Grid]`;
+  container = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Row]`;
+  contents = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Col]`;
+  configTabs = `${htmlElements.ul}[${DATA_TESTID}=config_ToolbarPageConfig_Tabs]`;
+  designerDiv = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_div]`;
+  widgetItem = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGroupingItem_div]`;
+  frameMenuItem = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_MenuItem]`;
+  frameMenuLink = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_Link]`;
+  pageGridTab = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Tab]`;
+  pageGridMain = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridCol_div]`;
+  pageGridRow = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridRow_div]`;
+  pageTreeTable = `${htmlElements.table}[${DATA_TESTID}=common_PageTreeCompact_table]`;
+  pageTreeTbody = `${htmlElements.tbody}[${DATA_TESTID}=common_PageTreeCompact_tbody]`;
+  pageTreeRow = `${htmlElements.tr}[${DATA_TESTID}=common_PageTreeCompact_tr]`;
+  widgetGroupings = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGroupings_div]`;
+  widgetGrouping = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGrouping_div]`;
+  pageTree = `${htmlElements.span}[${DATA_TESTID}=common_PageTreeCompact_span]`;
 
   static FRAME_ACTIONS = {
     SAVE_AS: 'Save As',
@@ -113,66 +114,37 @@ export default class DesignerPage extends Content {
                .children(htmlElements.h1);
   }
 
-  getPageGrid() {
-    return this.getContents()
-      .children(htmlElements.div)
-      .children(htmlElements.div)
-      .children(this.pageGridTab)
-      .children(this.designerDiv)
-      .children(this.designerDiv).eq(1)
-      .children(this.pageGridMain);
-  }
-
-  getDropQueryString(frameName) {
-    return `${htmlElements.div}[${TEST_ID_KEY}=WidgetFrame__${frameName.replace(/\s/g, '_')}]`;
-  }
-
-  getSidebarTab(title) {
-    return this.getSidebar()
-      .children(this.configTabs).contains(title);
-  }
-
-  getSidebarContent() {
-    return this.getSidebar()
-      .children(htmlElements.div)
-      .children(htmlElements.div);
+  getWidgetItemByWidgetName(name) {
+    return this.parent.get()
+      .children(this.widgetItem).contains(name);
   }
 
   getWidgetItemByWidgetName(name) {
-    return this.getSidebarContent()
-      .children(this.widgetGroupings)
-      .children(this.widgetGroupings).eq(1)
-      .children(this.widgetGrouping).contains(name);
+    return this.parent.get()
+      .children(this.widgetItem).contains(name);
+  }
+
+  getDropQueryString(frameName) {
+    return `${htmlElements.div}[${DATA_TESTID}=WidgetFrame__${frameName.replace(/\s/g, '_')}]`;
+  }
+
+  getSidebarTab(title) {
+    return this.parent.get()
+      .children(this.configTabs).contains(title);
   }
 
   getPageTreeItem(title) {
-    return this.getSidebarContent()
-      .children(htmlElements.div)
-      .children(this.pageTreeTable)
-      .children(this.pageTreeTbody)
-      .children(this.pageTreeRow).contains(title);
+    return this.parent.get()
+      .children(this.pageTree).contains(title);
   }
 
-  gatherWidgetConfigPage(forWidget) {
-    const { CMS_WIDGETS, PAGE_WIDGETS, SYSTEM_WIDGETS } = DesignerPage;
-    switch (forWidget.code) {
-      case CMS_WIDGETS.CONTENT.code:
-      default:
-        return ContentWidgetConfigPage;
-    }
-  }
-
-  dragWidgetToFrame(widget, frameName) {
-    this.getWidgetItemByWidgetName(widget.name)
+  dragWidgetToFrame(widgetName, frameName) {
+    this.getWidgetItemByWidgetName(widgetName)
       .drag(this.getDropQueryString(frameName), { position: 'center', force: true });
-    
-    const WidgetConfigPage = this.gatherWidgetConfigPage(widget);
-
-    return new AppPage(WidgetConfigPage);
   }
 
   getKebabMenuByFrame(frameName) {
-    return this.getContents()
+    return this.parent.get()
       .children(this.getDropQueryString(frameName)).contains(frameName)
       .parent().find(htmlElements.button);
   }

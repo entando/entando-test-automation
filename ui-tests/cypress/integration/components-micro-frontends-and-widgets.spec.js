@@ -137,6 +137,27 @@ describe('Microfrontends and Widgets', () => {
       cy.getPageStatus().should('match', /^Published$/);
     });
 
+    it('Basic edit with widget settings', () => {
+      cy.openPageViaPageDesigner(PAGE);
+      cy.wait(500);
+
+      cy.openPageWidgetSettingsByFrame(WIDGET_FRAME.frameName);
+      cy.wait(500);
+      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Change content').click();
+      cy.getModalDialogByTitle('Select one content item').should('be.visible');
+      cy.wait(4500);
+      cy.get('#selectNWS4').click({ force: true });
+      cy.get('.modal-dialog').contains('Choose').click();
+      cy.wait(500);
+      
+      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Save').click();
+      cy.wait(500);
+
+      cy.getPageStatus().should('match', /^Published, with pending changes$/);
+      cy.publishPageClick();
+      cy.getPageStatus().should('match', /^Published$/);
+    });
+
     it('Open Widget Details from the widget dropped', () => {
       selectHomepageFromSidebar();
       cy.wait(500);
