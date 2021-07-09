@@ -8,8 +8,11 @@ import {
 } from '../test-const/components-test-const';
 
 import HomePage from "../support/pageObjects/HomePage.js";
+import DesignerPage from "../support/pageObjects/pages/designer/DesignerPage";
 
 import { TEST_ID_PAGE_DESIGNER } from '../test-const/page-designer-test-const';
+
+const { CMS_WIDGETS, SYSTEM_WIDGETS, PAGE_WIDGETS } = DesignerPage;
 
 const SAMPLE_BASIC_WIDGET_ID = 'my_widget';
 const SAMPLE_DUPE_WIDGET_CODE = 'mio_widget';
@@ -80,20 +83,25 @@ describe('Microfrontends and Widgets', () => {
     const WIDGET_FRAME = {
       frameName: 'Frame 3',
       frameNum: 6,
-      widgetCode: 'content_viewer',
-      widgetName: 'Content',
+    };
+
+    const selectHomepageFromSidebar = () => {
+      currentPage.getContent().getSidebarTab('Page Tree').click();
+      cy.wait(3000);
+      currentPage.getContent().getPageTreeItem(PAGE.title).click({ force: true });
+      currentPage.getContent().getSidebarTab('Widgets').click();
     };
 
     it('Basic add with widget settings', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-      cy.addWidgetToFrame(WIDGET_FRAME.widgetName, WIDGET_FRAME.frameName);
+      currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
 
-      cy.validateUrlChanged(`/widget/config/${WIDGET_FRAME.widgetCode}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
-      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Add existing content').click();
-      cy.getModalDialogByTitle('Select one content item').should('be.visible');
+      cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      currentPage.getContent().getAddContentButton().click();
+      currentPage.getContent().getSelectContentModal().should('be.visible');
       cy.get('#selectTCL6').click();
       cy.get('.modal-dialog').contains('Choose').click();
       cy.wait(500);
@@ -107,7 +115,7 @@ describe('Microfrontends and Widgets', () => {
     });
 
     it('Basic edit with widget settings', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
 
       cy.openPageWidgetSettingsByFrame(WIDGET_FRAME.frameName);
@@ -128,7 +136,7 @@ describe('Microfrontends and Widgets', () => {
     });
 
     it('Open Widget Details from the widget dropped', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
 
       cy.openPageWidgetDetailsByFrame(WIDGET_FRAME.frameName);
@@ -136,7 +144,7 @@ describe('Microfrontends and Widgets', () => {
     });
 
     it('Save As Widget', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
 
       cy.openSaveAsWidgetWithFrame(WIDGET_FRAME.frameName);
@@ -159,7 +167,7 @@ describe('Microfrontends and Widgets', () => {
     });
 
     it('Test widget cleanup', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
       cy.deletePageWidgetByFrame(WIDGET_FRAME.frameName);
       cy.publishPageClick();
@@ -172,7 +180,7 @@ describe('Microfrontends and Widgets', () => {
     });
   });
 
-  describe('Widget Usage for CMS Content List Widget', () => {
+  /* describe('Widget Usage for CMS Content List Widget', () => {
     const WIDGET_FRAME = {
       frameName: 'Frame 4',
       frameNum: 7,
@@ -567,5 +575,5 @@ describe('Microfrontends and Widgets', () => {
       cy.publishPageClick();
       cy.wait(500);
     });
-  });
+  }); */
 });
