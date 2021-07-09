@@ -86,11 +86,10 @@ describe('Microfrontends and Widgets', () => {
     };
 
     const selectHomepageFromSidebar = () => {
-      const currentPageContent = currentPage.getContent();
-      currentPageContent.getSidebarTab('Page Tree').click();
+      currentPage.getContent().getSidebarTab('Page Tree').click();
       cy.wait(3000);
-      currentPageContent.getPageTreeItem(PAGE.title).click({ force: true });
-      currentPageContent.getSidebarTab('Widgets').click();
+      currentPage.getContent().getPageTreeItem(PAGE.title).click({ force: true });
+      currentPage.getContent().getSidebarTab('Widgets').click();
     };
 
     it('Basic add with widget settings', () => {
@@ -102,30 +101,8 @@ describe('Microfrontends and Widgets', () => {
 
       cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       currentPage.getContent().getAddContentButton().click();
-      cy.wait(3000);
       currentPage.getContent().getSelectContentModal().should('be.visible');
-      currentPage.getContent().getSelectContentModal().getCheckboxFromTitle('Sample - About Us').click({ force: true });
-      currentPage.getContent().getSelectContentModal().getChooseButton().click();
-      cy.wait(500);
-      currentPage.getContent().getSelectContentModal().should('not.exist');
-      currentPage = currentPage.getContent().clickSaveButton();
-      cy.wait(500);
-
-      cy.getPageStatus().should('match', /^Published, with pending changes$/);
-      cy.publishPageClick();
-      cy.getPageStatus().should('match', /^Published$/);
-    });
-
-    it('Basic edit with widget settings', () => {
-      selectHomepageFromSidebar();
-      cy.wait(500);
-
-      cy.openPageWidgetSettingsByFrame(WIDGET_FRAME.frameName);
-      cy.wait(500);
-      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Change content').click();
-      cy.getModalDialogByTitle('Select one content item').should('be.visible');
-      cy.wait(4500);
-      cy.get('#selectNWS4').click({ force: true });
+      cy.get('#selectTCL6').click();
       cy.get('.modal-dialog').contains('Choose').click();
       cy.wait(500);
       
@@ -138,7 +115,7 @@ describe('Microfrontends and Widgets', () => {
     });
 
     it('Basic edit with widget settings', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
 
       cy.openPageWidgetSettingsByFrame(WIDGET_FRAME.frameName);
