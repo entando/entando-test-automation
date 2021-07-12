@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "browse-test": "./node_modules/cypress/bin/cypress open",
-    "lint": "eslint ./",
-    "precommit": "npm run lint"
+    "lint": "eslint ./"
   },
   "author": "",
   "license": "ISC",
