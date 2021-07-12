@@ -4,15 +4,50 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "browse-test": "./node_modules/cypress/bin/cypress open",
+    "lint": "eslint ./"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@4tw/cypress-drag-drop": "^1.6.0",
+    "babel-eslint": "^10.1.0",
     "cypress": "^7.6.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-keycloak-commands": "^1.2.0",
+    "eslint": "^7.30.0",
+    "eslint-plugin-cypress": "^2.11.3",
+    "husky": "^1.3.1",
     "uuid": "^8.3.2"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "eslint:recommended",
+      "plugin:cypress/recommended"
+    ],
+    "env": {
+      "es6": true,
+      "browser": true,
+      "node": true
+    },
+    "rules": {
+      "no-unused-vars": 2,
+      "no-undef": 2,
+      "cypress/no-unnecessary-waiting": "off"
+    },
+    "parser": "babel-eslint",
+    "parserOptions": {
+      "sourceType": "module",
+      "ecmaFeatures": {
+        "modules": true,
+        "spread": true,
+        "restParams": true
+      }
+    }
   }
 }
