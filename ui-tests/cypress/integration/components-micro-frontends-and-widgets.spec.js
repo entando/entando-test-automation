@@ -86,10 +86,11 @@ describe('Microfrontends and Widgets', () => {
     };
 
     const selectHomepageFromSidebar = () => {
-      currentPage.getContent().getSidebarTab('Page Tree').click();
+      const currentPageContent = currentPage.getContent();
+      currentPageContent.getSidebarTab('Page Tree').click();
       cy.wait(3000);
-      currentPage.getContent().getPageTreeItem(PAGE.title).click({ force: true });
-      currentPage.getContent().getSidebarTab('Widgets').click();
+      currentPageContent.getPageTreeItem(PAGE.title).click({ force: true });
+      currentPageContent.getSidebarTab('Widgets').click();
     };
 
     it('Basic add with widget settings', () => {
@@ -101,12 +102,13 @@ describe('Microfrontends and Widgets', () => {
 
       cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       currentPage.getContent().getAddContentButton().click();
+      cy.wait(3000);
       currentPage.getContent().getSelectContentModal().should('be.visible');
-      cy.get('#selectTCL6').click();
-      cy.get('.modal-dialog').contains('Choose').click();
+      currentPage.getContent().getSelectContentModal().getCheckboxFromTitle('Sample - About Us').click({ force: true });
+      currentPage.getContent().getSelectContentModal().getChooseButton().click();
       cy.wait(500);
-      cy.get('.modal-dialog').should('not.exist');
-      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Save').click();
+      currentPage.getContent().getSelectContentModal().should('not.exist');
+      currentPage = currentPage.getContent().clickSaveButton();
       cy.wait(500);
 
       cy.getPageStatus().should('match', /^Published, with pending changes$/);
