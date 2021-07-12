@@ -41,7 +41,8 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   }
 
   getSelectContentModal() {
-    return this.get().getModalDialogByTitle('Select one content item');
+    return new ContentListSelectModal(
+      this.get().getModalDialogByTitle('Select one content item').closest('.modal-dialog')
+    );
   }
-
 }
