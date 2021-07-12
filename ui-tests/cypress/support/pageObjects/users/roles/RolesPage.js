@@ -44,7 +44,7 @@ export default class RolesPage extends Content {
                .children(htmlElements.button);
   }
 
-  addRole() {
+  openAddRolePage() {
     this.getAddButton().click();
     return new AppPage(AddPage);
   }
