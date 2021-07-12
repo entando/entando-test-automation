@@ -72,6 +72,7 @@ export default class ContentMenu extends SubMenu {
 
   openCategories() {
     this.getCategories().click();
+    cy.wait(1000);
     return new AppPage(CategoriesPage);
   }
 

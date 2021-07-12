@@ -5,20 +5,18 @@ import {generateRandomId} from "../support/utils";
 const ROLE_NAME = generateRandomId();
 const ROLE_CODE = generateRandomId();
 
-var currentPage;
-
 describe('Roles', () => {
 
   it('Create a role', () => {
     cy.kcLogin("admin").as("tokens");
 
     cy.visit('/');
-    currentPage = new HomePage();
+    let currentPage = new HomePage();
 
     currentPage = currentPage.getMenu().getUsers().open();
     currentPage = currentPage.openRoles();
 
-    currentPage = currentPage.getContent().addRole();
+    currentPage = currentPage.getContent().openAddRolePage();
     currentPage = currentPage.getContent().addRole(ROLE_NAME, ROLE_CODE);
 
     currentPage.getContent().getTableRows().contains('td', ROLE_CODE).parent().as('tableRows');

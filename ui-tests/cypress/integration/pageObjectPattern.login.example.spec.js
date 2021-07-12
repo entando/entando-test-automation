@@ -1,7 +1,6 @@
 import LoginPage from "../support/pageObjects/keyCloak/LoginPage.js";
 
 const baseUrl = Cypress.config("baseUrl");
-var currentPage;
 
 describe('Keycloack', () => {
 
@@ -10,7 +9,7 @@ describe('Keycloack', () => {
 
     cy.fixture(`users/admin`)
       .then((userData) => {
-        currentPage = new LoginPage();
+        let currentPage = new LoginPage();
         currentPage.login(userData);
       })
 

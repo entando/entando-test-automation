@@ -8,6 +8,8 @@ export default class AppPage extends WebElement {
 
   root = `${htmlElements.div}#root`;
   page = `[${TEST_ID_KEY}=internal-page]`;
+  toastList = `${htmlElements.div}.toast-notifications-list-pf`;
+  dialog = `${htmlElements.div}[role=dialog]`;
 
   constructor(content) {
     super();
@@ -23,12 +25,25 @@ export default class AppPage extends WebElement {
                .children(this.page);
   }
 
+  getDialog() {
+    return this.parent.get()
+               .children(htmlElements.body)
+               .children(this.dialog)
+  }
+
   getAppTour() {
     return this.appTour;
   }
 
   getNavbar() {
     return this.menus.getNavbar();
+  }
+
+  getToastList(){
+    return this.parent.get()
+        .children(htmlElements.body)
+        .children(this.root)
+        .children(this.toastList);
   }
 
   getMenu() {
