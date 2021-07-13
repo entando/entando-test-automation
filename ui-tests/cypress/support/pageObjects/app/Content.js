@@ -9,10 +9,6 @@ export default class Content extends WebElement {
                .children(this.content);
   }
 
-  getRoot() {
-    return cy.root();
-  }
-
   getContents() {
     return this.get()
                .children(htmlElements.div);

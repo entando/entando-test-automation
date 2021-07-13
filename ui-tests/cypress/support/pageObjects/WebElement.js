@@ -35,6 +35,10 @@ export class WebElement {
     throw new Error("Implement a specific get for the sub-class!");
   }
 
+  getRoot() {
+    return cy.root();
+  }
+
 }
 
 class HTML extends WebElement {
