@@ -2,7 +2,6 @@ export const TEST_ID_PAGE_CONTAINER = 'internal-page_InternalPage_div';
 
 export const TEST_ID_CONTENTTYPES_LIST_TABLE = {
   ACTION_EDIT: 'ContentTypeList__menu-item-edit',
-  ACTION_DELETE: 'ContentTypeList__menu-item-delete',
 };
 
 export const TEST_ID_CONTENTTYPE_FORM = {
@@ -10,6 +9,4 @@ export const TEST_ID_CONTENTTYPE_FORM = {
   ACTION_EDIT: 'ContTypeAttributeListMenuAction__menu-item-edit',
   ACTION_DELETE: 'ContTypeAttributeListMenuAction__menu-item-delete',
   ATTRIBUTE_TYPE_DROPDOWN: 'nestedAttribute.type',
-  CODE_FIELD: 'code',
-  NAME_FIELD: 'name',
 };

@@ -4,23 +4,6 @@ import {
   TEST_ID_CONTENTTYPE_FORM,
 } from '../../test-const/content-types-const';
 
-Cypress.Commands.add('addContentType', (contentTypeCode, contentTypeName) => {
-  cy.log(`Add content type with code ${contentTypeCode}`);
-  cy.openPageFromMenu(['Content', 'Types']);
-  cy.getButtonByText('Add Content Type').click();
-  cy.getInputByName(TEST_ID_CONTENTTYPE_FORM.CODE_FIELD).type(contentTypeCode);
-  cy.getInputByName(TEST_ID_CONTENTTYPE_FORM.NAME_FIELD).type(contentTypeName);
-  cy.getButtonByText('Save').click();
-});
-
-Cypress.Commands.add('deleteContentType', (contentTypeCode) => {
-  cy.log(`Delete content type with code ${contentTypeCode}`);
-  cy.openPageFromMenu(['Content', 'Types']);
-  cy.openTableActionsByTestId(contentTypeCode);
-  cy.getVisibleActionItemByClass(TEST_ID_CONTENTTYPES_LIST_TABLE.ACTION_DELETE).click();
-  cy.getButtonByText('Delete').click();
-});
-
 Cypress.Commands.add('openContentTypeFormWith', (contentTypeCode) => {
   cy.log(`Edit content type ${contentTypeCode}`);
   cy.openPageFromMenu(['Content', 'Types']);
