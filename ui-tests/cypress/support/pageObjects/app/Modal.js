@@ -22,4 +22,9 @@ export default class Modal {
     return this.getModalContent()
       .children('.modal-footer');
   }
+
+  clickActionByLabel(label) {
+    return this.getModalFooter()
+      .find('button').contains(label).click();
+  }
 }

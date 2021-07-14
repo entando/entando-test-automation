@@ -1,8 +1,8 @@
-import {TEST_ID_KEY, htmlElements, WebElement} from "../../../WebElement.js";
+import { htmlElements } from '../../../WebElement';
 
 import Modal from '../../../app/Modal';
 
-import WidgetConfigPage from "../WidgetConfigPage.js";
+import WidgetConfigPage from '../WidgetConfigPage';
 
 export class ContentListSelectModal extends Modal {
   getContentListTable() {
@@ -38,6 +38,10 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   
   getAddContentButton() {
     return this.getMainContainer().contains('Add existing content');
+  }
+
+  getChangeContentButton() {
+    return this.getMainContainer().contains('Change content');
   }
 
   getSelectContentModal() {

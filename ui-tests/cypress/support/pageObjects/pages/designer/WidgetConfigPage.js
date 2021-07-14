@@ -1,6 +1,6 @@
-import {TEST_ID_KEY, htmlElements, WebElement} from "../../WebElement.js";
+import { TEST_ID_KEY, htmlElements } from '../../WebElement';
 
-import Content from "../../app/Content.js";
+import Content from '../../app/Content';
 
 import DesignerPage from './DesignerPage';
 import AppPage from '../../app/AppPage';
@@ -18,7 +18,7 @@ export default class WidgetConfigPage extends Content {
       .contains('Save');
   }
 
-  clickSaveButton() {
+  confirmConfig() {
     this.getSaveButton().click();
     return new AppPage(DesignerPage);
   }

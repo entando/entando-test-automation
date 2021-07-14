@@ -1,8 +1,9 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement.js";
+import { DATA_TESTID, htmlElements } from '../../WebElement';
 
-import Content from "../../app/Content.js";
-import AppPage from "../../app/AppPage.js";
-import ContentWidgetConfigPage from "./widgetconfigs/ContentWidgetConfigPage.js";
+import Content from '../../app/Content';
+import AppPage from '../../app/AppPage';
+import ContentWidgetConfigPage from './widgetconfigs/ContentWidgetConfigPage';
+import MFEWidgetForm from '../../components/mfeWidgets/MFEWidgetForm';
 
 export default class DesignerPage extends Content {
 
@@ -14,6 +15,7 @@ export default class DesignerPage extends Content {
   widgetItem = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGroupingItem_div]`;
   frameMenuItem = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_MenuItem]`;
   frameMenuLink = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_Link]`;
+  pageStatusIcon = `i[${DATA_TESTID}=common_PageStatusIcon_i]`;
   pageGridTab = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Tab]`;
   pageGridMain = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridCol_div]`;
   pageGridRow = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridRow_div]`;
@@ -154,7 +156,7 @@ export default class DesignerPage extends Content {
   }
 
   gatherWidgetConfigPage(forWidget) {
-    const { CMS_WIDGETS, PAGE_WIDGETS, SYSTEM_WIDGETS } = DesignerPage;
+    const { CMS_WIDGETS } = DesignerPage;
     switch (forWidget.code) {
       case CMS_WIDGETS.CONTENT.code:
       default:
@@ -173,7 +175,7 @@ export default class DesignerPage extends Content {
 
   getKebabMenuByFrame(frameName) {
     return this.getContents()
-      .children(this.getDropQueryString(frameName)).contains(frameName)
+      .find(this.getDropQueryString(frameName)).contains(frameName)
       .parent().find(htmlElements.button);
   }
 
@@ -182,12 +184,37 @@ export default class DesignerPage extends Content {
   }
 
   getKebabMenuItem(menuName, isLink = false) {
-    return this.parent.get()
-      .children(isLink ? this.frameMenuLink : this.frameMenuItem)
+    return this.getContents()
+      .find(isLink ? this.frameMenuLink : this.frameMenuItem)
       .filter(':visible').contains(menuName);
   }
 
   getFrameAction(action) {
     return this.getKebabMenuItem(action, action === DesignerPage.FRAME_ACTIONS.DETAILS);
+  }
+
+  clickActionOnFrame(action, widget) {
+    this.getFrameAction(action).click();
+    switch (action) {
+      case DesignerPage.FRAME_ACTIONS.SETTINGS:
+        return new AppPage(this.gatherWidgetConfigPage(widget));
+      case DesignerPage.FRAME_ACTIONS.SAVE_AS:
+        return new AppPage(MFEWidgetForm);
+      case DesignerPage.FRAME_ACTIONS.DELETE:
+      case DesignerPage.FRAME_ACTIONS.DETAILS:
+      default:
+        return null;
+    }
+  }
+
+  getPageStatus() {
+    return this.getContents().find(this.pageStatusIcon).invoke('attr', 'title');
+  }
+
+  publishPageDesign() {
+    return this.getContents()
+      .find('.PageConfigPage__bottom-options')
+      .contains(/^Publish$/)
+      .click();
   }
 }

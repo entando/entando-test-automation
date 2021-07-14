@@ -11,6 +11,7 @@ import HomePage from "../support/pageObjects/HomePage.js";
 import DesignerPage from "../support/pageObjects/pages/designer/DesignerPage";
 
 import { TEST_ID_PAGE_DESIGNER } from '../test-const/page-designer-test-const';
+import MFEWidgetsPage from '../support/pageObjects/components/mfeWidgets/MFEWidgetsPage';
 
 const { CMS_WIDGETS, SYSTEM_WIDGETS, PAGE_WIDGETS } = DesignerPage;
 
@@ -103,82 +104,96 @@ describe('Microfrontends and Widgets', () => {
       cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       currentPage.getContent().getAddContentButton().click();
       cy.wait(3000);
-      currentPage.getContent().getSelectContentModal().should('be.visible');
+      // currentPage.getContent().getSelectContentModal().should('be.visible');
       currentPage.getContent().getSelectContentModal().getCheckboxFromTitle('Sample - About Us').click({ force: true });
       currentPage.getContent().getSelectContentModal().getChooseButton().click();
       cy.wait(500);
-      currentPage.getContent().getSelectContentModal().should('not.exist');
-      currentPage = currentPage.getContent().clickSaveButton();
+      // currentPage.getContent().getSelectContentModal().should('not.exist');
+      currentPage = currentPage.getContent().confirmConfig();
       cy.wait(500);
 
-      cy.getPageStatus().should('match', /^Published, with pending changes$/);
-      cy.publishPageClick();
-      cy.getPageStatus().should('match', /^Published$/);
+      currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+      currentPage.getContent().publishPageDesign();
+      currentPage.getContent().getPageStatus().should('match', /^Published$/);
     });
 
     it('Basic edit with widget settings', () => {
       selectHomepageFromSidebar();
       cy.wait(500);
 
-      cy.openPageWidgetSettingsByFrame(WIDGET_FRAME.frameName);
-      cy.wait(500);
-      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Change content').click();
-      cy.getModalDialogByTitle('Select one content item').should('be.visible');
-      cy.wait(4500);
-      cy.get('#selectNWS4').click({ force: true });
-      cy.get('.modal-dialog').contains('Choose').click();
-      cy.wait(500);
-      
-      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Save').click();
+      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+      currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT);
       cy.wait(500);
 
-      cy.getPageStatus().should('match', /^Published, with pending changes$/);
-      cy.publishPageClick();
-      cy.getPageStatus().should('match', /^Published$/);
+      currentPage.getContent().getChangeContentButton().click();
+
+      //cy.getModalDialogByTitle('Select one content item').should('be.visible');
+      cy.wait(4500);
+      currentPage.getContent().getSelectContentModal().getCheckboxFromTitle('Sample Banner').click({ force: true });
+      currentPage.getContent().getSelectContentModal().getChooseButton().click();
+      cy.wait(500);
+      
+      currentPage = currentPage.getContent().confirmConfig();
+      cy.wait(500);
+
+      currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+      currentPage.getContent().publishPageDesign();
+      currentPage.getContent().getPageStatus().should('match', /^Published$/);
     });
 
     it('Open Widget Details from the widget dropped', () => {
       selectHomepageFromSidebar();
       cy.wait(500);
 
-      cy.openPageWidgetDetailsByFrame(WIDGET_FRAME.frameName);
-      cy.validateUrlChanged(`/widget/detail/${WIDGET_FRAME.widgetCode}`);
+      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+      currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.CONTENT);
+      cy.wait(500);
+      cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT.code}`);
     });
 
     it('Save As Widget', () => {
       selectHomepageFromSidebar();
       cy.wait(500);
 
-      cy.openSaveAsWidgetWithFrame(WIDGET_FRAME.frameName);
+      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+      currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT);
 
-      cy.validateUrlChanged(`/page/${PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${WIDGET_FRAME.widgetCode}/viewerConfig`);
-      cy.fillUpWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
-      cy.get('form').contains('Parent Type').should('exist');
-      cy.get('form').contains('Configuration *').should('exist');
-      cy.get('form').contains('Configuration *').click();
+      cy.validateUrlChanged(`/page/${PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
+      currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
+      currentPage.getContent().getConfigTabConfiguration().should('exist');
+      currentPage.getContent().getConfigTabConfiguration().click();
       cy.wait(500);
-      cy.get('form').contains('Change content').should('exist');
-      cy.get(`.${WIDGET_FORM_HEADER_CLASSNAME}`).contains('Save and Replace').click();
+      currentPage.getContent().getFormBody().contains('Change content').should('exist');
+      currentPage = currentPage.getContent().submitCloneWidget();
 
       cy.wait(4500);
       cy.validateUrlChanged(`/page/configuration/${PAGE.code}`);
-      cy.getPageStatus().should('match', /^Published, with pending changes$/);
-      cy.publishPageClick();
-      cy.wait(500);
-      cy.getPageStatus().should('match', /^Published$/);
+
+      currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+      currentPage.getContent().publishPageDesign();
+      currentPage.getContent().getPageStatus().should('match', /^Published$/);
     });
 
     it('Test widget cleanup', () => {
       selectHomepageFromSidebar();
       cy.wait(500);
-      cy.deletePageWidgetByFrame(WIDGET_FRAME.frameName);
-      cy.publishPageClick();
-      cy.openPageFromMenu(['Components', 'MFE & Widgets']);
-      cy.openTableActionsByTestId(SAMPLE_DUPE_WIDGET_CODE);
-      cy.getVisibleActionItemByClass(DELETE_ACTION_CLASSNAME).click();
-      cy.getModalDialogByTitle('Delete').should('be.visible');
-      cy.getButtonByText('Delete').click();
-      cy.get('table').should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
+      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+      currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT);
+      cy.wait(1000);
+      currentPage.getContent().publishPageDesign();
+      
+      currentPage = new HomePage();
+      currentPage = currentPage.getMenu().getComponents().open();
+      currentPage = currentPage.openMFE_Widgets();
+
+      currentPage.getContent().openKebabMenuByWidgetCode(
+        SAMPLE_DUPE_WIDGET_CODE,
+        MFEWidgetsPage.WIDGET_ACTIONS.DELETE,
+      );
+      const modal = currentPage.getContent().getDeletePromptModal();
+      modal.getContent().should('be.visible');
+      modal.clickActionByLabel('Delete');
+      currentPage.getContent().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
     });
   });
 
