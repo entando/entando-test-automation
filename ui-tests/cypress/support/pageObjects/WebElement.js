@@ -12,6 +12,7 @@ export const htmlElements = {
   table: "table",
   tbody: "tbody",
   tr: "tr",
+  td: "td",
   form: "form",
   input: "input",
   button: "button"
