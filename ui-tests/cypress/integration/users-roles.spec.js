@@ -1,6 +1,5 @@
 import {generateRandomId} from '../support/utils';
 
-import {TEST_ID_ROLE_LIST_TABLE} from '../test-const/role-test-const';
 import {htmlElements} from "../support/pageObjects/WebElement";
 
 import HomePage from "../support/pageObjects/HomePage";
@@ -68,15 +67,15 @@ describe('User Roles', () => {
     });
 
     it('Should forbid deletion of an assigned role to a user', () => {
+      const ROLE_CODE_ADMIN = 'admin';
+
       currentPage = openRolesPage();
 
-      cy.log('Delete the role');
-      const adminRoleCode = 'admin';
-      cy.openPageFromMenu(['Users', 'Roles']);
-      cy.contains(adminRoleCode).should('be.visible');
-      cy.openTableActionsByTestId(adminRoleCode);
-      cy.getVisibleActionItemByTestID(TEST_ID_ROLE_LIST_TABLE.ACTION_DELETE_ROLE).click();
-      cy.getModalDialogByTitle('Delete role').should('not.be.visible');
+      currentPage.getContent().getTableRows().should('contain', ROLE_CODE_ADMIN);
+
+      currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().clickDelete();
+
+      currentPage.getDialog().getConfirmButton().should('not.exist');
     });
   });
 
