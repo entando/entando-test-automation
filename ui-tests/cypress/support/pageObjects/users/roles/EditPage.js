@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement";
+import {DATA_TESTID, htmlElements} from "../../WebElement";
 
 import Content from "../../app/Content.js";
 
@@ -6,7 +6,7 @@ import AppPage from "../../app/AppPage.js";
 
 import RolesPage from "./RolesPage.js";
 
-export default class AddPage extends Content {
+export default class EditPage extends Content {
 
   nameInput = `${htmlElements.input}[name="name"][${DATA_TESTID}=form_RenderTextInput_input]`;
   codeInput = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
@@ -31,24 +31,19 @@ export default class AddPage extends Content {
     this.getNameInput().type(input);
   }
 
-  typeCode(input) {
-    this.getCodeInput().type(input);
-  }
-
-  clearCode() {
-    this.getCodeInput().clear();
+  clearName() {
+    this.getNameInput().clear();
   }
 
   submitForm() {
     this.getSaveButton().click();
   }
 
-  addRole(name, code, append = false) {
-    this.typeName(name);
+  editRole(name, append = false) {
     if (!append) {
-      this.clearCode();
+      this.clearName();
     }
-    this.typeCode(code);
+    this.typeName(name);
     this.submitForm();
     cy.wait(1000);
     return new AppPage(RolesPage);
