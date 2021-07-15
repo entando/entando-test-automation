@@ -14,7 +14,8 @@ export const htmlElements = {
   tr: "tr",
   form: "form",
   input: "input",
-  button: "button"
+  button: "button",
+  select: "select"
 }
 
 export class WebElement {
