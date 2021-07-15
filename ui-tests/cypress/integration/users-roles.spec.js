@@ -35,30 +35,31 @@ describe('User Roles', () => {
     });
 
     it('Should update a role and verify change on details page', () => {
+      const ROLE_NAME_EDIT = generateRandomId();
+
+      cy.rolesController().then(controller => controller.addRole(ROLE_CODE, ROLE_NAME));
+
       currentPage = openRolesPage();
 
-      cy.log('Update the role');
-      cy.addRole(ROLE_NAME, ROLE_CODE);
-      const newRoleName = 'new_rolename_tests';
-      cy.openPageFromMenu(['Users', 'Roles']);
-      cy.editRole(ROLE_CODE, newRoleName);
-      cy.validateUrlChanged('/role');
-      cy.log('Validate user changes');
-      cy.openPageFromMenu(['Users', 'Roles']);
-      cy.getTableRowsBySelector(ROLE_CODE).contains(newRoleName).should('be.visible');
-      cy.openTableActionsByTestId(ROLE_CODE);
-      cy.getVisibleActionItemByClass(TEST_ID_ROLE_LIST_TABLE.ACTION_DETAIL_ROLE).click();
-      cy.validateUrlChanged(`/role/view/${ROLE_CODE}`);
-      cy.contains(newRoleName).should('be.visible');
+      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE).open().openEdit();
+      currentPage = currentPage.getContent().editRole(ROLE_NAME_EDIT);
+
+      currentPage.getContent().getTableRows().contains(htmlElements.td, ROLE_CODE).parent().as('tableRows');
+      cy.get('@tableRows').children(htmlElements.td).eq(0).should('contain', ROLE_NAME_EDIT);
+      cy.get('@tableRows').children(htmlElements.td).eq(1).should('contain', ROLE_CODE);
+
+      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE).open().openDetails();
+      currentPage.getContent().getCodeValue().should('contain', ROLE_CODE);
+      currentPage.getContent().getNameValue().should('contain', ROLE_NAME_EDIT);
 
       cy.rolesController().then(controller => controller.deleteRole(ROLE_CODE));
     });
 
     it('Should delete an unreferenced role', () => {
+      cy.rolesController().then(controller => controller.addRole(ROLE_CODE, ROLE_NAME));
       currentPage = openRolesPage();
 
       cy.log('Delete the role');
-      cy.addRole(ROLE_NAME, ROLE_CODE);
       cy.contains(ROLE_CODE).should('be.visible');
       cy.deleteRole(ROLE_CODE);
       cy.contains(ROLE_CODE).should('not.be.visible');
