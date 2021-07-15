@@ -59,9 +59,7 @@ export default class CategoriesPage extends Content {
         .click();
     cy.wait(1500);
 
-    this.parent.getDialog()
-        .find(this.modalDeleteButton)
-        .click();
+    this.parent.getDialog().confirm();
     cy.wait(1000);
 
     return new AppPage(CategoriesPage);

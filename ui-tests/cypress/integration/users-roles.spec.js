@@ -57,12 +57,14 @@ describe('User Roles', () => {
 
     it('Should delete an unreferenced role', () => {
       cy.rolesController().then(controller => controller.addRole(ROLE_CODE, ROLE_NAME));
+
       currentPage = openRolesPage();
 
-      cy.log('Delete the role');
-      cy.contains(ROLE_CODE).should('be.visible');
-      cy.deleteRole(ROLE_CODE);
-      cy.contains(ROLE_CODE).should('not.be.visible');
+      currentPage.getContent().getKebabMenu(ROLE_CODE).open().clickDelete();
+      currentPage.getDialog().getStateInfo().should('contain', ROLE_CODE);
+
+      currentPage.getDialog().confirm();
+      currentPage.getContent().getTableRows().should('not.contain', ROLE_CODE);
     });
 
     it('Should forbid deletion of an assigned role to a user', () => {
