@@ -1,4 +1,4 @@
-import {TEST_ID_KEY, htmlElements, WebElement} from "../../WebElement.js";
+import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement.js";
 import Content from "../../app/Content.js";
 import AddPage from "./AddPage";
 import EditPage from "./EditPage";
@@ -6,9 +6,9 @@ import AppPage from "../../app/AppPage";
 
 export default class CategoriesPage extends Content {
 
-  categoryTreeCol = `${htmlElements.div}[${TEST_ID_KEY}=list_CategoryTree_Col]`;
-  pageCol = `${htmlElements.div}[${TEST_ID_KEY}=list_ListCategoryPage_Col]`;
-  pageLink = `${htmlElements.a}[${TEST_ID_KEY}=list_ListCategoryPage_Link]`;
+  categoryTreeCol = `${htmlElements.div}[${DATA_TESTID}=list_CategoryTree_Col]`;
+  pageCol = `${htmlElements.div}[${DATA_TESTID}=list_ListCategoryPage_Col]`;
+  pageLink = `${htmlElements.a}[${DATA_TESTID}=list_ListCategoryPage_Link]`;
   modalDeleteButton = `${htmlElements.button}#DeleteCategoryModal__button-delete`;
   actionDelete= `${htmlElements.li}.CategoryListMenuAction__menu-item-delete`;
 

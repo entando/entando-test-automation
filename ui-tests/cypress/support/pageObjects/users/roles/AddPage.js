@@ -1,4 +1,4 @@
-import {TEST_ID_KEY, htmlElements, WebElement} from "../../WebElement";
+import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement";
 
 import Content from "../../app/Content.js";
 
@@ -8,9 +8,9 @@ import RolesPage from "./RolesPage.js";
 
 export default class AddPage extends Content {
 
-  nameInput = `${htmlElements.input}[name="name"][${TEST_ID_KEY}=form_RenderTextInput_input]`;
-  codeInput = `${htmlElements.input}[name="code"][${TEST_ID_KEY}=form_RenderTextInput_input]`;
-  saveButton = `${htmlElements.button}[${TEST_ID_KEY}=RoleForm__saveButton]`;
+  nameInput = `${htmlElements.input}[name="name"][${DATA_TESTID}=form_RenderTextInput_input]`;
+  codeInput = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
+  saveButton = `${htmlElements.button}[${DATA_TESTID}=RoleForm__saveButton]`;
 
   getNameInput() {
     return this.getContents()

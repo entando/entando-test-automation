@@ -1,8 +1,8 @@
-import {TEST_ID_KEY, htmlElements, WebElement} from "../WebElement.js";
+import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
 
 export default class Content extends WebElement {
 
-  content = `[${TEST_ID_KEY}=internal-page_InternalPage_div]`;
+  content = `[${DATA_TESTID}=internal-page_InternalPage_div]`;
 
   get() {
     return this.parent.get()
