@@ -1,19 +1,20 @@
-import {TEST_ID_KEY, htmlElements, WebElement} from "../WebElement.js";
+import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
 
 import AppTour from "./AppTour.js";
+import Dialog from "./Dialog";
 import Navbar from "./Navbar.js";
 import Menu from "./Menu.js";
 
 export default class AppPage extends WebElement {
 
   root = `${htmlElements.div}#root`;
-  page = `[${TEST_ID_KEY}=internal-page]`;
+  page = `[${DATA_TESTID}=internal-page]`;
   toastList = `${htmlElements.div}.toast-notifications-list-pf`;
-  dialog = `${htmlElements.div}[role=dialog]`;
 
   constructor(content) {
     super();
     this.appTour = new AppTour();
+    this.dialog = new Dialog();
     this.menus = new Menus(this);
     this.content = new content(this);
   }
@@ -25,25 +26,23 @@ export default class AppPage extends WebElement {
                .children(this.page);
   }
 
-  getDialog() {
-    return this.parent.get()
-               .children(htmlElements.body)
-               .children(this.dialog)
-  }
-
   getAppTour() {
     return this.appTour;
   }
 
-  getNavbar() {
-    return this.menus.getNavbar();
+  getDialog() {
+    return this.dialog;
   }
 
   getToastList(){
     return this.parent.get()
-        .children(htmlElements.body)
-        .children(this.root)
-        .children(this.toastList);
+               .children(htmlElements.body)
+               .children(this.root)
+               .children(this.toastList);
+  }
+
+  getNavbar() {
+    return this.menus.getNavbar();
   }
 
   getMenu() {
@@ -63,7 +62,7 @@ export default class AppPage extends WebElement {
 
 class Menus extends WebElement {
 
-  menus = `[${TEST_ID_KEY}=internal-page_VerticalMenuContainer_div]`;
+  menus = `[${DATA_TESTID}=internal-page_VerticalMenuContainer_div]`;
 
   constructor(parent) {
     super(parent);

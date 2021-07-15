@@ -1,21 +1,21 @@
-import {TEST_ID_KEY, htmlElements} from "../../WebElement.js";
+import {DATA_TESTID, htmlElements} from "../../WebElement.js";
 
 import Content from "../../app/Content.js";
 import AppPage from "../../app/AppPage.js";
 import ManagementPage from "./ManagementPage.js";
 
 export default class AddPage extends Content {
-    pageForm = `${htmlElements.div}[${TEST_ID_KEY}=add_PagesAddPage_Grid]`;
+    pageForm = `${htmlElements.div}[${DATA_TESTID}=add_PagesAddPage_Grid]`;
 
     inputTitle = `${htmlElements.input}[name="titles.en"]`;
     inputTitleIt = `${htmlElements.input}[name="titles.it"]`;
     inputCode = `${htmlElements.input}[name=code]`;
-    pageTreeSelector = `${htmlElements.div}[${TEST_ID_KEY}=PageForm__PageTreeSelector]`;
+    pageTreeSelector = `${htmlElements.div}[${DATA_TESTID}=PageForm__PageTreeSelector]`;
     pageTemplateSelector = `${htmlElements.select}[name=pageModel]`;
 
     // SEO
     seoInfoContainer = `${htmlElements.div}[id=basic-tabs]`;
-    seoInfoTabs = `${htmlElements.ul}[${TEST_ID_KEY}=common_SeoInfo_Tabs]`;
+    seoInfoTabs = `${htmlElements.ul}[${DATA_TESTID}=common_SeoInfo_Tabs]`;
     seoDescription = `${htmlElements.input}[name="seoData.seoDataByLang.en.description"]`
     seoDescriptionIt = `${htmlElements.input}[name="seoData.seoDataByLang.it.description"]`
     seoKeywords = `${htmlElements.input}[name="seoData.seoDataByLang.en.keywords"]`
@@ -29,8 +29,8 @@ export default class AddPage extends Content {
     metatagValue = `${htmlElements.input}[name="titles.en"]`
 
     // buttons
-    saveButton = `${htmlElements.button}[${TEST_ID_KEY}="save-page"]`;
-    saveAndDesignButton = `${htmlElements.button}[${TEST_ID_KEY}="common_PageForm_Button"]`;
+    saveButton = `${htmlElements.button}[${DATA_TESTID}="save-page"]`;
+    saveAndDesignButton = `${htmlElements.button}[${DATA_TESTID}="common_PageForm_Button"]`;
 
     getPageForm () {
         return this.parent.get()
