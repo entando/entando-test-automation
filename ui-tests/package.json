@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "browse-test": "./node_modules/cypress/bin/cypress open",
-    "lint": "eslint ./"
+    "lint": "eslint ./",
+    "lintStaged": "path=$(git rev-parse --show-toplevel) && LIST=`git diff --name-only --cached --diff-filter=d \"$@\" | grep .*\\.js$ | sed \"s,^,$path/,\"`; if [ \"$LIST\" ]; then eslint $LIST --fix; fi"
   },
   "author": "",
   "license": "ISC",
@@ -22,7 +23,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint"
+      "pre-commit": "npm run lintStaged"
     }
   },
   "eslintConfig": {
