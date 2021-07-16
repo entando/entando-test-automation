@@ -4,6 +4,22 @@ import {
 } from '../test-const/content-types-const';
 import { generateRandomId, generateRandomContentTypeCode } from '../support/utils';
 import HomePage from '../support/pageObjects/HomePage.js';
+import { htmlElements } from '../support/pageObjects/WebElement';
+
+const postContentType = (code, name) => {
+  cy.contentTypesController().then(controller => controller.postContentType(code, name));
+}
+
+const deleteContentType = (code) => {
+  cy.contentTypesController().then(controller => controller.deleteContentType(code));
+}
+
+const openContentTypesPage = () => {
+  cy.visit('/');
+  let currentPage = new HomePage();
+  currentPage = currentPage.getMenu().getContent().open();
+  return  currentPage.openTypes();
+};
 
 describe('Content Types', () => {
   let currentPage;
@@ -12,11 +28,6 @@ describe('Content Types', () => {
 
   beforeEach(() => {
     cy.kcLogin('admin').as('tokens');
-    cy.visit('/');
-
-    currentPage = new HomePage();
-    currentPage = currentPage.getMenu().getContent().open();
-    currentPage = currentPage.openTypes();
 
     contentTypeCode = generateRandomContentTypeCode();
     contentTypeName = generateRandomId();
@@ -26,40 +37,41 @@ describe('Content Types', () => {
     cy.kcLogout();
   });
 
-  const addContentType = (code, name) => {
-    cy.log(`Add content type with code ${code}`);
-    currentPage = currentPage.getContent().addContentType();
-    currentPage = currentPage.getContent().addAndSaveContentType(code, name);
-  };
-
   it('should have the functionality to add a new content type', () => {
-    addContentType(contentTypeCode, contentTypeName);
+    currentPage = openContentTypesPage();
+
+    cy.log(`Add content type with code ${contentTypeCode}`);
+    currentPage = currentPage.getContent().addContentType();
+    currentPage = currentPage.getContent().addAndSaveContentType(contentTypeCode, contentTypeName);
     currentPage.getContent().getCodeInput().should('have.value', contentTypeCode).and('be.disabled');
     currentPage.getContent().getNameInput().should('have.value', contentTypeName);
+  
     currentPage = currentPage.getContent().save();
-    currentPage.getContent().getTableCell(contentTypeCode).should('be.visible');
-    currentPage.getContent().getTableCell(contentTypeName).should('be.visible');
-    cy.log(`Delete content type with code ${contentTypeCode}`);
-    currentPage.getContent().deleteContentType(contentTypeCode);
+    currentPage.getContent().getTableRow(contentTypeCode).find(htmlElements.td).eq(0).should('contain.text', contentTypeName);
+    currentPage.getContent().getTableRow(contentTypeCode).find(htmlElements.td).eq(2).should('contain.text', contentTypeCode);
+  
+    deleteContentType(contentTypeCode);
   });
 
   it('should have the functionality to edit a content type', () => {
-    addContentType(contentTypeCode, contentTypeName);
-    currentPage = currentPage.getContent().save();
+    postContentType(contentTypeCode, contentTypeName);
+    currentPage = openContentTypesPage();
+
     cy.log(`Edit content type with code ${contentTypeCode}`);
     currentPage = currentPage.getContent().editContentType(contentTypeCode);
     const newContentTypeName = generateRandomId();
     currentPage.getContent().clearName();
     currentPage.getContent().typeName(newContentTypeName);
     currentPage = currentPage.getContent().save();
-    currentPage.getContent().getTableCell(newContentTypeName).should('be.visible');
-    cy.log(`Delete content type with code ${contentTypeCode}`);
-    currentPage.getContent().deleteContentType(contentTypeCode);
+    currentPage.getContent().getTableRow(contentTypeCode).find(htmlElements.td).eq(0).should('contain.text', newContentTypeName);
+
+    deleteContentType(contentTypeCode);
   });
 
   it('should allow deleting a content type not referenced by a published content', () => {
-    addContentType(contentTypeCode, contentTypeName);
-    currentPage = currentPage.getContent().save();
+    postContentType(contentTypeCode, contentTypeName);
+    currentPage = openContentTypesPage();
+
     cy.log(`Delete content type with code ${contentTypeCode}`);
     currentPage.getContent().deleteContentType(contentTypeCode);
   });
@@ -85,6 +97,10 @@ describe('Content Types', () => {
         nameEnValue: 'Curr Stamp',
       },
     ];
+
+    beforeEach(() => {
+      cy.visit('/');
+    });
 
     describe('Content Type Attribute - List', () => {
       describe('nested attribute types that are not allowed in List attribute', () => {

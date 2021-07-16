@@ -9,11 +9,11 @@ export default class TypesPage extends Content {
   editOption = `${htmlElements.li}.ContentTypeList__menu-item-edit`;
   deleteOption= `${htmlElements.li}.ContentTypeList__menu-item-delete`;
   modalDeleteButton = `${htmlElements.button}#DeleteContentTypeModal__button-delete`;
+  addButton = `${htmlElements.button}.ContentTypeList__addbutton`;
 
   getAddButton() {
     return this.getContents()
-               .find(htmlElements.button)
-               .contains('Add');
+               .find(this.addButton);
   }
 
   getTable() {
@@ -21,10 +21,11 @@ export default class TypesPage extends Content {
                .find(htmlElements.table);
   }
 
-  getTableCell(content) {
-    return this.getContents()
+  getTableRow(code) {
+    return this.getTable()
                .find(htmlElements.td)
-               .contains(content);
+               .contains(code)
+               .closest(htmlElements.tr);
   }
 
   getTableRowAction(code) {

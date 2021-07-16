@@ -7,6 +7,7 @@ export default class AddPage extends Content {
 
   nameInput = `${htmlElements.input}[name=name]`;
   codeInput = `${htmlElements.input}[name=code]`;
+  saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
 
   getNameInput() {
     return this.getContents()
@@ -20,8 +21,7 @@ export default class AddPage extends Content {
 
   getSaveButton() {
     return this.getContents()
-               .find(htmlElements.button)
-               .contains('Save');
+               .find(this.saveButton);
   }
 
   typeName(value) {
