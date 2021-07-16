@@ -58,6 +58,7 @@ export default class RolesPage extends Content {
 
   openAddRolePage() {
     this.getAddButton().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(AddPage);
   }
 
@@ -100,11 +101,13 @@ class KebabMenu extends WebElement {
 
   openDetails() {
     this.getDetails().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(DetailsPage);
   }
 
   openEdit() {
     this.getEdit().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(EditPage);
   }
 
