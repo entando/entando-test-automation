@@ -3,6 +3,7 @@ import { DATA_TESTID, htmlElements } from '../../WebElement';
 import Content from '../../app/Content';
 import AppPage from '../../app/AppPage';
 import ContentWidgetConfigPage from './widgetconfigs/ContentWidgetConfigPage';
+import ContentListWidgetConfigPage from './widgetconfigs/ContentListWidgetConfigPage';
 import MFEWidgetForm from '../../components/mfeWidgets/MFEWidgetForm';
 
 export default class DesignerPage extends Content {
@@ -158,6 +159,8 @@ export default class DesignerPage extends Content {
   gatherWidgetConfigPage(forWidget) {
     const { CMS_WIDGETS } = DesignerPage;
     switch (forWidget.code) {
+      case CMS_WIDGETS.CONTENT_LIST.code:
+        return ContentListWidgetConfigPage;
       case CMS_WIDGETS.CONTENT.code:
       default:
         return ContentWidgetConfigPage;

@@ -177,106 +177,117 @@ describe('Microfrontends and Widgets', () => {
     it('Test widget cleanup', () => {
       selectHomepageFromSidebar();
       cy.wait(500);
+
       currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
       currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT);
-      cy.wait(1000);
       currentPage.getContent().publishPageDesign();
+      cy.wait(1000);
       
-      currentPage = new HomePage();
       currentPage = currentPage.getMenu().getComponents().open();
       currentPage = currentPage.openMFE_Widgets();
+      cy.wait(500);
 
       currentPage.getContent().openKebabMenuByWidgetCode(
         SAMPLE_DUPE_WIDGET_CODE,
         MFEWidgetsPage.WIDGET_ACTIONS.DELETE,
       );
-      const modal = currentPage.getContent().getDeletePromptModal();
-      modal.getContent().should('be.visible');
-      modal.clickActionByLabel('Delete');
-      currentPage.getContent().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
+      currentPage.getContent().getDeletePromptModal().clickActionByLabel('Delete');
+      currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
     });
   });
 
-  /* describe('Widget Usage for CMS Content List Widget', () => {
+  describe('Widget Usage for CMS Content List Widget', () => {
     const WIDGET_FRAME = {
       frameName: 'Frame 4',
       frameNum: 7,
-      widgetCode: 'row_content_viewer_list',
-      widgetName: 'Content List',
+    };
+
+    const selectHomepageFromSidebar = () => {
+      const currentPageContent = currentPage.getContent();
+      currentPageContent.getSidebarTab('Page Tree').click();
+      cy.wait(3000);
+      currentPageContent.getPageTreeItem(PAGE.title).click({ force: true });
+      currentPageContent.getSidebarTab('Widgets').click();
     };
 
     it('Basic add with widget settings', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-      cy.addWidgetToFrame(WIDGET_FRAME.widgetName, WIDGET_FRAME.frameName);
+      currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME.frameName);
 
-      cy.validateUrlChanged(`/widget/config/${WIDGET_FRAME.widgetCode}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       cy.wait(5000);
-      cy.get('.Contents__body td').contains('Sample - About Us')
-        .siblings().contains('Add')
-        .click();
-      cy.get('.Contents__body td').contains('Sample Banner')
-        .siblings().contains('Add')
-        .click();
+      currentPage.getContentListTableRows('Sample - About Us').contains('Add').click();
+      currentPage.getContentListTableRows('Sample Banner').contains('Add').click();
       cy.wait(500);
-      cy.getByName('contents[0].modelId').select('2-column-content');
-      cy.getByName('contents[1].modelId').select('Banner - Text, Image, CTA');
-      cy.getByTestId(TEST_ID_PAGE_DESIGNER.WIDGET_CONFIG).contains('Save').click();
+      currentPage.getModelIdDropdownByIndex(0).select('2-column-content');
+      currentPage.getModelIdDropdownByIndex(1).select('Banner - Text, Image, CTA');
+      currentPage.getSaveButton().click();
 
       cy.wait(500);
-      cy.getPageStatus().should('match', /^Published, with pending changes$/);
-      cy.publishPageClick();
-      cy.getPageStatus().should('match', /^Published$/);
+      currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+      currentPage.getContent().publishPageDesign();
+      currentPage.getContent().getPageStatus().should('match', /^Published$/);
     });
 
     it('Open Widget Details from the widget dropped', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
 
-      cy.openPageWidgetDetailsByFrame(WIDGET_FRAME.frameName);
-      cy.validateUrlChanged(`/widget/detail/${WIDGET_FRAME.widgetCode}`);
+      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+      currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.CONTENT_LIST);
+      cy.wait(500);
+      cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
     });
 
     it('Save As Widget', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
 
-      cy.openSaveAsWidgetWithFrame(WIDGET_FRAME.frameName);
+      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+      currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT_LIST);
 
-      cy.validateUrlChanged(`/page/${PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${WIDGET_FRAME.widgetCode}/rowListViewerConfig`);
-      cy.fillUpWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
-      cy.get('form').contains('Parent Type').should('exist');
-      cy.get('form').contains('Configuration *').should('exist');
-      cy.get('form').contains('Configuration *').click();
+      cy.validateUrlChanged(`/page/${PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/viewerConfig`);
+      currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
+      currentPage.getContent().getConfigTabConfiguration().should('exist');
+      currentPage.getContent().getConfigTabConfiguration().click();
       cy.wait(500);
-      cy.get('form').contains('Sample Banner').should('exist');
-      cy.get(`.${WIDGET_FORM_HEADER_CLASSNAME}`).contains('Save and Replace').click();
+      currentPage.getContent().getFormBody().contains('Change content').should('exist');
+      currentPage = currentPage.getContent().submitCloneWidget();
 
       cy.wait(4500);
       cy.validateUrlChanged(`/page/configuration/${PAGE.code}`);
-      cy.getPageStatus().should('match', /^Published, with pending changes$/);
-      cy.publishPageClick();
-      cy.wait(500);
-      cy.getPageStatus().should('match', /^Published$/);
+
+      currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+      currentPage.getContent().publishPageDesign();
+      currentPage.getContent().getPageStatus().should('match', /^Published$/);
     });
 
     it('Test widget cleanup', () => {
-      cy.openPageViaPageDesigner(PAGE);
+      selectHomepageFromSidebar();
       cy.wait(500);
-      cy.deletePageWidgetByFrame(WIDGET_FRAME.frameName);
-      cy.publishPageClick();
-      cy.openPageFromMenu(['Components', 'MFE & Widgets']);
-      cy.openTableActionsByTestId(SAMPLE_DUPE_WIDGET_CODE);
-      cy.getVisibleActionItemByClass(DELETE_ACTION_CLASSNAME).click();
-      cy.getModalDialogByTitle('Delete').should('be.visible');
-      cy.getButtonByText('Delete').click();
-      cy.get('table').should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
+
+      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+      currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
+      currentPage.getContent().publishPageDesign();
+      cy.wait(1000);
+      
+      currentPage = currentPage.getMenu().getComponents().open();
+      currentPage = currentPage.openMFE_Widgets();
+      cy.wait(500);
+
+      currentPage.getContent().openKebabMenuByWidgetCode(
+        SAMPLE_DUPE_WIDGET_CODE,
+        MFEWidgetsPage.WIDGET_ACTIONS.DELETE,
+      );
+      currentPage.getContent().getDeletePromptModal().clickActionByLabel('Delete');
+      currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
     });
   });
 
-  describe('Widget Usage for CMS Content Search Query Widget', () => {
+  /* describe('Widget Usage for CMS Content Search Query Widget', () => {
     const WIDGET_FRAME = {
       frameName: 'Frame 3',
       frameNum: 6,
