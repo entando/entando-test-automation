@@ -34,6 +34,7 @@ export default class AddPage extends Content {
 
   save() {
     this.getSaveButton().click();
+    // TODO: find a way to avoid waiting for arbitrary time periods
     cy.wait(1000);
     return new AppPage(TypesPage);
   }

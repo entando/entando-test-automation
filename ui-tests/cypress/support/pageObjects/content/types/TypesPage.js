@@ -41,6 +41,7 @@ export default class TypesPage extends Content {
   editContentType(code) {
     this.getTableRowAction(code)
         .click();
+    // TODO: find a way to avoid waiting for arbitrary time periods
     cy.wait(500);
 
     this.getTable()
@@ -54,12 +55,14 @@ export default class TypesPage extends Content {
   deleteContentType(code) {
     this.getTableRowAction(code)
         .click();
+    // TODO: find a way to avoid waiting for arbitrary time periods
     cy.wait(500);
 
     this.getTable()
         .find(this.deleteOption)
         .filter(':visible')
         .click();
+    // TODO: find a way to avoid waiting for arbitrary time periods
     cy.wait(1500);
 
     this.parent
