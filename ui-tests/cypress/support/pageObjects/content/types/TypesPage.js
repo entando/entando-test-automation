@@ -67,8 +67,7 @@ export default class TypesPage extends Content {
 
     this.parent
         .getDialog()
-        .get()
-        .find(this.modalDeleteButton)
+        .getConfirmButton()
         .click();
   }
 }
