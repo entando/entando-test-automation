@@ -2,24 +2,16 @@ import {htmlElements} from "../../WebElement";
 import Content from "../../app/Content.js";
 import AppPage from "../../app/AppPage.js";
 import ManagementPage from "./ManagementPage";
+import DropDownButton from "./DropDownButton";
 
 export default class AddPage extends Content {
 
-  alertMessageDiv = `.alert`;
   contentDescriptionInput = `${htmlElements.input}#description`;
   contentTitleAttrInput = `.RenderTextInput`
   contentAttrsItTab = `${htmlElements.a}#content-attributes-tabs-tab-it`;
   contentTitleAttrInputIt = `attributes[0].values.it`
-  contentSaveButton = `${htmlElements.button}#saveopts`;
-  contentSaveButtonUl = `${htmlElements.ul}`;
-  contentSaveButtonWrapper = `${htmlElements.div}.StickySave__row--top`;
-  contentSaveButtonSaveAction = `${htmlElements.li}`;
   contentAttrEnPane = `${htmlElements.div}#content-attributes-tabs-pane-en`;
   contentAttrItPane = `${htmlElements.div}#content-attributes-tabs-pane-it`;
-
-  getAlertMessage() {
-    return this.getRoot().find(this.alertMessageDiv);
-  }
 
   getTitleAttrItInput() {
     return this.getContents().get(this.contentAttrItPane)
@@ -40,10 +32,17 @@ export default class AddPage extends Content {
     return this.getContents().find(this.contentAttrsItTab);
   }
 
-  getSaveButton() {
-    this.getContents().find(this.contentSaveButton).click();
-    return this.getContents().get(this.contentSaveButtonWrapper).find(this.contentSaveButtonUl).eq(0)
-      .find(this.contentSaveButtonSaveAction).eq(0);
+  getSaveDropDownButton() {
+    return new DropDownButton(this);
+  }
+
+  getSaveDropDownListItems() {
+    return this.getSaveDropDownButton().open();
+  }
+
+  getSaveAction() {
+    // 0 is the Save action number
+    return this.getSaveDropDownListItems().get(0);
   }
 
   typeAttrTitleIt(input) {
@@ -63,7 +62,7 @@ export default class AddPage extends Content {
   }
 
   submitForm() {
-    this.getSaveButton().click();
+    this.getSaveAction().click();
   }
 
   addContent(titleEn, titleIt, description, append = false) {

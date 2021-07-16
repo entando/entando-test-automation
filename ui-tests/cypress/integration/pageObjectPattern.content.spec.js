@@ -11,7 +11,8 @@ describe('Contents', () => {
     currentPage = currentPage.getContent().openAddContentPage();
 
     currentPage.getContent().addContent(`AAA-EN`, `AAA-IT`, 'description test');
-    currentPage.getContent().getAlertMessage().contains('Saved').should('be.visible');
+
+    cy.validateToast(currentPage, true, 'Saved');
 
     cy.kcLogout();
   })
@@ -41,7 +42,8 @@ describe('Contents', () => {
 
     currentPage = currentPage.getMenu().getContent().open().openManagement();
     currentPage = currentPage.getContent().deleteLastAddedContent();
-    currentPage.getContent().getAlertMessage().contains('removed').should('be.visible');
+
+    cy.validateToast(currentPage, true, 'removed');
 
     cy.kcLogout();
   })
