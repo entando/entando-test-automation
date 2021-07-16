@@ -1,16 +1,16 @@
-import {TEST_ID_KEY, htmlElements, WebElement} from "../../WebElement";
+import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement";
 import Content from "../../app/Content.js";
 import AppPage from "../../app/AppPage.js";
 import CategoriesPage from "./CategoriesPage";
 
 export default class AddPage extends Content {
 
-  titleItInput = `${htmlElements.input}[name="titles.it"][${TEST_ID_KEY}=form_RenderTextInput_input]`;
-  titleEnInput = `${htmlElements.input}[name="titles.en"][${TEST_ID_KEY}=form_RenderTextInput_input]`;
-  codeInput = `${htmlElements.input}[name="code"][${TEST_ID_KEY}=form_RenderTextInput_input]`;
-  treePositionInput = `${htmlElements.table}[${TEST_ID_KEY}=common_CategoryTreeSelector_table]`;
-  saveButton = `${htmlElements.button}[${TEST_ID_KEY}=common_CategoryForm_Button]`;
-  alertMessageDiv = `${htmlElements.div}[${TEST_ID_KEY}=form_ErrorsAlert_Alert]`;
+  titleItInput = `${htmlElements.input}[name="titles.it"][${DATA_TESTID}=form_RenderTextInput_input]`;
+  titleEnInput = `${htmlElements.input}[name="titles.en"][${DATA_TESTID}=form_RenderTextInput_input]`;
+  codeInput = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
+  treePositionInput = `${htmlElements.table}[${DATA_TESTID}=common_CategoryTreeSelector_table]`;
+  saveButton = `${htmlElements.button}[${DATA_TESTID}=common_CategoryForm_Button]`;
+  alertMessageDiv = `${htmlElements.div}[${DATA_TESTID}=form_ErrorsAlert_Alert]`;
 
   getAlertMessage() {
     return this.getContents()

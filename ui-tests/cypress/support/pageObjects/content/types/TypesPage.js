@@ -1,4 +1,4 @@
-import {TEST_ID_KEY, htmlElements, WebElement} from '../../WebElement.js';
+import { htmlElements } from '../../WebElement.js';
 import Content from '../../app/Content.js';
 import AppPage from '../../app/AppPage.js';
 import AddPage from './AddPage.js';

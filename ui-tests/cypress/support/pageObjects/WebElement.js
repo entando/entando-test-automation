@@ -1,13 +1,19 @@
-export const TEST_ID_KEY = "data-testid"
+export const DATA_TESTID = "data-testid"
+export const DATA_ID = "data-id"
 
 export const htmlElements = {
   body: "body",
   nav: "nav",
   div: "div",
   h1: "h1",
+  h4: "h4",
+  p: "p",
   ol: "ol",
   ul: "ul",
   li: "li",
+  dl: "dl",
+  dt: "dt",
+  dd: "dd",
   a: "a",
   table: "table",
   tbody: "tbody",
