@@ -29,7 +29,7 @@ describe('Contents', () => {
   //   currentPage = currentPage.getContent().openEditContentPage();
 
   //   currentPage.getContent().editContent('description changed');
-  //   currentPage.getContent().getAlertMessage().contains('Saved').should('be.visible');
+  //   cy.validateToast(currentPage, true, 'Saved');
 
   //   // cy.kcLogout();
   // })

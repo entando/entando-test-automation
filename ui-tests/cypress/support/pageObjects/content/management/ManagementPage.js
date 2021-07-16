@@ -7,7 +7,6 @@ import AppPage from "../../app/AppPage";
 
 export default class ManagementPage extends Content {
 
-  alertMessageDiv = `.alert`;
   contentTabs = `${htmlElements.div}#secondary-tabs-1`;
   contentLink = `${htmlElements.div}.Contents__main-action-button`;
   actionOptions = `${htmlElements.ul}.dropdown-menu`;
@@ -20,11 +19,6 @@ export default class ManagementPage extends Content {
 
 
   modalDeleteButton = `${htmlElements.button}#DeleteContentModal__button-delete`;
-
-
-  getAlertMessage() {
-    return this.getRoot().find(this.alertMessageDiv);
-  }
 
   getAddButton() {
     return this.getContents()
