@@ -3,7 +3,8 @@ import {DATA_TESTID, DATA_ID, htmlElements} from "../../WebElement.js";
 import Content   from "../../app/Content.js";
 import KebabMenu from "../../app/KebabMenu";
 
-import AppPage from "../../app/AppPage.js";
+import AppPage      from "../../app/AppPage.js";
+import DeleteDialog from "../../app/DeleteDialog";
 
 import AddPage     from "./AddPage.js";
 import EditPage    from "./EditPage.js";
@@ -96,6 +97,7 @@ class RolesKebabMenu extends KebabMenu {
 
   clickDelete() {
     this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
   }
 
 }

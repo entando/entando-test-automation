@@ -217,7 +217,7 @@ describe('User Roles', () => {
       currentPage = openRolesPage();
 
       currentPage.getContent().getKebabMenu(ROLE_CODE).open().clickDelete();
-      currentPage.getDialog().getStateInfo().should('contain', ROLE_CODE);
+      currentPage.getDialog().getBody().getStateInfo().should('contain', ROLE_CODE);
 
       currentPage.getDialog().confirm();
       currentPage.getContent().getTableRows().should('not.contain', ROLE_CODE);

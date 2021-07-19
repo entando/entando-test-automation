@@ -127,7 +127,7 @@ describe("Users Management", () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME);
 
       currentPage.getContent().getKebabMenu(USERNAME).open().clickDelete();
-      currentPage.getDialog().getStateInfo().should("contain", USERNAME);
+      currentPage.getDialog().getBody().getStateInfo().should("contain", USERNAME);
       currentPage.getDialog().confirm();
       cy.wait(1000);
       currentPage.getContent().getTableRows().should("not.contain", USERNAME);
@@ -140,7 +140,7 @@ describe("Users Management", () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
 
       currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().clickDelete();
-      currentPage.getDialog().getStateInfo().should("contain", USERNAME_ADMIN);
+      currentPage.getDialog().getBody().getStateInfo().should("contain", USERNAME_ADMIN);
       currentPage.getDialog().confirm();
 
       cy.validateToast(currentPage, false, "Sorry. You can't delete the administrator user");

@@ -1,12 +1,11 @@
 import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
 
-export default class Dialog extends WebElement {
+export class Dialog extends WebElement {
 
   dialog = `${htmlElements.div}[role=dialog]`;
   header = `${htmlElements.div}.modal-header`;
   title = `${htmlElements.button}[${DATA_TESTID}=modal-title]`;
   closeButton = `${htmlElements.button}[${DATA_TESTID}=modal_GenericModal_button]`;
-  body = `${htmlElements.div}.modal-body`;
   footer = `${htmlElements.div}.modal-footer`;
 
   get() {
@@ -15,14 +14,17 @@ export default class Dialog extends WebElement {
                .children(this.dialog);
   }
 
+  setBody(content) {
+    this.body = new content(this);
+  }
+
   getHeader() {
     return this.get()
                .find(this.header);
   }
 
   getBody() {
-    return this.get()
-               .find(this.body);
+    return this.body;
   }
 
   getFooter() {
@@ -40,23 +42,6 @@ export default class Dialog extends WebElement {
                .children(this.closeButton);
   }
 
-  getState() {
-    return this.getBody()
-               .children(htmlElements.div);
-  }
-
-  getStateTitle() {
-    return this.getBody()
-               .children(htmlElements.div)
-               .children(htmlElements.h4);
-  }
-
-  getStateInfo() {
-    return this.getBody()
-               .children(htmlElements.div)
-               .children(htmlElements.p);
-  }
-
   getCancelButton() {
     return this.getFooter()
                .children(htmlElements.button).eq(0);
@@ -69,14 +54,28 @@ export default class Dialog extends WebElement {
 
   close() {
     this.getCloseButton().click();
+    this.body = null;
   }
 
   cancel() {
     this.getCancelButton().click();
+    this.body = null;
   }
 
   confirm() {
     this.getConfirmButton().click();
+    this.body = null;
+  }
+
+}
+
+export class DialogContent extends WebElement {
+
+  body = `${htmlElements.div}.modal-body`;
+
+  get() {
+    return this.parent.get()
+        .find(this.body);
   }
 
 }
