@@ -15,12 +15,4 @@ export default class ContentListWidgetConfigPage extends WidgetConfigPage {
   getModelIdDropdownByIndex(idx) {
     return this.getMainContainer().find(`[name="contents[${idx}].modelId"]`);
   }
-  
-  /* getAddContentButton() {
-    return this.getMainContainer().contains('Add existing content');
-  }
-
-  getChangeContentButton() {
-    return this.getMainContainer().contains('Change content');
-  } */
 }

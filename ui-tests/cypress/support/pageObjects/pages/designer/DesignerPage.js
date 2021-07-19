@@ -4,6 +4,7 @@ import Content from '../../app/Content';
 import AppPage from '../../app/AppPage';
 import ContentWidgetConfigPage from './widgetconfigs/ContentWidgetConfigPage';
 import ContentListWidgetConfigPage from './widgetconfigs/ContentListWidgetConfigPage';
+import ContentQueryWidgetConfigPage from './widgetconfigs/ContentQueryWidgetConfigPage';
 import MFEWidgetForm from '../../components/mfeWidgets/MFEWidgetForm';
 
 export default class DesignerPage extends Content {
@@ -49,6 +50,10 @@ export default class DesignerPage extends Content {
     SEARCH_FORM: {
       name: 'Search Form',
       code: 'search_form',
+    },
+    SEARCH_RESULT: {
+      name: 'Search Results',
+      code: 'search_result',
     },
     NEWS_ARCHIVE: {
       name: 'News Archive',
@@ -161,6 +166,8 @@ export default class DesignerPage extends Content {
     switch (forWidget.code) {
       case CMS_WIDGETS.CONTENT_LIST.code:
         return ContentListWidgetConfigPage;
+      case CMS_WIDGETS.CONTENT_QUERY.code:
+        return ContentQueryWidgetConfigPage;
       case CMS_WIDGETS.CONTENT.code:
       default:
         return ContentWidgetConfigPage;
