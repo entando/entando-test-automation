@@ -1,8 +1,8 @@
-import {generateRandomId} from '../support/utils';
+import {generateRandomId} from '../../support/utils';
 
-import {htmlElements} from "../support/pageObjects/WebElement";
+import {htmlElements} from "../../support/pageObjects/WebElement";
 
-import HomePage from "../support/pageObjects/HomePage";
+import HomePage from "../../support/pageObjects/HomePage";
 
 describe('User Roles', () => {
 

@@ -1,4 +1,4 @@
-import { TEST_ID_PAGE_DESIGNER } from '../test-const/page-designer-test-const';
+import { TEST_ID_PAGE_DESIGNER } from '../../test-const/page-designer-test-const';
 
 describe('Pages Designer', () => {
   beforeEach(() => {
@@ -29,4 +29,3 @@ describe('Pages Designer', () => {
     });
   });
 });
-

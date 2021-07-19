@@ -7,8 +7,8 @@ import {
   TEST_ID_USER_FORM,
   TEST_ID_USER_AUTHORITY_TABLE,
   TEST_ID_USER_AUTHORITY_PAGE_FORM, TEST_ID_USER_AUTHORITY_MODAL,
-} from '../test-const/user-test-const';
-import TEST_ID_GENERIC_MODAL from '../test-const/test-const';
+}                            from '../../test-const/user-test-const';
+import TEST_ID_GENERIC_MODAL from '../../test-const/test-const';
 
 describe('Users Management', () => {
   const USERNAME = 'admin';

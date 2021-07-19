@@ -1,4 +1,4 @@
-import HomePage from "../support/pageObjects/HomePage.js";
+import HomePage from "../../support/pageObjects/HomePage.js";
 
 describe('Contents', () => {
   it('Create a new content', () => {
