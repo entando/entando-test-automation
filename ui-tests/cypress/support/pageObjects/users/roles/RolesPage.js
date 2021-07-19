@@ -24,6 +24,12 @@ export default class RolesPage extends Content {
                .children(this.table);
   }
 
+  getTableHeaders() {
+    return this.getRolesTable()
+               .children(htmlElements.thead)
+               .children(htmlElements.tr);
+  }
+
   getTableRows() {
     return this.getRolesTable()
                .children(htmlElements.tbody)
