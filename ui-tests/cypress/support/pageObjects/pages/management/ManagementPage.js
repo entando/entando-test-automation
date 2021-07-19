@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement.js";
+import {DATA_TESTID, htmlElements} from "../../WebElement.js";
 
 import Content from "../../app/Content.js";
 import AppPage from "../../app/AppPage.js";
@@ -8,7 +8,7 @@ export default class ManagementPage extends Content {
     add = `[${DATA_TESTID}=button-step-5]`;
     tableContainer = `${htmlElements.div}.DDTable`;
     pageName = `[${DATA_TESTID}=common_PageTree_span]`;
-    optionsMenu = `[id=WidgetListRow-dropown]`;
+    optionsMenu = `#WidgetListRow-dropown`;
     addChild = `[aria-labelledby=WidgetListRow-dropown] li:nth-child(1) a`;
     expandAll = `${htmlElements.div}.PageTree__toggler--expand`;
 

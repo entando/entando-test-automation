@@ -7,8 +7,7 @@ import ManagementPage from "./ManagementPage.js";
 export default class AddPage extends Content {
     pageForm = `${htmlElements.div}[${DATA_TESTID}=add_PagesAddPage_Grid]`;
 
-    inputTitle = `${htmlElements.input}[name="titles.en"]`;
-    inputTitleIt = `${htmlElements.input}[name="titles.it"]`;
+    inputTitle = `${htmlElements.input}[name="titles.{code}"]`;
     inputCode = `${htmlElements.input}[name=code]`;
     pageTreeSelector = `${htmlElements.div}[${DATA_TESTID}=PageForm__PageTreeSelector]`;
     pageTemplateSelector = `${htmlElements.select}[name=pageModel]`;
@@ -16,17 +15,15 @@ export default class AddPage extends Content {
     // SEO
     seoInfoContainer = `${htmlElements.div}[id=basic-tabs]`;
     seoInfoTabs = `${htmlElements.ul}[${DATA_TESTID}=common_SeoInfo_Tabs]`;
-    seoDescription = `${htmlElements.input}[name="seoData.seoDataByLang.en.description"]`
-    seoDescriptionIt = `${htmlElements.input}[name="seoData.seoDataByLang.it.description"]`
-    seoKeywords = `${htmlElements.input}[name="seoData.seoDataByLang.en.keywords"]`
-    seoKeywordsIt = `${htmlElements.input}[name="seoData.seoDataByLang.it.keywords"]`
-    seoFriendlyCode = `${htmlElements.input}[name="seoData.seoDataByLang.en.friendlyCode"]`
-    seoFriendlyCodeIt = `${htmlElements.input}[name="seoData.seoDataByLang.it.friendlyCode"]`
+    
+    seoDescription = `${htmlElements.input}[name="seoData.seoDataByLang.{code}.description"]`
+    seoKeywords = `${htmlElements.input}[name="seoData.seoDataByLang.{code}.keywords"]`
+    seoFriendlyCode = `${htmlElements.input}[name="seoData.seoDataByLang.{code}.friendlyCode"]`
 
     // Meta
     metatagKey = `${htmlElements.input}[name="metakey"]`
     metatagType = `${htmlElements.input}[name="metatype"]`
-    metatagValue = `${htmlElements.input}[name="titles.en"]`
+    metatagValue = `${htmlElements.input}[name="metavalue"]`
 
     // buttons
     saveButton = `${htmlElements.button}[${DATA_TESTID}="save-page"]`;
@@ -42,6 +39,10 @@ export default class AddPage extends Content {
                .find(this.seoInfoContainer);
     }
 
+    getMultilangElement (name, langCode) {
+        return this.getSeoContainer().find(this[name].replace('{code}', langCode));
+    }
+
     getSeoTabs() {
         return this.getSeoContainer()
                .children(this.seoInfoTabs);
@@ -53,19 +54,19 @@ export default class AddPage extends Content {
     }
 
     getInputTitle(lang) {
-        return this.getSeoContainer().find(lang === 'it' ? this.inputTitleIt : this.inputTitle);
+        return this.getMultilangElement('inputTitle', lang);
     }
 
     getSeoDescription (lang) {
-        return this.getSeoContainer().find(lang === 'it' ? this.seoDescriptionIt : this.seoDescription);
+        return this.getMultilangElement('seoDescription', lang);
     }
 
     getSeoKeywords (lang) {
-        return this.getSeoContainer().find(lang === 'it' ? this.seoKeywordsIt : this.seoKeywords);
+        return this.getMultilangElement('seoKeywords', lang);
     }
 
     getSeoFriendlyCode (lang) {
-        return this.getSeoContainer().find(lang === 'it' ? this.seoFriendlyCodeIt : this.seoFriendlyCode);
+        return this.getMultilangElement('seoFriendlyCode', lang);
     }
 
     setSeoDescription (value, lang = 'en') {

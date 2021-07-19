@@ -44,7 +44,6 @@ describe('Pages Management - Create', () => {
     
         // delete recently added page
         cy.pagesController().then(controller => controller.deletePage(code));
-        cy.wait(2000);
     });
   });
 
