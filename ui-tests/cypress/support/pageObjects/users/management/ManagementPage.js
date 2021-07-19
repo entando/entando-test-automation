@@ -6,9 +6,10 @@ import KebabMenu from "../../app/KebabMenu";
 import AppPage      from "../../app/AppPage";
 import DeleteDialog from "../../app/DeleteDialog";
 
-import AddPage         from "./AddPage";
-import EditPage        from "./EditPage";
-import EditProfilePage from "./EditProfilePage";
+import AddPage           from "./AddPage";
+import EditPage          from "./EditPage";
+import EditProfilePage   from "./EditProfilePage";
+import AuthorizationPage from "./AuthorizationPage";
 
 export default class ManagementPage extends Content {
 
@@ -140,6 +141,7 @@ class UsersKebabMenu extends KebabMenu {
 
   openManageAuth() {
     this.getManageAuth().click();
+    return new AppPage(AuthorizationPage);
   }
 
   openEditProfile() {

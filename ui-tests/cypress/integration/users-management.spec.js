@@ -2,13 +2,6 @@ import {generateRandomId} from "../support/utils";
 
 import {htmlElements} from "../support/pageObjects/WebElement";
 
-import {
-  TEST_ID_USER_AUTHORITY_MODAL,
-  TEST_ID_USER_AUTHORITY_TABLE,
-  TEST_ID_USER_LIST_TABLE
-}                            from "../test-const/user-test-const";
-import TEST_ID_GENERIC_MODAL from "../test-const/test-const";
-
 import HomePage from "../support/pageObjects/HomePage";
 
 describe("Users Management", () => {
@@ -97,6 +90,38 @@ describe("Users Management", () => {
       cy.usersController().then(controller => controller.deleteUser(USERNAME));
     });
 
+    it("Update an existing user authorization", () => {
+      const GROUP = {
+        ID: "free",
+        DESCRIPTION: "Free Access"
+      };
+      const ROLE  = {
+        ID: "admin",
+        DESCRIPTION: "Administrator"
+      };
+
+      cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
+
+      currentPage = openManagementPage();
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME);
+
+      currentPage = currentPage.getContent().getKebabMenu(USERNAME).open().openManageAuth();
+      currentPage.getContent().getTitle().should("contain", USERNAME);
+
+      currentPage.getContent().addAuthorization();
+      currentPage.getDialog().getBody().selectGroup(GROUP.ID);
+      currentPage.getDialog().getBody().selectRole(ROLE.ID);
+      currentPage.getDialog().confirm();
+
+      currentPage.getContent().getTableRows().contains(htmlElements.td, GROUP.DESCRIPTION).parent().as("tableRows");
+      cy.get("@tableRows").children(htmlElements.td).eq(0).should("have.text", GROUP.DESCRIPTION);
+      cy.get("@tableRows").children(htmlElements.td).eq(1).should("have.text", ROLE.DESCRIPTION);
+
+      currentPage.getContent().save();
+
+      cy.usersController().then(controller => controller.deleteUser(USERNAME));
+    });
+
     it("Search an existing user", () => {
       cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
 
@@ -146,49 +171,6 @@ describe("Users Management", () => {
       cy.validateToast(currentPage, false, "Sorry. You can't delete the administrator user");
     });
 
-  });
-
-  describe("User authorizations", () => {
-
-    const group = {
-      ID: "free",
-      DESCRIPTION: "Free Access"
-    };
-    const role  = {
-      ID: "admin",
-      DESCRIPTION: "Administrator"
-    };
-
-    beforeEach(() => {
-      cy.visit("/");
-      new HomePage();
-    });
-
-    it("Should edit the user authorizations", () => {
-      cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
-
-      cy.log("Should edit the user authorizations");
-      // Edit Authorizations
-      cy.searchUser(USERNAME);
-      cy.openTableActionsByTestId(USERNAME);
-      cy.getVisibleActionItemByClass(TEST_ID_USER_LIST_TABLE.ACTION_MANAGE_AUTHORIZATIONS).click();
-      cy.validateUrlChanged(`/authority/${USERNAME}`);
-      cy.contains("No authorizations yet").should("be.visible");
-      // Add Authorizations
-      cy.log("Should add the user authorizations");
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.ADD_BUTTON).click();
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_MODAL.GROUP_FIELD).select(group.ID);
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_MODAL.ROLE_FIELD).select(role.ID);
-      cy.getByTestId(TEST_ID_GENERIC_MODAL.BUTTON).contains("Add").click();
-      cy.contains(group.DESCRIPTION).should("be.visible");
-      cy.contains(role.DESCRIPTION).should("be.visible");
-      cy.getTableRowsByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).should("have.length", 1);
-      // Delete Authorizations
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.DELETE_BUTTON).click();
-      cy.contains("No authorizations yet").should("be.visible");
-
-      cy.usersController().then(controller => controller.deleteUser(USERNAME));
-    });
   });
 
   const openManagementPage = () => {
