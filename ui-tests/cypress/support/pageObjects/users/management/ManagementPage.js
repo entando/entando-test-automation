@@ -5,7 +5,8 @@ import KebabMenu from "../../app/KebabMenu";
 
 import AppPage from "../../app/AppPage";
 
-import AddPage from "./AddPage";
+import AddPage  from "./AddPage";
+import EditPage from "./EditPage";
 
 export default class ManagementPage extends Content {
 
@@ -132,6 +133,7 @@ class UsersKebabMenu extends KebabMenu {
 
   openEdit() {
     this.getEdit().click();
+    return new AppPage(EditPage);
   }
 
   openManageAuth() {

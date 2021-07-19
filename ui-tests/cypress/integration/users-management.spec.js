@@ -5,7 +5,6 @@ import {htmlElements} from "../support/pageObjects/WebElement";
 import {
   TEST_ID_USER_AUTHORITY_MODAL,
   TEST_ID_USER_AUTHORITY_TABLE,
-  TEST_ID_USER_FORM,
   TEST_ID_DETAIL_USER_TABLE,
   TEST_ID_USER_PROFILE_FORM,
   TEST_ID_USER_LIST_TABLE
@@ -39,6 +38,37 @@ describe("Users Management", () => {
       currentPage = currentPage.getContent().addUser(USERNAME, PASSWORD, PROFILE_TYPE_CODE);
 
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME);
+
+      cy.usersController().then(controller => controller.deleteUser(USERNAME));
+    });
+
+    it("Add a user with existing user name is forbidden", () => {
+      cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
+
+      currentPage = openManagementPage();
+
+      currentPage = currentPage.getContent().openAddUserPage();
+      currentPage.getContent().addUser(USERNAME, PASSWORD, PROFILE_TYPE_CODE);
+
+      cy.validateToast(currentPage, false, `The user '${USERNAME}' already exists`);
+
+      cy.usersController().then(controller => controller.deleteUser(USERNAME));
+    });
+
+    it("Update an existing user", () => {
+      const PASSWORD_EDIT = generateRandomId();
+
+      cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
+
+      currentPage = openManagementPage();
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME);
+
+      currentPage = currentPage.getContent().getKebabMenu(USERNAME).open().openEdit();
+      currentPage = currentPage.getContent().editUser(PASSWORD_EDIT, true);
+
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME).parent().as("tableRows");
+      cy.get("@tableRows").children(htmlElements.td).eq(0).should("have.text", USERNAME);
+      cy.get("@tableRows").children(htmlElements.td).eq(4).should("contain", "Active");
 
       cy.usersController().then(controller => controller.deleteUser(USERNAME));
     });
@@ -79,52 +109,19 @@ describe("Users Management", () => {
       currentPage.getContent().getTableRows().should("not.contain", USERNAME);
     });
 
-  });
+    it("Deletion of admin is forbidden", () => {
+      const USERNAME_ADMIN = "admin";
 
-  describe("User ", () => {
+      currentPage = openManagementPage();
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
 
-    beforeEach(() => {
-      cy.visit("/");
-      new HomePage();
+      currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().clickDelete();
+      currentPage.getDialog().getStateInfo().should("contain", USERNAME_ADMIN);
+      currentPage.getDialog().confirm();
+
+      cy.validateToast(currentPage, false, "Sorry. You can't delete the administrator user");
     });
 
-    it("Should update a user", () => {
-      cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
-
-      cy.log("Update the user");
-      const newPassword = "new_password_tests";
-      cy.searchUser(USERNAME);
-      cy.getTableRowsBySelector(USERNAME).contains("Not active").should("be.visible");
-      cy.openTableActionsByTestId(USERNAME);
-      cy.getVisibleActionItemByClass(TEST_ID_USER_LIST_TABLE.ACTION_EDIT_USER).click();
-      cy.getInputByName(TEST_ID_USER_FORM.USERNAME_FIELD).should("have.value", USERNAME);
-      cy.getInputByName(TEST_ID_USER_FORM.PASSWORD_FIELD).type(newPassword);
-      cy.getInputByName(TEST_ID_USER_FORM.CONFIRM_PASSWORD_FIELD).type(newPassword);
-      cy.getByTestId(TEST_ID_USER_FORM.STATUS_FIELD).click("left");
-      cy.getByTestId(TEST_ID_USER_FORM.SAVE_BUTTON).click();
-      cy.validateUrlChanged("/user");
-      cy.log("Validate user changes");
-      cy.searchUser(USERNAME);
-      cy.getTableRowsBySelector(USERNAME).contains("Active").should("be.visible");
-
-      cy.usersController().then(controller => controller.deleteUser(USERNAME));
-    });
-
-    it("Delete admin user should not be possible", () => {
-      cy.log("Delete admin user should not be possible");
-      cy.deleteUser("admin");
-      cy.validateToastNotificationError("Sorry. You can't delete the administrator user");
-    });
-
-    it("Add user with username that already exists should not be possible", () => {
-      cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
-
-      cy.log("Add a new user with username that already exists");
-      cy.addUser(USERNAME, PASSWORD, PROFILE_TYPE_CODE);
-      cy.validateToastNotificationError(`The user '${USERNAME}' already exists`);
-
-      cy.usersController().then(controller => controller.deleteUser(USERNAME));
-    });
   });
 
   describe("User profile", () => {
