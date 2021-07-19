@@ -24,6 +24,7 @@ export const htmlElements = {
   form: "form",
   input: "input",
   button: "button",
+  select: "select",
   fieldset: "fieldset",
   legend: "legend"
 }
