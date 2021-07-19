@@ -5,8 +5,9 @@ import KebabMenu from "../../app/KebabMenu";
 
 import AppPage from "../../app/AppPage";
 
-import AddPage  from "./AddPage";
-import EditPage from "./EditPage";
+import AddPage         from "./AddPage";
+import EditPage        from "./EditPage";
+import EditProfilePage from "./EditProfilePage";
 
 export default class ManagementPage extends Content {
 
@@ -142,6 +143,7 @@ class UsersKebabMenu extends KebabMenu {
 
   openEditProfile() {
     this.getEditProfile().click();
+    return new AppPage(EditProfilePage);
   }
 
   openViewProfile() {

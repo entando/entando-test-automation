@@ -5,8 +5,6 @@ import {htmlElements} from "../support/pageObjects/WebElement";
 import {
   TEST_ID_USER_AUTHORITY_MODAL,
   TEST_ID_USER_AUTHORITY_TABLE,
-  TEST_ID_DETAIL_USER_TABLE,
-  TEST_ID_USER_PROFILE_FORM,
   TEST_ID_USER_LIST_TABLE
 }                            from "../test-const/user-test-const";
 import TEST_ID_GENERIC_MODAL from "../test-const/test-const";
@@ -73,6 +71,32 @@ describe("Users Management", () => {
       cy.usersController().then(controller => controller.deleteUser(USERNAME));
     });
 
+    it("Update an existing user profile", () => {
+      const FULL_NAME = generateRandomId();
+      const EMAIL     = `${generateRandomId()}@entando.com`;
+
+      cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
+
+      currentPage = openManagementPage();
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME);
+
+      currentPage = currentPage.getContent().getKebabMenu(USERNAME).open().openEditProfile();
+      currentPage.getContent().getUsernameInput().should("have.value", USERNAME);
+
+      currentPage = currentPage.getContent().editUser(null, FULL_NAME, EMAIL, null);
+
+      cy.validateToast(currentPage, true, "User profile has been updated");
+
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME).parent().as("tableRows");
+      cy.get("@tableRows").children(htmlElements.td).eq(0).should("have.text", USERNAME);
+      cy.get("@tableRows").children(htmlElements.td).eq(1).should("have.text", "Default user profile PFL");
+      cy.get("@tableRows").children(htmlElements.td).eq(2).should("have.text", FULL_NAME);
+      cy.get("@tableRows").children(htmlElements.td).eq(3).should("have.text", EMAIL);
+      cy.get("@tableRows").children(htmlElements.td).eq(4).should("contain", "Not active");
+
+      cy.usersController().then(controller => controller.deleteUser(USERNAME));
+    });
+
     it("Search an existing user", () => {
       cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
 
@@ -122,59 +146,6 @@ describe("Users Management", () => {
       cy.validateToast(currentPage, false, "Sorry. You can't delete the administrator user");
     });
 
-  });
-
-  describe("User profile", () => {
-
-    const FULL_NAME = "Test Test";
-    const EMAIL     = "email-user-test@entando.com";
-
-    beforeEach(() => {
-      cy.visit("/");
-      new HomePage();
-    });
-
-    it("Should edit the user profile", () => {
-      cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
-
-      cy.log("Should edit and view the user profile");
-      // Edit User Profile
-      cy.editUserProfile(USERNAME, FULL_NAME, EMAIL);
-      cy.validateToastNotificationOk("User profile has been updated");
-      cy.log("Check edited user profile");
-      cy.searchUser(USERNAME);
-      cy.getTableRowsBySelector(USERNAME).should("be.visible");
-      cy.getTableRowsBySelector(FULL_NAME).should("be.visible");
-      cy.getTableRowsBySelector(EMAIL).should("be.visible");
-      cy.getTableRowsBySelector(`Default user profile ${PROFILE_TYPE_CODE}`).should("be.visible");
-      cy.openTableActionsByTestId(USERNAME);
-      cy.getVisibleActionItemByClass(TEST_ID_USER_LIST_TABLE.ACTION_EDIT_PROFILE).click();
-      cy.validateUrlChanged(`/userprofile/${USERNAME}`);
-      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.USERNAME_FIELD).should("have.value", USERNAME);
-      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.FULL_NAME_FIELD).should("have.value", FULL_NAME);
-      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.EMAIL_FIELD).should("have.value", EMAIL);
-      cy.getSelectByName(TEST_ID_USER_PROFILE_FORM.PROFILE_TYPE_FIELD).within(() => {
-        cy.get("option:selected")
-          .should("have.text", "Default user profile")
-          .and("have.value", PROFILE_TYPE_CODE);
-      });
-      // View User Profile
-      cy.log("Should view the user profile");
-      cy.searchUser(USERNAME);
-      cy.openTableActionsByTestId(USERNAME);
-      cy.getVisibleActionItemByTestID(TEST_ID_USER_LIST_TABLE.ACTION_VIEW_PROFILE).click();
-      cy.validateUrlChanged(`/user/view/${USERNAME}`);
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains(USERNAME).should("be.visible");
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains(FULL_NAME).should("be.visible");
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains(EMAIL).should("be.visible");
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains(`Default user profile ${PROFILE_TYPE_CODE}`)
-        .should("be.visible");
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.BACK_BUTTON).should("be.visible");
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.BACK_BUTTON).click();
-      cy.validateUrlChanged("/user");
-
-      cy.usersController().then(controller => controller.deleteUser(USERNAME));
-    });
   });
 
   describe("User authorizations", () => {
