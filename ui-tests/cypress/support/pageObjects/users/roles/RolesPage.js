@@ -38,6 +38,12 @@ export default class RolesPage extends Content {
                .children(htmlElements.tr);
   }
 
+  getTableRow(code) {
+    return this.getRolesTable()
+               .find(`#${code}-actions`)
+               .parents(htmlElements.tr);
+  }
+
   getKebabMenu(code) {
     return new RolesKebabMenu(this, code);
   }

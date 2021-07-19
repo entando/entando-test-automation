@@ -53,6 +53,12 @@ export default class ManagementPage extends Content {
                .children(htmlElements.tr);
   }
 
+  getTableRow(code) {
+    return this.getUsersTable()
+               .find(`#${code}-actions`)
+               .parents(htmlElements.tr);
+  }
+
   getTableAlert() {
     return this.getContents()
                .find(this.tableAlert);

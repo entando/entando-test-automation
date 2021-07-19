@@ -28,7 +28,8 @@ describe("Users Management", () => {
       currentPage = currentPage.getContent().openAddUserPage();
       currentPage = currentPage.getContent().addUser(USERNAME, PASSWORD, PROFILE_TYPE_CODE);
 
-      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME);
+      currentPage.getContent().getTableRow(USERNAME).children(htmlElements.td)
+                 .then(cells => cy.validateListTexts(cells, [USERNAME]));
 
       cy.usersController().then(controller => controller.deleteUser(USERNAME));
     });
@@ -57,16 +58,16 @@ describe("Users Management", () => {
       currentPage = currentPage.getContent().getKebabMenu(USERNAME).open().openEdit();
       currentPage = currentPage.getContent().editUser(PASSWORD_EDIT, true);
 
-      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME).parent().as("tableRows");
-      cy.get("@tableRows").children(htmlElements.td).eq(0).should("have.text", USERNAME);
-      cy.get("@tableRows").children(htmlElements.td).eq(4).should("contain", "Active");
+      currentPage.getContent().getTableRow(USERNAME).children(htmlElements.td)
+                 .then(cells => cy.validateListTexts(cells, [USERNAME, null, null, null, "\u00a0Active"]));
 
       cy.usersController().then(controller => controller.deleteUser(USERNAME));
     });
 
     it("Update an existing user profile", () => {
-      const FULL_NAME = generateRandomId();
-      const EMAIL     = `${generateRandomId()}@entando.com`;
+      const FULL_NAME         = generateRandomId();
+      const EMAIL             = `${generateRandomId()}@entando.com`;
+      const PROFILE_TYPE_DESC = "Default user profile";
 
       cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
 
@@ -80,12 +81,8 @@ describe("Users Management", () => {
 
       cy.validateToast(currentPage, true, "User profile has been updated");
 
-      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME).parent().as("tableRows");
-      cy.get("@tableRows").children(htmlElements.td).eq(0).should("have.text", USERNAME);
-      cy.get("@tableRows").children(htmlElements.td).eq(1).should("have.text", "Default user profile PFL");
-      cy.get("@tableRows").children(htmlElements.td).eq(2).should("have.text", FULL_NAME);
-      cy.get("@tableRows").children(htmlElements.td).eq(3).should("have.text", EMAIL);
-      cy.get("@tableRows").children(htmlElements.td).eq(4).should("contain", "Not active");
+      currentPage.getContent().getTableRow(USERNAME).children(htmlElements.td)
+                 .then(cells => cy.validateListTexts(cells, [USERNAME, `${PROFILE_TYPE_DESC} ${PROFILE_TYPE_CODE}`, FULL_NAME, EMAIL, "\u00a0Not active"]));
 
       cy.usersController().then(controller => controller.deleteUser(USERNAME));
     });
@@ -113,16 +110,17 @@ describe("Users Management", () => {
       currentPage.getDialog().getBody().selectRole(ROLE.ID);
       currentPage.getDialog().confirm();
 
-      currentPage.getContent().getTableRows().contains(htmlElements.td, GROUP.DESCRIPTION).parent().as("tableRows");
-      cy.get("@tableRows").children(htmlElements.td).eq(0).should("have.text", GROUP.DESCRIPTION);
-      cy.get("@tableRows").children(htmlElements.td).eq(1).should("have.text", ROLE.DESCRIPTION);
+      currentPage.getContent().getTableRows().contains(htmlElements.td, GROUP.DESCRIPTION).parent().then(row => {
+        cy.get(row).children(htmlElements.td).eq(0).should("have.text", GROUP.DESCRIPTION);
+        cy.get(row).children(htmlElements.td).eq(1).should("have.text", ROLE.DESCRIPTION);
+      });
 
       currentPage.getContent().save();
 
       cy.usersController().then(controller => controller.deleteUser(USERNAME));
     });
 
-    it("Search an existing user", () => {
+    it.only("Search an existing user", () => {
       cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
 
       currentPage = openManagementPage();
@@ -130,7 +128,8 @@ describe("Users Management", () => {
       currentPage = currentPage.getContent().searchUser(USERNAME);
       currentPage.getContent().getTableRows()
                  .should("have.length", 1)
-                 .then(rows => cy.get(rows).children(htmlElements.td).eq(0).should("contain", USERNAME));
+                 .children(htmlElements.td)
+                 .then(cells => cy.validateListTexts(cells, [USERNAME]));
 
       cy.usersController().then(controller => controller.deleteUser(USERNAME));
     });

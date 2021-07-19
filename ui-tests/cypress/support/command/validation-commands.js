@@ -21,7 +21,9 @@ Cypress.Commands.add('validateToast', ( page, isOk = true , text) => {
  */
 Cypress.Commands.add('validateListTexts', (list, values) => {
   for (let i = 0; i < values.length; i++) {
-    cy.get(list).eq(i).should('have.text', values[i]);
+    if (values[i]) {
+      cy.get(list).eq(i).should('have.text', values[i]);
+    }
   }
 });
 
