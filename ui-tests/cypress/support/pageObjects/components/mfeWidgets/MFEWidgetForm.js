@@ -1,6 +1,6 @@
 import 'cypress-file-upload';
 
-import { TEST_ID_KEY, htmlElements } from '../../WebElement';
+import { DATA_TESTID, htmlElements } from '../../WebElement';
 
 import Content from '../../app/Content';
 
@@ -16,14 +16,14 @@ export default class MFEWidgetForm extends Content {
   formConfigSection = `${htmlElements.div}.WidgetForm__container`;
   formInfoSection = `${htmlElements.div}.WidgetForm__info`;
   configTabs = `${htmlElements.div}#basic-tabs ${htmlElements.ul}[role=tablist]`;
-  iconUploadInput = `${htmlElements.input}[type="file"][${TEST_ID_KEY}=common_IconUploader_input]`;
-  enTitleInput = `${htmlElements.input}[name="titles.en"][${TEST_ID_KEY}=form_RenderTextInput_input]`;
-  itTitleInput = `${htmlElements.input}[name="titles.it"][${TEST_ID_KEY}=form_RenderTextInput_input]`;
-  codeInput = `${htmlElements.input}[name="code"][${TEST_ID_KEY}=form_RenderTextInput_input]`;
-  groupInput = `${htmlElements.div}[${TEST_ID_KEY}=group-typeahead]`;
-  customUiInput = `textarea[name="customUi"][${TEST_ID_KEY}=form_RenderTextAreaInput_textarea]`;
+  iconUploadInput = `${htmlElements.input}[type="file"][${DATA_TESTID}=common_IconUploader_input]`;
+  enTitleInput = `${htmlElements.input}[name="titles.en"][${DATA_TESTID}=form_RenderTextInput_input]`;
+  itTitleInput = `${htmlElements.input}[name="titles.it"][${DATA_TESTID}=form_RenderTextInput_input]`;
+  codeInput = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
+  groupInput = `${htmlElements.div}[${DATA_TESTID}=group-typeahead]`;
+  customUiInput = `textarea[name="customUi"][${DATA_TESTID}=form_RenderTextAreaInput_textarea]`;
   saveReplaceButton = `${htmlElements.button}[type=submit]`;
-  formLabelSpan = `${htmlElements.span}[${TEST_ID_KEY}=form_FormLabel_span]`;
+  formLabelSpan = `${htmlElements.span}[${DATA_TESTID}=form_FormLabel_span]`;
 
   get isCloneMode() {
     return this.cloneMode;

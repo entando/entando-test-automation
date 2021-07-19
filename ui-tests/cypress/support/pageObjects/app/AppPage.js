@@ -53,7 +53,7 @@ export default class AppPage extends WebElement {
     return this.content;
   }
 
-  getModalDialogByTitle() {
+  getModalDialogByTitle(title) {
     return this.get().children('[role=dialog]')
                 .children(htmlElements.div)
                 .children('.modal-dialog').contains(title);

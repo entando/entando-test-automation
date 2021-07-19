@@ -1,4 +1,4 @@
-import { TEST_ID_KEY, htmlElements } from '../../WebElement';
+import { DATA_TESTID, htmlElements } from '../../WebElement';
 
 import Content from '../../app/Content';
 
@@ -6,7 +6,7 @@ import DesignerPage from './DesignerPage';
 import AppPage from '../../app/AppPage';
 
 export default class WidgetConfigPage extends Content {
-  grid = `${htmlElements.div}[${TEST_ID_KEY}=config_WidgetConfigPage_Grid]`;
+  grid = `${htmlElements.div}[${DATA_TESTID}=config_WidgetConfigPage_Grid]`;
 
   getMainContainer() {
     return this.get()

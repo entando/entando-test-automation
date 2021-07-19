@@ -1,4 +1,4 @@
-import { TEST_ID_KEY, htmlElements } from '../../WebElement';
+import { DATA_TESTID, htmlElements } from '../../WebElement';
 
 import Content from '../../app/Content';
 import AppPage from '../../app/AppPage';
@@ -12,8 +12,8 @@ export default class MFEWidgetsPage extends Content {
     DELETE: 'WidgetListRow__menu-item-delete',
   };
 
-  maincontent = `${htmlElements.div}[${TEST_ID_KEY}=list_ListWidgetPage_Grid]`;
-  rowlayout = `${htmlElements.div}[${TEST_ID_KEY}=list_ListWidgetPage_Row]`;
+  maincontent = `${htmlElements.div}[${DATA_TESTID}=list_ListWidgetPage_Grid]`;
+  rowlayout = `${htmlElements.div}[${DATA_TESTID}=list_ListWidgetPage_Row]`;
 
   getContents() {
     return this.get()
@@ -26,7 +26,7 @@ export default class MFEWidgetsPage extends Content {
   }
 
   getKebabMenuID(widgetCode) {
-    return `${htmlElements.div}[${TEST_ID_KEY}=${widgetCode}-actions]`;
+    return `${htmlElements.div}[${DATA_TESTID}=${widgetCode}-actions]`;
   }
 
   getKebabMenuOfWidget(code) {
@@ -65,5 +65,4 @@ export default class MFEWidgetsPage extends Content {
       this.get().getModalDialogByTitle('Delete').closest('.modal-dialog'),
     );
   }
-
 }

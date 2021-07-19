@@ -1,5 +1,3 @@
-import { htmlElements } from '../../../WebElement';
-
 import WidgetConfigPage from '../WidgetConfigPage';
 
 export default class ContentQueryWidgetConfigPage extends WidgetConfigPage {
