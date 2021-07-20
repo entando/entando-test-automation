@@ -24,13 +24,9 @@ export default class MFEWidgetsPage extends Content {
       .find(this.rowlayout).eq(2);
   }
 
-  getKebabMenuID(widgetCode) {
-    return `${htmlElements.div}[${DATA_TESTID}=${widgetCode}-actions]`;
-  }
-
   getKebabMenuOfWidget(code) {
     return this.getListArea()
-      .find(this.getKebabMenuID(code));
+      .find(`${htmlElements.div}[${DATA_TESTID}=${code}-actions]`);
   }
 
   getVisibleMenuItemFromKebab(action) {
