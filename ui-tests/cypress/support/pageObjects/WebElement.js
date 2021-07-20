@@ -26,8 +26,9 @@ export const htmlElements = {
   button: "button",
   select: "select",
   fieldset: "fieldset",
-  legend: "legend"
-}
+  legend: "legend",
+  span: "span",
+};
 
 export class WebElement {
 

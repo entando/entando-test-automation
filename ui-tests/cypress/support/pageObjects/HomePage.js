@@ -1,4 +1,4 @@
-import AppPage from "./app/AppPage.js";
+import AppPage from './app/AppPage';
 
 import Dashboard from "./dashboard/Dashboard.js";
 
