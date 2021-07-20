@@ -1,5 +1,5 @@
-import { generateRandomId } from '../support/utils';
-import HomePage from "../support/pageObjects/HomePage";
+import { generateRandomId } from '../../support/utils';
+import HomePage             from "../../support/pageObjects/HomePage";
 
 describe('Categories', () => {
     const titleIt = generateRandomId();

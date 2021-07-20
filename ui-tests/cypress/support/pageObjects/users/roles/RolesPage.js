@@ -1,19 +1,21 @@
-import {DATA_TESTID, DATA_ID, htmlElements, WebElement} from "../../WebElement.js";
+import {DATA_TESTID, DATA_ID, htmlElements} from "../../WebElement.js";
 
-import Content from "../../app/Content.js";
+import Content   from "../../app/Content.js";
+import KebabMenu from "../../app/KebabMenu";
 
-import AppPage from "../../app/AppPage.js";
+import AppPage      from "../../app/AppPage.js";
+import DeleteDialog from "../../app/DeleteDialog";
 
-import AddPage from "./AddPage.js";
-import EditPage from "./EditPage.js";
+import AddPage     from "./AddPage.js";
+import EditPage    from "./EditPage.js";
 import DetailsPage from "./DetailsPage";
 
 export default class RolesPage extends Content {
 
   tableDiv = `${htmlElements.div}[${DATA_TESTID}=list_RoleListTable_div]`;
   tableCol = `${htmlElements.div}[${DATA_TESTID}=list_RoleListTable_Col]`;
-  table = `${htmlElements.table}[${DATA_TESTID}=RoleListTable__table]`;
-  pageCol = `${htmlElements.div}[${DATA_TESTID}=list_ListRolePage_Col]`;
+  table    = `${htmlElements.table}[${DATA_TESTID}=RoleListTable__table]`;
+  pageCol  = `${htmlElements.div}[${DATA_TESTID}=list_ListRolePage_Col]`;
   pageLink = `${htmlElements.a}[${DATA_TESTID}=list_ListRolePage_Link]`;
 
   getRolesTable() {
@@ -36,8 +38,14 @@ export default class RolesPage extends Content {
                .children(htmlElements.tr);
   }
 
+  getTableRow(code) {
+    return this.getRolesTable()
+               .find(`#${code}-actions`)
+               .parents(htmlElements.tr);
+  }
+
   getKebabMenu(code) {
-    return new KebabMenu(this, code);
+    return new RolesKebabMenu(this, code);
   }
 
   getTablePagination() {
@@ -58,58 +66,44 @@ export default class RolesPage extends Content {
 
   openAddRolePage() {
     this.getAddButton().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(AddPage);
   }
 
 }
 
-class KebabMenu extends WebElement {
-
-  constructor(parent, code) {
-    super(parent);
-    this.code = code;
-  }
-
-  get() {
-    return this.parent.getTableRows()
-        .find(`${htmlElements.td}[${DATA_TESTID}=${this.code}-actions]`)
-        .children(htmlElements.div);
-  }
+class RolesKebabMenu extends KebabMenu {
 
   getDetails() {
     return this.get()
-               .find(`[${DATA_ID}=detail-${this.code}]`)
+               .find(`[${DATA_ID}=detail-${this.code}]`);
   }
 
   getEdit() {
     return this.get()
-               .find(`[${DATA_ID}=edit-${this.code}]`)
+               .find(`[${DATA_ID}=edit-${this.code}]`);
   }
 
   getDelete() {
     return this.get()
-               .find(`[${DATA_TESTID}=RoleListMenuAction__menu-item-delete]`)
-  }
-
-  open() {
-    this.get()
-        .children(htmlElements.button)
-        .click();
-    return this;
+               .find(`[${DATA_TESTID}=RoleListMenuAction__menu-item-delete]`);
   }
 
   openDetails() {
     this.getDetails().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(DetailsPage);
   }
 
   openEdit() {
     this.getEdit().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(EditPage);
   }
 
   clickDelete() {
     this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
   }
 
 }

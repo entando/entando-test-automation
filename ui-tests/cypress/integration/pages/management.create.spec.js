@@ -1,5 +1,5 @@
-import HomePage from "../support/pageObjects/HomePage";
-import { generateRandomId } from '../support/utils';
+import HomePage             from "../../support/pageObjects/HomePage";
+import { generateRandomId } from '../../support/utils';
 
 let currentPage;
 
@@ -30,18 +30,18 @@ describe('Pages Management - Create', () => {
 
         // go to add page
         currentPage = currentPage.getContent().clickAddButton();
-    
+
         currentPage.getContent()
             .fillRequiredData(`${template} - test en`, `${template} - test it`, code, 0, template);
-        
+
         currentPage.getContent().fillSeoData('SEO description', 'keyword', friendlyCode);
 
         currentPage = currentPage.getContent().clickSaveButton();
-    
+
         cy.wait(2000);
         // page should be created successfully
         currentPage.getContent().getRowByPageName(`${template} - test en`).should('be.visible');
-    
+
         // delete recently added page
         cy.pagesController().then(controller => controller.deletePage(code));
     });
@@ -95,7 +95,7 @@ describe('Pages Management - Create', () => {
     // fill mandatory data
     pageContent
         .fillRequiredData(name, name, code, 0, OOTB_PAGE_TEMPLATES[0]);
-    
+
     // save buttons should be enabled
     pageContent.getSaveButton().should('not.be.disabled');
     pageContent.getSaveAndDesignButton().should('not.be.disabled');

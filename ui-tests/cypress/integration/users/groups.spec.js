@@ -1,5 +1,5 @@
-import { TEST_ID_GROUPS_TABLE } from '../test-const/group-test-const';
-import { generateRandomId } from '../support/utils';
+import { TEST_ID_GROUPS_TABLE } from '../../test-const/group-test-const';
+import { generateRandomId }     from '../../support/utils';
 
 describe('Groups', () => {
   let groupName;

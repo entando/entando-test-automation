@@ -1,21 +1,21 @@
 import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
 
-import AppTour from "./AppTour.js";
-import Dialog from "./Dialog";
-import Navbar from "./Navbar.js";
-import Menu from "./Menu.js";
+import AppTour  from "./AppTour.js";
+import {Dialog} from "./Dialog";
+import Navbar   from "./Navbar.js";
+import Menu     from "./Menu.js";
 
 export default class AppPage extends WebElement {
 
-  root = `${htmlElements.div}#root`;
-  page = `[${DATA_TESTID}=internal-page]`;
+  root      = `${htmlElements.div}#root`;
+  page      = `[${DATA_TESTID}=internal-page]`;
   toastList = `${htmlElements.div}.toast-notifications-list-pf`;
 
   constructor(content) {
     super();
     this.appTour = new AppTour();
-    this.dialog = new Dialog();
-    this.menus = new Menus(this);
+    this.dialog  = new Dialog();
+    this.menus   = new Menus(this);
     this.content = new content(this);
   }
 
@@ -34,7 +34,7 @@ export default class AppPage extends WebElement {
     return this.dialog;
   }
 
-  getToastList(){
+  getToastList() {
     return this.parent.get()
                .children(htmlElements.body)
                .children(this.root)
@@ -67,7 +67,7 @@ class Menus extends WebElement {
   constructor(parent) {
     super(parent);
     this.navbar = new Navbar(this);
-    this.menu = new Menu(this);
+    this.menu   = new Menu(this);
   }
 
   get() {
