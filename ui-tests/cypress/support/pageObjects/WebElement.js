@@ -16,12 +16,17 @@ export const htmlElements = {
   dd: "dd",
   a: "a",
   table: "table",
+  thead: "thead",
   tbody: "tbody",
   tr: "tr",
+  th: "th",
   td: "td",
   form: "form",
   input: "input",
-  button: "button"
+  button: "button",
+  select: "select",
+  fieldset: "fieldset",
+  legend: "legend"
 }
 
 export class WebElement {

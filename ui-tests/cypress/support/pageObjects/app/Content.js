@@ -24,9 +24,7 @@ export default class Content extends WebElement {
   getTitle() {
     return this.getContents()
                .children(htmlElements.div).eq(1)
-               .children(htmlElements.div)
-               .children(htmlElements.div)
-               .children(htmlElements.h1);
+               .find(htmlElements.h1);
   }
 
 }
