@@ -3,7 +3,6 @@ import { DATA_TESTID, htmlElements } from '../../WebElement';
 import Content from '../../app/Content';
 import AppPage from '../../app/AppPage';
 import MFEWidgetForm from './MFEWidgetForm';
-import Modal from '../../app/Modal';
 
 export default class MFEWidgetsPage extends Content {
 
