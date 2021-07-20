@@ -67,6 +67,11 @@ export default class Dialog extends WebElement {
                .children(htmlElements.button).eq(1);
   }
 
+  getFooterActionByLabel(label) {
+    return this.getFooter()
+      .children(htmlElements.button).contains(label);
+  }
+
   close() {
     this.getCloseButton().click();
   }

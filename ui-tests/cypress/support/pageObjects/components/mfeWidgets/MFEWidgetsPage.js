@@ -52,17 +52,11 @@ export default class MFEWidgetsPage extends Content {
 
   getAddButton() {
     return this.getFooterArea()
-               .contains(/^Add$/);
+               .find('a[type=button]').contains(/^Add$/);
   }
 
   openAddWidgetForm() {
     this.getAddButton().click();
     return new AppPage(MFEWidgetForm);
-  }
-
-  getDeletePromptModal() {
-    return new Modal(
-      this.get().getModalDialogByTitle('Delete').closest('.modal-dialog'),
-    );
   }
 }

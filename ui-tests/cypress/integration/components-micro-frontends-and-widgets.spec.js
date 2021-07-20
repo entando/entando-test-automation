@@ -196,7 +196,7 @@ describe('Microfrontends and Widgets', () => {
           SAMPLE_DUPE_WIDGET_CODE,
           MFEWidgetsPage.WIDGET_ACTIONS.DELETE,
         );
-        currentPage.getContent().getDeletePromptModal().clickActionByLabel('Delete');
+        currentPage.getDialog().getFooterActionByLabel('Delete').click();
         currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
       });
     });
@@ -279,7 +279,7 @@ describe('Microfrontends and Widgets', () => {
           SAMPLE_DUPE_WIDGET_CODE,
           MFEWidgetsPage.WIDGET_ACTIONS.DELETE,
         );
-        currentPage.getContent().getDeletePromptModal().clickActionByLabel('Delete');
+        currentPage.getDialog().getFooterActionByLabel('Delete').click();
         currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
       });
     });
@@ -361,7 +361,7 @@ describe('Microfrontends and Widgets', () => {
           SAMPLE_DUPE_WIDGET_CODE,
           MFEWidgetsPage.WIDGET_ACTIONS.DELETE,
         );
-        currentPage.getContent().getDeletePromptModal().clickActionByLabel('Delete');
+        currentPage.getDialog().getFooterActionByLabel('Delete').click();
         currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
       });
     });
