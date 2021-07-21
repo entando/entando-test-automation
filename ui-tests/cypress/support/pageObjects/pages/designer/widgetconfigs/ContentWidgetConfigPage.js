@@ -1,12 +1,12 @@
 import { htmlElements } from '../../../WebElement';
 
-import Dialog from '../../../app/Dialog';
+import { DialogContent } from '../../../app/Dialog';
 
 import WidgetConfigPage from '../WidgetConfigPage';
 
-export class ContentListSelectModal extends Dialog {
+export class ContentListSelectModal extends DialogContent {
   getContentListTable() {
-    return this.getBody()
+    return this.get()
       .children('.Contents__body')
       .children(htmlElements.div).eq(1)
       .children(htmlElements.div)
@@ -26,51 +26,28 @@ export class ContentListSelectModal extends Dialog {
               .closest(htmlElements.tr)
               .children('td').eq(0)
               .children('input[type=checkbox]');
-  }
-
-  getChooseButton() {
-    return this.getFooterActionByLabel('Choose');
   }
 }
 
 export default class ContentWidgetConfigPage extends WidgetConfigPage {
   
   getAddContentButton() {
-    return this.getMainContainer().contains('Add existing content');
+    return this.getInnerPanel().find('button.btn.btn-primary')
+      .contains(/^Add existing content$/);
+  }
+
+  clickAddContentButton() {
+    this.getAddContentButton().click();
+    this.setDialogBodyWithClass(ContentListSelectModal);
   }
 
   getChangeContentButton() {
-    return this.getMainContainer().contains('Change content');
+    return this.getInnerPanel().find('button.btn.btn-primary')
+      .contains(/^Change content$/);
   }
 
-  getContentListTable() {
-    return this.getBody()
-      .children('.Contents__body')
-      .children(htmlElements.div).eq(1)
-      .children(htmlElements.div)
-      .children('.Contents__table')
-      .children(htmlElements.table);
-  }
-
-  getTableRows() {
-    return this.getContentListTable()
-               .children(htmlElements.tbody)
-               .children(htmlElements.tr);
-  }
-
-  getCheckboxFromTitle(contentTitle) {
-    return this.getTableRows()
-              .contains(contentTitle)
-              .closest(htmlElements.tr)
-              .children('td').eq(0)
-              .children('input[type=checkbox]');
-  }
-
-  getChooseButton() {
-    return this.getFooterActionByLabel('Choose');
-  }
-
-  getSelectContentModal() {
-    return new ContentListSelectModal();
+  clickChangeContentButton() {
+    this.getChangeContentButton().click();
+    this.setDialogBodyWithClass(ContentListSelectModal);
   }
 }
