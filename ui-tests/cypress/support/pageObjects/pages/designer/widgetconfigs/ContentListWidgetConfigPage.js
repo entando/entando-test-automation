@@ -11,6 +11,7 @@ export default class ContentListWidgetConfigPage extends WidgetConfigPage {
   }
 
   getAddButtonFromTableRowWithTitle(title) {
+    // TODO - amend test id attributes for the buttons in appbuilder to avoid using `contains` method
     return this.getContentListTableRowWithTitle(title)
       .find('button.btn.btn-default').contains(/^Add$/);
   }

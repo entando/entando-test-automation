@@ -32,6 +32,7 @@ export class ContentListSelectModal extends DialogContent {
 export default class ContentWidgetConfigPage extends WidgetConfigPage {
   
   getAddContentButton() {
+    // TODO - amend test id attributes for the buttons in appbuilder to avoid using `contains` method
     return this.getInnerPanel().find('button.btn.btn-primary')
       .contains(/^Add existing content$/);
   }
