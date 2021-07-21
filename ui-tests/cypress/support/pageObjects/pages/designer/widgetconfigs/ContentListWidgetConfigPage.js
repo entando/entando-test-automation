@@ -11,7 +11,8 @@ export default class ContentListWidgetConfigPage extends WidgetConfigPage {
   }
 
   getAddButtonFromTableRowWithTitle(title) {
-    return this.getContentListTableBody().find('td').contains(title).siblings().find('button').contains(/^Add$/);
+    return this.getContentListTableRowWithTitle(title)
+      .find('button.btn.btn-default').contains(/^Add$/);
   }
 
   getModelIdDropdownByIndex(idx) {
