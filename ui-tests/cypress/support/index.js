@@ -30,6 +30,7 @@ import './command/widget-form-command';
 import './restAPI/rolesAPI.js';
 import './restAPI/categoriesAPI.js';
 import './restAPI/contentTypesAPI';
+import './restAPI/contentsAPI';
 import './restAPI/pagesAPI.js';
 
 import './exception-handler';

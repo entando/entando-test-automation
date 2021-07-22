@@ -6,13 +6,15 @@ import { generateRandomId, generateRandomContentTypeCode } from '../support/util
 import HomePage from '../support/pageObjects/HomePage.js';
 import { htmlElements } from '../support/pageObjects/WebElement';
 
-const postContentType = (code, name) => {
-  cy.contentTypesController().then(controller => controller.postContentType(code, name));
-}
+const postContentType = (code, name) => cy.contentTypesController().then(controller => controller.postContentType(code, name));
 
-const deleteContentType = (code) => {
-  cy.contentTypesController().then(controller => controller.deleteContentType(code));
-}
+const deleteContentType = (code) => cy.contentTypesController().then(controller => controller.deleteContentType(code));
+
+const postContentTypeAttribute = (code, attribute) => cy.contentTypesController().then(controller => controller.postContentTypeAttribute(code, attribute));
+
+const postContent = content => cy.contentsController().then(controller => controller.postContent(content));
+
+const deleteContent = id => cy.contentsController().then(controller => controller.deleteContent(id));
 
 const openContentTypesPage = () => {
   cy.visit('/');
@@ -74,6 +76,70 @@ describe('Content Types', () => {
 
     cy.log(`Delete content type with code ${contentTypeCode}`);
     currentPage.getContent().deleteContentType(contentTypeCode);
+    currentPage.getContent().getTable().should('not.contain', contentTypeCode);
+  });
+
+  describe('Content Types - Referenced by published content', () => {
+    let contentId;
+
+    const createAndPublishTestContent = (typeCode) => {
+      const description = 'test';
+      const mainGroup = 'administrators';
+      const status = 'published';
+      postContent({
+        typeCode,
+        description,
+        mainGroup,
+        status,
+      }).then((response) => {
+        const { body: { payload } } = response;
+        contentId = payload[0].id;
+      });
+    };
+
+    beforeEach(() => {
+      postContentType(contentTypeCode, contentTypeName);
+      createAndPublishTestContent(contentTypeCode);
+    });
+
+    afterEach(() => {
+      deleteContent(contentId);
+      deleteContentType(contentTypeCode);
+    });
+
+    it('should not allow deleting a content type', () => {
+      currentPage = openContentTypesPage();
+
+      cy.log(`Delete content type with code ${contentTypeCode}`);
+      currentPage.getContent().deleteContentType(contentTypeCode);
+      cy.validateToast(currentPage, false, contentTypeCode);
+    });
+
+    it('should allow adding an attribute', () => {
+      currentPage = openContentTypesPage();
+      
+      const testAttribute = 'Text';
+      currentPage = currentPage.getContent().editContentType(contentTypeCode);
+      currentPage = currentPage.getContent().addAttribute(testAttribute);
+
+      currentPage.getContent().typeCode(testAttribute);
+      currentPage = currentPage.getContent().continue();
+      currentPage.getContent().getAttributesTable().should('contain', testAttribute);
+    });
+
+    it('should allow updating an attribute', () => {
+      currentPage = openContentTypesPage();
+      const testAttribute = { type: 'Text', code: 'Text' };
+      postContentTypeAttribute(contentTypeCode, testAttribute);
+
+      currentPage = currentPage.getContent().editContentType(contentTypeCode);
+      currentPage = currentPage.getContent().editAttribute(testAttribute.code);
+      currentPage.getContent().clearName();
+      const newAttributeName = 'Text2';
+      currentPage.getContent().typeName(newAttributeName);
+      currentPage = currentPage.getContent().continue();
+      currentPage.getContent().getAttributesTable().should('contain', newAttributeName);
+    });
   });
 
   describe('Content Types - Complex', () => {
