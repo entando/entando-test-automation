@@ -38,6 +38,13 @@ export default class MFEWidgetsPage extends Content {
     this.getKebabMenuOfWidget(code).click();
     this.getListArea()
       .find(`${htmlElements.li}.${action} > a`).filter(':visible').click();
+    switch(action) {
+      case MFEWidgetsPage.WIDGET_ACTIONS.EDIT:
+        return new AppPage(MFEWidgetForm);
+      case MFEWidgetsPage.WIDGET_ACTIONS.DELETE:
+      default:
+        return null;
+    }
   }
 
   getFooterArea() {

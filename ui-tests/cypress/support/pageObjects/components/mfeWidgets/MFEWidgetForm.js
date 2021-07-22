@@ -7,6 +7,7 @@ import Content from '../../app/Content';
 
 import AppPage from '../../app/AppPage';
 import DesignerPage from '../../pages/designer/DesignerPage';
+import MFEWidgetsPage from './MFEWidgetsPage';
 
 export default class MFEWidgetForm extends Content {
 
@@ -22,7 +23,11 @@ export default class MFEWidgetForm extends Content {
   codeInput = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
   groupInput = `${htmlElements.div}[${DATA_TESTID}=group-typeahead]`;
   customUiInput = `textarea[name="customUi"][${DATA_TESTID}=form_RenderTextAreaInput_textarea]`;
+  saveDropdownContainer = `${htmlElements.div}.FragmentForm__dropdown[${DATA_TESTID}=common_WidgetForm_div]`;
+  saveDropdownButton = `${htmlElements.button}[${DATA_TESTID}=common_WidgetForm_DropdownButton]`;
   saveReplaceButton = `${htmlElements.button}[type=submit]`;
+  regularSaveButton = `${htmlElements.a}#regularSaveButton`;
+  continueSaveButton = `${htmlElements.a}#continueSaveButton`;
   formLabelSpan = `${htmlElements.span}[${DATA_TESTID}=form_FormLabel_span]`;
 
   get isCloneMode() {
@@ -51,6 +56,31 @@ export default class MFEWidgetForm extends Content {
   getFormInfoArea() {
     return this.getFormBody()
       .find(this.formInfoSection);
+  }
+
+  getSaveDropdown() {
+    return this.getTopControl()
+      .find(this.saveDropdownContainer);
+  }
+
+  getSaveDropdownButton() {
+    return this.getSaveDropdown()
+        .find(this.saveDropdownButton);
+  }
+
+  getSaveDropdownMenu() {
+    return this.getSaveDropdown()
+        .find('[role=menu]');
+  }
+
+  getRegularSaveButton() {
+    return this.getSaveDropdownMenu()
+        .find(this.regularSaveButton);
+  }
+
+  getContinueSaveButton() {
+    return this.getSaveDropdownMenu()
+        .find(this.continueSaveButton);
   }
 
   getSaveReplaceButton() {
@@ -108,23 +138,45 @@ export default class MFEWidgetForm extends Content {
                .find(this.saveButton);
   }
 
+  editFormFields(payload) {
+    const fields = Object.keys(payload);
+    fields.forEach((field) => {
+      if (payload[field] === '') {
+        return;
+      }
+      switch(field) {
+        case 'name':
+          this.getTitleInput().clear();
+          this.getTitleInput().type(payload[field]);
+          this.getTitleInput('it').clear();
+          this.getTitleInput('it').type(payload[field]);
+          break;
+        case 'code':
+          this.getCodeInput().clear();
+          this.getCodeInput().type(payload[field]);
+          break;
+        case 'group':
+          this.getGroupDropdown().click();
+          this.getGroupDropdown().contains(payload[field]).click();
+          break;
+        case 'customUi':
+          this.getCustomUiInput().type(payload[field]);
+          break;
+        case 'iconUpload':
+          this.getIconUpload().attachFile(payload[field]);
+          cy.wait(500);
+          break;
+      }
+    });
+  }
+
   fillWidgetForm(
     name = 'My Widget',
     code = 'my_widget',
     customUi = '<h1>Just a basic widget</h1>',
     group = 'Administrators',
   ) {
-    this.getIconUpload().attachFile('icon/Entando.svg');
-    cy.wait(500);
-    this.getTitleInput().type(name);
-    this.getTitleInput('it').type(name);
-    this.getCodeInput().clear();
-    this.getCodeInput().type(code);
-    this.getGroupDropdown().click();
-    this.getGroupDropdown().contains(group).click();
-    if (customUi) {
-      this.getCustomUiInput().type(customUi);
-    }
+    this.editFormFields({ iconUpload: 'icon/Entando.svg', name, code, group, customUi });
   }
 
   getParentTypeLabel() {
@@ -139,6 +191,8 @@ export default class MFEWidgetForm extends Content {
   }
 
   submitForm() {
-    this.getSaveButton().click();
+    this.getSaveDropdownButton().click();
+    this.getRegularSaveButton().click();
+    return new AppPage(MFEWidgetsPage);
   }
 }

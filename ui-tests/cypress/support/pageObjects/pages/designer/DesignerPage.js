@@ -32,6 +32,7 @@ export default class DesignerPage extends Content {
     DETAILS: 'Details',
     SETTINGS: 'Settings',
     DELETE: 'Delete',
+    EDIT: 'Edit',
   };
 
   static CMS_WIDGETS = {
@@ -200,7 +201,8 @@ export default class DesignerPage extends Content {
   }
 
   getFrameAction(action) {
-    return this.getKebabMenuItem(action, action === DesignerPage.FRAME_ACTIONS.DETAILS);
+    const menuLinks = [DesignerPage.FRAME_ACTIONS.DETAILS, DesignerPage.FRAME_ACTIONS.EDIT];
+    return this.getKebabMenuItem(action, menuLinks.includes(action));
   }
 
   clickActionOnFrame(action, widget) {
@@ -209,6 +211,7 @@ export default class DesignerPage extends Content {
       case DesignerPage.FRAME_ACTIONS.SETTINGS:
         return new AppPage(this.gatherWidgetConfigPage(widget));
       case DesignerPage.FRAME_ACTIONS.SAVE_AS:
+      case DesignerPage.FRAME_ACTIONS.EDIT:
         return new AppPage(MFEWidgetForm);
       case DesignerPage.FRAME_ACTIONS.DELETE:
       case DesignerPage.FRAME_ACTIONS.DETAILS:
