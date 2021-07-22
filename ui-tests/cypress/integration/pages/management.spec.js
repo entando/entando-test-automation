@@ -3,8 +3,8 @@ import {
   PAGE_ALREADY_EXIST,
   PAGE_WITHOUT_SEO_DATA,
   PAGE_FREE_OWNER_GROUP,
-} from '../mocks/pages';
-import { TEST_ID_LIST_PAGE_TREE } from '../test-const/page-management-test-const';
+}                                 from '../../mocks/pages';
+import { TEST_ID_LIST_PAGE_TREE } from '../../test-const/page-management-test-const';
 
 describe('Pages Management', () => {
   const languages = ['en', 'it'];

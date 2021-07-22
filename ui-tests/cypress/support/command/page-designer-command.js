@@ -39,7 +39,7 @@ Cypress.Commands.add('moveWidget', (fromFrameName, toFrameName) => {
  */
 Cypress.Commands.add('getPageStatus', () => {
   cy.getByTestId(TEST_ID_PAGE_DESIGNER.STATUS).invoke('attr', 'title');
-});
+});  
 
 /**
   Delete the widget contained in the selected frame
@@ -53,74 +53,10 @@ Cypress.Commands.add('deletePageWidgetByFrame', (frameName) => {
 });
 
 /**
-  Open the details of the widget contained in the selected frame
-  @param frameName - the exact frame name displayed in the UI e.g. "Frame 1", "Logo"
- */
-Cypress.Commands.add('openPageWidgetDetailsByFrame', (frameName) => {
-  cy.getByTestId(`WidgetFrame__${frameName.replace(/\s/g, '_')}`).contains(frameName)
-    .parent().find('button')
-    .click();
-  cy.getByTestId(TEST_ID_WIDGET_FRAME.ACTION_LINKS).filter(':visible').contains(/^Details$/i).click();
-});
-
-/**
-  Open widget form for saving as new widget
-  @param frameName - the exact frame name displayed in the UI e.g. "Frame 1", "Logo"
- */
-Cypress.Commands.add('openSaveAsWidgetWithFrame', (frameName) => {
-  cy.getByTestId(`WidgetFrame__${frameName.replace(/\s/g, '_')}`).contains(frameName)
-    .parent().find('button')
-    .click();
-  cy.getByTestId(TEST_ID_WIDGET_FRAME.ACTIONS).filter(':visible').contains(/^Save As$/i).click();
-});
-
-/**
   Click on Publish Button in page designer
 */
 Cypress.Commands.add('publishPageClick', () => {
   cy.getByTestId(TEST_ID_PAGE_DESIGNER.BUTTON).contains(new RegExp('^Publish$')).click();
-});
-
-/**
- Click on Apply Default Widgets Button in page designer
- */
-Cypress.Commands.add('applyDefaultWidgetsClick', () => {
-  cy.getByTestId(TEST_ID_PAGE_DESIGNER.BUTTON).contains(new RegExp('^Apply the default widget$')).click();
-});
-
-/**
- Click on Unpublish Button in page designer
- */
-Cypress.Commands.add('unpublishPageClick', () => {
-  cy.getByTestId(TEST_ID_PAGE_DESIGNER.BUTTON).contains(new RegExp('^Unpublish$')).click();
-});
-
-/**
- Click on Info Button in page designer
- */
-Cypress.Commands.add('pageInfoClick', () => {
-  cy.getByTestId(TEST_ID_PAGE_DESIGNER.BUTTON).contains(new RegExp('^Info$')).click();
-});
-
-/**
- Click on Restore Button in page designer
- */
-Cypress.Commands.add('restorePageClick', () => {
-  cy.getByTestId(TEST_ID_PAGE_DESIGNER.BUTTON).contains(new RegExp('^Restore$')).click();
-});
-
-/**
- Open a page via Page Designer
- @param pageInfo - object that consist of "title" (page name) and "code" (page code) properties
- */
-Cypress.Commands.add('openPageViaPageDesigner', (pageInfo) => {
-  cy.openPageFromMenu(['Pages', 'Designer']);
-  cy.getByTestId(TEST_ID_PAGE_DESIGNER.CONFIG_TABS).contains('Page Tree').click();
-  cy.wait(500);
-  cy.getByTestId(TEST_ID_PAGE_DESIGNER.PAGE_TREE).contains(pageInfo.title).click();
-  cy.log('Select widgets tab');
-  cy.getByTestId(TEST_ID_PAGE_DESIGNER.CONFIG_TABS).contains('Widgets').click();
-  cy.validateUrlChanged(`/page/configuration/${pageInfo.code}`);
 });
 
 export {};

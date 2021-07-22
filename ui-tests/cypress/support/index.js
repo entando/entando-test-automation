@@ -13,24 +13,25 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import '@4tw/cypress-drag-drop';
-import 'cypress-keycloak-commands';
-import './keycloak-oauth2';
-import './command/command';
-import './command/validation-commands';
-import './command/upload-command';
-import './command/user-command';
-import './command/page-command';
-import './command/group-command';
-import './command/page-designer-command';
-import './command/page-management-command';
-import './command/content-types-command';
-import './command/widget-form-command';
+import "@4tw/cypress-drag-drop";
+import "cypress-keycloak-commands";
+import "./keycloak-oauth2";
+import "./command/command";
+import "./command/validation-commands";
+import "./command/upload-command";
+import "./command/user-command";
+import "./command/page-command";
+import "./command/group-command";
+import "./command/page-designer-command";
+import "./command/page-management-command";
+import "./command/content-types-command";
+import "./command/widget-form-command";
 
 import './restAPI/rolesAPI.js';
 import './restAPI/categoriesAPI.js';
 import './restAPI/contentTypesAPI';
 import './restAPI/contentsAPI';
 import './restAPI/pagesAPI.js';
+import "./restAPI/usersAPI.js";
 
 import './exception-handler';

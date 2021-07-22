@@ -1,5 +1,5 @@
-export const DATA_TESTID = "data-testid"
-export const DATA_ID = "data-id"
+export const DATA_TESTID = "data-testid";
+export const DATA_ID     = "data-id";
 
 export const htmlElements = {
   body: "body",
@@ -8,6 +8,7 @@ export const htmlElements = {
   h1: "h1",
   h4: "h4",
   p: "p",
+  span: "span",
   ol: "ol",
   ul: "ul",
   li: "li",
@@ -27,12 +28,12 @@ export const htmlElements = {
   select: "select",
   fieldset: "fieldset",
   legend: "legend"
-}
+};
 
 export class WebElement {
 
   constructor(parent = new HTML()) {
-    this.parent = parent
+    this.parent = parent;
   }
 
   get() {
@@ -45,11 +46,11 @@ export class WebElement {
 class HTML extends WebElement {
 
   constructor() {
-    super(null)
+    super(null);
   }
 
   get() {
-    return cy.root()
+    return cy.root();
   }
 
 }
