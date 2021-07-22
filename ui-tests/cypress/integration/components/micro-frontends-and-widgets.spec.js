@@ -331,6 +331,27 @@ describe("Microfrontends and Widgets", () => {
         currentPage.getContent().getPageStatus().should("match", /^Published$/);
       });
 
+      it("Basic edit with widget settings", () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT_QUERY);
+        
+        cy.wait(2500);
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        currentPage.getContent().getPublishSettingsAccordButton().click();
+        cy.wait(500);
+        currentPage.getContent().getMaxElemForItemDropdown().select("6");
+        currentPage.getContent().getMaxTotalElemDropdown().select("10");
+        currentPage = currentPage.getContent().confirmConfig();
+
+        cy.wait(500);
+        currentPage.getContent().getPageStatus().should("match", /^Published, with pending changes$/);
+        currentPage.getContent().publishPageDesign();
+        currentPage.getContent().getPageStatus().should("match", /^Published$/);
+      });
+
       it("Open Widget Details from the widget dropped", () => {
         selectPageFromSidebar();
         cy.wait(500);
