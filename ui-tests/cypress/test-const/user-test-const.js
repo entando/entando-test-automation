@@ -20,14 +20,6 @@ export const TEST_ID_USER_LIST_TABLE = {
   ALERT: 'list_UserListTable_Alert',
 };
 
-export const TEST_ID_USER_PROFILE_FORM = {
-  PROFILE_TYPE_FIELD: 'typeCode',
-  USERNAME_FIELD: 'id',
-  FULL_NAME_FIELD: 'fullname',
-  EMAIL_FIELD: 'email',
-  SAVE_BUTTON: 'UserProfileForm__saveButton',
-};
-
 export const TEST_ID_USER_AUTHORITY_TABLE = {
   TABLE: 'UserAuthorityTable__table',
   ADD_BUTTON: 'UserAuthorityTable__addButton',

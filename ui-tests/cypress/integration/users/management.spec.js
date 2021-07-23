@@ -7,8 +7,7 @@ import {
   TEST_ID_USER_AUTHORITY_MODAL,
   TEST_ID_USER_AUTHORITY_PAGE_FORM,
   TEST_ID_USER_AUTHORITY_TABLE,
-  TEST_ID_USER_LIST_TABLE,
-  TEST_ID_USER_PROFILE_FORM
+  TEST_ID_USER_LIST_TABLE
 }                            from '../../test-const/user-test-const';
 import TEST_ID_GENERIC_MODAL from '../../test-const/test-const';
 
@@ -79,53 +78,70 @@ describe('Users Management', () => {
                  .then(elements => cy.validateListTexts(elements, ['Users', 'Management', 'Edit']));
 
       currentPage.getContent().getUsernameInput()
-                 .should("be.visible")
-                 .and("have.value", USERNAME_ADMIN);
+                 .should('be.visible')
+                 .and('have.value', USERNAME_ADMIN);
       currentPage.getContent().getUsernameInput().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Username ');
       currentPage.getContent().getPasswordInput()
-                 .should("be.visible");
+                 .should('be.visible');
       currentPage.getContent().getPasswordInput().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Password ');
       currentPage.getContent().getPasswordConfirmInput()
-                 .should("be.visible");
+                 .should('be.visible');
       currentPage.getContent().getPasswordConfirmInput().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Confirm password ');
       currentPage.getContent().getStatus()
-                 .should("be.visible");
+                 .should('be.visible');
 
       currentPage.getContent().getCancelButton()
-                 .should("be.visible")
-                 .and("have.text", "Cancel");
+                 .should('be.visible')
+                 .and('have.text', 'Cancel');
       currentPage.getContent().getSaveButton()
-                 .should("be.visible")
-                 .and("have.text", "Save");
+                 .should('be.visible')
+                 .and('have.text', 'Save');
     });
 
     it('Edit user profile page', () => {
       currentPage = openManagementPage();
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
+      currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEditProfile();
 
-      cy.log('Should have all defined page components');
-      cy.searchUser(USERNAME_ADMIN);
-      cy.openTableActionsByTestId(USERNAME_ADMIN);
-      cy.getVisibleActionItemByClass(TEST_ID_USER_LIST_TABLE.ACTION_EDIT_PROFILE).click();
-      cy.validateUrlChanged(`/userprofile/${USERNAME_ADMIN}`);
-      // Page title
-      cy.getPageTitle().should('be.visible').and('have.text', 'Edit');
-      // Page breadcrumb
-      cy.validateBreadcrumbItems(['Users', 'Management', 'Edit user profile']);
-      // Form Fields
-      cy.getSelectByName(TEST_ID_USER_PROFILE_FORM.PROFILE_TYPE_FIELD).should('be.visible');
-      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.USERNAME_FIELD).should('be.visible').and('be.disabled');
-      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.FULL_NAME_FIELD).should('be.visible');
-      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.EMAIL_FIELD).should('be.visible');
-      // Labels
-      cy.getLabelByText('Profile Type').should('be.visible');
-      cy.getLabelByText('Username').should('be.visible');
-      cy.getLabelByText('Full Name').should('be.visible');
-      cy.getLabelByText('Email').should('be.visible');
-      // Button
-      cy.getByTestId(TEST_ID_USER_PROFILE_FORM.SAVE_BUTTON).should('be.visible').and('have.text', 'Save');
+      cy.location('pathname').should('eq', `/userprofile/${USERNAME_ADMIN}`);
+
+      currentPage.getContent().getTitle()
+                 .should('be.visible')
+                 .and('have.text', 'Edit');
+
+      currentPage.getContent().getBreadCrumb().should('be.visible');
+      currentPage.getContent().getBreadCrumb().children(htmlElements.li)
+                 .should('have.length', 3)
+                 .then(elements => cy.validateListTexts(elements, ['Users', 'Management', 'Edit user profile']));
+
+      currentPage.getContent().getProfileTypeSelect()
+                 .should('be.visible');
+      currentPage.getContent().getProfileTypeSelect().parent().parent().children(htmlElements.div).eq(0)
+                 .should('have.text', 'Profile Type ');
+      currentPage.getContent().getUsernameInput()
+                 .should('be.visible')
+                 .and('be.disabled');
+      currentPage.getContent().getUsernameInput().parent().parent().children(htmlElements.div).eq(0)
+                 .should('have.text', 'Username ');
+      currentPage.getContent().getFullNameInput()
+                 .should('be.visible');
+      currentPage.getContent().getFullNameInput().parent().parent().children(htmlElements.div).eq(0)
+                 .should('have.text', 'Full Name ');
+      currentPage.getContent().getEmailInput()
+                 .should('be.visible');
+      currentPage.getContent().getEmailInput().parent().parent().children(htmlElements.div).eq(0)
+                 .should('have.text', 'Email ');
+      currentPage.getContent().getProfilePictureInput()
+                 .should('be.visible');
+      currentPage.getContent().getProfilePictureInput().parent().parent().children(htmlElements.div).eq(0)
+                 .should('have.text', 'Profile Picture ');
+
+      currentPage.getContent().getSaveButton()
+                 .should('be.visible')
+                 .and('have.text', 'Save');
     });
 
     it('View user profile page', () => {
