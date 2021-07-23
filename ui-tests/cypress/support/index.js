@@ -27,10 +27,11 @@ import "./command/page-management-command";
 import "./command/content-types-command";
 import "./command/widget-form-command";
 
-import "./restAPI/categoriesAPI.js";
-import "./restAPI/contentTypesAPI";
-import "./restAPI/pagesAPI.js";
-import "./restAPI/rolesAPI.js";
+import './restAPI/rolesAPI.js';
+import './restAPI/categoriesAPI.js';
+import './restAPI/contentTypesAPI';
+import './restAPI/contentsAPI';
+import './restAPI/pagesAPI.js';
 import "./restAPI/usersAPI.js";
 
-import "./exception-handler";
+import './exception-handler';
