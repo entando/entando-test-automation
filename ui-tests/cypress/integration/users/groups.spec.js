@@ -57,15 +57,17 @@ describe("Groups", () => {
     cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
-  it("Delete group", () => {
+  it("Delete an existing group", () => {
     cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
 
-    cy.visit("/");
-    new HomePage();
+    currentPage = openGroupsPage();
 
-    cy.log("should delete the group after clicking and confirming the delete action");
-    cy.deleteGroup(groupCode);
-    cy.contains(groupCode).should("not.be.visible");
+    currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
+    currentPage.getDialog().getBody().getStateInfo().should("contain", groupCode);
+
+    currentPage.getDialog().confirm();
+    cy.reload(); //TODO the page does not automatically refresh the table
+    currentPage.getContent().getTableRows().should("not.contain", groupCode);
   });
 
   const openGroupsPage = () => {
