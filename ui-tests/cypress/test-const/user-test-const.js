@@ -1,8 +1,3 @@
-export const TEST_ID_DETAIL_USER_TABLE = {
-  TABLE: 'DetailUserTable__table',
-  BACK_BUTTON: 'DetailUserTable__backButton',
-};
-
 export const TEST_ID_USER_SEARCH_FORM = {
   FORM: 'UserSearchForm__Form',
   USERNAME_FIELD: 'username-field',

@@ -3,7 +3,6 @@ import {generateRandomId} from '../../support/utils';
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import {
-  TEST_ID_DETAIL_USER_TABLE,
   TEST_ID_USER_AUTHORITY_MODAL,
   TEST_ID_USER_AUTHORITY_PAGE_FORM,
   TEST_ID_USER_AUTHORITY_TABLE,
@@ -146,24 +145,34 @@ describe('Users Management', () => {
 
     it('View user profile page', () => {
       currentPage = openManagementPage();
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
+      currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openViewProfile();
 
-      cy.log('Should have all defined page components');
-      cy.searchUser(USERNAME_ADMIN);
-      cy.openTableActionsByTestId(USERNAME_ADMIN);
-      cy.getVisibleActionItemByTestID(TEST_ID_USER_LIST_TABLE.ACTION_VIEW_PROFILE).click();
-      cy.validateUrlChanged(`/user/view/${USERNAME_ADMIN}`);
-      // Page title
-      cy.getPageTitle().should('be.visible').and('have.text', 'Details');
-      // Page breadcrumb
-      cy.validateBreadcrumbItems(['Users', 'Management', 'Details']);
-      // Table
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).should('be.visible');
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains('Username').should('be.visible');
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains('Full Name').should('be.visible');
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains('Email').should('be.visible');
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains('Profile Type').should('be.visible');
-      // Button
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.BACK_BUTTON).should('be.visible').and('have.text', 'Back');
+      cy.location('pathname').should('eq', `/user/view/${USERNAME_ADMIN}`);
+
+      currentPage.getContent().getTitle()
+                 .should('be.visible')
+                 .and('have.text', 'Details');
+
+      currentPage.getContent().getBreadCrumb().should('be.visible');
+      currentPage.getContent().getBreadCrumb().children(htmlElements.li)
+                 .should('have.length', 3)
+                 .then(elements => cy.validateListTexts(elements, ['Users', 'Management', 'Details']));
+
+      currentPage.getContent().getDetailsTable()
+                 .should('be.visible')
+                 .within(() => {
+                   cy.get(htmlElements.th)
+                     .should('have.length', 5)
+                     .then(headings => cy.validateListTexts(headings, ['Username', 'profilepicture', 'Full Name', 'Email', 'Profile Type']));
+                   cy.get(htmlElements.td)
+                     .should('have.length', 5)
+                     .then(headings => cy.validateListTexts(headings, [USERNAME_ADMIN]));
+                 })
+
+      currentPage.getContent().getBackButton()
+                 .should('be.visible')
+                 .and('have.text', 'Back');
     });
 
     it('User authorizations page', () => {
