@@ -540,6 +540,42 @@ describe("Microfrontends and Widgets", () => {
         currentPage.getContent().getPageStatus().should("match", /^Published$/);
       });
 
+      it('Basic edit with CMS Search Form widget', () => {
+        selectPageFromSidebar(THE_PAGE);
+        cy.wait(500);
+    
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.SEARCH_FORM);
+        cy.wait(500);
+        
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Administrator',
+        });
+        currentPage = currentPage.getContent().submitForm();
+    
+        cy.wait(4500);
+        cy.validateUrlChanged("/widget");
+      });
+    
+      it('Basic edit with CMS Search Result widget', () => {
+        selectPageFromSidebar(THE_PAGE);
+        cy.wait(500);
+    
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.SEARCH_RESULT);
+        cy.wait(500);
+        
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Administrator',
+        });
+        currentPage = currentPage.getContent().submitForm();
+    
+        cy.wait(4500);
+        cy.validateUrlChanged("/widget");
+      });
+
       it("Open Widget Details from the dropped CMS Search Form widget", () => {
         selectPageFromSidebar(THE_PAGE);
         cy.wait(500);
@@ -571,7 +607,39 @@ describe("Microfrontends and Widgets", () => {
         currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.SEARCH_RESULT);
 
         currentPage.getContent().publishPageDesign();
+        cy.wait(1000);
+
+        currentPage = currentPage.getMenu().getComponents().open();
+        currentPage = currentPage.openMFE_Widgets();
         cy.wait(500);
+
+        currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
+          CMS_WIDGETS.SEARCH_FORM.code,
+          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+        );
+
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Free Access',
+        });
+        currentPage = currentPage.getContent().submitForm();
+
+        cy.wait(1500);
+
+        cy.validateUrlChanged("/widget");
+
+        currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
+          CMS_WIDGETS.SEARCH_RESULT.code,
+          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+        );
+
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Free Access',
+        });
+        currentPage = currentPage.getContent().submitForm();
+
+        cy.wait(1500);
       });
     });
 
