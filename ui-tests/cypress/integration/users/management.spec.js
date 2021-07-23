@@ -1,6 +1,6 @@
-import {generateRandomId} from "../../support/utils";
+import {generateRandomId} from '../../support/utils';
 
-import {htmlElements} from "../../support/pageObjects/WebElement";
+import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import {
   TEST_ID_DETAIL_USER_TABLE,
@@ -8,176 +8,177 @@ import {
   TEST_ID_USER_AUTHORITY_PAGE_FORM,
   TEST_ID_USER_AUTHORITY_TABLE,
   TEST_ID_USER_FORM,
-  TEST_ID_USER_LIST_PAGE,
   TEST_ID_USER_LIST_TABLE,
-  TEST_ID_USER_PROFILE_FORM,
-  TEST_ID_USER_SEARCH_FORM
-}                            from "../../test-const/user-test-const";
-import TEST_ID_GENERIC_MODAL from "../../test-const/test-const";
+  TEST_ID_USER_PROFILE_FORM
+}                            from '../../test-const/user-test-const';
+import TEST_ID_GENERIC_MODAL from '../../test-const/test-const';
 
-import HomePage from "../../support/pageObjects/HomePage";
+import HomePage from '../../support/pageObjects/HomePage';
 
-describe("Users Management", () => {
+describe('Users Management', () => {
 
   let currentPage;
 
   beforeEach(() => {
-    cy.kcLogin("admin").as("tokens");
+    cy.kcLogin('admin').as('tokens');
   });
 
   afterEach(() => {
     cy.kcLogout();
   });
 
-  describe("UI", () => {
+  describe('UI', () => {
 
-    const USERNAME_ADMIN = "admin";
+    const USERNAME_ADMIN = 'admin';
 
-    it("Users management page", () => {
+    it('Users management page', () => {
       currentPage = openManagementPage();
 
-      // Page title
-      cy.getPageTitle().should("be.visible").and("have.text", "Users");
-      // Page breadcrumb
-      cy.validateBreadcrumbItems(["Users", "Management"]);
-      // Search box title
-      cy.getByTestId(TEST_ID_USER_SEARCH_FORM.FORM).within(() => {
-        cy.get("h3").contains("Search").should("be.visible");
-      });
-      // Form Fields
-      cy.getInputByName("username").should("be.visible");
-      cy.getByTestId(TEST_ID_USER_SEARCH_FORM.WITH_PROFILE_FIELD).should("be.visible");
-      cy.getByTestId(TEST_ID_USER_SEARCH_FORM.SEARCH_BUTTON).should("be.visible");
-      cy.getByTestId(TEST_ID_USER_LIST_TABLE.TABLE).should("be.visible");
-      // Table
-      cy.getByTestId(TEST_ID_USER_LIST_TABLE.TABLE).should("be.visible");
-      cy.getByTestId(TEST_ID_USER_LIST_TABLE.TABLE).contains("Username").should("be.visible");
-      cy.getByTestId(TEST_ID_USER_LIST_TABLE.TABLE).contains("Full Name").should("be.visible");
-      cy.getByTestId(TEST_ID_USER_LIST_TABLE.TABLE).contains("Email").should("be.visible");
-      cy.getByTestId(TEST_ID_USER_LIST_TABLE.TABLE).contains("Profile Type").should("be.visible");
-      cy.getByTestId(TEST_ID_USER_LIST_TABLE.TABLE).contains("Status").should("be.visible");
-      cy.getByTestId(TEST_ID_USER_LIST_TABLE.TABLE).contains("Actions").should("be.visible");
-      cy.getTableColsByTestId(TEST_ID_USER_LIST_TABLE.TABLE).should("have.length", 6);
-      // Button
-      cy.getByTestId(TEST_ID_USER_LIST_PAGE.ADD_USER_BUTTON).should("be.visible").and("have.text", "Add");
+      cy.location('pathname').should('eq', '/user');
+
+      currentPage.getContent().getTitle()
+                 .should('be.visible')
+                 .and('have.text', 'Users');
+
+      currentPage.getContent().getBreadCrumb().should('be.visible');
+      currentPage.getContent().getBreadCrumb().children(htmlElements.li)
+                 .should('have.length', 2)
+                 .then(elements => cy.validateListTexts(elements, ['Users', 'Management']));
+
+      currentPage.getContent().getSearchForm()
+                 .should('be.visible')
+                 .within(() => {
+                   cy.get('h3').contains('Search').should('be.visible');
+                 });
+
+      currentPage.getContent().getSearchInput().should('be.visible');
+
+      currentPage.getContent().getUsersTable().should('be.visible');
+      currentPage.getContent().getTableHeaders().children(htmlElements.th)
+                 .should('have.length', 6)
+                 .then(elements => cy.validateListTexts(elements, ['Username', 'Profile Type', 'Full Name', 'Email', 'Status', 'Actions']));
+
+      currentPage.getContent().getAddButton()
+                 .should('be.visible')
+                 .and('have.text', 'Add');
     });
 
-    it("Edit user page", () => {
+    it('Edit user page', () => {
       currentPage = openManagementPage();
 
-      cy.log("Should have all defined page components");
+      cy.log('Should have all defined page components');
       cy.searchUser(USERNAME_ADMIN);
       cy.openTableActionsByTestId(USERNAME_ADMIN);
       cy.getVisibleActionItemByClass(TEST_ID_USER_LIST_TABLE.ACTION_EDIT_USER).click();
       cy.validateUrlChanged(`/user/edit/${USERNAME_ADMIN}`);
       // Page title
-      cy.getPageTitle().should("be.visible").and("have.text", "Edit");
+      cy.getPageTitle().should('be.visible').and('have.text', 'Edit');
       // Page breadcrumb
-      cy.validateBreadcrumbItems(["Users", "Management", "Edit"]);
+      cy.validateBreadcrumbItems(['Users', 'Management', 'Edit']);
       // Form Fields
-      cy.getInputByName(TEST_ID_USER_FORM.USERNAME_FIELD).should("be.visible");
-      cy.getInputByName(TEST_ID_USER_FORM.PASSWORD_FIELD).should("be.visible");
-      cy.getInputByName(TEST_ID_USER_FORM.CONFIRM_PASSWORD_FIELD).should("be.visible");
-      cy.getByTestId(TEST_ID_USER_FORM.STATUS_FIELD).should("be.visible");
-      cy.getByTestId(TEST_ID_USER_FORM.RESET_FIELD).should("be.visible");
+      cy.getInputByName(TEST_ID_USER_FORM.USERNAME_FIELD).should('be.visible');
+      cy.getInputByName(TEST_ID_USER_FORM.PASSWORD_FIELD).should('be.visible');
+      cy.getInputByName(TEST_ID_USER_FORM.CONFIRM_PASSWORD_FIELD).should('be.visible');
+      cy.getByTestId(TEST_ID_USER_FORM.STATUS_FIELD).should('be.visible');
+      cy.getByTestId(TEST_ID_USER_FORM.RESET_FIELD).should('be.visible');
       // Labels
-      cy.getLabelByText("Username").should("be.visible");
-      cy.getLabelByText("Password").should("be.visible");
-      cy.getLabelByText("Confirm password").should("be.visible");
-      cy.getLabelByText("Registration").should("be.visible");
-      cy.getLabelByText("Last login").should("be.visible");
-      cy.getLabelByText("Last password change").should("be.visible");
-      cy.getLabelByText("Reset").should("be.visible");
-      cy.getLabelByText("Status").should("be.visible");
+      cy.getLabelByText('Username').should('be.visible');
+      cy.getLabelByText('Password').should('be.visible');
+      cy.getLabelByText('Confirm password').should('be.visible');
+      cy.getLabelByText('Registration').should('be.visible');
+      cy.getLabelByText('Last login').should('be.visible');
+      cy.getLabelByText('Last password change').should('be.visible');
+      cy.getLabelByText('Reset').should('be.visible');
+      cy.getLabelByText('Status').should('be.visible');
       // Button
-      cy.getByTestId(TEST_ID_USER_FORM.SAVE_BUTTON).should("be.visible").and("have.text", "Save");
+      cy.getByTestId(TEST_ID_USER_FORM.SAVE_BUTTON).should('be.visible').and('have.text', 'Save');
     });
 
-    it("Edit user profile page", () => {
+    it('Edit user profile page', () => {
       currentPage = openManagementPage();
 
-      cy.log("Should have all defined page components");
+      cy.log('Should have all defined page components');
       cy.searchUser(USERNAME_ADMIN);
       cy.openTableActionsByTestId(USERNAME_ADMIN);
       cy.getVisibleActionItemByClass(TEST_ID_USER_LIST_TABLE.ACTION_EDIT_PROFILE).click();
       cy.validateUrlChanged(`/userprofile/${USERNAME_ADMIN}`);
       // Page title
-      cy.getPageTitle().should("be.visible").and("have.text", "Edit");
+      cy.getPageTitle().should('be.visible').and('have.text', 'Edit');
       // Page breadcrumb
-      cy.validateBreadcrumbItems(["Users", "Management", "Edit user profile"]);
+      cy.validateBreadcrumbItems(['Users', 'Management', 'Edit user profile']);
       // Form Fields
-      cy.getSelectByName(TEST_ID_USER_PROFILE_FORM.PROFILE_TYPE_FIELD).should("be.visible");
-      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.USERNAME_FIELD).should("be.visible").and("be.disabled");
-      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.FULL_NAME_FIELD).should("be.visible");
-      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.EMAIL_FIELD).should("be.visible");
+      cy.getSelectByName(TEST_ID_USER_PROFILE_FORM.PROFILE_TYPE_FIELD).should('be.visible');
+      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.USERNAME_FIELD).should('be.visible').and('be.disabled');
+      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.FULL_NAME_FIELD).should('be.visible');
+      cy.getInputByName(TEST_ID_USER_PROFILE_FORM.EMAIL_FIELD).should('be.visible');
       // Labels
-      cy.getLabelByText("Profile Type").should("be.visible");
-      cy.getLabelByText("Username").should("be.visible");
-      cy.getLabelByText("Full Name").should("be.visible");
-      cy.getLabelByText("Email").should("be.visible");
+      cy.getLabelByText('Profile Type').should('be.visible');
+      cy.getLabelByText('Username').should('be.visible');
+      cy.getLabelByText('Full Name').should('be.visible');
+      cy.getLabelByText('Email').should('be.visible');
       // Button
-      cy.getByTestId(TEST_ID_USER_PROFILE_FORM.SAVE_BUTTON).should("be.visible").and("have.text", "Save");
+      cy.getByTestId(TEST_ID_USER_PROFILE_FORM.SAVE_BUTTON).should('be.visible').and('have.text', 'Save');
     });
 
-    it("View user profile page", () => {
+    it('View user profile page', () => {
       currentPage = openManagementPage();
 
-      cy.log("Should have all defined page components");
+      cy.log('Should have all defined page components');
       cy.searchUser(USERNAME_ADMIN);
       cy.openTableActionsByTestId(USERNAME_ADMIN);
       cy.getVisibleActionItemByTestID(TEST_ID_USER_LIST_TABLE.ACTION_VIEW_PROFILE).click();
       cy.validateUrlChanged(`/user/view/${USERNAME_ADMIN}`);
       // Page title
-      cy.getPageTitle().should("be.visible").and("have.text", "Details");
+      cy.getPageTitle().should('be.visible').and('have.text', 'Details');
       // Page breadcrumb
-      cy.validateBreadcrumbItems(["Users", "Management", "Details"]);
+      cy.validateBreadcrumbItems(['Users', 'Management', 'Details']);
       // Table
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).should("be.visible");
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains("Username").should("be.visible");
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains("Full Name").should("be.visible");
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains("Email").should("be.visible");
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains("Profile Type").should("be.visible");
+      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).should('be.visible');
+      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains('Username').should('be.visible');
+      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains('Full Name').should('be.visible');
+      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains('Email').should('be.visible');
+      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.TABLE).contains('Profile Type').should('be.visible');
       // Button
-      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.BACK_BUTTON).should("be.visible").and("have.text", "Back");
+      cy.getByTestId(TEST_ID_DETAIL_USER_TABLE.BACK_BUTTON).should('be.visible').and('have.text', 'Back');
     });
 
-    it("User authorizations page", () => {
+    it('User authorizations page', () => {
       currentPage = openManagementPage();
 
-      cy.log("Should edit the user authorizations");
+      cy.log('Should edit the user authorizations');
       // Edit Authorizations
       cy.searchUser(USERNAME_ADMIN);
       cy.openTableActionsByTestId(USERNAME_ADMIN);
       cy.getVisibleActionItemByClass(TEST_ID_USER_LIST_TABLE.ACTION_MANAGE_AUTHORIZATIONS).click();
       cy.validateUrlChanged(`/authority/${USERNAME_ADMIN}`);
       // Page title
-      cy.getPageTitle().should("be.visible").and("have.text", `Authorizations for ${USERNAME_ADMIN}`);
+      cy.getPageTitle().should('be.visible').and('have.text', `Authorizations for ${USERNAME_ADMIN}`);
       // Page breadcrumb
-      cy.validateBreadcrumbItems(["Users", "Management", "Authorizations"]);
+      cy.validateBreadcrumbItems(['Users', 'Management', 'Authorizations']);
       // Table
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).should("be.visible");
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).contains("User Group").should("be.visible");
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).contains("User Role").should("be.visible");
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).contains("Actions").should("be.visible");
-      cy.getTableColsByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).should("have.length", 3);
+      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).should('be.visible');
+      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).contains('User Group').should('be.visible');
+      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).contains('User Role').should('be.visible');
+      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).contains('Actions').should('be.visible');
+      cy.getTableColsByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).should('have.length', 3);
       // Buttons
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.ADD_BUTTON).should("be.visible").and("have.text", "Add new Authorization");
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.DELETE_BUTTON).should("be.visible");
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_PAGE_FORM.SAVE_BUTTON).should("be.visible").and("have.text", "Save");
+      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.ADD_BUTTON).should('be.visible').and('have.text', 'Add new Authorization');
+      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.DELETE_BUTTON).should('be.visible');
+      cy.getByTestId(TEST_ID_USER_AUTHORITY_PAGE_FORM.SAVE_BUTTON).should('be.visible').and('have.text', 'Save');
       // Add authorization modal
       cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.ADD_BUTTON).click();
-      cy.getModalDialogByTitle("New authorizations").should("be.visible");
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_MODAL.ROLE_FIELD).should("be.visible");
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_MODAL.GROUP_FIELD).should("be.visible");
-      cy.getByTestId(TEST_ID_GENERIC_MODAL.BUTTON).contains("Cancel").should("be.visible");
-      cy.getByTestId(TEST_ID_GENERIC_MODAL.BUTTON).contains("Add").should("be.visible");
+      cy.getModalDialogByTitle('New authorizations').should('be.visible');
+      cy.getByTestId(TEST_ID_USER_AUTHORITY_MODAL.ROLE_FIELD).should('be.visible');
+      cy.getByTestId(TEST_ID_USER_AUTHORITY_MODAL.GROUP_FIELD).should('be.visible');
+      cy.getByTestId(TEST_ID_GENERIC_MODAL.BUTTON).contains('Cancel').should('be.visible');
+      cy.getByTestId(TEST_ID_GENERIC_MODAL.BUTTON).contains('Add').should('be.visible');
     });
 
   });
 
-  describe("Actions", () => {
+  describe('Actions', () => {
 
-    const PROFILE_TYPE_CODE = "PFL";
+    const PROFILE_TYPE_CODE = 'PFL';
 
     let username;
     let password;
@@ -187,7 +188,7 @@ describe("Users Management", () => {
       password = generateRandomId();
     });
 
-    it("Add a new user", () => {
+    it('Add a new user', () => {
       currentPage = openManagementPage();
 
       currentPage = currentPage.getContent().openAddUserPage();
@@ -199,7 +200,7 @@ describe("Users Management", () => {
       cy.usersController().then(controller => controller.deleteUser(username));
     });
 
-    it("Add a user with existing user name is forbidden", () => {
+    it('Add a user with existing user name is forbidden', () => {
       cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
 
       currentPage = openManagementPage();
@@ -212,7 +213,7 @@ describe("Users Management", () => {
       cy.usersController().then(controller => controller.deleteUser(username));
     });
 
-    it("Update an existing user", () => {
+    it('Update an existing user', () => {
       const PASSWORD_EDIT = generateRandomId();
 
       cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
@@ -224,15 +225,15 @@ describe("Users Management", () => {
       currentPage = currentPage.getContent().editUser(PASSWORD_EDIT, true);
 
       currentPage.getContent().getTableRow(username).children(htmlElements.td)
-                 .then(cells => cy.validateListTexts(cells, [username, null, null, null, "\u00a0Active"]));
+                 .then(cells => cy.validateListTexts(cells, [username, null, null, null, '\u00a0Active']));
 
       cy.usersController().then(controller => controller.deleteUser(username));
     });
 
-    it("Update an existing user profile", () => {
+    it('Update an existing user profile', () => {
       const FULL_NAME         = generateRandomId();
       const EMAIL             = `${generateRandomId()}@entando.com`;
-      const PROFILE_TYPE_DESC = "Default user profile";
+      const PROFILE_TYPE_DESC = 'Default user profile';
 
       cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
 
@@ -240,26 +241,26 @@ describe("Users Management", () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
 
       currentPage = currentPage.getContent().getKebabMenu(username).open().openEditProfile();
-      currentPage.getContent().getUsernameInput().should("have.value", username);
+      currentPage.getContent().getUsernameInput().should('have.value', username);
 
       currentPage = currentPage.getContent().editUser(null, FULL_NAME, EMAIL, null);
 
-      cy.validateToast(currentPage, true, "User profile has been updated");
+      cy.validateToast(currentPage, true, 'User profile has been updated');
 
       currentPage.getContent().getTableRow(username).children(htmlElements.td)
-                 .then(cells => cy.validateListTexts(cells, [username, `${PROFILE_TYPE_DESC} ${PROFILE_TYPE_CODE}`, FULL_NAME, EMAIL, "\u00a0Not active"]));
+                 .then(cells => cy.validateListTexts(cells, [username, `${PROFILE_TYPE_DESC} ${PROFILE_TYPE_CODE}`, FULL_NAME, EMAIL, '\u00a0Not active']));
 
       cy.usersController().then(controller => controller.deleteUser(username));
     });
 
-    it("Update an existing user authorization", () => {
+    it('Update an existing user authorization', () => {
       const GROUP = {
-        ID: "free",
-        DESCRIPTION: "Free Access"
+        ID: 'free',
+        DESCRIPTION: 'Free Access'
       };
       const ROLE  = {
-        ID: "admin",
-        DESCRIPTION: "Administrator"
+        ID: 'admin',
+        DESCRIPTION: 'Administrator'
       };
 
       cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
@@ -268,7 +269,7 @@ describe("Users Management", () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
 
       currentPage = currentPage.getContent().getKebabMenu(username).open().openManageAuth();
-      currentPage.getContent().getTitle().should("contain", username);
+      currentPage.getContent().getTitle().should('contain', username);
 
       currentPage.getContent().addAuthorization();
       currentPage.getDialog().getBody().selectGroup(GROUP.ID);
@@ -276,8 +277,8 @@ describe("Users Management", () => {
       currentPage.getDialog().confirm();
 
       currentPage.getContent().getTableRows().contains(htmlElements.td, GROUP.DESCRIPTION).parent().then(row => {
-        cy.get(row).children(htmlElements.td).eq(0).should("have.text", GROUP.DESCRIPTION);
-        cy.get(row).children(htmlElements.td).eq(1).should("have.text", ROLE.DESCRIPTION);
+        cy.get(row).children(htmlElements.td).eq(0).should('have.text', GROUP.DESCRIPTION);
+        cy.get(row).children(htmlElements.td).eq(1).should('have.text', ROLE.DESCRIPTION);
       });
 
       currentPage.getContent().save();
@@ -285,60 +286,60 @@ describe("Users Management", () => {
       cy.usersController().then(controller => controller.deleteUser(username));
     });
 
-    it("Search an existing user", () => {
+    it('Search an existing user', () => {
       cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
 
       currentPage = openManagementPage();
 
       currentPage = currentPage.getContent().searchUser(username);
       currentPage.getContent().getTableRows()
-                 .should("have.length", 1)
+                 .should('have.length', 1)
                  .children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [username]));
 
       cy.usersController().then(controller => controller.deleteUser(username));
     });
 
-    it("Search a non-existing user", () => {
+    it('Search a non-existing user', () => {
       currentPage = openManagementPage();
 
       currentPage = currentPage.getContent().searchUser(username);
-      currentPage.getContent().get().should("not.have.descendants", currentPage.getContent().table);
+      currentPage.getContent().get().should('not.have.descendants', currentPage.getContent().table);
       currentPage.getContent().getTableAlert()
-                 .should("be.visible")
-                 .and("have.text", "There are no USERS available");
+                 .should('be.visible')
+                 .and('have.text', 'There are no USERS available');
     });
 
-    it("Delete a user", () => {
+    it('Delete a user', () => {
       cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
 
       currentPage.getContent().getKebabMenu(username).open().clickDelete();
-      currentPage.getDialog().getBody().getStateInfo().should("contain", username);
+      currentPage.getDialog().getBody().getStateInfo().should('contain', username);
       currentPage.getDialog().confirm();
       cy.wait(1000);
-      currentPage.getContent().getTableRows().should("not.contain", username);
+      currentPage.getContent().getTableRows().should('not.contain', username);
     });
 
-    it("Deletion of admin is forbidden", () => {
-      const USERNAME_ADMIN = "admin";
+    it('Deletion of admin is forbidden', () => {
+      const USERNAME_ADMIN = 'admin';
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
 
       currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().clickDelete();
-      currentPage.getDialog().getBody().getStateInfo().should("contain", USERNAME_ADMIN);
+      currentPage.getDialog().getBody().getStateInfo().should('contain', USERNAME_ADMIN);
       currentPage.getDialog().confirm();
 
-      cy.validateToast(currentPage, false, "Sorry. You can't delete the administrator user");
+      cy.validateToast(currentPage, false, 'Sorry. You can\'t delete the administrator user');
     });
 
   });
 
   const openManagementPage = () => {
-    cy.visit("/");
+    cy.visit('/');
     currentPage = new HomePage();
     return currentPage.getMenu().getUsers().open().openManagement();
   };

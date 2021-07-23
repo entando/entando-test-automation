@@ -37,10 +37,6 @@ export const TEST_ID_USER_PROFILE_FORM = {
   SAVE_BUTTON: 'UserProfileForm__saveButton',
 };
 
-export const TEST_ID_USER_LIST_PAGE = {
-  ADD_USER_BUTTON: 'UserListPage__addUserButton',
-};
-
 export const TEST_ID_USER_AUTHORITY_TABLE = {
   TABLE: 'UserAuthorityTable__table',
   ADD_BUTTON: 'UserAuthorityTable__addButton',
