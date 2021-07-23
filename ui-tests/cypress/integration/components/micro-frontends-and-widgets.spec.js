@@ -675,6 +675,42 @@ describe("Microfrontends and Widgets", () => {
         currentPage.getContent().getPageStatus().should("match", /^Published$/);
       });
 
+      it('Basic edit with Language widget', () => {
+        selectPageFromSidebar(THE_PAGE);
+        cy.wait(500);
+    
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, PAGE_WIDGETS.LANGUAGE);
+        cy.wait(500);
+        
+        cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Administrator',
+        });
+        currentPage = currentPage.getContent().submitForm();
+    
+        cy.wait(4500);
+        cy.validateUrlChanged("/widget");
+      });
+    
+      it('Basic edit with Logo widget', () => {
+        selectPageFromSidebar(THE_PAGE);
+        cy.wait(500);
+    
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, PAGE_WIDGETS.LOGO);
+        cy.wait(500);
+        
+        cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Administrator',
+        });
+        currentPage = currentPage.getContent().submitForm();
+    
+        cy.wait(4500);
+        cy.validateUrlChanged("/widget");
+      });
+
       it("Open Widget Details from the dropped Language widget", () => {
         selectPageFromSidebar(THE_PAGE);
         cy.wait(500);
@@ -706,7 +742,39 @@ describe("Microfrontends and Widgets", () => {
         currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, PAGE_WIDGETS.LOGO);
 
         currentPage.getContent().publishPageDesign();
+        cy.wait(1000);
+
+        currentPage = currentPage.getMenu().getComponents().open();
+        currentPage = currentPage.openMFE_Widgets();
         cy.wait(500);
+
+        currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
+          PAGE_WIDGETS.LANGUAGE.code,
+          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+        );
+
+        cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Free Access',
+        });
+        currentPage = currentPage.getContent().submitForm();
+
+        cy.wait(1500);
+
+        cy.validateUrlChanged("/widget");
+
+        currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
+          PAGE_WIDGETS.LOGO.code,
+          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+        );
+
+        cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Free Access',
+        });
+        currentPage = currentPage.getContent().submitForm();
+
+        cy.wait(1500);
       });
     });
 
