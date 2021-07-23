@@ -120,7 +120,7 @@ describe("Users Management", () => {
       cy.usersController().then(controller => controller.deleteUser(USERNAME));
     });
 
-    it.only("Search an existing user", () => {
+    it("Search an existing user", () => {
       cy.usersController().then(controller => controller.addUser(USERNAME, PASSWORD, PASSWORD, PROFILE_TYPE_CODE));
 
       currentPage = openManagementPage();
