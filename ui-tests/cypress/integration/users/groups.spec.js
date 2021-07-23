@@ -2,8 +2,6 @@ import {generateRandomId} from "../../support/utils";
 
 import {htmlElements} from "../../support/pageObjects/WebElement";
 
-import {TEST_ID_GROUPS_TABLE} from "../../test-const/group-test-const";
-
 import HomePage from "../../support/pageObjects/HomePage";
 
 describe("Groups", () => {
@@ -36,34 +34,35 @@ describe("Groups", () => {
     cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
-  it("Edit group", () => {
-    cy.visit("/");
-    new HomePage();
-
-    cy.addGroup(groupName);
-
-    cy.log("should redirect to list with updated group after submitting the form");
+  it("Update an existing group", () => {
     const updatedGroupName = generateRandomId();
-    cy.editGroup(groupCode, updatedGroupName);
-    cy.getByTestId(TEST_ID_GROUPS_TABLE).should("be.visible");
-    cy.getTableRowsBySelector(updatedGroupName).should("be.visible");
-    cy.getTableRowsBySelector(groupCode).should("be.visible");
 
-    cy.log("should redirect back to list on cancel");
-    cy.openTableActionsByTestId(groupCode);
-    cy.get(`[data-id=edit-${groupCode}`).find("a").click();
-    cy.getButtonByText("Cancel").click();
-    cy.getByTestId(TEST_ID_GROUPS_TABLE).should("be.visible");
+    cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
+
+    currentPage = openGroupsPage();
+
+    currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openEdit();
+    currentPage = currentPage.getContent().editGroup(updatedGroupName);
+
+    currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
+               .then(cells => cy.validateListTexts(cells, [updatedGroupName, groupCode]));
+
+    currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
+    currentPage.getContent().getDetailsInfo()
+               .within(info => {
+                 cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should("have.text", groupCode);
+                 cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should("have.text", updatedGroupName);
+               });
 
     cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
   it("Delete group", () => {
+    cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
+
     cy.visit("/");
     new HomePage();
 
-    cy.addGroup(groupName);
-    cy.wait(1000);
     cy.log("should delete the group after clicking and confirming the delete action");
     cy.deleteGroup(groupCode);
     cy.contains(groupCode).should("not.be.visible");

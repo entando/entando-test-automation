@@ -12,6 +12,20 @@ class GroupsController {
     this.access_token = access_token;
   }
 
+  addGroup(code, name) {
+    cy.request({
+      url: `${controller}`,
+      method: "POST",
+      body: {
+        "code": code,
+        "name": name
+      },
+      auth: {
+        bearer: this.access_token
+      }
+    });
+  }
+
   deleteGroup(groupId) {
     cy.request({
       url: `${controller}/${groupId}`,
