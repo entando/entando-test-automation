@@ -1,61 +1,79 @@
-import { TEST_ID_GROUPS_TABLE } from '../../test-const/group-test-const';
-import { generateRandomId }     from '../../support/utils';
+import {generateRandomId} from "../../support/utils";
 
-describe('Groups', () => {
+import {htmlElements} from "../../support/pageObjects/WebElement";
+
+import {TEST_ID_GROUPS_TABLE} from "../../test-const/group-test-const";
+
+import HomePage from "../../support/pageObjects/HomePage";
+
+describe("Groups", () => {
+
+  let currentPage;
+
   let groupName;
   let groupCode;
 
   beforeEach(() => {
-    cy.appBuilderLogin();
-    cy.closeWizardAppTour();
+    cy.kcLogin("admin").as("tokens");
 
     groupName = generateRandomId();
     groupCode = groupName.toLowerCase();
   });
 
   afterEach(() => {
-    cy.appBuilderLogout();
+    cy.kcLogout();
   });
 
-  it('Add group', () => {
-    cy.log('should redirect to list with new group after submitting the form');
-    cy.addGroup(groupName);
-    cy.getByTestId(TEST_ID_GROUPS_TABLE).should('be.visible');
-    cy.getTableRowsBySelector(groupName).should('be.visible');
-    cy.getTableRowsBySelector(groupCode).should('be.visible');
+  it("Add a new group", () => {
+    currentPage = openGroupsPage();
 
-    cy.log('should redirect back to list on cancel');
-    cy.getButtonByText('Add').click();
-    cy.getButtonByText('Cancel').click();
-    cy.getByTestId(TEST_ID_GROUPS_TABLE).should('be.visible');
+    currentPage = currentPage.getContent().openAddGroupPage();
+    currentPage = currentPage.getContent().addGroup(groupName, groupCode);
 
-    cy.deleteGroup(groupCode);
+    currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
+               .then(cells => cy.validateListTexts(cells, [groupName, groupCode]));
+
+    cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
-  it('Edit group', () => {
+  it("Edit group", () => {
+    cy.visit("/");
+    new HomePage();
+
     cy.addGroup(groupName);
 
-    cy.log('should redirect to list with updated group after submitting the form');
+    cy.log("should redirect to list with updated group after submitting the form");
     const updatedGroupName = generateRandomId();
     cy.editGroup(groupCode, updatedGroupName);
-    cy.getByTestId(TEST_ID_GROUPS_TABLE).should('be.visible');
-    cy.getTableRowsBySelector(updatedGroupName).should('be.visible');
-    cy.getTableRowsBySelector(groupCode).should('be.visible');
+    cy.getByTestId(TEST_ID_GROUPS_TABLE).should("be.visible");
+    cy.getTableRowsBySelector(updatedGroupName).should("be.visible");
+    cy.getTableRowsBySelector(groupCode).should("be.visible");
 
-    cy.log('should redirect back to list on cancel');
+    cy.log("should redirect back to list on cancel");
     cy.openTableActionsByTestId(groupCode);
-    cy.get(`[data-id=edit-${groupCode}`).find('a').click();
-    cy.getButtonByText('Cancel').click();
-    cy.getByTestId(TEST_ID_GROUPS_TABLE).should('be.visible');
+    cy.get(`[data-id=edit-${groupCode}`).find("a").click();
+    cy.getButtonByText("Cancel").click();
+    cy.getByTestId(TEST_ID_GROUPS_TABLE).should("be.visible");
 
-    cy.deleteGroup(groupCode);
+    cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
-  it('Delete group', () => {
+  it("Delete group", () => {
+    cy.visit("/");
+    new HomePage();
+
     cy.addGroup(groupName);
     cy.wait(1000);
-    cy.log('should delete the group after clicking and confirming the delete action');
+    cy.log("should delete the group after clicking and confirming the delete action");
     cy.deleteGroup(groupCode);
-    cy.contains(groupCode).should('not.be.visible');
+    cy.contains(groupCode).should("not.be.visible");
   });
+
+  const openGroupsPage = () => {
+    cy.visit("/");
+    currentPage = new HomePage();
+    currentPage = currentPage.getMenu().getUsers().open();
+    return currentPage.openGroups();
+  };
+
 });
