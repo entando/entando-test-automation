@@ -607,7 +607,43 @@ describe("Microfrontends and Widgets", () => {
         currentPage.getContent().getPageStatus().should("match", /^Published$/);
       });
 
-      it("Open Widget Details from the dropped CMS Search Form widget", () => {
+      it('Basic edit with News Archive widget', () => {
+        selectPageFromSidebar(THE_PAGE);
+        cy.wait(500);
+    
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.NEWS_ARCHIVE);
+        cy.wait(500);
+        
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Administrator',
+        });
+        currentPage = currentPage.getContent().submitForm();
+    
+        cy.wait(4500);
+        cy.validateUrlChanged("/widget");
+      });
+
+      it('Basic edit with News Latest widget', () => {
+        selectPageFromSidebar(THE_PAGE);
+        cy.wait(500);
+    
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.NEWS_LATEST);
+        cy.wait(500);
+        
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Administrator',
+        });
+        currentPage = currentPage.getContent().submitForm();
+    
+        cy.wait(4500);
+        cy.validateUrlChanged("/widget");
+      });
+
+      it("Open Widget Details from the dropped CMS News Archive widget", () => {
         selectPageFromSidebar(THE_PAGE);
         cy.wait(500);
 
@@ -617,7 +653,7 @@ describe("Microfrontends and Widgets", () => {
         cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
       });
 
-      it("Open Widget Details from the dropped CMS Search Results widget", () => {
+      it("Open Widget Details from the dropped CMS News Latest widget", () => {
         selectPageFromSidebar(THE_PAGE);
         cy.wait(500);
 
@@ -638,7 +674,39 @@ describe("Microfrontends and Widgets", () => {
         currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.NEWS_LATEST);
 
         currentPage.getContent().publishPageDesign();
+        cy.wait(1000);
+
+        currentPage = currentPage.getMenu().getComponents().open();
+        currentPage = currentPage.openMFE_Widgets();
         cy.wait(500);
+
+        currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
+          CMS_WIDGETS.NEWS_ARCHIVE.code,
+          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+        );
+
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Free Access',
+        });
+        currentPage = currentPage.getContent().submitForm();
+    
+        cy.wait(1500);
+
+        cy.validateUrlChanged("/widget");
+
+        currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
+          CMS_WIDGETS.NEWS_LATEST.code,
+          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+        );
+
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Free Access',
+        });
+        currentPage = currentPage.getContent().submitForm();
+
+        cy.wait(1500);
       });
     });
 
