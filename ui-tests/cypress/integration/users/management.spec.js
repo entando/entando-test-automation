@@ -160,7 +160,7 @@ describe('Users Management', () => {
                    cy.get(htmlElements.td)
                      .should('have.length', 5)
                      .then(headings => cy.validateListTexts(headings, [USERNAME_ADMIN]));
-                 })
+                 });
 
       currentPage.getContent().getBackButton()
                  .should('be.visible')
