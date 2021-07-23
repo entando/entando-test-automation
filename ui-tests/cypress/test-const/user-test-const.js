@@ -20,15 +20,6 @@ export const TEST_ID_USER_LIST_TABLE = {
   ALERT: 'list_UserListTable_Alert',
 };
 
-export const TEST_ID_USER_FORM = {
-  USERNAME_FIELD: 'username',
-  PASSWORD_FIELD: 'password',
-  PROFILE_TYPE_FIELD: 'profileType',
-  CONFIRM_PASSWORD_FIELD: 'passwordConfirm',
-  RESET_FIELD: 'reset-switchField',
-  STATUS_FIELD: 'status-switchField',
-  SAVE_BUTTON: 'UserForm__saveButton',
-};
 export const TEST_ID_USER_PROFILE_FORM = {
   PROFILE_TYPE_FIELD: 'typeCode',
   USERNAME_FIELD: 'id',

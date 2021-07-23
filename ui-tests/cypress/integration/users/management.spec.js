@@ -7,7 +7,6 @@ import {
   TEST_ID_USER_AUTHORITY_MODAL,
   TEST_ID_USER_AUTHORITY_PAGE_FORM,
   TEST_ID_USER_AUTHORITY_TABLE,
-  TEST_ID_USER_FORM,
   TEST_ID_USER_LIST_TABLE,
   TEST_ID_USER_PROFILE_FORM
 }                            from '../../test-const/user-test-const';
@@ -65,33 +64,42 @@ describe('Users Management', () => {
 
     it('Edit user page', () => {
       currentPage = openManagementPage();
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
+      currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEdit();
 
-      cy.log('Should have all defined page components');
-      cy.searchUser(USERNAME_ADMIN);
-      cy.openTableActionsByTestId(USERNAME_ADMIN);
-      cy.getVisibleActionItemByClass(TEST_ID_USER_LIST_TABLE.ACTION_EDIT_USER).click();
-      cy.validateUrlChanged(`/user/edit/${USERNAME_ADMIN}`);
-      // Page title
-      cy.getPageTitle().should('be.visible').and('have.text', 'Edit');
-      // Page breadcrumb
-      cy.validateBreadcrumbItems(['Users', 'Management', 'Edit']);
-      // Form Fields
-      cy.getInputByName(TEST_ID_USER_FORM.USERNAME_FIELD).should('be.visible');
-      cy.getInputByName(TEST_ID_USER_FORM.PASSWORD_FIELD).should('be.visible');
-      cy.getInputByName(TEST_ID_USER_FORM.CONFIRM_PASSWORD_FIELD).should('be.visible');
-      cy.getByTestId(TEST_ID_USER_FORM.STATUS_FIELD).should('be.visible');
-      cy.getByTestId(TEST_ID_USER_FORM.RESET_FIELD).should('be.visible');
-      // Labels
-      cy.getLabelByText('Username').should('be.visible');
-      cy.getLabelByText('Password').should('be.visible');
-      cy.getLabelByText('Confirm password').should('be.visible');
-      cy.getLabelByText('Registration').should('be.visible');
-      cy.getLabelByText('Last login').should('be.visible');
-      cy.getLabelByText('Last password change').should('be.visible');
-      cy.getLabelByText('Reset').should('be.visible');
-      cy.getLabelByText('Status').should('be.visible');
-      // Button
-      cy.getByTestId(TEST_ID_USER_FORM.SAVE_BUTTON).should('be.visible').and('have.text', 'Save');
+      cy.location('pathname').should('eq', `/user/edit/${USERNAME_ADMIN}`);
+
+      currentPage.getContent().getTitle()
+                 .should('be.visible')
+                 .and('have.text', 'Edit');
+
+      currentPage.getContent().getBreadCrumb().should('be.visible');
+      currentPage.getContent().getBreadCrumb().children(htmlElements.li)
+                 .should('have.length', 3)
+                 .then(elements => cy.validateListTexts(elements, ['Users', 'Management', 'Edit']));
+
+      currentPage.getContent().getUsernameInput()
+                 .should("be.visible")
+                 .and("have.value", USERNAME_ADMIN);
+      currentPage.getContent().getUsernameInput().parent().parent().children(htmlElements.div).eq(0)
+                 .should('have.text', 'Username ');
+      currentPage.getContent().getPasswordInput()
+                 .should("be.visible");
+      currentPage.getContent().getPasswordInput().parent().parent().children(htmlElements.div).eq(0)
+                 .should('have.text', 'Password ');
+      currentPage.getContent().getPasswordConfirmInput()
+                 .should("be.visible");
+      currentPage.getContent().getPasswordConfirmInput().parent().parent().children(htmlElements.div).eq(0)
+                 .should('have.text', 'Confirm password ');
+      currentPage.getContent().getStatus()
+                 .should("be.visible");
+
+      currentPage.getContent().getCancelButton()
+                 .should("be.visible")
+                 .and("have.text", "Cancel");
+      currentPage.getContent().getSaveButton()
+                 .should("be.visible")
+                 .and("have.text", "Save");
     });
 
     it('Edit user profile page', () => {
