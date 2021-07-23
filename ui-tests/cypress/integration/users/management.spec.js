@@ -2,14 +2,6 @@ import {generateRandomId} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
-import {
-  TEST_ID_USER_AUTHORITY_MODAL,
-  TEST_ID_USER_AUTHORITY_PAGE_FORM,
-  TEST_ID_USER_AUTHORITY_TABLE,
-  TEST_ID_USER_LIST_TABLE
-}                            from '../../test-const/user-test-const';
-import TEST_ID_GENERIC_MODAL from '../../test-const/test-const';
-
 import HomePage from '../../support/pageObjects/HomePage';
 
 describe('Users Management', () => {
@@ -177,34 +169,53 @@ describe('Users Management', () => {
 
     it('User authorizations page', () => {
       currentPage = openManagementPage();
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
+      currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openManageAuth();
 
-      cy.log('Should edit the user authorizations');
-      // Edit Authorizations
-      cy.searchUser(USERNAME_ADMIN);
-      cy.openTableActionsByTestId(USERNAME_ADMIN);
-      cy.getVisibleActionItemByClass(TEST_ID_USER_LIST_TABLE.ACTION_MANAGE_AUTHORIZATIONS).click();
-      cy.validateUrlChanged(`/authority/${USERNAME_ADMIN}`);
-      // Page title
-      cy.getPageTitle().should('be.visible').and('have.text', `Authorizations for ${USERNAME_ADMIN}`);
-      // Page breadcrumb
-      cy.validateBreadcrumbItems(['Users', 'Management', 'Authorizations']);
-      // Table
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).should('be.visible');
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).contains('User Group').should('be.visible');
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).contains('User Role').should('be.visible');
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).contains('Actions').should('be.visible');
-      cy.getTableColsByTestId(TEST_ID_USER_AUTHORITY_TABLE.TABLE).should('have.length', 3);
-      // Buttons
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.ADD_BUTTON).should('be.visible').and('have.text', 'Add new Authorization');
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.DELETE_BUTTON).should('be.visible');
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_PAGE_FORM.SAVE_BUTTON).should('be.visible').and('have.text', 'Save');
-      // Add authorization modal
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_TABLE.ADD_BUTTON).click();
-      cy.getModalDialogByTitle('New authorizations').should('be.visible');
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_MODAL.ROLE_FIELD).should('be.visible');
-      cy.getByTestId(TEST_ID_USER_AUTHORITY_MODAL.GROUP_FIELD).should('be.visible');
-      cy.getByTestId(TEST_ID_GENERIC_MODAL.BUTTON).contains('Cancel').should('be.visible');
-      cy.getByTestId(TEST_ID_GENERIC_MODAL.BUTTON).contains('Add').should('be.visible');
+      cy.location('pathname').should('eq', `/authority/${USERNAME_ADMIN}`);
+
+      currentPage.getContent().getTitle()
+                 .should('be.visible')
+                 .and('have.text', `Authorizations for ${USERNAME_ADMIN}`);
+
+      currentPage.getContent().getBreadCrumb().should('be.visible');
+      currentPage.getContent().getBreadCrumb().children(htmlElements.li)
+                 .should('have.length', 3)
+                 .then(elements => cy.validateListTexts(elements, ['Users', 'Management', 'Authorizations']));
+
+      currentPage.getContent().getAuthorityTable().should('be.visible');
+      currentPage.getContent().getTableHeaders().children(htmlElements.th)
+                 .should('have.length', 3)
+                 .then(elements => cy.validateListTexts(elements, ['User Group', 'User Role', 'Actions']));
+
+      currentPage.getContent().getTableRows()
+                 .should('have.length', 1)
+                 .within(() => {
+                   cy.get(htmlElements.td).eq(0).should('have.text', 'Administrators');
+                   cy.get(htmlElements.td).eq(1).should('have.text', 'Administrator');
+                   cy.get(htmlElements.td).eq(2).should('have.descendants', htmlElements.button);
+                 });
+
+      currentPage.getContent().getAddButton()
+                 .should('be.visible')
+                 .and('have.text', 'Add new Authorization');
+
+      currentPage.getContent().getSaveButton()
+                 .should('be.visible')
+                 .and('have.text', 'Save');
+
+      currentPage.getContent().addAuthorization();
+      currentPage.getDialog().getTitle()
+                 .should('be.visible')
+                 .and('have.text', 'New authorizations');
+      currentPage.getDialog().getBody().getGroup().should('be.visible');
+      currentPage.getDialog().getBody().getRole().should('be.visible');
+      currentPage.getDialog().getCancelButton()
+                 .should('be.visible')
+                 .and('have.text', 'Cancel');
+      currentPage.getDialog().getConfirmButton()
+                 .should('be.visible')
+                 .and('have.text', 'Add');
     });
 
   });

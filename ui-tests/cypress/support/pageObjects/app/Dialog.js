@@ -4,7 +4,7 @@ export class Dialog extends WebElement {
 
   dialog = `${htmlElements.div}[role=dialog]`;
   header = `${htmlElements.div}.modal-header`;
-  title = `${htmlElements.button}[${DATA_TESTID}=modal-title]`;
+  title = `${htmlElements.h4}.modal-title`;
   closeButton = `${htmlElements.button}[${DATA_TESTID}=modal_GenericModal_button]`;
   footer = `${htmlElements.div}.modal-footer`;
 
