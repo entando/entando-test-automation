@@ -151,6 +151,14 @@ export default class MFEWidgetForm extends Content {
           this.getTitleInput('it').clear();
           this.getTitleInput('it').type(payload[field]);
           break;
+        case 'names.en':
+          this.getTitleInput().clear();
+          this.getTitleInput().type(payload[field]);
+          break;
+        case 'names.it':
+          this.getTitleInput('it').clear();
+          this.getTitleInput('it').type(payload[field]);
+          break;
         case 'code':
           this.getCodeInput().clear();
           this.getCodeInput().type(payload[field]);
@@ -194,5 +202,10 @@ export default class MFEWidgetForm extends Content {
     this.getSaveDropdownButton().click();
     this.getRegularSaveButton().click();
     return new AppPage(MFEWidgetsPage);
+  }
+
+  submitContinueForm() {
+    this.getSaveDropdownButton().click();
+    this.getContinueSaveButton().click();
   }
 }
