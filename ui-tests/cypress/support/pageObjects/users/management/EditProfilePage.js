@@ -6,7 +6,7 @@ import AppPage from "../../app/AppPage.js";
 
 import ManagementPage from "./ManagementPage.js";
 
-export default class AddPage extends Content {
+export default class EditProfilePage extends Content {
 
   profileTypeSelect   = `${htmlElements.select}[${DATA_TESTID}=form_RenderSelectInput_select]`;
   usernameInput       = `${htmlElements.input}[name=id][${DATA_TESTID}=form_RenderTextInput_input]`;

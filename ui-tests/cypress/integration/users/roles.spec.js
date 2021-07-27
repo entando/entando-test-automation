@@ -175,7 +175,7 @@ describe("User Roles", () => {
 
   });
 
-  describe.only("Actions ", () => {
+  describe("Actions ", () => {
 
     it("Add a new role", () => {
       currentPage = openRolesPage();
