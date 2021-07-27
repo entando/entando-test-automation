@@ -1,6 +1,6 @@
 import { htmlElements } from '../../../WebElement';
 
-import Dialog from '../../../app/Dialog';
+import {Dialog} from '../../../app/Dialog';
 
 import WidgetConfigPage from '../WidgetConfigPage';
 

@@ -17,28 +17,28 @@ export default class AppTour extends WebElement {
                .find(this.tourContainer);
   }
 
-  #getFooter() {
+  getFooter() {
     return this.get()
                .children(this.#footer);
   }
 
   getCloseButton() {
-    return this.#getFooter()
+    return this.getFooter()
                .children(this.closeButton);
   }
 
   getStartButton() {
-    return this.#getFooter()
+    return this.getFooter()
                .children(this.startButton);
   }
 
   getCancelCloseButton() {
-    return this.#getFooter()
+    return this.getFooter()
                .children(this.cancelCloseButton);
   }
 
   getConfirmCloseButton() {
-    return this.#getFooter()
+    return this.getFooter()
                .children(this.cancelConfirmButton);
   }
 

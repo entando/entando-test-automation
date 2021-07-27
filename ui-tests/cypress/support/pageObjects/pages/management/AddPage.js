@@ -12,6 +12,9 @@ export default class AddPage extends Content {
     pageTreeSelector = `${htmlElements.div}[${DATA_TESTID}=PageForm__PageTreeSelector]`;
     pageTemplateSelector = `${htmlElements.select}[name=pageModel]`;
 
+    ownerGroupButton = `${htmlElements.div}[${DATA_TESTID}=ownerGroup-typeahead] ${htmlElements.button}[${DATA_TESTID}=form_RenderDropdownTypeaheadInput_button]`;
+    ownerGroupDropdown = `#ownerGroup`;
+
     // SEO
     seoInfoContainer = `${htmlElements.div}[id=basic-tabs]`;
     seoInfoTabs = `${htmlElements.ul}[${DATA_TESTID}=common_SeoInfo_Tabs]`;
@@ -28,6 +31,8 @@ export default class AddPage extends Content {
     // buttons
     saveButton = `${htmlElements.button}[${DATA_TESTID}="save-page"]`;
     saveAndDesignButton = `${htmlElements.button}[${DATA_TESTID}="common_PageForm_Button"]`;
+
+    alertMessageDiv = `${htmlElements.div}[${DATA_TESTID}=form_ErrorsAlert_Alert]`;
 
     getPageForm () {
         return this.parent.get()
@@ -46,6 +51,25 @@ export default class AddPage extends Content {
     getSeoTabs() {
         return this.getSeoContainer()
                .children(this.seoInfoTabs);
+    }
+
+    getAlertMessage() {
+        return this.getContents()
+               .find(this.alertMessageDiv);
+    }
+
+    getOwnerGroupButton() {
+        return this.getContents()
+               .find(this.ownerGroupButton);
+    }
+
+    clickOwnerGroupButton() {
+        this.getOwnerGroupButton().click();
+    }
+
+    getOwnerGroupDropdown() {
+        return this.getContents()
+               .find(this.ownerGroupDropdown);
     }
 
     selectSeoLanguage(langOrder) {
