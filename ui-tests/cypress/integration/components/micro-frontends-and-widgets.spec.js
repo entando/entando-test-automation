@@ -26,7 +26,7 @@ describe('Microfrontends and Widgets', () => {
     const currentPageContent = currentPage.getContent();
     currentPageContent.getSidebarTab('Page Tree').click();
     cy.wait(3000);
-    currentPageContent.getPageTreeItem(pageOpen.title).click({force: true});
+    currentPageContent.getPageTreeItem(pageOpen.title).click();
     currentPageContent.getSidebarTab('Widgets').click();
   };
 
