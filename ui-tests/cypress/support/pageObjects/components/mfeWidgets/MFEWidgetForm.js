@@ -8,6 +8,7 @@ import Content from '../../app/Content';
 import AppPage from '../../app/AppPage';
 import DesignerPage from '../../pages/designer/DesignerPage';
 import MFEWidgetsPage from './MFEWidgetsPage';
+import { DialogContent } from '../../app/Dialog';
 
 export default class MFEWidgetForm extends Content {
 
@@ -17,7 +18,10 @@ export default class MFEWidgetForm extends Content {
   formConfigSection = `${htmlElements.div}.WidgetForm__container`;
   formInfoSection = `${htmlElements.div}.WidgetForm__info`;
   configTabs = `${htmlElements.div}#basic-tabs ${htmlElements.ul}[role=tablist]`;
+  iconFieldContainer = `${htmlElements.div}.IconUploader__container[${DATA_TESTID}=common_IconUploader_div]`;
   iconUploadInput = `${htmlElements.input}[type="file"][${DATA_TESTID}=common_IconUploader_input]`;
+  iconFieldInnerDiv = `${htmlElements.div}[${DATA_TESTID}=common_IconUploader_div]`;
+  iconList = `${htmlElements.div}.IconLibrary__icon-list[${DATA_TESTID}=common_IconLibrary_div]`;
   enTitleInput = `${htmlElements.input}[name="titles.en"][${DATA_TESTID}=form_RenderTextInput_input]`;
   itTitleInput = `${htmlElements.input}[name="titles.it"][${DATA_TESTID}=form_RenderTextInput_input]`;
   codeInput = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
@@ -133,6 +137,13 @@ export default class MFEWidgetForm extends Content {
               .find(this.iconUploadInput);
   }
 
+  getIconChooseButton() {
+    return this.getFormBody()
+      .find(this.iconFieldContainer)
+      .children(this.iconFieldInnerDiv).eq(1)
+      .children(htmlElements.button).eq(0);
+  }
+
   getSaveButton() {
     return this.getFormBody()
                .find(this.saveButton);
@@ -173,6 +184,13 @@ export default class MFEWidgetForm extends Content {
         case 'iconUpload':
           this.getIconUpload().attachFile(payload[field]);
           cy.wait(500);
+          break;
+        case 'iconChoose':
+          this.getIconChooseButton().click();
+          this.parent.getDialog().setBody(DialogContent);
+          this.parent.getDialog().getBody()
+            .get().find(this.iconList).contains(payload[field]).click();
+          this.parent.getDialog().confirm();
           break;
       }
     });
