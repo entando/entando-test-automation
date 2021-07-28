@@ -20,16 +20,16 @@ import "./command/command";
 import "./command/validation-commands";
 import "./command/upload-command";
 import "./command/page-command";
-import "./command/group-command";
 import "./command/page-designer-command";
 import "./command/page-management-command";
 import "./command/content-types-command";
 
-import './restAPI/rolesAPI.js';
-import './restAPI/categoriesAPI.js';
-import './restAPI/contentTypesAPI';
-import './restAPI/contentsAPI';
-import './restAPI/pagesAPI.js';
+import "./restAPI/categoriesAPI.js";
+import "./restAPI/contentsAPI";
+import "./restAPI/contentTypesAPI";
+import "./restAPI/groupsAPI.js";
+import "./restAPI/pagesAPI.js";
+import "./restAPI/rolesAPI.js";
 import "./restAPI/usersAPI.js";
 
-import './exception-handler';
+import "./exception-handler";
