@@ -40,7 +40,7 @@ describe('Pages Management - Create', () => {
 
         cy.wait(2000);
         // page should be created successfully
-        currentPage.getContent().getRowByPageName(`${template} - test en`).should('be.visible');
+        currentPage.getContent().getTableRows().should('contain', `${template} - test en`);
 
         // delete recently added page
         cy.pagesController().then(controller => controller.deletePage(code));
@@ -63,7 +63,7 @@ describe('Pages Management - Create', () => {
 
     cy.wait(1000);
     // page should be created successfully
-    currentPage.getContent().getRowByPageName(name).should('be.visible');
+    currentPage.getContent().getTableRows().should('contain', name);
 
     // delete recently added page
     cy.pagesController().then(controller => controller.deletePage(code));
@@ -113,8 +113,8 @@ describe('Pages Management - Create', () => {
     const code = generateRandomId();
     const name = 'child page';
 
-    // go to add page
-    currentPage = currentPage.getContent().clickAddChild('Sitemap');
+    // add a child page for sitemap
+    currentPage = currentPage.getContent().getKebabMenu('sitemap').open().openAdd();
 
     currentPage.getContent()
         .fillRequiredData(name, name, code, undefined, OOTB_PAGE_TEMPLATES[0]);
@@ -127,7 +127,7 @@ describe('Pages Management - Create', () => {
     cy.wait(2000);
 
     // page should be created successfully
-    currentPage.getContent().getRowByPageName(name).should('be.visible');
+    currentPage.getContent().getTableRows().should('contain', name);
 
     // delete recently added page
     cy.pagesController().then(controller => controller.deletePage(code));

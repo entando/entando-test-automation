@@ -1,4 +1,4 @@
-import {htmlElements, WebElement} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 import Content from '../../app/Content.js';
 import AppPage from '../../app/AppPage.js';
 import TypesPage from './TypesPage.js';
