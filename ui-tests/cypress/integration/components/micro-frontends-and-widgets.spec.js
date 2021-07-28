@@ -8,6 +8,8 @@ const { WIDGET_ACTIONS } = MFEWidgetsPage;
 const SAMPLE_BASIC_WIDGET_ID  = 'my_widget';
 const SAMPLE_DUPE_WIDGET_CODE = 'mio_widget';
 
+const SAMPLE_WIDGET_NAMES = ['My Widget', 'Your Widget', 'Our Widget'];
+
 const PAGE = {
   title: 'My Homepage',
   code: 'my_homepage'
@@ -20,7 +22,16 @@ describe('Microfrontends and Widgets', () => {
     cy.kcLogout();
   });
 
+  const selectPageFromSidebar = (pageOpen = PAGE) => {
+    const currentPageContent = currentPage.getContent();
+    currentPageContent.getSidebarTab('Page Tree').click();
+    cy.wait(3000);
+    currentPageContent.getPageTreeItem(pageOpen.title).click();
+    currentPageContent.getSidebarTab('Widgets').click();
+  };
+
   describe('Widgets CRUD', () => {
+    const WIDGET_FRAME = 'Frame 3';
     beforeEach(() => {
       cy.kcLogin('admin').as('tokens');
 
@@ -34,7 +45,7 @@ describe('Microfrontends and Widgets', () => {
       currentPage = currentPage.getContent().openAddWidgetForm();
       cy.validateUrlChanged('/widget/add');
       cy.wait(500);
-      currentPage.getContent().fillWidgetForm('My Widget', SAMPLE_BASIC_WIDGET_ID);
+      currentPage.getContent().fillWidgetForm(SAMPLE_WIDGET_NAMES[0], SAMPLE_BASIC_WIDGET_ID);
       currentPage = currentPage.getContent().submitForm();
       cy.validateUrlChanged('/widget');
       currentPage.getContent().getListArea().should('contain', SAMPLE_BASIC_WIDGET_ID);
@@ -44,7 +55,7 @@ describe('Microfrontends and Widgets', () => {
       currentPage = currentPage.getContent().openAddWidgetForm();
       cy.validateUrlChanged('/widget/add');
       cy.wait(500);
-      currentPage.getContent().fillWidgetForm('My Widget', 'content_viewer');
+      currentPage.getContent().fillWidgetForm(SAMPLE_WIDGET_NAMES[0], 'content_viewer');
       currentPage.getContent().submitForm();
       cy.location('pathname').should('not.eq', '/widget');
       currentPage.getToastList().should('contain', 'The Widget content_viewer already exists');
@@ -75,12 +86,14 @@ describe('Microfrontends and Widgets', () => {
       currentPage.getContent().getRegularSaveButton().closest('li').invoke('attr', 'class').should('contain', 'disabled');
     });
 
-    it('Editing the widget we just made', () => {
+    it('Editing the widget modifying all mandatory fields', () => {
       currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
       cy.wait(500);
       cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
-        'names.en': 'Your Widget',
+        name: SAMPLE_WIDGET_NAMES[1],
+        group: 'Free Access',
+        iconChoose: 'fa-android',
       });
       currentPage.getContent().submitContinueForm();
       cy.location('pathname').should('not.eq', '/widget');
@@ -88,10 +101,78 @@ describe('Microfrontends and Widgets', () => {
       currentPage = currentPage.getMenu().getComponents().open();
       currentPage = currentPage.openMFE_Widgets();
       cy.wait(500);
-      currentPage.getContent().getListArea().should('contain', 'Your Widget');
+      currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[1]);
+
+      cy.log('Widget setup - add new widget to page');
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openDesigner();
+      selectPageFromSidebar();
+      cy.wait(500);
+
+      currentPage.getContent().dragWidgetToFrame({
+        code: SAMPLE_BASIC_WIDGET_ID,
+        name: SAMPLE_WIDGET_NAMES[1],
+      }, WIDGET_FRAME);
+      currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+      currentPage.getContent().publishPageDesign();
+      currentPage.getContent().getPageStatus().should('match', /^Published$/);
+    });
+
+    it('Editing a used widget via widget list modifying all mandatory fields', () => {
+      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
+      cy.wait(500);
+      cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      currentPage.getContent().editFormFields({
+        iconUpload: 'icon/Entando.svg',
+        name: SAMPLE_WIDGET_NAMES[2],
+        group: 'Administrators',
+      });
+      currentPage = currentPage.getContent().submitForm();
+      cy.validateUrlChanged('/widget');
+      currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[2]);
+    });
+
+    it('Editing a used widget via page designer modifying all mandatory fields', () => {
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openDesigner();
+      selectPageFromSidebar();
+      cy.wait(500);
+      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME);
+      currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, {
+        code: SAMPLE_BASIC_WIDGET_ID,
+        name: SAMPLE_WIDGET_NAMES[2],
+      });
+      cy.wait(500);
+      cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      currentPage.getContent().editFormFields({
+        name: SAMPLE_WIDGET_NAMES[0],
+        group: 'Free Access',
+        iconChoose: 'fa-android',
+      });
+      currentPage = currentPage.getContent().submitForm();
+      cy.wait(3000);
+      cy.validateUrlChanged('/widget');
+      currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[0]);
     });
 
     it('Delete the widget we just made', () => {
+      cy.log('Widget cleanup - temporary');
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openDesigner();
+      selectPageFromSidebar();
+      cy.wait(500);
+
+      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME);
+      currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, {
+        code: SAMPLE_BASIC_WIDGET_ID,
+        name: SAMPLE_WIDGET_NAMES[0],
+      });
+      currentPage.getContent().publishPageDesign();
+      cy.wait(1000);
+
+      currentPage = currentPage.getMenu().getComponents().open();
+      currentPage = currentPage.openMFE_Widgets();
+
       currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.DELETE);
 
       currentPage.getDialog().getConfirmButton().click();
@@ -100,14 +181,6 @@ describe('Microfrontends and Widgets', () => {
   });
 
   describe('Widget Usages', () => {
-
-    const selectPageFromSidebar = (pageOpen = PAGE) => {
-      const currentPageContent = currentPage.getContent();
-      currentPageContent.getSidebarTab('Page Tree').click();
-      cy.wait(3000);
-      currentPageContent.getPageTreeItem(pageOpen.title).click({force: true});
-      currentPageContent.getSidebarTab('Widgets').click();
-    };
 
     beforeEach(() => {
       cy.kcLogin('admin').as('tokens');
