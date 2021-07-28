@@ -160,16 +160,18 @@ describe("Content Types", () => {
     ];
 
     beforeEach(() => {
-      cy.visit("/");
+      openContentTypeFormWith(CONTENT_TYPE_CODE);
     });
 
     describe("List", () => {
 
       const TYPE_LIST = "List";
 
+      beforeEach(() => {
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_LIST);
+      });
+
       it("Nested attribute type selection should not contain Text, Longtext, Hypertext, Image, Attach, Link", () => {
-        cy.openContentTypeFormWith(CONTENT_TYPE_CODE);
-        cy.addNewContentTypeAttribute(CONTENT_TYPE_CODE, TYPE_LIST);
         cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Text");
         cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Longtext");
         cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Hypertext");
@@ -179,11 +181,6 @@ describe("Content Types", () => {
       });
 
       describe("examples of nested attribute types that are allowed in List attribute", () => {
-
-        beforeEach(() => {
-          cy.openContentTypeFormWith(CONTENT_TYPE_CODE);
-          cy.addNewContentTypeAttribute(CONTENT_TYPE_CODE, TYPE_LIST);
-        });
 
         const attributeListTest = [
           {
@@ -219,19 +216,16 @@ describe("Content Types", () => {
 
     describe("Monolist", () => {
 
+      beforeEach(() => {
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
+      });
+
       it("Nested attribute type selection should not contain Monolist", () => {
-        cy.openContentTypeFormWith(CONTENT_TYPE_CODE);
-        cy.addNewContentTypeAttribute(CONTENT_TYPE_CODE, TYPE_MONOLIST);
         cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Monolist");
         cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "List");
       });
 
       describe("examples of nested attribute types that are allowed in Monolist attribute", () => {
-
-        beforeEach(() => {
-          cy.openContentTypeFormWith(CONTENT_TYPE_CODE);
-          cy.addNewContentTypeAttribute(CONTENT_TYPE_CODE, TYPE_MONOLIST);
-        });
 
         const attributeMonolistTest = [
           {
@@ -269,12 +263,8 @@ describe("Content Types", () => {
       const compositeCode = "compCode";
       const compName      = "compo name";
 
-      beforeEach(() => {
-        cy.openContentTypeFormWith(CONTENT_TYPE_CODE);
-      });
-
       it("test on adding composite", () => {
-        cy.addNewContentTypeAttribute(CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
 
         cy.fillAddListAttributeForm(TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
         attributeCompositeTest.forEach((subAttribute) => {
@@ -316,12 +306,8 @@ describe("Content Types", () => {
       const mainAttrCode = "mocoCode";
       const mainAttrName = "Mono compo name";
 
-      beforeEach(() => {
-        cy.openContentTypeFormWith(CONTENT_TYPE_CODE);
-      });
-
       it("test on adding monolist composite", () => {
-        cy.addNewContentTypeAttribute(CONTENT_TYPE_CODE, TYPE_MONOLIST);
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
         cy.fillAddListAttributeForm(TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
         cy.wait(1000);
         attributeCompositeTest.forEach((subAttribute) => {
@@ -377,6 +363,19 @@ describe("Content Types", () => {
       });
 
     });
+
+    const openContentTypeFormWith = (contentTypeCode) => {
+      cy.log(`Edit content type ${contentTypeCode}`);
+      currentPage = openContentTypesPage();
+      currentPage = currentPage.getContent().editContentType(contentTypeCode);
+      cy.location("pathname").should("eq", `/cms/content-types/edit/${contentTypeCode}`);
+    };
+
+    const addNewContentTypeAttribute = (page, contentTypeCode, attributeType) => {
+      cy.log(`Add new content type attribute ${attributeType} to ${contentTypeCode}`);
+      currentPage = page.getContent().addAttribute(attributeType);
+      cy.location("pathname").should("eq", `/cms/content-type/attribute/${contentTypeCode}/add`);
+    };
 
   });
 
