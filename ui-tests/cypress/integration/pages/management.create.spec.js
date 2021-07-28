@@ -40,7 +40,7 @@ describe('Pages Management - Create', () => {
 
         cy.wait(2000);
         // page should be created successfully
-        currentPage.getContent().getTableRows().contains(`${template} - test en`).should('be.visible');
+        currentPage.getContent().getTableRows().should('contain', `${template} - test en`);
 
         // delete recently added page
         cy.pagesController().then(controller => controller.deletePage(code));
@@ -63,7 +63,7 @@ describe('Pages Management - Create', () => {
 
     cy.wait(1000);
     // page should be created successfully
-    currentPage.getContent().getTableRows().contains(name).should('be.visible');
+    currentPage.getContent().getTableRows().should('contain', name);
 
     // delete recently added page
     cy.pagesController().then(controller => controller.deletePage(code));
@@ -127,7 +127,7 @@ describe('Pages Management - Create', () => {
     cy.wait(2000);
 
     // page should be created successfully
-    currentPage.getContent().getTableRows().contains(name).should('be.visible');
+    currentPage.getContent().getTableRows().should('contain', name);
 
     // delete recently added page
     cy.pagesController().then(controller => controller.deletePage(code));

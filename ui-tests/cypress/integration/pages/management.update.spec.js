@@ -50,7 +50,7 @@ describe('Pages Management - Update', () => {
 
         if (o.value) {
           // should contain all OOTB values
-          expect(OOTB_PAGE_TEMPLATES.includes(o.value)).to.eq(true);
+          expect(OOTB_PAGE_TEMPLATES).to.include(o.value);
         }
       });
     });
