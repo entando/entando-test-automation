@@ -172,12 +172,13 @@ describe("Content Types", () => {
       });
 
       it("Nested attribute type selection should not contain Text, Longtext, Hypertext, Image, Attach, Link", () => {
-        cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Text");
-        cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Longtext");
-        cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Hypertext");
-        cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Image");
-        cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Attach");
-        cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Link");
+        currentPage.getContent().getNestedAttributeType()
+                   .should("not.contain", "Text")
+                   .and("not.contain", "Longtext")
+                   .and("not.contain", "Hypertext")
+                   .and("not.contain", "Image")
+                   .and("not.contain", "Attach")
+                   .and("not.contain", "Link");
       });
 
       describe("examples of nested attribute types that are allowed in List attribute", () => {

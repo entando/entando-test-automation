@@ -1,17 +1,20 @@
-import {htmlElements} from '../../WebElement';
-import Content from '../../app/Content.js';
-import AppPage from '../../app/AppPage.js';
-import TypesPage from './TypesPage.js';
-import AddAttributePage from './AddAttributePage';
-import EditAttributePage from './EditAttributePage';
+import {htmlElements} from "../../WebElement";
 
-export default class AddPage extends Content {
+import Content from "../../app/Content.js";
 
-  nameInput = `${htmlElements.input}[name=name]`;
-  codeInput = `${htmlElements.input}[name=code]`;
-  saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
+import AppPage from "../../app/AppPage.js";
+
+import AddAttributePage  from "./AddAttributePage";
+import EditAttributePage from "./EditAttributePage";
+import TypesPage         from "./TypesPage.js";
+
+export default class EditPage extends Content {
+
+  nameInput           = `${htmlElements.input}[name=name]`;
+  codeInput           = `${htmlElements.input}[name=code]`;
+  saveButton          = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
   attributeTypeSelect = `${htmlElements.select}[name=type]`;
-  addAttributeButton = `${htmlElements.button}.ContentTypeForm__add`;
+  addAttributeButton  = `${htmlElements.button}.ContentTypeForm__add`;
   editAttributeOption = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-edit`;
 
   getNameInput() {
@@ -50,8 +53,7 @@ export default class AddPage extends Content {
   addAttribute(attributeCode) {
     this.getAttributeTypeSelect().select(attributeCode);
     this.getAddAttributeButton().click();
-    // TODO: find a way to avoid waiting for arbitrary time periods
-    cy.wait(1000);
+    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     return new AppPage(AddAttributePage);
   }
 
@@ -68,12 +70,11 @@ export default class AddPage extends Content {
   editAttribute(code) {
     this.getAttributesTableRowAction(code)
         .click();
-    // TODO: find a way to avoid waiting for arbitrary time periods
-    cy.wait(500);
+    cy.wait(500); // TODO: find a way to avoid waiting for arbitrary time periods
 
     this.getAttributesTable()
         .find(this.editAttributeOption)
-        .filter(':visible')
+        .filter(":visible")
         .click();
 
     return new AppPage(EditAttributePage);
@@ -81,8 +82,8 @@ export default class AddPage extends Content {
 
   save() {
     this.getSaveButton().click();
-    // TODO: find a way to avoid waiting for arbitrary time periods
-    cy.wait(1000);
+    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     return new AppPage(TypesPage);
   }
+
 }
