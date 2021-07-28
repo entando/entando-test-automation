@@ -8,8 +8,9 @@ import DeleteDialog from "../../app/DeleteDialog";
 
 import AddPage           from "./AddPage";
 import EditPage          from "./EditPage";
-import EditProfilePage   from "./EditProfilePage";
 import AuthorizationPage from "./AuthorizationPage";
+import EditProfilePage   from "./EditProfilePage";
+import ViewProfilePage   from "./ViewProfilePage";
 
 export default class ManagementPage extends Content {
 
@@ -157,6 +158,7 @@ class UsersKebabMenu extends KebabMenu {
 
   openViewProfile() {
     this.getViewProfile().click();
+    return new AppPage(ViewProfilePage);
   }
 
   clickDelete() {

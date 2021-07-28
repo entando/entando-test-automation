@@ -6,18 +6,18 @@ import AppPage from "../../app/AppPage.js";
 
 import ManagementPage from "./ManagementPage.js";
 
-export default class AddPage extends Content {
+export default class EditPage extends Content {
 
-  nameInput            = `${htmlElements.input}[name=username][${DATA_TESTID}=form_RenderTextInput_input]`;
+  usernameInput        = `${htmlElements.input}[name=username][${DATA_TESTID}=form_RenderTextInput_input]`;
   passwordInput        = `${htmlElements.input}[name=password][${DATA_TESTID}=form_RenderTextInput_input]`;
   passwordConfirmInput = `${htmlElements.input}[name=passwordConfirm][${DATA_TESTID}=form_RenderTextInput_input]`;
   status               = `${htmlElements.div}[${DATA_TESTID}=status-switchField]`;
   saveButton           = `${htmlElements.button}[${DATA_TESTID}=UserForm__saveButton]`;
   cancelButton         = `${htmlElements.button}[${DATA_TESTID}=common_UserForm_Button]`;
 
-  getNameInput() {
+  getUsernameInput() {
     return this.getContents()
-               .find(this.nameInput);
+               .find(this.usernameInput);
   }
 
   getPasswordInput() {
@@ -43,10 +43,6 @@ export default class AddPage extends Content {
   getSaveButton() {
     return this.getContents()
                .find(this.saveButton);
-  }
-
-  typeName(input) {
-    this.getNameInput().type(input);
   }
 
   typePassword(input) {

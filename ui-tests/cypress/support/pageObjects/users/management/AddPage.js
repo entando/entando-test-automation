@@ -8,7 +8,7 @@ import ManagementPage from "./ManagementPage.js";
 
 export default class AddPage extends Content {
 
-  nameInput            = `${htmlElements.input}[name=username][${DATA_TESTID}=form_RenderTextInput_input]`;
+  usernameInput        = `${htmlElements.input}[name=username][${DATA_TESTID}=form_RenderTextInput_input]`;
   passwordInput        = `${htmlElements.input}[name=password][${DATA_TESTID}=form_RenderTextInput_input]`;
   passwordConfirmInput = `${htmlElements.input}[name=passwordConfirm][${DATA_TESTID}=form_RenderTextInput_input]`;
   profileTypeSelect    = `${htmlElements.select}[name=profileType][${DATA_TESTID}=form_RenderSelectInput_select]`;
@@ -16,9 +16,9 @@ export default class AddPage extends Content {
   saveButton           = `${htmlElements.button}[${DATA_TESTID}=UserForm__saveButton]`;
   otherButtons         = `${htmlElements.button}[${DATA_TESTID}=common_UserForm_Button]`;
 
-  getNameInput() {
+  getUsernameInput() {
     return this.getContents()
-               .find(this.nameInput);
+               .find(this.usernameInput);
   }
 
   getPasswordInput() {
@@ -56,8 +56,8 @@ export default class AddPage extends Content {
                .find(this.saveButton);
   }
 
-  typeName(input) {
-    this.getNameInput().type(input);
+  typeUsername(input) {
+    this.getUsernameInput().type(input);
   }
 
   typePassword(input) {
@@ -77,7 +77,7 @@ export default class AddPage extends Content {
   }
 
   addUser(username, password, profileType, passwordConfirm = password) {
-    this.typeName(username);
+    this.typeUsername(username);
     this.typePassword(password);
     this.typePasswordConfirm(passwordConfirm);
     this.selectProfileType(profileType);
