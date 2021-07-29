@@ -1,8 +1,9 @@
-import {htmlElements} from "../../WebElement";
+import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement";
 
 import Content from "../../app/Content.js";
 
-import AppPage from "../../app/AppPage.js";
+import AppPage      from "../../app/AppPage.js";
+import DeleteDialog from "../../app/DeleteDialog";
 
 import AddAttributePage  from "./AddAttributePage";
 import EditAttributePage from "./EditAttributePage";
@@ -15,7 +16,6 @@ export default class EditPage extends Content {
   saveButton          = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
   attributeTypeSelect = `${htmlElements.select}[name=type]`;
   addAttributeButton  = `${htmlElements.button}.ContentTypeForm__add`;
-  editAttributeOption = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-edit`;
 
   getNameInput() {
     return this.getContents()
@@ -32,14 +32,6 @@ export default class EditPage extends Content {
                .find(this.saveButton);
   }
 
-  typeName(value) {
-    this.getNameInput().type(value);
-  }
-
-  clearName() {
-    this.getNameInput().clear();
-  }
-
   getAttributeTypeSelect() {
     return this.getContents()
                .find(this.attributeTypeSelect);
@@ -50,40 +42,104 @@ export default class EditPage extends Content {
                .find(this.addAttributeButton);
   }
 
-  addAttribute(attributeCode) {
-    this.getAttributeTypeSelect().select(attributeCode);
-    this.getAddAttributeButton().click();
-    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AppPage(AddAttributePage);
-  }
-
   getAttributesTable() {
     return this.getContents()
                .find(htmlElements.table);
   }
 
-  getAttributesTableRowAction(code) {
-    return this.getAttributesTable()
-               .find(`${htmlElements.button}#${code}-actions`);
+  getKebabMenu(code) {
+    return new AttributeKebabMenu(this, code);
   }
 
-  editAttribute(code) {
-    this.getAttributesTableRowAction(code)
-        .click();
-    cy.wait(500); // TODO: find a way to avoid waiting for arbitrary time periods
+  typeName(value) {
+    this.getNameInput().type(value);
+  }
 
-    this.getAttributesTable()
-        .find(this.editAttributeOption)
-        .filter(":visible")
-        .click();
+  clearName() {
+    this.getNameInput().clear();
+  }
 
-    return new AppPage(EditAttributePage);
+  selectAttribute(value) {
+    this.getAttributeTypeSelect().select(value);
+  }
+
+  addAttribute(attributeCode) {
+    this.selectAttribute(attributeCode);
+    this.getAddAttributeButton().click();
+    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
+    return new AppPage(AddAttributePage);
   }
 
   save() {
     this.getSaveButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     return new AppPage(TypesPage);
+  }
+
+}
+
+class AttributeKebabMenu extends WebElement {
+
+  edit     = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-edit`;
+  moveUp   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-up`;
+  moveDown = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-down`;
+  delete   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-delete`;
+
+  constructor(parent, code) {
+    super(parent);
+    this.code = code;
+  }
+
+  get() {
+    return this.parent.getAttributesTable()
+               .find(`${htmlElements.div}[${DATA_TESTID}=${this.code}-actions]`)
+               .children(htmlElements.div);
+  }
+
+  open() {
+    this.get()
+        .children(htmlElements.button)
+        .click();
+    return this;
+  }
+
+  getEdit() {
+    return this.get()
+               .find(this.edit);
+  }
+
+  getMoveUp() {
+    return this.get()
+               .find(this.moveUp);
+  }
+
+  getMoveDown() {
+    return this.get()
+               .find(this.moveDown);
+  }
+
+  getDelete() {
+    return this.get()
+               .find(this.delete);
+  }
+
+  openEdit() {
+    this.getEdit().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
+    return new AppPage(EditAttributePage);
+  }
+
+  clickMoveUp() {
+    this.getMoveUp().click();
+  }
+
+  clickMoveDown() {
+    this.getMoveDown().click();
+  }
+
+  clickDelete() {
+    this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
   }
 
 }

@@ -1,10 +1,11 @@
 import {htmlElements} from "../../WebElement";
 
-import Content        from "../../app/Content";
+import Content from "../../app/Content";
 
-import AppPage        from "../../app/AppPage";
+import AppPage from "../../app/AppPage";
 
-import EditPage       from "./EditPage";
+import EditPage              from "./EditPage";
+import EditListAttributePage from "./EditListAttributePage";
 
 export default class AddAttributePage extends Content {
 
@@ -31,10 +32,20 @@ export default class AddAttributePage extends Content {
     this.getCodeInput().type(value);
   }
 
-  continue() {
+  selectNestedAttributeType(value) {
+    this.getNestedAttributeType().select(value);
+  }
+
+  continue(attribute = "") {
     this.getContinueButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AppPage(EditPage);
+    switch (attribute) {
+      case "List":
+        return new AppPage(EditListAttributePage);
+      default:
+        return new AppPage(EditPage);
+    }
+
   }
 
 }

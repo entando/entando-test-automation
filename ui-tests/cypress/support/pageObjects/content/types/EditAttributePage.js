@@ -1,16 +1,25 @@
-import AppPage from '../../app/AppPage';
-import Content from '../../app/Content';
-import EditPage from './EditPage';
-import { htmlElements } from '../../WebElement';
+import {htmlElements} from "../../WebElement";
+
+import Content from "../../app/Content";
+
+import AppPage from "../../app/AppPage";
+
+import EditPage              from "./EditPage";
+import EditListAttributePage from "./EditListAttributePage";
 
 export default class EditAttributePage extends Content {
 
-  nameInput = `${htmlElements.input}[name="names.en"]`;
+  nameInput      = `${htmlElements.input}[name="names.en"]`;
   continueButton = `${htmlElements.button}.ContentTypeAttributeForm__continue-btn`;
 
   getNameInput() {
     return this.getContents()
                .find(this.nameInput);
+  }
+
+  getContinueButton() {
+    return this.getContents()
+               .find(this.continueButton);
   }
 
   typeName(value) {
@@ -21,15 +30,15 @@ export default class EditAttributePage extends Content {
     this.getNameInput().clear();
   }
 
-  getContinueButton() {
-    return this.getContents()
-               .find(this.continueButton);
+  continue(attribute = "") {
+    this.getContinueButton().click();
+    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
+    switch (attribute) {
+      case "List":
+        return new AppPage(EditListAttributePage);
+      default:
+        return new AppPage(EditPage);
+    }
   }
 
-  continue() {
-    this.getContinueButton().click();
-    // TODO: find a way to avoid waiting for arbitrary time periods
-    cy.wait(1000);
-    return new AppPage(EditPage);
-  }
 }

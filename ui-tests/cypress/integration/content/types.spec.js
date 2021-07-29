@@ -111,7 +111,7 @@ describe("Content Types", () => {
       postContentTypeAttribute(contentTypeCode, testAttribute);
 
       currentPage = currentPage.getContent().editContentType(contentTypeCode);
-      currentPage = currentPage.getContent().editAttribute(testAttribute.code);
+      currentPage = currentPage.getContent().getKebabMenu(testAttribute.code).open().openEdit();
       currentPage.getContent().clearName();
       const newAttributeName = "Text2";
       currentPage.getContent().typeName(newAttributeName);
@@ -171,7 +171,7 @@ describe("Content Types", () => {
         addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_LIST);
       });
 
-      it("Nested attribute type selection should not contain Text, Longtext, Hypertext, Image, Attach, Link", () => {
+      it("Un-allowed nested attribute types", () => {
         currentPage.getContent().getNestedAttributeType()
                    .should("not.contain", "Text")
                    .and("not.contain", "Longtext")
@@ -181,7 +181,7 @@ describe("Content Types", () => {
                    .and("not.contain", "Link");
       });
 
-      describe("examples of nested attribute types that are allowed in List attribute", () => {
+      describe("Allowed nested attribute types", () => {
 
         const attributeListTest = [
           {
@@ -202,14 +202,65 @@ describe("Content Types", () => {
         ];
 
         attributeListTest.forEach(({type, codeValue, nameEnValue}) => {
-          it(`${type} attribute nested`, () => {
-            cy.fillAddListAttributeForm(type, codeValue, CONTENT_TYPE_CODE, TYPE_LIST);
-
-            cy.fillEditListAttributeForm(nameEnValue, codeValue, CONTENT_TYPE_CODE, TYPE_LIST);
-
-            cy.deleteAttributeFromContentType(codeValue, CONTENT_TYPE_CODE);
+          it(`${type}`, () => {
+            fillAddListAttributeForm(currentPage, type, codeValue, CONTENT_TYPE_CODE, TYPE_LIST);
+            fillEditListAttributeForm(currentPage, nameEnValue, codeValue, CONTENT_TYPE_CODE, TYPE_LIST);
+            deleteAttributeFromContentType(currentPage, codeValue, CONTENT_TYPE_CODE);
           });
         });
+
+        const fillAddListAttributeForm = (page, nestedAttribute, codeValue, contentTypeCode, attributeType = 'List') => {
+          const isArrayNested = ['Monolist', 'List'].includes(attributeType);
+          cy.log(`Add a nested attribute ${attributeType} with attribute ${codeValue} for ${contentTypeCode}`);
+          page.getContent().typeCode(codeValue);
+          if (isArrayNested) {
+            page.getContent().selectNestedAttributeType(nestedAttribute);
+          }
+          currentPage = page.getContent().continue(attributeType);
+          if (isArrayNested) {
+            cy.location("pathname").should("eq", `/cms/content-type/attribute/${contentTypeCode}/MonolistAdd/${codeValue}`);
+
+            if (nestedAttribute !== 'Composite') {
+              currentPage = currentPage.getContent().continue();
+              cy.location("pathname").should("eq", `/cms/content-types/edit/${contentTypeCode}`);
+
+              cy.log('check if new list attribute exists');
+              currentPage.getContent().getAttributesTable().should("contain", codeValue);
+            }
+          }
+        };
+        const fillEditListAttributeForm = (page, nameEnValue, codeValue, contentTypeCode, attributeType = 'List', isMonolistComposite = false) => {
+          const isArrayNested = ['Monolist', 'List'].includes(attributeType);
+          cy.log(`Edit attribute ${codeValue} for ${contentTypeCode}`);
+
+          currentPage = page.getContent().getKebabMenu(codeValue).open().openEdit();
+          cy.location("pathname").should("eq", `/cms/content-type/attribute/${contentTypeCode}/edit/${codeValue}`);
+
+          currentPage.getContent().clearName();
+          currentPage.getContent().typeName(nameEnValue);
+          currentPage = currentPage.getContent().continue(attributeType);
+
+          if (isArrayNested) {
+            if (!isMonolistComposite) {
+              cy.location("pathname").should("eq", `/cms/content-type/attribute/${contentTypeCode}/MonolistAdd/${codeValue}`);
+
+              currentPage = currentPage.getContent().continue();
+              cy.location("pathname").should("eq", `/cms/content-types/edit/${contentTypeCode}`);
+
+              cy.log('check if new name of list attribute exists');
+              currentPage.getContent().getAttributesTable().should("contain", nameEnValue);
+            }
+          }
+        };
+        const deleteAttributeFromContentType = (page, codeValue, contentTypeCode, forSubAttribute = false) => {
+          cy.log(`Delete attribute ${codeValue} from ${contentTypeCode}`);
+          page.getContent().getKebabMenu(codeValue).open().clickDelete();
+          if (!forSubAttribute) {
+            page.getDialog().getBody().getStateInfo().should("contain", codeValue);
+            page.getDialog().confirm();
+          }
+          page.getContent().getAttributesTable().should("not.contain", codeValue);
+        }
 
       });
 
