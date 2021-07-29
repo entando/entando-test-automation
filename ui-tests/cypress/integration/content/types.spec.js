@@ -323,23 +323,24 @@ describe("Content Types", () => {
       const mainAttrCode = "mocoCode";
       const mainAttrName = "Mono compo name";
 
-      it("test on adding monolist composite", () => {
+      it("Add monolist composite attribute", () => {
         addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-        cy.fillAddListAttributeForm(TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-        cy.wait(1000);
+        fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
+
         attributeCompositeTest.forEach((subAttribute) => {
-          cy.addNewCompositeAttribute(
+          addNewCompositeAttribute(
+              currentPage,
               subAttribute.type,
               subAttribute.codeValue,
-              CONTENT_TYPE_CODE,
-              false,
-              true
+              CONTENT_TYPE_CODE
           );
         });
-        cy.getByTestId(TEST_ID_PAGE_CONTAINER).contains("Continue").click();
-        cy.wait(1000);
+        currentPage = currentPage.getContent().continue();
+
         cy.log("check if new list attribute exists");
-        cy.get("table").should("contain", mainAttrCode);
+        currentPage.getContent().getAttributesTable().should("contain", mainAttrCode);
+
+        deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
       });
 
       it("test on editing monolist composite", () => {
@@ -401,7 +402,11 @@ describe("Content Types", () => {
       if (isArrayNested) {
         page.getContent().selectNestedAttributeType(nestedAttribute);
       }
-      currentPage = page.getContent().continue(attributeType);
+      if (nestedAttribute !== "Composite") {
+        currentPage = page.getContent().continue(attributeType);
+      } else {
+        currentPage = page.getContent().continue(nestedAttribute);
+      }
       if (isArrayNested) {
         cy.location("pathname").should("eq", `/cms/content-type/attribute/${contentTypeCode}/MonolistAdd/${codeValue}`);
 

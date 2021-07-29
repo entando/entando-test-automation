@@ -9,13 +9,14 @@ import EditPage         from "./EditPage";
 
 export default class CompositeAttributePage extends Content {
 
-  attributeTypeSelect = `${htmlElements.select}[name=type]`;
-  addAttributeButton  = `${htmlElements.button}.ContentTypeForm__add`;
-  continueButton      = `${htmlElements.button}.ContentTypeAttributeForm__continue-btn`;
+  attributeTable     = `${htmlElements.div}.AttributeListTableComposite`;
+  addAttributeButton = `${htmlElements.button}.ContentTypeForm__add`;
+  submitButton       = `${htmlElements.button}[type=submit]`;
 
   getAttributeTypeSelect() {
     return this.getContents()
-               .find(this.attributeTypeSelect);
+               .find(this.attributeTable)
+               .find(htmlElements.select);
   }
 
   getAddAttributeButton() {
@@ -23,9 +24,9 @@ export default class CompositeAttributePage extends Content {
                .find(this.addAttributeButton);
   }
 
-  getContinueButton() {
+  getSubmitButton() {
     return this.getContents()
-               .find(this.continueButton);
+               .find(this.submitButton);
   }
 
   selectAttribute(value) {
@@ -49,7 +50,7 @@ export default class CompositeAttributePage extends Content {
   }
 
   continue() {
-    this.getContinueButton().click();
+    this.getSubmitButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     return new AppPage(EditPage);
   }
