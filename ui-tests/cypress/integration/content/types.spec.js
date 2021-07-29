@@ -307,8 +307,13 @@ describe("Content Types", () => {
         deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
       });
 
-      it("test on deleting composite", () => {
-        cy.deleteAttributeFromContentType(compositeCode, CONTENT_TYPE_CODE);
+      it("Delete composite attribute", () => {
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
+        currentPage = currentPage.getContent().continue();
+
+        deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
       });
 
     });
