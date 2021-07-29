@@ -375,8 +375,13 @@ describe("Content Types", () => {
         deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
       });
 
-      it("test on deleting monolist composite", () => {
-        cy.deleteAttributeFromContentType(mainAttrCode, CONTENT_TYPE_CODE);
+      it("Delete monolist composite attribute", () => {
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
+        fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
+        addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
+        currentPage = currentPage.getContent().continue();
+
+        deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
       });
 
     });
