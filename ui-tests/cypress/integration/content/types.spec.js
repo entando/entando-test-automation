@@ -274,11 +274,17 @@ describe("Content Types", () => {
         deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
       });
 
-      it("test on editing composite", () => {
-        cy.fillEditListAttributeForm(compName, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
-        cy.addNewCompositeAttribute("Image", "muImage", CONTENT_TYPE_CODE, true);
+      it("Edit composite attribute", () => {
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
+        currentPage = currentPage.getContent().continue();
 
-        cy.getByTestId(TEST_ID_PAGE_CONTAINER).contains("Save").click();
+        fillEditListAttributeForm(currentPage, compName, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        addNewCompositeAttribute(currentPage, "Image", "muImage", CONTENT_TYPE_CODE);
+        currentPage = currentPage.getContent().continue();
+
+        deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
       });
 
       it("test on editing composite #2 - removing attributes inside composite", () => {
