@@ -274,7 +274,7 @@ describe("Content Types", () => {
         deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
       });
 
-      it("Edit composite attribute", () => {
+      it("Edit composite attribute - Add sub-attribute", () => {
         addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
         fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
         addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
@@ -287,16 +287,24 @@ describe("Content Types", () => {
         deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
       });
 
-      it("test on editing composite #2 - removing attributes inside composite", () => {
+      it("Edit composite attribute - Remove sub-attribute", () => {
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        attributeCompositeTest.forEach((subAttribute) => {
+          addNewCompositeAttribute(currentPage, subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
+        });
+        currentPage = currentPage.getContent().continue();
+
         const toDelete = attributeCompositeTest.slice(0, 2);
 
-        cy.fillEditListAttributeForm(compName, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        fillEditListAttributeForm(currentPage, compName, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
         toDelete.forEach((attr) => {
-          cy.deleteAttributeFromContentType(attr.codeValue, CONTENT_TYPE_CODE, true);
+          deleteAttributeFromContentType(currentPage, attr.codeValue, CONTENT_TYPE_CODE, true);
         });
 
-        cy.getByTestId(TEST_ID_PAGE_CONTAINER).contains("Save").click();
-        cy.wait(1000);
+        currentPage = currentPage.getContent().continue();
+
+        deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
       });
 
       it("test on deleting composite", () => {
