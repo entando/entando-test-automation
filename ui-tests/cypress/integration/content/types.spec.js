@@ -2,10 +2,6 @@ import {generateRandomId} from "../../support/utils";
 
 import {htmlElements} from "../../support/pageObjects/WebElement";
 
-import {
-  TEST_ID_PAGE_CONTAINER
-} from "../../test-const/content-types-const";
-
 import HomePage from "../../support/pageObjects/HomePage.js";
 
 describe("Content Types", () => {
@@ -357,23 +353,26 @@ describe("Content Types", () => {
         deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
       });
 
-      it("test on editing monolist composite #2 - removing attributes inside", () => {
-        const toDelete = attributeCompositeTest.slice(1, 2);
+      it("Edit monolist composite attribute - Remove sub-attribute", () => {
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
+        fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
 
-        cy.fillEditListAttributeForm(
-            mainAttrName,
-            mainAttrCode,
-            CONTENT_TYPE_CODE,
-            TYPE_MONOLIST,
-            true
-        );
+        attributeCompositeTest.forEach((subAttribute) => {
+          addNewCompositeAttribute(currentPage, subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
+        });
+        currentPage = currentPage.getContent().continue();
 
+        const toDelete = attributeCompositeTest.slice(0, 2);
+
+        fillEditListAttributeForm(currentPage, mainAttrName, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST, true);
         toDelete.forEach((attr) => {
-          cy.deleteAttributeFromContentType(attr.codeValue, CONTENT_TYPE_CODE, true);
+          deleteAttributeFromContentType(currentPage, attr.codeValue, CONTENT_TYPE_CODE, true);
         });
 
-        cy.getByTestId(TEST_ID_PAGE_CONTAINER).contains("Save").click();
-        cy.wait(1000);
+        currentPage = currentPage.getContent().continue(TYPE_MONOLIST);
+        currentPage = currentPage.getContent().continue();
+
+        deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
       });
 
       it("test on deleting monolist composite", () => {

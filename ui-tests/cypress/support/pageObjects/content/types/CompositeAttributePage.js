@@ -4,8 +4,9 @@ import Content from "../../app/Content";
 
 import AppPage from "../../app/AppPage";
 
-import AddAttributePage from "./AddAttributePage";
-import EditPage         from "./EditPage";
+import AddAttributePage          from "./AddAttributePage";
+import EditPage                  from "./EditPage";
+import EditMonolistAttributePage from "./EditMonolistAttributePage";
 
 export default class CompositeAttributePage extends Content {
 
@@ -49,10 +50,15 @@ export default class CompositeAttributePage extends Content {
     return new AppPage(AddAttributePage);
   }
 
-  continue() {
+  continue(attribute = "") {
     this.getSubmitButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AppPage(EditPage);
+    switch (attribute) {
+      case "Monolist":
+        return new AppPage(EditMonolistAttributePage);
+      default:
+        return new AppPage(EditPage);
+    }
   }
 
 }
