@@ -11,6 +11,8 @@ export default class ManagementPage extends Content {
     pageName = `[${DATA_TESTID}=common_PageTree_span]`;
     optionsMenu = `#WidgetListRow-dropown`;
     addChild = `[aria-labelledby=WidgetListRow-dropown] li:nth-child(1) a`;
+    publishChild = `[aria-labelledby=WidgetListRow-dropown] li:nth-child(5) a`;
+    deleteChild = `[aria-labelledby=WidgetListRow-dropown] li:nth-child(7) a`;
     expandAll = `${htmlElements.div}.PageTree__toggler--expand`;
 
     getAddButton() {
@@ -37,6 +39,14 @@ export default class ManagementPage extends Content {
 
     clickExpandAll() {
         this.getExpandAll().click();
+    }
+
+    getPublishChild (name) {
+        return this.getOptionsMenu(name).click().parent().find(this.publishChild);
+    }
+
+    getDeleteChild (name) {
+        return this.getOptionsMenu(name).click().parent().find(this.deleteChild);
     }
 
     clickAddChild (name) {
