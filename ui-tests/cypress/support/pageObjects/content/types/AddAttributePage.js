@@ -7,6 +7,7 @@ import AppPage from "../../app/AppPage";
 import EditPage                  from "./EditPage";
 import EditListAttributePage     from "./EditListAttributePage";
 import EditMonolistAttributePage from "./EditMonolistAttributePage";
+import CompositeAttributePage    from "./CompositeAttributePage";
 
 export default class AddAttributePage extends Content {
 
@@ -37,7 +38,7 @@ export default class AddAttributePage extends Content {
     this.getNestedAttributeType().select(value);
   }
 
-  continue(attribute = "") {
+  continue(attribute = "", isComposite = false) {
     this.getContinueButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     switch (attribute) {
@@ -45,8 +46,14 @@ export default class AddAttributePage extends Content {
         return new AppPage(EditListAttributePage);
       case "Monolist":
         return new AppPage(EditMonolistAttributePage);
+      case "Composite":
+        return new AppPage(CompositeAttributePage);
       default:
-        return new AppPage(EditPage);
+        if (isComposite) {
+          return new AppPage(CompositeAttributePage);
+        } else {
+          return new AppPage(EditPage);
+        }
     }
 
   }

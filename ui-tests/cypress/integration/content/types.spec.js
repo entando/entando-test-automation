@@ -260,17 +260,18 @@ describe("Content Types", () => {
       const compositeCode = "compCode";
       const compName      = "compo name";
 
-      it("test on adding composite", () => {
+      it("Add composite attribute", () => {
         addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
 
-        cy.fillAddListAttributeForm(TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+        fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
         attributeCompositeTest.forEach((subAttribute) => {
-          cy.addNewCompositeAttribute(subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
+          addNewCompositeAttribute(currentPage, subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
         });
-        cy.getByTestId(TEST_ID_PAGE_CONTAINER).contains("Continue").click();
-        cy.wait(1000);
+        currentPage = currentPage.getContent().continue();
         cy.log("check if new list attribute exists");
-        cy.get("table").should("contain", compositeCode);
+        currentPage.getContent().getAttributesTable().should("contain", compositeCode);
+
+        deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
       });
 
       it("test on editing composite", () => {
@@ -425,6 +426,14 @@ describe("Content Types", () => {
         page.getDialog().confirm();
       }
       page.getContent().getAttributesTable().should("not.contain", codeValue);
+    };
+    const addNewCompositeAttribute       = (page, attributeType, codeValue, contentTypeCode) => {
+      cy.log(`Add new composite attribute ${attributeType} to ${contentTypeCode}`);
+      currentPage = page.getContent().addAttribute(attributeType);
+      currentPage.getContent().typeCode(codeValue);
+      currentPage = currentPage.getContent().continue("", true);
+      cy.log("check if new list attribute exists");
+      currentPage.getContent().getAttributesTable().should("contain", codeValue);
     };
 
   });
