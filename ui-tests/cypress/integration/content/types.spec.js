@@ -155,7 +155,10 @@ describe("Content Types", () => {
     ];
 
     beforeEach(() => {
-      currentPage = openContentTypeFormWith(CONTENT_TYPE_CODE);
+      cy.log(`Edit content type ${CONTENT_TYPE_CODE}`);
+      currentPage = openContentTypesPage();
+      currentPage = currentPage.getContent().editContentType(CONTENT_TYPE_CODE);
+      cy.location("pathname").should("eq", `/cms/content-types/edit/${CONTENT_TYPE_CODE}`);
     });
 
     describe("List", () => {
@@ -253,13 +256,16 @@ describe("Content Types", () => {
     });
 
     describe("Composite", () => {
+
       const compositeCode = "compCode";
       const compName      = "compo name";
 
-      it("Add composite attribute", () => {
+      beforeEach(() => {
         currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
-
         currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
+      });
+
+      it("Add composite attribute", () => {
         attributeCompositeTest.forEach((subAttribute) => {
           currentPage = addNewCompositeAttribute(currentPage, subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
         });
@@ -271,8 +277,6 @@ describe("Content Types", () => {
       });
 
       it("Edit composite attribute - Add sub-attribute", () => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
-        currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
         currentPage = addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
         currentPage = currentPage.getContent().continue();
 
@@ -284,8 +288,6 @@ describe("Content Types", () => {
       });
 
       it("Edit composite attribute - Remove sub-attribute", () => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
-        currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
         attributeCompositeTest.forEach((subAttribute) => {
           currentPage = addNewCompositeAttribute(currentPage, subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
         });
@@ -304,8 +306,6 @@ describe("Content Types", () => {
       });
 
       it("Delete composite attribute", () => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
-        currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
         currentPage = addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
         currentPage = currentPage.getContent().continue();
 
@@ -319,10 +319,12 @@ describe("Content Types", () => {
       const mainAttrCode = "mocoCode";
       const mainAttrName = "Mono compo name";
 
-      it("Add monolist composite attribute", () => {
+      beforeEach(() => {
         currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
         currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
+      });
 
+      it("Add monolist composite attribute", () => {
         attributeCompositeTest.forEach((subAttribute) => {
           currentPage = addNewCompositeAttribute(
               currentPage,
@@ -340,8 +342,6 @@ describe("Content Types", () => {
       });
 
       it("Edit monolist composite attribute - Add sub-attribute", () => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-        currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
         currentPage = addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
         currentPage = currentPage.getContent().continue();
 
@@ -354,9 +354,6 @@ describe("Content Types", () => {
       });
 
       it("Edit monolist composite attribute - Remove sub-attribute", () => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-        currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-
         attributeCompositeTest.forEach((subAttribute) => {
           currentPage = addNewCompositeAttribute(currentPage, subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
         });
@@ -376,8 +373,6 @@ describe("Content Types", () => {
       });
 
       it("Delete monolist composite attribute", () => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-        currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
         currentPage = addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
         currentPage = currentPage.getContent().continue();
 
@@ -385,14 +380,6 @@ describe("Content Types", () => {
       });
 
     });
-
-    const openContentTypeFormWith = (contentTypeCode) => {
-      cy.log(`Edit content type ${contentTypeCode}`);
-      currentPage = openContentTypesPage();
-      currentPage = currentPage.getContent().editContentType(contentTypeCode);
-      cy.location("pathname").should("eq", `/cms/content-types/edit/${contentTypeCode}`);
-      return currentPage;
-    };
 
     const addNewContentTypeAttribute = (page, contentTypeCode, attributeType) => {
       cy.log(`Add new content type attribute ${attributeType} to ${contentTypeCode}`);
