@@ -3,8 +3,7 @@ import {generateRandomId} from "../../support/utils";
 import {htmlElements} from "../../support/pageObjects/WebElement";
 
 import {
-  TEST_ID_PAGE_CONTAINER,
-  TEST_ID_CONTENTTYPE_FORM
+  TEST_ID_PAGE_CONTAINER
 } from "../../test-const/content-types-const";
 
 import HomePage from "../../support/pageObjects/HomePage.js";
@@ -272,9 +271,10 @@ describe("Content Types", () => {
         addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
       });
 
-      it("Nested attribute type selection should not contain Monolist", () => {
-        cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "Monolist");
-        cy.getByName(TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN).should("not.contain", "List");
+      it("Un-allowed nested attribute types", () => {
+        currentPage.getContent().getNestedAttributeType()
+                   .should("not.contain", "Monolist")
+                   .and("not.contain", "List");
       });
 
       describe("examples of nested attribute types that are allowed in Monolist attribute", () => {
