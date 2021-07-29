@@ -10,10 +10,23 @@ const SAMPLE_DUPE_WIDGET_CODE = 'mio_widget';
 
 const SAMPLE_WIDGET_NAMES = ['My Widget', 'Your Widget', 'Our Widget'];
 
-const PAGE = {
+const HOMEPAGE = {
   title: 'My Homepage',
   code: 'my_homepage'
 };
+
+const SITEMAP = {
+  title: 'Sitemap',
+  code: 'sitemap'
+};
+
+const DEMOPAGE = {
+  title: 'Demo page',
+  code: 'demopage',
+};
+
+const iconChoose = 'fa-android';
+const iconUpload = 'icon/Entando.svg';
 
 describe('Microfrontends and Widgets', () => {
   let currentPage;
@@ -22,7 +35,7 @@ describe('Microfrontends and Widgets', () => {
     cy.kcLogout();
   });
 
-  const selectPageFromSidebar = (pageOpen = PAGE) => {
+  const selectPageFromSidebar = (pageOpen = HOMEPAGE) => {
     const currentPageContent = currentPage.getContent();
     currentPageContent.getSidebarTab('Page Tree').click();
     cy.wait(3000);
@@ -79,7 +92,7 @@ describe('Microfrontends and Widgets', () => {
       cy.wait(500);
       currentPage.getContent().editFormFields({
         code: 'momaco',
-        iconUpload: 'icon/Entando.svg',
+        iconUpload,
         customUi: '<h2>memecode</h2>',
       });
       currentPage.getContent().getSaveDropdownButton().click();
@@ -93,7 +106,7 @@ describe('Microfrontends and Widgets', () => {
       currentPage.getContent().editFormFields({
         name: SAMPLE_WIDGET_NAMES[1],
         group: 'Free Access',
-        iconChoose: 'fa-android',
+        iconChoose,
       });
       currentPage.getContent().submitContinueForm();
       cy.location('pathname').should('not.eq', '/widget');
@@ -102,18 +115,35 @@ describe('Microfrontends and Widgets', () => {
       currentPage = currentPage.openMFE_Widgets();
       cy.wait(500);
       currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[1]);
+    });
+    
+    it('Prerequisite - widget setup for the new user widget', () => {
+      cy.log('Widget setup - create sample page');
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openManagement();
+      cy.wait(500);
+      currentPage = currentPage.getContent().clickAddButton();
+      currentPage.getContent().fillRequiredData(
+        DEMOPAGE.title,
+        DEMOPAGE.title,
+        DEMOPAGE.code,
+        0,
+        '1-2-column',
+      );
+      currentPage = currentPage.getContent().clickSaveButton();
+      cy.wait(1000);
 
       cy.log('Widget setup - add new widget to page');
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openDesigner();
-      selectPageFromSidebar();
+      selectPageFromSidebar(DEMOPAGE);
       cy.wait(500);
 
       currentPage.getContent().dragWidgetToFrame({
         code: SAMPLE_BASIC_WIDGET_ID,
         name: SAMPLE_WIDGET_NAMES[1],
       }, WIDGET_FRAME);
-      currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+      currentPage.getContent().getPageStatus().should('match', /^Unpublished$/);
       currentPage.getContent().publishPageDesign();
       currentPage.getContent().getPageStatus().should('match', /^Published$/);
     });
@@ -123,7 +153,7 @@ describe('Microfrontends and Widgets', () => {
       cy.wait(500);
       cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
-        iconUpload: 'icon/Entando.svg',
+        iconUpload,
         name: SAMPLE_WIDGET_NAMES[2],
         group: 'Administrators',
       });
@@ -135,7 +165,7 @@ describe('Microfrontends and Widgets', () => {
     it('Editing a used widget via page designer modifying all mandatory fields', () => {
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openDesigner();
-      selectPageFromSidebar();
+      selectPageFromSidebar(DEMOPAGE);
       cy.wait(500);
       currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME);
       currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, {
@@ -147,7 +177,7 @@ describe('Microfrontends and Widgets', () => {
       currentPage.getContent().editFormFields({
         name: SAMPLE_WIDGET_NAMES[0],
         group: 'Free Access',
-        iconChoose: 'fa-android',
+        iconChoose,
       });
       currentPage = currentPage.getContent().submitForm();
       cy.wait(3000);
@@ -155,20 +185,36 @@ describe('Microfrontends and Widgets', () => {
       currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[0]);
     });
 
-    it('Delete the widget we just made', () => {
-      cy.log('Widget cleanup - temporary');
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
-      selectPageFromSidebar();
-      cy.wait(500);
+    it('Attempt to delete the widget with reference to a published page', () => {
+      currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.DELETE);
 
-      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME);
-      currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, {
-        code: SAMPLE_BASIC_WIDGET_ID,
-        name: SAMPLE_WIDGET_NAMES[0],
-      });
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
+      currentPage.getDialog().getConfirmButton().click();
+      currentPage.getToastList().should('contain', `The Widget ${SAMPLE_BASIC_WIDGET_ID} cannot be deleted because it is used into pages`);
+    });
+
+    it('Attempt to delete the widget with reference to an unpublished page', () => {
+      cy.log('set the page to unpublished first');
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openManagement();
+      currentPage.getContent().getPublishChild(DEMOPAGE.title).click();
+      currentPage.getDialog().getConfirmButton().click();
+
+      cy.log('now attempt to delete the widget');
+      currentPage = currentPage.getMenu().getComponents().open();
+      currentPage = currentPage.openMFE_Widgets();
+
+      currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.DELETE);
+
+      currentPage.getDialog().getConfirmButton().click();
+      currentPage.getToastList().should('contain', `The Widget ${SAMPLE_BASIC_WIDGET_ID} cannot be deleted because it is used into pages`);
+    });
+
+    it('Delete a user widget', () => {
+      cy.log('delete the page');
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openManagement();
+      currentPage.getContent().getDeleteChild(DEMOPAGE.title).click();
+      currentPage.getDialog().getConfirmButton().click();
 
       currentPage = currentPage.getMenu().getComponents().open();
       currentPage = currentPage.openMFE_Widgets();
@@ -204,7 +250,7 @@ describe('Microfrontends and Widgets', () => {
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
         currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
     
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().clickAddContentButton();
         cy.wait(3000);
     
@@ -280,7 +326,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT);
     
-        cy.validateUrlChanged(`/page/${PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
+        cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
         currentPage.getContent().getConfigTabConfiguration().should('exist');
         currentPage.getContent().getConfigTabConfiguration().click();
@@ -289,7 +335,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().submitCloneWidget();
     
         cy.wait(4500);
-        cy.validateUrlChanged(`/page/configuration/${PAGE.code}`);
+        cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
     
         currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
         currentPage.getContent().publishPageDesign();
@@ -346,7 +392,7 @@ describe('Microfrontends and Widgets', () => {
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
         currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME.frameName);
     
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         cy.wait(5000);
         currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
         currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Banner').click();
@@ -415,7 +461,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT_LIST);
     
-        cy.validateUrlChanged(`/page/${PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
+        cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
         currentPage.getContent().getConfigTabConfiguration().should('exist');
         currentPage.getContent().getConfigTabConfiguration().click();
@@ -424,7 +470,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().submitCloneWidget();
     
         cy.wait(4500);
-        cy.validateUrlChanged(`/page/configuration/${PAGE.code}`);
+        cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
     
         currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
         currentPage.getContent().publishPageDesign();
@@ -481,7 +527,7 @@ describe('Microfrontends and Widgets', () => {
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
         currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_QUERY, WIDGET_FRAME.frameName);
 
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().getContentTypeField().select('Banner');
         cy.wait(2500);
         currentPage.getContent().getPublishSettingsAccordButton().click();
@@ -521,7 +567,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT_QUERY);
         
         cy.wait(2500);
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().getPublishSettingsAccordButton().click();
         cy.wait(500);
         currentPage.getContent().getMaxElemForItemDropdown().select('6');
@@ -551,7 +597,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT_QUERY);
 
-        cy.validateUrlChanged(`/page/${PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_QUERY.code}/listViewerConfig`);
+        cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_QUERY.code}/listViewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
         currentPage.getContent().getConfigTabConfiguration().should('exist');
         currentPage.getContent().getConfigTabConfiguration().click();
@@ -560,7 +606,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().submitCloneWidget();
 
         cy.wait(4500);
-        cy.validateUrlChanged(`/page/configuration/${PAGE.code}`);
+        cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
 
         currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
         currentPage.getContent().publishPageDesign();
@@ -606,10 +652,6 @@ describe('Microfrontends and Widgets', () => {
     });
 
     describe('CMS Search Form and Search Results Widgets', () => {
-      const THE_PAGE = {
-        title: 'Sitemap',
-        code: 'sitemap'
-      };
 
       const WIDGET_FRAME_1 = {
         frameName: 'Frame 2',
@@ -622,7 +664,7 @@ describe('Microfrontends and Widgets', () => {
       };
 
       it('Basic add', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
@@ -639,7 +681,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Basic edit with CMS Search Form widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
     
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -657,7 +699,7 @@ describe('Microfrontends and Widgets', () => {
       });
     
       it('Basic edit with CMS Search Result widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
     
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
@@ -675,7 +717,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Open Widget Details from the dropped CMS Search Form widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -685,7 +727,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Open Widget Details from the dropped CMS Search Results widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
@@ -695,7 +737,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Test widget cleanup', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -742,10 +784,6 @@ describe('Microfrontends and Widgets', () => {
     });
 
     describe('CMS News Archive and News Latest Widgets', () => {
-      const THE_PAGE = {
-        title: 'Sitemap',
-        code: 'sitemap'
-      };
 
       const WIDGET_FRAME_1 = {
         frameName: 'Frame 2',
@@ -758,7 +796,7 @@ describe('Microfrontends and Widgets', () => {
       };
 
       it('Basic add', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
@@ -774,7 +812,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Basic edit with News Archive widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
     
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -792,7 +830,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Basic edit with News Latest widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
     
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
@@ -810,7 +848,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Open Widget Details from the dropped CMS News Archive widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -820,7 +858,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Open Widget Details from the dropped CMS News Latest widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
@@ -830,7 +868,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Test widget cleanup', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -877,10 +915,6 @@ describe('Microfrontends and Widgets', () => {
     });
 
     describe('Page Widgets - Language and Logo', () => {
-      const THE_PAGE = {
-        title: 'Sitemap',
-        code: 'sitemap'
-      };
 
       const WIDGET_FRAME_1 = {
         frameName: 'Frame 2',
@@ -893,7 +927,7 @@ describe('Microfrontends and Widgets', () => {
       };
 
       it('Basic add', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
@@ -910,7 +944,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Basic edit with Language widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
     
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -928,7 +962,7 @@ describe('Microfrontends and Widgets', () => {
       });
     
       it('Basic edit with Logo widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
     
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
@@ -946,7 +980,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Open Widget Details from the dropped Language widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -956,7 +990,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Open Widget Details from the dropped Logo widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
@@ -966,7 +1000,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Test widget cleanup', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -1013,10 +1047,6 @@ describe('Microfrontends and Widgets', () => {
     });
 
     describe('System Widgets - APIs and System Messages', () => {
-      const THE_PAGE = {
-        title: 'Sitemap',
-        code: 'sitemap'
-      };
 
       const WIDGET_FRAME_1 = {
         frameName: 'Frame 2',
@@ -1029,7 +1059,7 @@ describe('Microfrontends and Widgets', () => {
       };
 
       it('Basic add', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
@@ -1046,7 +1076,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Basic edit with APIs widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
       
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -1064,7 +1094,7 @@ describe('Microfrontends and Widgets', () => {
       });
       
       it('Basic edit with News Latest widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
       
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
@@ -1082,7 +1112,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Open Widget Details from the dropped APIs widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
@@ -1092,7 +1122,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Open Widget Details from the dropped System Messages widget', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
@@ -1102,7 +1132,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Test widget cleanup', () => {
-        selectPageFromSidebar(THE_PAGE);
+        selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
