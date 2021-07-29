@@ -4,8 +4,9 @@ import Content from "../../app/Content";
 
 import AppPage from "../../app/AppPage";
 
-import EditPage              from "./EditPage";
-import EditListAttributePage from "./EditListAttributePage";
+import EditPage                  from "./EditPage";
+import EditListAttributePage     from "./EditListAttributePage";
+import EditMonolistAttributePage from "./EditMonolistAttributePage";
 
 export default class AddAttributePage extends Content {
 
@@ -42,6 +43,8 @@ export default class AddAttributePage extends Content {
     switch (attribute) {
       case "List":
         return new AppPage(EditListAttributePage);
+      case "Monolist":
+        return new AppPage(EditMonolistAttributePage);
       default:
         return new AppPage(EditPage);
     }
