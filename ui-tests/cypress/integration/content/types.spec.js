@@ -343,18 +343,18 @@ describe("Content Types", () => {
         deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
       });
 
-      it("test on editing monolist composite", () => {
-        cy.fillEditListAttributeForm(
-            mainAttrName,
-            mainAttrCode,
-            CONTENT_TYPE_CODE,
-            TYPE_MONOLIST,
-            true
-        );
-        cy.addNewCompositeAttribute("Image", "muImage", CONTENT_TYPE_CODE, true, true);
+      it("Edit monolist composite attribute - Add sub-attribute", () => {
+        addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
+        fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
+        addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
+        currentPage = currentPage.getContent().continue();
 
-        cy.getByTestId(TEST_ID_PAGE_CONTAINER).contains("Save").click();
-        cy.wait(1000);
+        fillEditListAttributeForm(currentPage, mainAttrName, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST, true);
+        addNewCompositeAttribute(currentPage,"Image", "muImage", CONTENT_TYPE_CODE);
+
+        currentPage = currentPage.getContent().continue();
+
+        deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
       });
 
       it("test on editing monolist composite #2 - removing attributes inside", () => {
@@ -428,7 +428,11 @@ describe("Content Types", () => {
 
       currentPage.getContent().clearName();
       currentPage.getContent().typeName(nameEnValue);
-      currentPage = currentPage.getContent().continue(attributeType);
+      if (!isMonolistComposite) {
+        currentPage = currentPage.getContent().continue(attributeType);
+      } else {
+        currentPage = currentPage.getContent().continue("Composite");
+      }
 
       if (isArrayNested) {
         if (!isMonolistComposite) {
