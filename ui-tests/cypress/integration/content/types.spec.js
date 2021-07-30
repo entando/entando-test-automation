@@ -10,18 +10,16 @@ describe("Content Types", () => {
 
   let contentType = {};
 
-  beforeEach(() => {
-    cy.kcLogin("admin").as("tokens");
+  beforeEach(() => cy.kcLogin("admin").as("tokens"));
 
-    contentType.code = generateRandomContentTypeCode();
-    contentType.name = generateRandomId();
-  });
-
-  afterEach(() => {
-    cy.kcLogout();
-  });
+  afterEach(() => cy.kcLogout());
 
   describe("Unreferenced", () => {
+
+    beforeEach(() => {
+      contentType.code = generateRandomContentTypeCode();
+      contentType.name = generateRandomId();
+    });
 
     it("should have the functionality to add a new content type", () => {
       currentPage = openContentTypesPage();
@@ -71,6 +69,9 @@ describe("Content Types", () => {
     let contentId;
 
     beforeEach(() => {
+      contentType.code = generateRandomContentTypeCode();
+      contentType.name = generateRandomId();
+
       postContentType(contentType.code, contentType.name);
       createAndPublishTestContent(contentType.code);
     });
@@ -104,7 +105,7 @@ describe("Content Types", () => {
     it("should allow updating an attribute", () => {
       currentPage         = openContentTypesPage();
       const testAttribute = {type: "Text", code: "Text"};
-      postContentTypeAttribute(contentType.code, testAttribute);
+      cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(testAttribute));
 
       currentPage = currentPage.getContent().getKebabMenu(contentType.code).open().openEdit();
       currentPage = currentPage.getContent().getKebabMenu(testAttribute.code).open().openEdit();
@@ -133,33 +134,28 @@ describe("Content Types", () => {
 
   describe("Attributes", () => {
 
-    const CONTENT_TYPE_CODE = "BNR";
-    const TYPE_MONOLIST     = "Monolist";
-    const TYPE_COMPOSITE    = "Composite";
+    const TYPE_MONOLIST  = "Monolist";
+    const TYPE_COMPOSITE = "Composite";
 
     const attributeCompositeTest = [
-      {
-        type: "Hypertext",
-        codeValue: "httext",
-        nameEnValue: "Le Hyper Text"
-      },
-      {
-        type: "Link",
-        codeValue: "myLink",
-        nameEnValue: "My Link"
-      },
-      {
-        type: "Timestamp",
-        codeValue: "currStamp",
-        nameEnValue: "Curr Stamp"
-      }
+      {type: "Hypertext", code: "httext", names: {en: "Le Hyper Text"}},
+      {type: "Link", code: "myLink", names: {en: "My Link"}},
+      {type: "Timestamp", code: "currStamp", names: {en: "Curr Stamp"}}
     ];
 
-    beforeEach(() => {
-      cy.log(`Edit content type ${CONTENT_TYPE_CODE}`);
-      currentPage = openContentTypesPage();
-      currentPage = currentPage.getContent().getKebabMenu(CONTENT_TYPE_CODE).open().openEdit();
-      cy.location("pathname").should("eq", `/cms/content-types/edit/${CONTENT_TYPE_CODE}`);
+    before(() => {
+      contentType.code = generateRandomContentTypeCode();
+      contentType.name = generateRandomId();
+
+      cy.kcLogin("admin").as("tokens");
+      cy.contentTypesController().then(controller => controller.addContentType(contentType.code, contentType.name));
+      cy.kcLogout();
+    });
+
+    after(() => {
+      cy.kcLogin("admin").as("tokens");
+      cy.contentTypesController().then(controller => controller.deleteContentType(contentType.code));
+      cy.kcLogout();
     });
 
     describe("List", () => {
@@ -167,7 +163,8 @@ describe("Content Types", () => {
       const TYPE_LIST = "List";
 
       beforeEach(() => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_LIST);
+        currentPage = openEditContentTypePage(contentType.code);
+        currentPage = currentPage.getContent().openAddAttributePage(TYPE_LIST);
       });
 
       it("Un-allowed nested attribute types", () => {
@@ -183,28 +180,16 @@ describe("Content Types", () => {
       describe("Allowed nested attribute types", () => {
 
         const attributeListTest = [
-          {
-            type: "CheckBox",
-            codeValue: "checki",
-            nameEnValue: "Checki"
-          },
-          {
-            type: "Email",
-            codeValue: "emaili",
-            nameEnValue: "Emaili"
-          },
-          {
-            type: "Date",
-            codeValue: "dati",
-            nameEnValue: "Daeti"
-          }
+          {type: "CheckBox", code: "checki", names: {en: "Checki"}},
+          {type: "Email", code: "emaili", names: {en: "Emaili"}},
+          {type: "Date", code: "dati", names: {en: "Daeti"}}
         ];
 
-        attributeListTest.forEach(({type, codeValue, nameEnValue}) => {
+        attributeListTest.forEach(({type, code, names}) => {
           it(`${type}`, () => {
-            currentPage = fillAddListAttributeForm(currentPage, type, codeValue, CONTENT_TYPE_CODE, TYPE_LIST);
-            currentPage = fillEditListAttributeForm(currentPage, nameEnValue, codeValue, CONTENT_TYPE_CODE, TYPE_LIST);
-            deleteAttributeFromContentType(currentPage, codeValue, CONTENT_TYPE_CODE);
+            currentPage = fillAddListAttributeForm(currentPage, contentType.code, TYPE_LIST, code, type);
+            currentPage = fillEditListAttributeForm(currentPage, contentType.code, TYPE_LIST, code, names.en);
+            cy.contentTypeAttributeController(contentType.code).then(controller => controller.deleteAttribute(code));
           });
         });
 
@@ -214,11 +199,10 @@ describe("Content Types", () => {
 
     describe("Monolist", () => {
 
-      beforeEach(() => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-      });
-
       it("Un-allowed nested attribute types", () => {
+        currentPage = openEditContentTypePage(contentType.code);
+        currentPage = currentPage.getContent().openAddAttributePage(TYPE_MONOLIST);
+
         currentPage.getContent().getNestedAttributeType()
                    .should("not.contain", "Monolist")
                    .and("not.contain", "List");
@@ -227,29 +211,107 @@ describe("Content Types", () => {
       describe("examples of nested attribute types that are allowed in Monolist attribute", () => {
 
         const attributeMonolistTest = [
-          {
-            type: "Text",
-            codeValue: "nicetext",
-            nameEnValue: "Nice Text"
-          },
-          {
-            type: "Image",
-            codeValue: "myImage",
-            nameEnValue: "My Image"
-          },
-          {
-            type: "Attach",
-            codeValue: "myAttach",
-            nameEnValue: "My Attach"
-          }
+          {type: "Text", code: "nicetext", names: {en: "Nice Text"}},
+          {type: "Image", code: "myImage", names: {en: "My Image"}},
+          {type: "Attach", code: "myAttach", names: {en: "My Attach"}}
         ];
 
-        attributeMonolistTest.forEach(({type, codeValue, nameEnValue}) => {
+        beforeEach(() => {
+          currentPage = openEditContentTypePage(contentType.code);
+          currentPage = currentPage.getContent().openAddAttributePage(TYPE_MONOLIST);
+        });
+
+        attributeMonolistTest.forEach(({type, code, names}) => {
           it(`${type} attribute nested`, () => {
-            currentPage = fillAddListAttributeForm(currentPage, type, codeValue, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-            currentPage = fillEditListAttributeForm(currentPage, nameEnValue, codeValue, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-            deleteAttributeFromContentType(currentPage, codeValue, CONTENT_TYPE_CODE);
+            currentPage = fillAddListAttributeForm(currentPage, contentType.code, TYPE_MONOLIST, code, type);
+            currentPage = fillEditListAttributeForm(currentPage, contentType.code, TYPE_MONOLIST, code, names.en);
+            cy.contentTypeAttributeController(contentType.code).then(controller => controller.deleteAttribute(code));
           });
+        });
+
+      });
+
+      describe("Monolist Composite", () => {
+
+        const mainAttrCode = "mocoCode";
+        const mainAttrName = "Mono compo name";
+
+        it("Add monolist composite attribute", () => {
+          currentPage = openEditContentTypePage(contentType.code);
+          currentPage = currentPage.getContent().openAddAttributePage(TYPE_MONOLIST);
+          currentPage = fillAddListAttributeForm(currentPage, contentType.code, TYPE_MONOLIST, mainAttrCode, TYPE_COMPOSITE);
+
+          attributeCompositeTest.forEach(({type, code}) => {
+            currentPage = addNewCompositeAttribute(currentPage, contentType.code, type, code);
+          });
+          currentPage = currentPage.getContent().continue();
+
+          currentPage.getContent().getAttributesTable().should("contain", mainAttrCode);
+
+          cy.contentTypeAttributeController(contentType.code).then(controller => controller.deleteAttribute(mainAttrCode));
+        });
+
+        it("Edit monolist composite attribute - Add sub-attribute", () => {
+          const attribute = {
+            type: TYPE_MONOLIST,
+            code: mainAttrCode,
+            nestedAttribute: {
+              type: TYPE_COMPOSITE,
+              code: mainAttrCode,
+              compositeAttributes: attributeCompositeTest
+            }
+          };
+          cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(attribute));
+          currentPage = openEditContentTypePage(contentType.code);
+
+          currentPage = fillEditListAttributeForm(currentPage, contentType.code, TYPE_MONOLIST, mainAttrCode, mainAttrName, true);
+          currentPage = addNewCompositeAttribute(currentPage, contentType.code, "Image", "muImage");
+
+          cy.contentTypeAttributeController(contentType.code).then(controller => controller.deleteAttribute(mainAttrCode));
+        });
+
+        it("Edit monolist composite attribute - Remove sub-attribute", () => {
+          const toDelete = attributeCompositeTest.slice(0, 2);
+
+          const attribute = {
+            type: TYPE_MONOLIST,
+            code: mainAttrCode,
+            nestedAttribute: {
+              type: TYPE_COMPOSITE,
+              code: mainAttrCode,
+              compositeAttributes: attributeCompositeTest
+            }
+          };
+          cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(attribute));
+          currentPage = openEditContentTypePage(contentType.code);
+
+          currentPage = fillEditListAttributeForm(currentPage, contentType.code, TYPE_MONOLIST, mainAttrCode, mainAttrName, true);
+          toDelete.forEach(({code}) => {
+            deleteAttributeFromContentType(currentPage, code, contentType.code, true);
+          });
+
+          cy.contentTypeAttributeController(contentType.code).then(controller => controller.deleteAttribute(mainAttrCode));
+        });
+
+        it("Delete monolist composite attribute", () => {
+          const textAttribute      = {
+            type: "Text",
+            code: "Text"
+          };
+          const compositeAttribute = {
+            type: TYPE_MONOLIST,
+            code: mainAttrCode,
+            nestedAttribute: {
+              type: TYPE_COMPOSITE,
+              code: mainAttrCode,
+              compositeAttributes: attributeCompositeTest
+            }
+          };
+          cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(textAttribute));
+          cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(compositeAttribute));
+          currentPage = openEditContentTypePage(contentType.code);
+
+          deleteAttributeFromContentType(currentPage, mainAttrCode, contentType.code);
         });
 
       });
@@ -261,137 +323,83 @@ describe("Content Types", () => {
       const compositeCode = "compCode";
       const compName      = "compo name";
 
-      beforeEach(() => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
-        currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
-      });
-
       it("Add composite attribute", () => {
-        attributeCompositeTest.forEach((subAttribute) => {
-          currentPage = addNewCompositeAttribute(currentPage, subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
+        currentPage = openEditContentTypePage(contentType.code);
+        currentPage = currentPage.getContent().openAddAttributePage(TYPE_COMPOSITE);
+        currentPage = fillAddListAttributeForm(currentPage, contentType.code, TYPE_COMPOSITE, compositeCode, TYPE_COMPOSITE);
+
+        attributeCompositeTest.forEach(({type, code}) => {
+          currentPage = addNewCompositeAttribute(currentPage, contentType.code, type, code);
         });
         currentPage = currentPage.getContent().continue();
-        cy.log("check if new list attribute exists");
+
         currentPage.getContent().getAttributesTable().should("contain", compositeCode);
 
-        deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
+        cy.contentTypeAttributeController(contentType.code).then(controller => controller.deleteAttribute(compositeCode));
       });
 
       it("Edit composite attribute - Add sub-attribute", () => {
-        currentPage = addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
+        const attribute = {
+          type: TYPE_COMPOSITE,
+          code: compositeCode,
+          compositeAttributes: attributeCompositeTest
+        };
+        cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(attribute));
+        currentPage = openEditContentTypePage(contentType.code);
+
+        currentPage = fillEditListAttributeForm(currentPage, contentType.code, TYPE_COMPOSITE, compositeCode, compName);
+        currentPage = addNewCompositeAttribute(currentPage, contentType.code, "Image", "muImage");
         currentPage = currentPage.getContent().continue();
 
-        currentPage = fillEditListAttributeForm(currentPage, compName, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
-        currentPage = addNewCompositeAttribute(currentPage, "Image", "muImage", CONTENT_TYPE_CODE);
-        currentPage = currentPage.getContent().continue();
-
-        deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
+        cy.contentTypeAttributeController(contentType.code).then(controller => controller.deleteAttribute(compositeCode));
       });
 
       it("Edit composite attribute - Remove sub-attribute", () => {
-        attributeCompositeTest.forEach((subAttribute) => {
-          currentPage = addNewCompositeAttribute(currentPage, subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
-        });
-        currentPage = currentPage.getContent().continue();
-
         const toDelete = attributeCompositeTest.slice(0, 2);
 
-        currentPage = fillEditListAttributeForm(currentPage, compName, compositeCode, CONTENT_TYPE_CODE, TYPE_COMPOSITE);
-        toDelete.forEach((attr) => {
-          deleteAttributeFromContentType(currentPage, attr.codeValue, CONTENT_TYPE_CODE, true);
+        const attribute = {
+          type: TYPE_COMPOSITE,
+          code: compositeCode,
+          compositeAttributes: attributeCompositeTest
+        };
+        cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(attribute));
+        currentPage = openEditContentTypePage(contentType.code);
+
+        currentPage = fillEditListAttributeForm(currentPage, contentType.code, TYPE_COMPOSITE, compositeCode, compName);
+        toDelete.forEach(({code}) => {
+          deleteAttributeFromContentType(currentPage, code, contentType.code, true);
         });
 
-        currentPage = currentPage.getContent().continue();
-
-        deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
+        cy.contentTypeAttributeController(contentType.code).then(controller => controller.deleteAttribute(compositeCode));
       });
 
       it("Delete composite attribute", () => {
-        currentPage = addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
-        currentPage = currentPage.getContent().continue();
+        const textAttribute      = {
+          type: "Text",
+          code: "Text"
+        };
+        const compositeAttribute = {
+          type: TYPE_COMPOSITE,
+          code: compositeCode,
+          compositeAttributes: attributeCompositeTest
+        };
+        cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(textAttribute));
+        cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(compositeAttribute));
+        currentPage = openEditContentTypePage(contentType.code);
 
-        deleteAttributeFromContentType(currentPage, compositeCode, CONTENT_TYPE_CODE);
+        deleteAttributeFromContentType(currentPage, compositeCode, contentType.code);
       });
 
     });
 
-    describe("Monolist Composite", () => {
-
-      const mainAttrCode = "mocoCode";
-      const mainAttrName = "Mono compo name";
-
-      beforeEach(() => {
-        currentPage = addNewContentTypeAttribute(currentPage, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-        currentPage = fillAddListAttributeForm(currentPage, TYPE_COMPOSITE, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST);
-      });
-
-      it("Add monolist composite attribute", () => {
-        attributeCompositeTest.forEach((subAttribute) => {
-          currentPage = addNewCompositeAttribute(
-              currentPage,
-              subAttribute.type,
-              subAttribute.codeValue,
-              CONTENT_TYPE_CODE
-          );
-        });
-        currentPage = currentPage.getContent().continue();
-
-        cy.log("check if new list attribute exists");
-        currentPage.getContent().getAttributesTable().should("contain", mainAttrCode);
-
-        deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
-      });
-
-      it("Edit monolist composite attribute - Add sub-attribute", () => {
-        currentPage = addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
-        currentPage = currentPage.getContent().continue();
-
-        currentPage = fillEditListAttributeForm(currentPage, mainAttrName, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST, true);
-        currentPage = addNewCompositeAttribute(currentPage, "Image", "muImage", CONTENT_TYPE_CODE);
-
-        currentPage = currentPage.getContent().continue();
-
-        deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
-      });
-
-      it("Edit monolist composite attribute - Remove sub-attribute", () => {
-        attributeCompositeTest.forEach((subAttribute) => {
-          currentPage = addNewCompositeAttribute(currentPage, subAttribute.type, subAttribute.codeValue, CONTENT_TYPE_CODE);
-        });
-        currentPage = currentPage.getContent().continue();
-
-        const toDelete = attributeCompositeTest.slice(0, 2);
-
-        currentPage = fillEditListAttributeForm(currentPage, mainAttrName, mainAttrCode, CONTENT_TYPE_CODE, TYPE_MONOLIST, true);
-        toDelete.forEach((attr) => {
-          deleteAttributeFromContentType(currentPage, attr.codeValue, CONTENT_TYPE_CODE, true);
-        });
-
-        currentPage = currentPage.getContent().continue(TYPE_MONOLIST);
-        currentPage = currentPage.getContent().continue();
-
-        deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
-      });
-
-      it("Delete monolist composite attribute", () => {
-        currentPage = addNewCompositeAttribute(currentPage, attributeCompositeTest[0].type, attributeCompositeTest[0].codeValue, CONTENT_TYPE_CODE);
-        currentPage = currentPage.getContent().continue();
-
-        deleteAttributeFromContentType(currentPage, mainAttrCode, CONTENT_TYPE_CODE);
-      });
-
-    });
-
-    const addNewContentTypeAttribute = (page, contentTypeCode, attributeType) => {
-      cy.log(`Add new content type attribute ${attributeType} to ${contentTypeCode}`);
-      currentPage = page.getContent().openAddAttributePage(attributeType);
-      cy.location("pathname").should("eq", `/cms/content-type/attribute/${contentTypeCode}/add`);
-      return currentPage;
+    const openEditContentTypePage = (contentTypeCode) => {
+      currentPage = openContentTypesPage();
+      return currentPage.getContent().getKebabMenu(contentTypeCode).open().openEdit();
     };
 
-    const fillAddListAttributeForm       = (page, nestedAttribute, codeValue, contentTypeCode, attributeType = "List") => {
+    const fillAddListAttributeForm       = (page, contentTypeCode, attributeType, codeValue, nestedAttribute) => {
       const isArrayNested = ["Monolist", "List"].includes(attributeType);
-      cy.log(`Add a nested attribute ${attributeType} with attribute ${codeValue} for ${contentTypeCode}`);
+
       page.getContent().typeCode(codeValue);
       if (isArrayNested) {
         page.getContent().selectNestedAttributeType(nestedAttribute);
@@ -408,15 +416,13 @@ describe("Content Types", () => {
           currentPage = currentPage.getContent().continue();
           cy.location("pathname").should("eq", `/cms/content-types/edit/${contentTypeCode}`);
 
-          cy.log("check if new list attribute exists");
           currentPage.getContent().getAttributesTable().should("contain", codeValue);
         }
       }
       return currentPage;
     };
-    const fillEditListAttributeForm      = (page, nameEnValue, codeValue, contentTypeCode, attributeType = "List", isMonolistComposite = false) => {
+    const fillEditListAttributeForm      = (page, contentTypeCode, attributeType, codeValue, nameEnValue, isMonolistComposite = false) => {
       const isArrayNested = ["Monolist", "List"].includes(attributeType);
-      cy.log(`Edit attribute ${codeValue} for ${contentTypeCode}`);
 
       currentPage = page.getContent().getKebabMenu(codeValue).open().openEdit();
       cy.location("pathname").should("eq", `/cms/content-type/attribute/${contentTypeCode}/edit/${codeValue}`);
@@ -451,7 +457,7 @@ describe("Content Types", () => {
       }
       page.getContent().getAttributesTable().should("not.contain", codeValue);
     };
-    const addNewCompositeAttribute       = (page, attributeType, codeValue, contentTypeCode) => {
+    const addNewCompositeAttribute       = (page, contentTypeCode, attributeType, codeValue) => {
       cy.log(`Add new composite attribute ${attributeType} to ${contentTypeCode}`);
       currentPage = page.getContent().openAddAttributePage(attributeType);
       currentPage.getContent().typeCode(codeValue);
@@ -472,7 +478,6 @@ describe("Content Types", () => {
   };
 
   const postContentType          = (code, name) => cy.contentTypesController().then(controller => controller.addContentType(code, name));
-  const postContentTypeAttribute = (code, attribute) => cy.contentTypeAttributeController(code).then(controller => controller.addAttribute(attribute));
   const deleteContentType        = (code) => cy.contentTypesController().then(controller => controller.deleteContentType(code));
 
   const openContentTypesPage = () => {
