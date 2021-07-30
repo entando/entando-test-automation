@@ -1,10 +1,12 @@
-import {htmlElements} from "../../WebElement";
+import {htmlElements} from "../../../WebElement";
 
-import Content  from "../../app/Content";
-import AppPage  from "../../app/AppPage";
-import EditPage from "./EditPage";
+import Content  from "../../../app/Content";
 
-export default class EditListAttributePage extends Content {
+import AppPage  from "../../../app/AppPage";
+
+import EditPage from "../EditPage";
+
+export default class NestedAttributePage extends Content {
 
   getContinueButton() {
     return this.getContents()

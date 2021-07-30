@@ -1,35 +1,30 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement";
+import {htmlElements} from "../../WebElement";
 
-import Content from "../../app/Content.js";
+import Content   from "../../app/Content.js";
+import KebabMenu from "../../app/KebabMenu";
 
 import AppPage      from "../../app/AppPage.js";
 import DeleteDialog from "../../app/DeleteDialog";
 
-import AddAttributePage  from "./AddAttributePage";
-import EditAttributePage from "./EditAttributePage";
 import TypesPage         from "./TypesPage.js";
+import AttributePage from "./attributes/AttributePage";
 
 export default class EditPage extends Content {
 
-  nameInput           = `${htmlElements.input}[name=name]`;
   codeInput           = `${htmlElements.input}[name=code]`;
+  nameInput           = `${htmlElements.input}[name=name]`;
   saveButton          = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
   attributeTypeSelect = `${htmlElements.select}[name=type]`;
   addAttributeButton  = `${htmlElements.button}.ContentTypeForm__add`;
-
-  getNameInput() {
-    return this.getContents()
-               .find(this.nameInput);
-  }
 
   getCodeInput() {
     return this.getContents()
                .find(this.codeInput);
   }
 
-  getSaveButton() {
+  getNameInput() {
     return this.getContents()
-               .find(this.saveButton);
+               .find(this.nameInput);
   }
 
   getAttributeTypeSelect() {
@@ -47,8 +42,19 @@ export default class EditPage extends Content {
                .find(htmlElements.table);
   }
 
+  getTableRows() {
+    return this.getAttributesTable()
+               .children(htmlElements.tbody)
+               .children(htmlElements.tr);
+  }
+
   getKebabMenu(code) {
     return new AttributeKebabMenu(this, code);
+  }
+
+  getSaveButton() {
+    return this.getContents()
+               .find(this.saveButton);
   }
 
   typeName(value) {
@@ -63,11 +69,11 @@ export default class EditPage extends Content {
     this.getAttributeTypeSelect().select(value);
   }
 
-  addAttribute(attributeCode) {
+  openAddAttributePage(attributeCode) {
     this.selectAttribute(attributeCode);
     this.getAddAttributeButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AppPage(AddAttributePage);
+    return new AppPage(AttributePage);
   }
 
   save() {
@@ -78,30 +84,12 @@ export default class EditPage extends Content {
 
 }
 
-class AttributeKebabMenu extends WebElement {
+class AttributeKebabMenu extends KebabMenu {
 
   edit     = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-edit`;
   moveUp   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-up`;
   moveDown = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-down`;
   delete   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-delete`;
-
-  constructor(parent, code) {
-    super(parent);
-    this.code = code;
-  }
-
-  get() {
-    return this.parent.getAttributesTable()
-               .find(`${htmlElements.div}[${DATA_TESTID}=${this.code}-actions]`)
-               .children(htmlElements.div);
-  }
-
-  open() {
-    this.get()
-        .children(htmlElements.button)
-        .click();
-    return this;
-  }
 
   getEdit() {
     return this.get()
@@ -126,7 +114,7 @@ class AttributeKebabMenu extends WebElement {
   openEdit() {
     this.getEdit().click();
     cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AppPage(EditAttributePage);
+    return new AppPage(AttributePage);
   }
 
   clickMoveUp() {

@@ -8,14 +8,13 @@ describe("Content Types", () => {
 
   let currentPage;
 
-  let contentTypeCode;
-  let contentTypeName;
+  let contentType = {};
 
   beforeEach(() => {
     cy.kcLogin("admin").as("tokens");
 
-    contentTypeCode = generateRandomContentTypeCode();
-    contentTypeName = generateRandomId();
+    contentType.code = generateRandomContentTypeCode();
+    contentType.name = generateRandomId();
   });
 
   afterEach(() => {
@@ -27,41 +26,42 @@ describe("Content Types", () => {
     it("should have the functionality to add a new content type", () => {
       currentPage = openContentTypesPage();
 
-      cy.log(`Add content type with code ${contentTypeCode}`);
-      currentPage = currentPage.getContent().addContentType();
-      currentPage = currentPage.getContent().addAndSaveContentType(contentTypeCode, contentTypeName);
-      currentPage.getContent().getCodeInput().should("have.value", contentTypeCode).and("be.disabled");
-      currentPage.getContent().getNameInput().should("have.value", contentTypeName);
+      cy.log(`Add content type with code ${contentType.code}`);
+      currentPage = currentPage.getContent().openAddContentTypePage();
+      currentPage = currentPage.getContent().addAndSaveContentType(contentType.code, contentType.name);
+      currentPage.getContent().getCodeInput().should("have.value", contentType.code).and("be.disabled");
+      currentPage.getContent().getNameInput().should("have.value", contentType.name);
 
       currentPage = currentPage.getContent().save();
-      currentPage.getContent().getTableRow(contentTypeCode).find(htmlElements.td).eq(0).should("contain.text", contentTypeName);
-      currentPage.getContent().getTableRow(contentTypeCode).find(htmlElements.td).eq(2).should("contain.text", contentTypeCode);
+      currentPage.getContent().getTableRow(contentType.code).find(htmlElements.td).eq(0).should("contain.text", contentType.name);
+      currentPage.getContent().getTableRow(contentType.code).find(htmlElements.td).eq(2).should("contain.text", contentType.code);
 
-      deleteContentType(contentTypeCode);
+      deleteContentType(contentType.code);
     });
 
     it("should have the functionality to edit a content type", () => {
-      postContentType(contentTypeCode, contentTypeName);
+      postContentType(contentType.code, contentType.name);
       currentPage = openContentTypesPage();
 
-      cy.log(`Edit content type with code ${contentTypeCode}`);
-      currentPage              = currentPage.getContent().editContentType(contentTypeCode);
+      cy.log(`Edit content type with code ${contentType.code}`);
+      currentPage              = currentPage.getContent().getKebabMenu(contentType.code).open().openEdit();
       const newContentTypeName = generateRandomId();
       currentPage.getContent().clearName();
       currentPage.getContent().typeName(newContentTypeName);
       currentPage = currentPage.getContent().save();
-      currentPage.getContent().getTableRow(contentTypeCode).find(htmlElements.td).eq(0).should("contain.text", newContentTypeName);
+      currentPage.getContent().getTableRow(contentType.code).find(htmlElements.td).eq(0).should("contain.text", newContentTypeName);
 
-      deleteContentType(contentTypeCode);
+      deleteContentType(contentType.code);
     });
 
     it("should allow deleting a content type not referenced by a published content", () => {
-      postContentType(contentTypeCode, contentTypeName);
+      postContentType(contentType.code, contentType.name);
       currentPage = openContentTypesPage();
 
-      cy.log(`Delete content type with code ${contentTypeCode}`);
-      currentPage.getContent().deleteContentType(contentTypeCode);
-      currentPage.getContent().getTable().should("not.contain", contentTypeCode);
+      cy.log(`Delete content type with code ${contentType.code}`);
+      currentPage.getContent().getKebabMenu(contentType.code).open().clickDelete();
+      currentPage.getDialog().confirm();
+      currentPage.getContent().getTable().should("not.contain", contentType.code);
     });
 
   });
@@ -71,29 +71,30 @@ describe("Content Types", () => {
     let contentId;
 
     beforeEach(() => {
-      postContentType(contentTypeCode, contentTypeName);
-      createAndPublishTestContent(contentTypeCode);
+      postContentType(contentType.code, contentType.name);
+      createAndPublishTestContent(contentType.code);
     });
 
     afterEach(() => {
       deleteContent(contentId);
-      deleteContentType(contentTypeCode);
+      deleteContentType(contentType.code);
     });
 
     it("should not allow deleting a content type", () => {
       currentPage = openContentTypesPage();
 
-      cy.log(`Delete content type with code ${contentTypeCode}`);
-      currentPage.getContent().deleteContentType(contentTypeCode);
-      cy.validateToast(currentPage, false, contentTypeCode);
+      cy.log(`Delete content type with code ${contentType.code}`);
+      currentPage.getContent().getKebabMenu(contentType.code).open().clickDelete();
+      currentPage.getDialog().confirm();
+      cy.validateToast(currentPage, false, contentType.code);
     });
 
     it("should allow adding an attribute", () => {
       currentPage = openContentTypesPage();
 
       const testAttribute = "Text";
-      currentPage         = currentPage.getContent().editContentType(contentTypeCode);
-      currentPage         = currentPage.getContent().addAttribute(testAttribute);
+      currentPage         = currentPage.getContent().getKebabMenu(contentType.code).open().openEdit();
+      currentPage         = currentPage.getContent().openAddAttributePage(testAttribute);
 
       currentPage.getContent().typeCode(testAttribute);
       currentPage = currentPage.getContent().continue();
@@ -103,13 +104,13 @@ describe("Content Types", () => {
     it("should allow updating an attribute", () => {
       currentPage         = openContentTypesPage();
       const testAttribute = {type: "Text", code: "Text"};
-      postContentTypeAttribute(contentTypeCode, testAttribute);
+      postContentTypeAttribute(contentType.code, testAttribute);
 
-      currentPage = currentPage.getContent().editContentType(contentTypeCode);
+      currentPage = currentPage.getContent().getKebabMenu(contentType.code).open().openEdit();
       currentPage = currentPage.getContent().getKebabMenu(testAttribute.code).open().openEdit();
-      currentPage.getContent().clearName();
+      currentPage.getContent().clearName("en");
       const newAttributeName = "Text2";
-      currentPage.getContent().typeName(newAttributeName);
+      currentPage.getContent().typeName("en", newAttributeName);
       currentPage = currentPage.getContent().continue();
       currentPage.getContent().getAttributesTable().should("contain", newAttributeName);
     });
@@ -157,7 +158,7 @@ describe("Content Types", () => {
     beforeEach(() => {
       cy.log(`Edit content type ${CONTENT_TYPE_CODE}`);
       currentPage = openContentTypesPage();
-      currentPage = currentPage.getContent().editContentType(CONTENT_TYPE_CODE);
+      currentPage = currentPage.getContent().getKebabMenu(CONTENT_TYPE_CODE).open().openEdit();
       cy.location("pathname").should("eq", `/cms/content-types/edit/${CONTENT_TYPE_CODE}`);
     });
 
@@ -383,7 +384,7 @@ describe("Content Types", () => {
 
     const addNewContentTypeAttribute = (page, contentTypeCode, attributeType) => {
       cy.log(`Add new content type attribute ${attributeType} to ${contentTypeCode}`);
-      currentPage = page.getContent().addAttribute(attributeType);
+      currentPage = page.getContent().openAddAttributePage(attributeType);
       cy.location("pathname").should("eq", `/cms/content-type/attribute/${contentTypeCode}/add`);
       return currentPage;
     };
@@ -420,8 +421,8 @@ describe("Content Types", () => {
       currentPage = page.getContent().getKebabMenu(codeValue).open().openEdit();
       cy.location("pathname").should("eq", `/cms/content-type/attribute/${contentTypeCode}/edit/${codeValue}`);
 
-      currentPage.getContent().clearName();
-      currentPage.getContent().typeName(nameEnValue);
+      currentPage.getContent().clearName("en");
+      currentPage.getContent().typeName("en", nameEnValue);
       if (!isMonolistComposite) {
         currentPage = currentPage.getContent().continue(attributeType);
       } else {
@@ -452,7 +453,7 @@ describe("Content Types", () => {
     };
     const addNewCompositeAttribute       = (page, attributeType, codeValue, contentTypeCode) => {
       cy.log(`Add new composite attribute ${attributeType} to ${contentTypeCode}`);
-      currentPage = page.getContent().addAttribute(attributeType);
+      currentPage = page.getContent().openAddAttributePage(attributeType);
       currentPage.getContent().typeCode(codeValue);
       currentPage = currentPage.getContent().continue("", true);
       cy.log("check if new list attribute exists");

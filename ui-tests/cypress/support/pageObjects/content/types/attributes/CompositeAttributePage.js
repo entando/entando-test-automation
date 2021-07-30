@@ -1,12 +1,12 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement";
+import {DATA_TESTID, htmlElements, WebElement} from "../../../WebElement";
 
-import Content from "../../app/Content";
+import Content from "../../../app/Content";
 
-import AppPage from "../../app/AppPage";
+import AppPage from "../../../app/AppPage";
 
-import AddAttributePage          from "./AddAttributePage";
-import EditPage                  from "./EditPage";
-import EditMonolistAttributePage from "./EditMonolistAttributePage";
+import EditPage      from "../EditPage";
+import AttributePage       from "./AttributePage";
+import NestedAttributePage from "./NestedAttributePage";
 
 export default class CompositeAttributePage extends Content {
 
@@ -43,11 +43,11 @@ export default class CompositeAttributePage extends Content {
     return new AttributeKebabMenu(this, code);
   }
 
-  addAttribute(attributeCode) {
+  openAddAttributePage(attributeCode) {
     this.selectAttribute(attributeCode);
     this.getAddAttributeButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AppPage(AddAttributePage);
+    return new AppPage(AttributePage);
   }
 
   continue(attribute = "") {
@@ -55,7 +55,7 @@ export default class CompositeAttributePage extends Content {
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     switch (attribute) {
       case "Monolist":
-        return new AppPage(EditMonolistAttributePage);
+        return new AppPage(NestedAttributePage);
       default:
         return new AppPage(EditPage);
     }
