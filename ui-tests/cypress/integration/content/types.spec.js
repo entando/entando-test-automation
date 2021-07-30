@@ -471,8 +471,8 @@ describe("Content Types", () => {
     return code;
   };
 
-  const postContentType          = (code, name) => cy.contentTypesController().then(controller => controller.postContentType(code, name));
-  const postContentTypeAttribute = (code, attribute) => cy.contentTypesController().then(controller => controller.postContentTypeAttribute(code, attribute));
+  const postContentType          = (code, name) => cy.contentTypesController().then(controller => controller.addContentType(code, name));
+  const postContentTypeAttribute = (code, attribute) => cy.contentTypeAttributeController(code).then(controller => controller.addAttribute(attribute));
   const deleteContentType        = (code) => cy.contentTypesController().then(controller => controller.deleteContentType(code));
 
   const openContentTypesPage = () => {
