@@ -82,11 +82,11 @@ describe("Groups", () => {
 
     beforeEach(() => {
       cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
-      cy.pagesController().then(controller => controller.addPage({ ...page, ownerGroup: groupCode }));
+      cy.pagesController().then(controller => controller.addNewPage({ ...page, ownerGroup: groupCode }));
     });
 
     afterEach(() => {
-      cy.pagesController().then(controller => controller.updateStatus(page.code, 'draft'));
+      cy.pagesController().then(controller => controller.setPageStatus(page.code, 'draft'));
       cy.pagesController().then(controller => controller.deletePage(page.code));
       cy.groupsController().then(controller => controller.deleteGroup(groupCode));
     });
@@ -111,7 +111,7 @@ describe("Groups", () => {
     });
   
     it('Update a group used by a published page', () => {
-      cy.pagesController().then(controller => controller.updateStatus(page.code, 'published'));
+      cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
 
       const updatedGroupName = generateRandomId();
 
@@ -142,7 +142,7 @@ describe("Groups", () => {
     });
   
     it('Delete a group used by a published page - not allowed', () => {
-      cy.pagesController().then(controller => controller.updateStatus(page.code, 'published'));
+      cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
 
       currentPage = openGroupsPage();
 
