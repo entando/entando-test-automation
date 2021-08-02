@@ -14,6 +14,19 @@ class PagesController {
     this.access_token = access_token;
   }
 
+  addNewPage(page) {
+    return cy.request({
+      url: `${controller}`,
+      method: 'POST',
+      auth: {
+        bearer: this.access_token
+      },
+      body: {
+        ...page,
+      }
+    });
+  }
+
   deletePage(id) {
     cy.request({
       url: `${controller}/${id}`,
