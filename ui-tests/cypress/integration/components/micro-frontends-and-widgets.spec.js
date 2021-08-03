@@ -514,6 +514,109 @@ describe('Microfrontends and Widgets', () => {
       });
     });
 
+    describe('CMS Content List Widget - Extended', () => {
+      const WIDGET_FRAME = {
+        frameName: 'Frame 3',
+        frameNum: 6,
+      };
+
+      const WIDGET_FRAME_2 = {
+        frameName: 'Frame 4',
+        frameNum: 7,
+      };
+    
+      it('Add all existing published OOTB contents', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+    
+        cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
+        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME.frameName);
+    
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.wait(5000);
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
+        cy.wait(500);
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('Why You Need a Micro Frontend Platform for Kubernetes').click();
+        cy.wait(500);
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('Entando and JHipster: How It Works').click();
+        cy.wait(500);
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Banner').click();
+        cy.wait(500);
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('A Modern Platform for Modern UX').click();
+        cy.wait(500);
+        currentPage.getContent().getModelIdDropdownByIndex(0).select('2-column-content');
+        currentPage.getContent().getModelIdDropdownByIndex(1).select('News - Detail');
+        currentPage.getContent().getModelIdDropdownByIndex(2).select('News - Detail');
+        currentPage.getContent().getModelIdDropdownByIndex(3).select('Banner - Text, Image, CTA');
+        currentPage.getContent().getModelIdDropdownByIndex(4).select('Banner - Text, Image, CTA');
+
+        currentPage = currentPage.getContent().confirmConfig();
+    
+        cy.wait(500);
+        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().publishPageDesign();
+        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+      });
+
+      it('Add new existing published contents', () => {
+        
+        currentPage = currentPage.getMenu().getContent().open();
+        currentPage = currentPage.openManagement();
+
+        currentPage = currentPage.getContent().openAddContentPage();
+        currentPage = currentPage.getContent().addContent('En Title', 'It Title', 'Sample Description', true);
+
+        currentPage = currentPage.getContent().openAddContentPage();
+        currentPage = currentPage.getContent().addContent('En Title 2', 'It Title 2', 'Another Content so its more than 1', true);
+
+        currentPage = currentPage.getMenu().getPages().open();
+        currentPage = currentPage.openDesigner();
+
+        selectPageFromSidebar();
+        cy.wait(500);
+    
+        cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
+        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME_2.frameName);
+    
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME_2.frameNum}`);
+        cy.wait(5000);
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('Another Content so its more than 1').click();
+        cy.wait(500);
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Description').click();
+        cy.wait(500);
+        currentPage.getContent().getModelIdDropdownByIndex(0).select('Banner - Text, Image, CTA');
+        currentPage.getContent().getModelIdDropdownByIndex(1).select('Banner - Text, Image, CTA');
+
+        currentPage = currentPage.getContent().confirmConfig();
+    
+        cy.wait(500);
+        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().publishPageDesign();
+        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+      });
+
+      it('Test widget cleanup', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+    
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
+        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
+        currentPage.getContent().publishPageDesign();
+        cy.wait(1000);
+        
+        currentPage = currentPage.getMenu().getContent().open();
+        currentPage = currentPage.openManagement();
+        cy.wait(500);
+    
+        currentPage = currentPage.getContent().unpublishLastAddedContent();
+        currentPage = currentPage.getContent().deleteLastAddedContent();
+        currentPage = currentPage.getContent().unpublishLastAddedContent();
+        currentPage = currentPage.getContent().deleteLastAddedContent();
+      });
+    });
+
     describe('CMS Content Search Query Widget', () => {
       const WIDGET_FRAME = {
         frameName: 'Frame 3',
