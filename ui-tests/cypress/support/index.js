@@ -22,7 +22,6 @@ import "./command/upload-command";
 import "./command/page-command";
 import "./command/page-designer-command";
 import "./command/page-management-command";
-import "./command/content-types-command";
 
 import "./restAPI/categoriesAPI.js";
 import "./restAPI/contentsAPI";
