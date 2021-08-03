@@ -48,6 +48,12 @@ export default class EditPage extends Content {
                .children(htmlElements.tr);
   }
 
+  getTableRow(code) {
+    return this.getKebabMenu(code)
+               .get()
+               .parents(htmlElements.tr);
+  }
+
   getKebabMenu(code) {
     return new AttributeKebabMenu(this, code);
   }
