@@ -74,6 +74,20 @@ class PagesController {
     });
   }
 
+  updatePageWidget(pageCode, frameId, widgetCode, config) {
+    return cy.request({
+      url: `${controller}/${pageCode}/widgets/${frameId}`,
+      method: 'PUT',
+      auth: {
+        bearer: this.access_token
+      },
+      body: {
+        code: widgetCode,
+        config
+      }
+    });
+  }
+  
   addWidgetToPage(pageId, frameId, widgetId) {
     cy.request({
       url: `${controller}/${pageId}/widgets/${frameId}`,

@@ -14,6 +14,7 @@ export default class AddPage extends Content {
   contentTitleAttrInputIt = `attributes[0].values.it`
   contentAttrEnPane = `${htmlElements.div}#content-attributes-tabs-pane-en`;
   contentAttrItPane = `${htmlElements.div}#content-attributes-tabs-pane-it`;
+  groupsFormSection = `${htmlElements.div}.GroupsFormBody`;
 
   getTitleAttrItInput() {
     return this.getContents().get(this.contentAttrItPane)
@@ -54,6 +55,13 @@ export default class AddPage extends Content {
     return this.getSaveDropDownListItems().get(0);
   }
 
+  getOwnerGroup() {
+    return this.getContents()
+               .get(this.groupsFormSection)
+               .find(htmlElements.input)
+               .eq(0);
+  }
+
   getSaveApproveAction() {
     return this.getSaveDropDownListItems().get(2);
   }
@@ -72,6 +80,10 @@ export default class AddPage extends Content {
 
   clearDescription() {
     this.getDescriptionInput().clear();
+  }
+
+  clearOwnerGroup() {
+    this.getOwnerGroup().clear();
   }
 
   submitForm() {

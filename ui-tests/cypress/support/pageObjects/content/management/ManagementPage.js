@@ -27,6 +27,16 @@ export default class ManagementPage extends Content {
             .find(this.actionOption).eq(0);
   }
 
+  getTable() {
+    return this.getContents()
+               .find(htmlElements.table);
+  }
+
+  getTableRowAction(code) {
+    return this.getTable()
+               .find(`${htmlElements.button}#actionsKebab_${code}`);
+  }
+
   openAddContentPage() {
     this.getAddButton().click();
     cy.wait(1000);
@@ -84,4 +94,21 @@ export default class ManagementPage extends Content {
     return new AppPage(ManagementPage);
   }
 
+  unpublishContent(code) {
+    this.getTableRowAction(code)
+        .click();
+    // TODO: find a way to avoid waiting for arbitrary time periods
+    cy.wait(500);
+
+    this.getTable()
+        .find(htmlElements.li)
+        .filter(':visible')
+        .eq(4)
+        .click();
+    
+    this.parent
+        .getDialog()
+        .getConfirmButton()
+        .click();
+  }
 }

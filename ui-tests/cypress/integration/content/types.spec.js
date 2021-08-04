@@ -1,4 +1,4 @@
-import {generateRandomId} from "../../support/utils";
+import {generateRandomContentTypeCode, generateRandomId} from "../../support/utils";
 
 import {htmlElements} from "../../support/pageObjects/WebElement";
 
@@ -466,14 +466,6 @@ describe("Content Types", () => {
     };
 
   });
-
-  const generateRandomContentTypeCode = () => {
-    let code = "";
-    for (let i = 0; i < 3; i++) {
-      code += String.fromCharCode("A".charCodeAt(0) + Math.random() * 26);
-    }
-    return code;
-  };
 
   const postContentType   = (code, name) => cy.contentTypesController().then(controller => controller.addContentType(code, name));
   const deleteContentType = (code) => cy.contentTypesController().then(controller => controller.deleteContentType(code));
