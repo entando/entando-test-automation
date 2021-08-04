@@ -1,23 +1,25 @@
-import {TEST_ID_KEY, htmlElements, WebElement} from '../../WebElement';
-import Content from '../../app/Content.js';
-import AppPage from '../../app/AppPage.js';
-import TypesPage from './TypesPage.js';
-import EditPage from './EditPage';
+import {htmlElements} from "../../WebElement";
+
+import Content from "../../app/Content.js";
+
+import AppPage from "../../app/AppPage.js";
+
+import EditPage from "./EditPage";
 
 export default class AddPage extends Content {
 
-  nameInput = `${htmlElements.input}[name=name]`;
-  codeInput = `${htmlElements.input}[name=code]`;
+  codeInput  = `${htmlElements.input}[name=code]`;
+  nameInput  = `${htmlElements.input}[name=name]`;
   saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
-
-  getNameInput() {
-    return this.getContents()
-               .find(this.nameInput);
-  }
 
   getCodeInput() {
     return this.getContents()
                .find(this.codeInput);
+  }
+
+  getNameInput() {
+    return this.getContents()
+               .find(this.nameInput);
   }
 
   getSaveButton() {
@@ -35,8 +37,7 @@ export default class AddPage extends Content {
 
   save() {
     this.getSaveButton().click();
-    // TODO: find a way to avoid waiting for arbitrary time periods
-    cy.wait(1000);
+    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     return new AppPage(EditPage);
   }
 
@@ -45,4 +46,5 @@ export default class AddPage extends Content {
     this.typeCode(code);
     return this.save();
   }
+
 }

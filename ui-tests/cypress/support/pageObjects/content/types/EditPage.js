@@ -1,27 +1,61 @@
-import {htmlElements} from '../../WebElement';
-import Content from '../../app/Content.js';
-import AppPage from '../../app/AppPage.js';
-import TypesPage from './TypesPage.js';
-import AddAttributePage from './AddAttributePage';
-import EditAttributePage from './EditAttributePage';
+import {htmlElements} from "../../WebElement";
 
-export default class AddPage extends Content {
+import Content   from "../../app/Content.js";
+import KebabMenu from "../../app/KebabMenu";
 
-  nameInput = `${htmlElements.input}[name=name]`;
-  codeInput = `${htmlElements.input}[name=code]`;
-  saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
+import AppPage      from "../../app/AppPage.js";
+import DeleteDialog from "../../app/DeleteDialog";
+
+import TypesPage         from "./TypesPage.js";
+import AttributePage from "./attributes/AttributePage";
+
+export default class EditPage extends Content {
+
+  codeInput           = `${htmlElements.input}[name=code]`;
+  nameInput           = `${htmlElements.input}[name=name]`;
+  saveButton          = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
   attributeTypeSelect = `${htmlElements.select}[name=type]`;
-  addAttributeButton = `${htmlElements.button}.ContentTypeForm__add`;
-  editAttributeOption = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-edit`;
+  addAttributeButton  = `${htmlElements.button}.ContentTypeForm__add`;
+
+  getCodeInput() {
+    return this.getContents()
+               .find(this.codeInput);
+  }
 
   getNameInput() {
     return this.getContents()
                .find(this.nameInput);
   }
 
-  getCodeInput() {
+  getAttributeTypeSelect() {
     return this.getContents()
-               .find(this.codeInput);
+               .find(this.attributeTypeSelect);
+  }
+
+  getAddAttributeButton() {
+    return this.getContents()
+               .find(this.addAttributeButton);
+  }
+
+  getAttributesTable() {
+    return this.getContents()
+               .find(htmlElements.table);
+  }
+
+  getTableRows() {
+    return this.getAttributesTable()
+               .children(htmlElements.tbody)
+               .children(htmlElements.tr);
+  }
+
+  getTableRow(code) {
+    return this.getKebabMenu(code)
+               .get()
+               .parents(htmlElements.tr);
+  }
+
+  getKebabMenu(code) {
+    return new AttributeKebabMenu(this, code);
   }
 
   getSaveButton() {
@@ -37,52 +71,69 @@ export default class AddPage extends Content {
     this.getNameInput().clear();
   }
 
-  getAttributeTypeSelect() {
-    return this.getContents()
-               .find(this.attributeTypeSelect);
+  selectAttribute(value) {
+    this.getAttributeTypeSelect().select(value);
   }
 
-  getAddAttributeButton() {
-    return this.getContents()
-               .find(this.addAttributeButton);
-  }
-
-  addAttribute(attributeCode) {
-    this.getAttributeTypeSelect().select(attributeCode);
+  openAddAttributePage(attributeCode) {
+    this.selectAttribute(attributeCode);
     this.getAddAttributeButton().click();
-    // TODO: find a way to avoid waiting for arbitrary time periods
-    cy.wait(1000);
-    return new AppPage(AddAttributePage);
-  }
-
-  getAttributesTable() {
-    return this.getContents()
-               .find(htmlElements.table);
-  }
-
-  getAttributesTableRowAction(code) {
-    return this.getAttributesTable()
-               .find(`${htmlElements.button}#${code}-actions`);
-  }
-
-  editAttribute(code) {
-    this.getAttributesTableRowAction(code)
-        .click();
-    // TODO: find a way to avoid waiting for arbitrary time periods
-    cy.wait(500);
-
-    this.getAttributesTable()
-        .find(this.editAttributeOption)
-        .filter(':visible')
-        .click();
-
-    return new AppPage(EditAttributePage);
+    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
+    return new AppPage(AttributePage);
   }
 
   save() {
     this.getSaveButton().click();
-    // TODO: find a way to avoid waiting for arbitrary time periods
-    cy.wait(1000);
+    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     return new AppPage(TypesPage);
   }
+
+}
+
+class AttributeKebabMenu extends KebabMenu {
+
+  edit     = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-edit`;
+  moveUp   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-up`;
+  moveDown = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-down`;
+  delete   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-delete`;
+
+  getEdit() {
+    return this.get()
+               .find(this.edit);
+  }
+
+  getMoveUp() {
+    return this.get()
+               .find(this.moveUp);
+  }
+
+  getMoveDown() {
+    return this.get()
+               .find(this.moveDown);
+  }
+
+  getDelete() {
+    return this.get()
+               .find(this.delete);
+  }
+
+  openEdit() {
+    this.getEdit().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
+    return new AppPage(AttributePage);
+  }
+
+  clickMoveUp() {
+    this.getMoveUp().click();
+  }
+
+  clickMoveDown() {
+    this.getMoveDown().click();
+  }
+
+  clickDelete() {
+    this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
+  }
+
 }
