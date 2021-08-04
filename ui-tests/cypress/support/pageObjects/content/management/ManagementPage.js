@@ -56,12 +56,31 @@ export default class ManagementPage extends Content {
     return new AppPage(EditPage);
   }
 
-  deleteLastAddedContent() {
+  openKebabLastAddedContent() {
     this.getContents()
       .get(this.contentsTableDiv)
       .find(this.contentsKebabMenu).eq(0)
       .find(this.contentsKebabMenuButton)
       .click();
+  }
+
+  unpublishLastAddedContent() {
+    this.openKebabLastAddedContent();
+    this.getContents()
+      .get(this.contentsTableDiv)
+      .find(this.contentsKebabMenuAction).eq(4)
+      .click();
+    cy.wait(1500);
+
+    this.parent.getDialog()
+        .confirm();
+    cy.wait(1000);
+
+    return new AppPage(ManagementPage);
+  }
+
+  deleteLastAddedContent() {
+    this.openKebabLastAddedContent();
     this.getContents()
       .get(this.contentsTableDiv)
       .find(this.contentsKebabMenuAction).eq(1)
@@ -69,8 +88,7 @@ export default class ManagementPage extends Content {
     cy.wait(1500);
 
     this.parent.getDialog()
-        .find(this.modalDeleteButton)
-        .click();
+        .confirm();
     cy.wait(1000);
 
     return new AppPage(ManagementPage);

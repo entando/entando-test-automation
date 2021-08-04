@@ -8,7 +8,7 @@ export default class ActionItems extends WebElement {
 
   get(action = 0) {
     return this.parent.get()
-    .children().find(this.contentSaveButtonWrapper).find(this.contentSaveButtonUl).eq(action)
+    .children().find(this.contentSaveButtonWrapper).find(this.contentSaveButtonUl)
       .find(this.contentSaveButtonSaveAction).eq(action);
   }
 

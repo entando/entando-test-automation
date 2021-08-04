@@ -7,6 +7,8 @@ import DropDownButton from "./DropDownButton";
 export default class AddPage extends Content {
 
   contentDescriptionInput = `${htmlElements.input}#description`;
+  contentGroupFormBody = `${htmlElements.div}.GroupsFormBody.EditContentForm__outer-fieldset`;
+  contentGroupInput = `${htmlElements.div}.DropdownTypeahead`;
   contentTitleAttrInput = `.RenderTextInput`
   contentAttrsItTab = `${htmlElements.a}#content-attributes-tabs-tab-it`;
   contentTitleAttrInputIt = `attributes[0].values.it`
@@ -27,6 +29,13 @@ export default class AddPage extends Content {
   getDescriptionInput() {
     return this.getContents()
                .find(this.contentDescriptionInput);
+  }
+
+  getGroupDropdown() {
+    return this.getContents()
+              .find(this.contentGroupFormBody)
+              .find(this.contentGroupInput).eq(0)
+              .children(htmlElements.div).eq(1);
   }
 
   getItLanguageTab() {
@@ -53,6 +62,10 @@ export default class AddPage extends Content {
                .eq(0);
   }
 
+  getSaveApproveAction() {
+    return this.getSaveDropDownListItems().get(2);
+  }
+
   typeAttrTitleIt(input) {
     this.getTitleAttrItInput().type(input);
   }
@@ -77,15 +90,28 @@ export default class AddPage extends Content {
     this.getSaveAction().click();
   }
 
-  addContent(titleEn, titleIt, description, append = false) {
+  submitApproveForm() {
+    this.getSaveApproveAction().click();
+  }
+
+  addContent(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
+    this.getGroupDropdown().click({ scrollBehavior: 'center' });
+    this.getGroupDropdown().contains(group).click({ scrollBehavior: 'center' });
     if (!append) {
       this.clearDescription();
     }
+
     this.typeDescription(description);
     this.typeAttrTitleEn(titleEn);
     this.getItLanguageTab().click();
     this.typeAttrTitleIt(titleIt);
-    this.submitForm();
+
+    if (useApprove) {
+      this.submitApproveForm();
+    } else {
+      this.submitForm();
+    }
+
     cy.wait(1000);
     return new AppPage(ManagementPage);
   }
