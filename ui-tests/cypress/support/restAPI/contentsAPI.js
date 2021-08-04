@@ -35,4 +35,18 @@ class contentsController {
       }
     });
   }
+
+  updateStatus(id, status) {
+    return cy.request({
+      url: `${controller}/status`,
+      method: 'PUT',
+      auth: {
+        bearer: this.access_token
+      },
+      body: {
+        codes: [id],
+        status
+      }
+    });
+  }
 }
