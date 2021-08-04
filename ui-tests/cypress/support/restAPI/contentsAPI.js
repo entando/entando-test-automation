@@ -3,11 +3,11 @@ const controller = `${apiURL}plugins/cms/contents`;
 
 Cypress.Commands.add('contentsController', () => {
   cy.get("@tokens").then(tokens => {
-    return new contentsController(tokens.access_token);
+    return new ContentsController(tokens.access_token);
   });
 })
 
-class contentsController {
+class ContentsController {
 
   constructor(access_token) {
     this.access_token = access_token;

@@ -42,20 +42,6 @@ Cypress.Commands.add('fillAddListAttributeForm', (nestedAttribute, codeValue, co
   }
 });
 
-Cypress.Commands.add('addNewCompositeAttribute', (attributeType, codeValue, contentTypeCode, fromEdit = false, isMonolistComposite = false) => {
-  cy.log(`Add new composite attribute ${attributeType} to ${contentTypeCode}`);
-  const dropdownName = (!fromEdit && isMonolistComposite) ?
-    TEST_ID_CONTENTTYPE_FORM.ATTRIBUTE_TYPE_DROPDOWN :
-    TEST_ID_CONTENTTYPE_FORM.NAME_TYPE_DROPDOWN;
-  cy.getByName(dropdownName).select(attributeType);
-  cy.getByTestId(TEST_ID_PAGE_CONTAINER).contains(/^Add$/).click();
-  cy.getByName('code').type(codeValue);
-  cy.getByTestId(TEST_ID_PAGE_CONTAINER).contains(fromEdit || isMonolistComposite ? 'Continue' : 'Save').click();
-  cy.wait(500);
-  cy.log('check if new list attribute exists');
-  cy.get('table').should('contain', codeValue);
-});
-
 Cypress.Commands.add('fillEditListAttributeForm', (nameEnValue, codeValue, contentTypeCode, attributeType = 'List', isMonolistComposite = false) => {
   const isArrayNested = ['Monolist', 'List'].includes(attributeType);
   cy.log(`Edit attribute ${codeValue} for ${contentTypeCode}`);
