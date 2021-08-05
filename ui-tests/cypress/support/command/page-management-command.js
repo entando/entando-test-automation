@@ -45,28 +45,6 @@ Cypress.Commands.add('dragAndDropPageBelow', (draggedPageName, targetPageName) =
   doDragAndDrop(draggedPageName, targetPageName, 'bottom');
 });
 
-function expandOrCollapse(folderName, isExpand) {
-  const selectedClass = isExpand ? 'fa-angle-right' : 'fa-angle-down';
-  cy.getByTestId(TEST_ID_PAGE_TREE.PAGE_NAME).contains(folderName).siblings(`i.${selectedClass}`).click();
-  cy.wait(500);
-}
-
-/**
- * Expand one folder by click on the arrow aside the name.
- * @param folderName the exact name displayed in the UI e.g. "Home", "Sitemap"
- */
-Cypress.Commands.add('expandPageTreeFolder', (folderName) => {
-  expandOrCollapse(folderName, true);
-});
-
-/**
- * Collapse one folder by click on the arrow aside the name.
- * @param folderName the exact name displayed in the UI e.g. "Home", "Sitemap"
- */
-Cypress.Commands.add('collapsePageTreeFolder', (folderName) => {
-  expandOrCollapse(folderName);
-});
-
 function expandOrCollapseAll(label) {
   cy.getByTestId(TEST_ID_PAGE_TREE.PAGE_NAME).siblings().contains(label).click();
 }
@@ -76,13 +54,6 @@ function expandOrCollapseAll(label) {
  */
 Cypress.Commands.add('expandAllPageTreeFolders', () => {
   expandOrCollapseAll('Expand');
-});
-
-/**
- * Collapse all folders by clicking on the "Collapse" main button above the page tree.
- */
-Cypress.Commands.add('collapseAllPageTreeFolders', () => {
-  expandOrCollapseAll('Collapse');
 });
 
 /**

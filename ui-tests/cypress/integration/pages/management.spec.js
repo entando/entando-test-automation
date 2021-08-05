@@ -1,115 +1,244 @@
-import {
-  PAGE_WITH_SEO_DATA,
-  PAGE_ALREADY_EXIST,
-  PAGE_WITHOUT_SEO_DATA,
-  PAGE_FREE_OWNER_GROUP,
-}                                 from '../../mocks/pages';
-import { TEST_ID_LIST_PAGE_TREE } from '../../test-const/page-management-test-const';
+import {generateRandomId} from "../../support/utils";
 
-describe('Pages Management', () => {
-  const languages = ['en', 'it'];
+import {
+  PAGE_WITHOUT_SEO_DATA,
+  PAGE_FREE_OWNER_GROUP
+}                               from "../../mocks/pages";
+import {TEST_ID_LIST_PAGE_TREE} from "../../test-const/page-management-test-const";
+
+import HomePage from "../../support/pageObjects/HomePage";
+
+describe("Page Management", () => {
+
+  const languages = ["en", "it"];
+
+  let currentPage;
 
   beforeEach(() => {
-    cy.appBuilderLogin();
-    cy.closeWizardAppTour();
+    cy.kcLogin("admin").as("tokens");
+    currentPage = openManagementPage();
   });
 
   afterEach(() => {
-    cy.appBuilderLogout();
+    cy.kcLogout();
   });
 
-  describe('Add a new page', () => {
-    it('Should add a page without SEO Attributes', () => {
-      cy.addPage(PAGE_WITHOUT_SEO_DATA, languages);
-      cy.validateToastNotificationOk('Page successfully created');
-      cy.deletePage(PAGE_WITHOUT_SEO_DATA.code);
+  describe("Add a new page", () => {
+
+    let page            = {};
+    let pageToBeDeleted = false;
+
+    beforeEach(() => {
+      page = {
+        title: {
+          en: generateRandomId(),
+          it: generateRandomId()
+        },
+        code: generateRandomId(),
+        pageTree: 0,
+        ownerGroup: "Administrators",
+        template: "1-2-column",
+        seoData: {
+          en: {
+            description: generateRandomId(),
+            keywords: generateRandomId(),
+            friendlyCode: generateRandomId()
+          },
+          it: {
+            description: generateRandomId(),
+            keywords: generateRandomId(),
+            friendlyCode: generateRandomId()
+          }
+        },
+        metaTags: [
+          {
+            key: generateRandomId(),
+            type: "name",
+            value: generateRandomId()
+          },
+          {
+            key: generateRandomId(),
+            type: "http-equiv",
+            value: generateRandomId()
+          },
+          {
+            key: generateRandomId(),
+            type: "property",
+            value: generateRandomId()
+          }
+        ]
+      };
     });
 
-    it('Should add a page with SEO Attributes', () => {
-      cy.addPage(PAGE_WITH_SEO_DATA, languages);
-      cy.validateToastNotificationOk('Page successfully created');
-      cy.deletePage(PAGE_WITH_SEO_DATA.code);
+    afterEach(() => {
+      if (pageToBeDeleted) {
+        cy.pagesController()
+          .then(controller => {
+            controller.setPageStatus(page.code, "draft");
+            controller.deletePage(page.code);
+          })
+          .then(() => pageToBeDeleted = false);
+      }
     });
 
-    it('Should forbid adding a page that already exist', () => {
-      cy.addPage(PAGE_ALREADY_EXIST, languages);
-      cy.validateToastNotificationError(`The page ${PAGE_ALREADY_EXIST.code} already exists`);
+    it("Add a new page without SEO attributes", () => {
+      currentPage = currentPage.getContent().openAddPagePage();
+      cy.location("pathname").should("eq", "/page/add");
+
+      addPageMandatoryData(currentPage, page);
+      currentPage = currentPage.getContent().clickSaveButton();
+      pageToBeDeleted = true;
+
+      cy.validateToast(currentPage);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title.en)
+      );
     });
+
+    it("Add a new page with SEO Attributes", () => {
+      currentPage = currentPage.getContent().openAddPagePage();
+      cy.location("pathname").should("eq", "/page/add");
+
+      addPageMandatoryData(currentPage, page);
+      addSeoData(currentPage, page.seoData);
+      page.metaTags.forEach(metaTag => addMetaTag(currentPage, metaTag));
+      currentPage = currentPage.getContent().clickSaveButton();
+      pageToBeDeleted = true;
+
+      cy.validateToast(currentPage);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title.en)
+      );
+    });
+
+    it("Adding a new page with existing code is forbidden", () => {
+      currentPage = currentPage.getContent().openAddPagePage();
+      cy.location("pathname").should("eq", "/page/add");
+
+      page.code = "my_homepage";
+      addPageMandatoryData(currentPage, page);
+      currentPage.getContent().clickSaveButton();
+
+      cy.validateToast(currentPage, page.code, false);
+    });
+
+    const addPageMandatoryData = (page, data) => {
+      page.getContent().selectSeoLanguage(0);
+      page.getContent().typeTitle(data.title.en, "en");
+
+      page.getContent().selectSeoLanguage(1);
+      page.getContent().typeTitle(data.title.it, "it");
+
+      page.getContent().clearCode();
+      page.getContent().typeCode(data.code);
+
+      page.getContent().selectPageOnPageTreeTable(data.pageTree);
+
+      page.getContent().selectOwnerGroup(data.ownerGroup);
+
+      page.getContent().selectPageTemplate(data.template);
+    };
+    const addSeoData           = (page, seoData) => {
+      page.getContent().selectSeoLanguage(0);
+      page.getContent().typeSeoDescription(seoData.en.description, "en");
+      page.getContent().typeSeoKeywords(seoData.en.keywords, "en");
+      page.getContent().typeSeoFriendlyCode(seoData.en.friendlyCode, "en");
+      page.getContent().selectSeoLanguage(1);
+      page.getContent().typeSeoDescription(seoData.it.description, "it");
+      page.getContent().typeSeoKeywords(seoData.it.keywords, "it");
+      page.getContent().typeSeoFriendlyCode(seoData.it.friendlyCode, "it");
+    };
+    const addMetaTag           = (page, metaTag) => {
+      page.getContent().selectSeoLanguage(0);
+      page.getContent().typeMetaKey(metaTag.key);
+      page.getContent().selectMetaType(metaTag.type);
+      page.getContent().typeMetaValue(metaTag.value);
+      page.getContent().clickMetaTagAddButton();
+    };
+
   });
 
-  describe('Search Page', () => {
-    it('Should search the page by Name', () => {
-      const pageName = 'Home';
-      cy.openPageFromMenu(['Pages', 'Management']);
-      cy.searchPageBy('Page Name', pageName);
-      cy.getTableRowsBySelector(pageName).should('be.visible');
-      cy.getTableRowsByTestId(TEST_ID_LIST_PAGE_TREE.SEARCH_TABLE).should('have.length', 2);
+  describe("Search Page", () => {
+    it("Should search the page by Name", () => {
+      const pageName = "Home";
+      cy.openPageFromMenu(["Pages", "Management"]);
+      cy.searchPageBy("Page Name", pageName);
+      cy.getTableRowsBySelector(pageName).should("be.visible");
+      cy.getTableRowsByTestId(TEST_ID_LIST_PAGE_TREE.SEARCH_TABLE).should("have.length", 2);
       cy.clearSearchPageResults();
     });
 
-    it('Should search the page by Code', () => {
-      const pageCode = 'homepage';
-      cy.openPageFromMenu(['Pages', 'Management']);
-      cy.searchPageBy('Page Code', pageCode);
-      cy.getTableRowsBySelector(pageCode).should('be.visible');
-      cy.getTableRowsByTestId(TEST_ID_LIST_PAGE_TREE.SEARCH_TABLE).should('have.length', 2);
+    it("Should search the page by Code", () => {
+      const pageCode = "homepage";
+      cy.openPageFromMenu(["Pages", "Management"]);
+      cy.searchPageBy("Page Code", pageCode);
+      cy.getTableRowsBySelector(pageCode).should("be.visible");
+      cy.getTableRowsByTestId(TEST_ID_LIST_PAGE_TREE.SEARCH_TABLE).should("have.length", 2);
       cy.clearSearchPageResults();
     });
   });
 
-  describe('Change page position in the page tree', () => {
-    it('Should move the page in the right place according the place chosen in the tree (Above)', () => {
-      cy.openPageFromMenu(['Pages', 'Management']);
+  describe("Change page position in the page tree", () => {
+    it("Should move the page in the right place according the place chosen in the tree (Above)", () => {
+      cy.openPageFromMenu(["Pages", "Management"]);
       cy.expandAllPageTreeFolders();
-      cy.dragAndDropPageAbove('Sitemap', 'Error page');
-      cy.dragAndDropPageBelow('Error page', 'Sitemap');
+      cy.dragAndDropPageAbove("Sitemap", "Error page");
+      cy.dragAndDropPageBelow("Error page", "Sitemap");
     });
 
-    it('Should move the page in the right place according the place chosen in the tree (Below)', () => {
-      cy.openPageFromMenu(['Pages', 'Management']);
+    it("Should move the page in the right place according the place chosen in the tree (Below)", () => {
+      cy.openPageFromMenu(["Pages", "Management"]);
       cy.expandAllPageTreeFolders();
-      cy.dragAndDropPageBelow('Sitemap', 'My Homepage');
-      cy.dragAndDropPageAbove('My Homepage', 'Sitemap');
+      cy.dragAndDropPageBelow("Sitemap", "My Homepage");
+      cy.dragAndDropPageAbove("My Homepage", "Sitemap");
     });
 
-    it('Should forbid to move a page with free owner group under a reserved page', () => {
+    it("Should forbid to move a page with free owner group under a reserved page", () => {
       cy.addPage(PAGE_WITHOUT_SEO_DATA, languages);
       cy.closeToastNotification();
-      cy.openPageFromMenu(['Pages', 'Management']);
+      cy.openPageFromMenu(["Pages", "Management"]);
       cy.expandAllPageTreeFolders();
-      cy.dragAndDropPageInto('Search Result', PAGE_WITHOUT_SEO_DATA.titles.en);
-      cy.validateToastNotificationError('Cannot move a free page under a reserved page');
+      cy.dragAndDropPageInto("Search Result", PAGE_WITHOUT_SEO_DATA.titles.en);
+      cy.validateToastNotificationError("Cannot move a free page under a reserved page");
       cy.closeToastNotification();
       cy.deletePage(PAGE_WITHOUT_SEO_DATA.code);
     });
 
-    it('Should forbid to move a published page under a no published page', () => {
+    it("Should forbid to move a published page under a no published page", () => {
       cy.addPage(PAGE_FREE_OWNER_GROUP, languages);
       cy.closeToastNotification();
-      cy.openPageFromMenu(['Pages', 'Management']);
+      cy.openPageFromMenu(["Pages", "Management"]);
       cy.expandAllPageTreeFolders();
       cy.wait(1000);
-      cy.dragAndDropPageInto('Service', PAGE_FREE_OWNER_GROUP.titles.en);
-      cy.validateToastNotificationError('Can not move a published page under an unpublished page');
+      cy.dragAndDropPageInto("Service", PAGE_FREE_OWNER_GROUP.titles.en);
+      cy.validateToastNotificationError("Can not move a published page under an unpublished page");
       cy.deletePage(PAGE_FREE_OWNER_GROUP.code);
     });
 
-    it('Should forbid to move a published page under his published child page', () => {
-      cy.openPageFromMenu(['Pages', 'Management']);
+    it("Should forbid to move a published page under his published child page", () => {
+      cy.openPageFromMenu(["Pages", "Management"]);
       cy.expandAllPageTreeFolders();
       cy.wait(1000);
-      cy.dragAndDropPageInto('Service', 'Login');
-      cy.validateToastNotificationError('The page \'login\' can not be the parent of \'service\' because he is one of his child');
+      cy.dragAndDropPageInto("Service", "Login");
+      cy.validateToastNotificationError("The page 'login' can not be the parent of 'service' because he is one of his child");
     });
   });
 
-  describe('Change page status', () => {
-    it('Should publish and unpublish a page', () => {
-      cy.openPageFromMenu(['Pages', 'Management']);
-      cy.unpublishPageAction('login');
-      cy.getPageStatusInPageTree('Login').should('match', new RegExp('^Unpublished$'));
-      cy.publishPageAction('login');
-      cy.getPageStatusInPageTree('Login').should('match', new RegExp('^Published$'));
+  describe("Change page status", () => {
+    it("Should publish and unpublish a page", () => {
+      cy.openPageFromMenu(["Pages", "Management"]);
+      cy.unpublishPageAction("login");
+      cy.getPageStatusInPageTree("Login").should("match", new RegExp("^Unpublished$"));
+      cy.publishPageAction("login");
+      cy.getPageStatusInPageTree("Login").should("match", new RegExp("^Published$"));
     });
   });
+
+  const openManagementPage = () => {
+    cy.visit("/");
+    currentPage = new HomePage();
+    currentPage = currentPage.getMenu().getPages().open();
+    return currentPage.openManagement();
+  };
+
 });
