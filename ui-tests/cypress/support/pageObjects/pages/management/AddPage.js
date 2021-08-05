@@ -17,9 +17,11 @@ export default class AddPage extends Content {
   seoKeywordsInput     = `${htmlElements.input}[name="seoData.seoDataByLang.{lang}.keywords"]`;
   seoFriendlyCodeInput = `${htmlElements.input}[name="seoData.seoDataByLang.{lang}.friendlyCode"]`;
   // Meta
-  metaKey              = `${htmlElements.input}[name="metakey"]`;
-  metaType             = `${htmlElements.input}[name="metatype"]`;
-  metaValue            = `${htmlElements.input}[name="metavalue"]`;
+  metaDataFormDiv      = `${htmlElements.div}[${DATA_TESTID}=common_SeoMetadataForm_div]`;
+  metaKeyInput         = `${htmlElements.input}[name=metakey]`;
+  metaTypeSelect       = `${htmlElements.select}[name=metatype]`;
+  metaValueInput       = `${htmlElements.input}[name=metavalue]`;
+  metaTagAddButton     = `${htmlElements.button}[${DATA_TESTID}=common_SeoMetadataForm_Button]`;
 
   codeInput = `${htmlElements.input}[name=code]`;
 
@@ -62,6 +64,31 @@ export default class AddPage extends Content {
 
   getSeoFriendlyCodeInput(lang) {
     return this.getMultilangElement("seoFriendlyCodeInput", lang);
+  }
+
+  getMetadataFormDiv() {
+    return this.getSeoContainer()
+               .find(this.metaDataFormDiv);
+  }
+
+  getMetaKeyInput() {
+    return this.getMetadataFormDiv()
+               .find(this.metaKeyInput);
+  }
+
+  getMetaTypeSelect() {
+    return this.getMetadataFormDiv()
+               .find(this.metaTypeSelect);
+  }
+
+  getMetaValueInput() {
+    return this.getMetadataFormDiv()
+               .find(this.metaValueInput);
+  }
+
+  getMetaTagAddButton() {
+    return this.getMetadataFormDiv()
+               .find(this.metaTagAddButton);
   }
 
   getCodeInput() {
@@ -129,6 +156,22 @@ export default class AddPage extends Content {
 
   typeSeoFriendlyCode(value, lang = "en") {
     this.getSeoFriendlyCodeInput(lang).type(value);
+  }
+
+  typeMetaKey(value) {
+    this.getMetaKeyInput().type(value);
+  }
+
+  selectMetaType(value) {
+    this.getMetaTypeSelect().select(value);
+  }
+
+  typeMetaValue(value) {
+    this.getMetaValueInput().type(value);
+  }
+
+  clickMetaTagAddButton() {
+    this.getMetaTagAddButton().click();
   }
 
   typeCode(value) {
