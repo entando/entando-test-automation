@@ -1,165 +1,208 @@
 import {DATA_TESTID, htmlElements} from "../../WebElement.js";
 
 import Content from "../../app/Content.js";
+
 import AppPage from "../../app/AppPage.js";
+
 import ManagementPage from "./ManagementPage.js";
 
 export default class AddPage extends Content {
-    pageForm = `${htmlElements.div}[${DATA_TESTID}=add_PagesAddPage_Grid]`;
 
-    inputTitle = `${htmlElements.input}[name="titles.{code}"]`;
-    inputCode = `${htmlElements.input}[name=code]`;
-    pageTreeSelector = `${htmlElements.div}[${DATA_TESTID}=PageForm__PageTreeSelector]`;
-    pageTemplateSelector = `${htmlElements.select}[name=pageModel]`;
+  // SEO
+  seoInfoContainer = `${htmlElements.div}#basic-tabs`;
 
-    ownerGroupButton = `${htmlElements.div}[${DATA_TESTID}=ownerGroup-typeahead] ${htmlElements.button}[${DATA_TESTID}=form_RenderDropdownTypeaheadInput_button]`;
-    ownerGroupDropdown = `#ownerGroup`;
+  seoInfoTabs          = `${htmlElements.ul}[${DATA_TESTID}=common_SeoInfo_Tabs]`;
+  titleInput           = `${htmlElements.input}[name="titles.{lang}"]`;
+  seoDescriptionInput  = `${htmlElements.input}[name="seoData.seoDataByLang.{lang}.description"]`;
+  seoKeywordsInput     = `${htmlElements.input}[name="seoData.seoDataByLang.{lang}.keywords"]`;
+  seoFriendlyCodeInput = `${htmlElements.input}[name="seoData.seoDataByLang.{lang}.friendlyCode"]`;
+  // Meta
+  metaKey              = `${htmlElements.input}[name="metakey"]`;
+  metaType             = `${htmlElements.input}[name="metatype"]`;
+  metaValue            = `${htmlElements.input}[name="metavalue"]`;
 
-    // SEO
-    seoInfoContainer = `${htmlElements.div}[id=basic-tabs]`;
-    seoInfoTabs = `${htmlElements.ul}[${DATA_TESTID}=common_SeoInfo_Tabs]`;
+  codeInput = `${htmlElements.input}[name=code]`;
 
-    seoDescription = `${htmlElements.input}[name="seoData.seoDataByLang.{code}.description"]`
-    seoKeywords = `${htmlElements.input}[name="seoData.seoDataByLang.{code}.keywords"]`
-    seoFriendlyCode = `${htmlElements.input}[name="seoData.seoDataByLang.{code}.friendlyCode"]`
+  pageTreeSelector = `${htmlElements.div}[${DATA_TESTID}=PageForm__PageTreeSelector]`;
 
-    // Meta
-    metatagKey = `${htmlElements.input}[name="metakey"]`
-    metatagType = `${htmlElements.input}[name="metatype"]`
-    metatagValue = `${htmlElements.input}[name="metavalue"]`
+  ownerGroupDiv = `${htmlElements.div}[${DATA_TESTID}=ownerGroup-typeahead]`;
 
-    // buttons
-    saveButton = `${htmlElements.button}[${DATA_TESTID}="save-page"]`;
-    saveAndDesignButton = `${htmlElements.button}[${DATA_TESTID}="common_PageForm_Button"]`;
+  pageTemplateSelect = `${htmlElements.select}[name=pageModel]`;
 
-    getPageForm () {
-        return this.parent.get()
-                .find(this.pageForm);
-    }
+  // buttons
+  saveAndDesignButton = `${htmlElements.button}[${DATA_TESTID}="common_PageForm_Button"]`;
+  saveButton          = `${htmlElements.button}[${DATA_TESTID}="save-page"]`;
 
-    getSeoContainer () {
-        return this.parent.get()
+  getSeoContainer() {
+    return this.getContents()
                .find(this.seoInfoContainer);
-    }
+  }
 
-    getMultilangElement (name, langCode) {
-        return this.getSeoContainer().find(this[name].replace('{code}', langCode));
-    }
-
-    getSeoTabs() {
-        return this.getSeoContainer()
+  getSeoTabs() {
+    return this.getSeoContainer()
                .children(this.seoInfoTabs);
-    }
+  }
 
-    getOwnerGroupButton() {
-        return this.getContents()
-               .find(this.ownerGroupButton);
-    }
+  getMultilangElement(name, lang) {
+    return this.getSeoContainer()
+               .find(this[name].replace("{lang}", lang));
+  }
 
-    clickOwnerGroupButton() {
-        this.getOwnerGroupButton().click();
-    }
+  getTitleInput(lang) {
+    return this.getMultilangElement("titleInput", lang);
+  }
 
-    getOwnerGroupDropdown() {
-        return this.getContents()
-               .find(this.ownerGroupDropdown);
-    }
+  getSeoDescriptionInput(lang) {
+    return this.getMultilangElement("seoDescriptionInput", lang);
+  }
 
-    selectSeoLanguage(langOrder) {
-        this.getSeoTabs().find(htmlElements.a).eq(langOrder).click();
-        cy.wait(1000);
-    }
+  getSeoKeywordsInput(lang) {
+    return this.getMultilangElement("seoKeywordsInput", lang);
+  }
 
-    getInputTitle(lang) {
-        return this.getMultilangElement('inputTitle', lang);
-    }
+  getSeoFriendlyCodeInput(lang) {
+    return this.getMultilangElement("seoFriendlyCodeInput", lang);
+  }
 
-    getSeoDescription (lang) {
-        return this.getMultilangElement('seoDescription', lang);
-    }
+  getCodeInput() {
+    return this.getContents()
+               .find(this.codeInput);
+  }
 
-    getSeoKeywords (lang) {
-        return this.getMultilangElement('seoKeywords', lang);
-    }
+  getPageTreeTable() {
+    return this.getContents()
+               .find(this.pageTreeSelector)
+               .children(htmlElements.div)
+               .children(htmlElements.table);
+  }
 
-    getSeoFriendlyCode (lang) {
-        return this.getMultilangElement('seoFriendlyCode', lang);
-    }
+  getOwnerGroup() {
+    return this.getContents()
+               .find(this.ownerGroupDiv);
+  }
 
-    setSeoDescription (value, lang = 'en') {
-        this.getSeoDescription(lang).type(value)
-    }
+  getOwnerGroupButton() {
+    return this.getOwnerGroup()
+               .children(htmlElements.div)
+               .children(htmlElements.button);
+  }
 
-    setSeoKeywords (value, lang = 'en') {
-        this.getSeoKeywords(lang).type(value);
-    }
+  getOwnerGroupDropdown() {
+    return this.getOwnerGroup()
+               .children(htmlElements.div)
+               .children(htmlElements.ul);
+  }
 
-    setSeoFriendlyCode (value, lang = 'en') {
-        this.getSeoFriendlyCode(lang).type(value);
-    }
+  getPageTemplateSelect() {
+    return this.getContents()
+               .find(this.pageTemplateSelect);
+  }
 
-    setInputTitle(value, lang = 'en') {
-        this.getInputTitle(lang).type(value);
-    }
+  getSaveAndDesignButton() {
+    return this.getContents()
+               .find(this.saveAndDesignButton);
+  }
 
-    getCode() {
-        return this.getPageForm().find(this.inputCode);
-    }
+  getSaveButton() {
+    return this.getContents()
+               .find(this.saveButton);
+  }
 
-    setCode(value) {
-        this.getCode().type(value);
-    }
+  selectSeoLanguage(langOrder) {
+    this.getSeoTabs()
+        .find(htmlElements.a).eq(langOrder)
+        .click();
+    cy.wait(1000);
+  }
 
-    getPageTreeSelector() {
-        return this.getPageForm().find(this.pageTreeSelector);
-    }
+  typeTitle(value, lang = "en") {
+    this.getTitleInput(lang).type(value);
+  }
 
-    selectPageOnTreeSelector(page) {
-        this.getPageTreeSelector().find('tbody tr').eq(page).click();
-    }
+  typeSeoDescription(value, lang = "en") {
+    this.getSeoDescriptionInput(lang).type(value);
+  }
 
-    getPageTemplateSelector() {
-        return this.getPageForm().find(this.pageTemplateSelector)
-    }
+  typeSeoKeywords(value, lang = "en") {
+    this.getSeoKeywordsInput(lang).type(value);
+  }
 
-    selectPageTemplate(value) {
-        this.getPageTemplateSelector().select(value);
-    }
+  typeSeoFriendlyCode(value, lang = "en") {
+    this.getSeoFriendlyCodeInput(lang).type(value);
+  }
 
-    getSaveButton() {
-        return this.getPageForm().find(this.saveButton)
-    }
+  typeCode(value) {
+    this.getCodeInput().type(value);
+  }
 
-    getSaveAndDesignButton() {
-        return this.getPageForm().find(this.saveAndDesignButton)
-    }
+  clearCode() {
+    this.getCodeInput().clear();
+  }
 
-    clickSaveButton () {
-        this.getSaveButton().click();
-        return new AppPage(ManagementPage);
-    }
+  openSubPagesOnPageTreePage(pageOrder) {
+    this.getPageTreeTable()
+        .children(htmlElements.tbody)
+        .children(htmlElements.tr).eq(pageOrder)
+        .children(htmlElements.td)
+        .children(htmlElements.span).eq(0)
+        .click();
+  }
 
-    fillRequiredData(enTitle, itTitle, code, pageIndex, pageTemplate) {
-        this.selectSeoLanguage(0);
-        this.setInputTitle(enTitle, 'en');
-        this.selectSeoLanguage(1);
-        this.setInputTitle(itTitle, 'it');
-        this.getCode().clear();
-        this.setCode(code);
-        if (pageIndex !== undefined) {
-            this.selectPageOnTreeSelector(pageIndex);
-        }
-        this.selectPageTemplate(pageTemplate);
-    }
+  selectPageOnPageTreeTable(pageOrder) {
+    this.getPageTreeTable()
+        .children(htmlElements.tbody)
+        .children(htmlElements.tr).eq(pageOrder)
+        .click();
+  }
 
-    fillSeoData(description, keywords, friendlyCode) {
-        this.selectSeoLanguage(0);
-        this.setSeoDescription(description);
-        this.setSeoKeywords(keywords);
-        this.setSeoFriendlyCode(friendlyCode);
-        this.selectSeoLanguage(1);
-        this.setSeoDescription(description, 'it');
-        this.setSeoKeywords(keywords, 'it');
-        this.setSeoFriendlyCode(friendlyCode, 'it');
+  openOwnerGroupMenu() {
+    this.getOwnerGroupButton().click();
+  }
+
+  selectOwnerGroup(value) {
+    this.openOwnerGroupMenu();
+    this.getOwnerGroupDropdown()
+        .find(`${htmlElements.li}[aria-label=${value}]`)
+        .click();
+  }
+
+  selectPageTemplate(value) {
+    this.getPageTemplateSelect()
+        .select(value);
+  }
+
+  clickSaveAndDesignButton() {
+    this.getSaveAndDesignButton().click();
+    //TODO add returned page
+  }
+
+  clickSaveButton() {
+    this.getSaveButton().click();
+    return new AppPage(ManagementPage);
+  }
+
+  fillRequiredData(enTitle, itTitle, code, pageIndex, pageTemplate) {
+    this.selectSeoLanguage(0);
+    this.typeTitle(enTitle, "en");
+    this.selectSeoLanguage(1);
+    this.typeTitle(itTitle, "it");
+    this.getCodeInput().clear();
+    this.typeCode(code);
+    if (pageIndex !== undefined) {
+      this.selectPageOnPageTreeTable(pageIndex);
     }
+    this.selectPageTemplate(pageTemplate);
+  }
+
+  fillSeoData(description, keywords, friendlyCode) {
+    this.selectSeoLanguage(0);
+    this.typeSeoDescription(description);
+    this.typeSeoKeywords(keywords);
+    this.typeSeoFriendlyCode(friendlyCode);
+    this.selectSeoLanguage(1);
+    this.typeSeoDescription(description, "it");
+    this.typeSeoKeywords(keywords, "it");
+    this.typeSeoFriendlyCode(friendlyCode, "it");
+  }
+
 }

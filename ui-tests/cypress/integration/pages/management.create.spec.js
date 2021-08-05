@@ -29,7 +29,7 @@ describe('Pages Management - Create', () => {
         const friendlyCode = generateRandomId();
 
         // go to add page
-        currentPage = currentPage.getContent().clickAddButton();
+        currentPage = currentPage.getContent().openAddPagePage();
 
         currentPage.getContent()
             .fillRequiredData(`${template} - test en`, `${template} - test it`, code, 0, template);
@@ -54,7 +54,7 @@ describe('Pages Management - Create', () => {
     const name = 'empty SEO data';
 
     // go to add page
-    currentPage = currentPage.getContent().clickAddButton();
+    currentPage = currentPage.getContent().openAddPagePage();
 
     currentPage.getContent()
         .fillRequiredData(name, name, code, 0, OOTB_PAGE_TEMPLATES[0]);
@@ -74,7 +74,7 @@ describe('Pages Management - Create', () => {
     currentPage = openManagementPage();
 
     // go to add page
-    currentPage = currentPage.getContent().clickAddButton();
+    currentPage = currentPage.getContent().openAddPagePage();
 
     // save buttons should be disabled without mandatory fields
     currentPage.getContent().getSaveButton().should('be.disabled');
@@ -88,7 +88,7 @@ describe('Pages Management - Create', () => {
     const name = 'missing required field';
 
     // go to add page
-    currentPage = currentPage.getContent().clickAddButton();
+    currentPage = currentPage.getContent().openAddPagePage();
 
     const pageContent = currentPage.getContent();
 
@@ -100,7 +100,7 @@ describe('Pages Management - Create', () => {
     pageContent.getSaveButton().should('not.be.disabled');
     pageContent.getSaveAndDesignButton().should('not.be.disabled');
 
-    pageContent.getCode().clear();
+    pageContent.getCodeInput().clear();
 
     // save buttons should be disabled after cleaning required data
     pageContent.getSaveButton().should('be.disabled');

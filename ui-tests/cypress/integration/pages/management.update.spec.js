@@ -27,7 +27,7 @@ describe('Pages Management - Update', () => {
     currentPage = openManagementPage();
 
     // go to add page
-    currentPage = currentPage.getContent().clickAddButton();
+    currentPage = currentPage.getContent().openAddPagePage();
 
     currentPage.getContent()
         .fillRequiredData(`Existing code`, `Existing code`, OOTB_CODE, 0, OOTB_PAGE_TEMPLATES[0]);
@@ -43,9 +43,9 @@ describe('Pages Management - Update', () => {
     currentPage = openManagementPage();
 
     // go to add page
-    currentPage = currentPage.getContent().clickAddButton();
+    currentPage = currentPage.getContent().openAddPagePage();
 
-    currentPage.getContent().getPageTemplateSelector().children('option').then(options => {
+    currentPage.getContent().getPageTemplateSelect().children('option').then(options => {
       [...options].forEach(o => {
 
         if (o.value) {
@@ -60,11 +60,11 @@ describe('Pages Management - Update', () => {
     currentPage = openManagementPage();
 
     // go to add page
-    currentPage = currentPage.getContent().clickAddButton();
+    currentPage = currentPage.getContent().openAddPagePage();
 
-    currentPage.getContent().clickOwnerGroupButton();
+    currentPage.getContent().openOwnerGroupMenu();
     cy.wait(1000);
-    
+
     currentPage.getContent().getOwnerGroupDropdown().children('li').then(listItems => {
       [...listItems].forEach(li => {
         expect(OOTB_OWNER_GROUPS.includes(li.innerText)).to.eq(true);
@@ -77,9 +77,9 @@ describe('Pages Management - Update', () => {
 
     cy.visit('/page/add?parentCode=non-existing-page');
     cy.wait(3000);
-    
+
     // should redirect back to /page/add when parentCode does not exist
-    cy.location().should(loc => { 
+    cy.location().should(loc => {
       expect(loc.pathname).to.eq('/page/add');
       expect(loc.search).to.eq('');
     })
@@ -91,17 +91,17 @@ describe('Pages Management - Update', () => {
 
     // edit sitemap page
     currentPage = currentPage.getContent().getKebabMenu('sitemap').open().openEdit();
-    
-    currentPage.getContent().getOwnerGroupButton().should('be.disabled');    
+
+    currentPage.getContent().getOwnerGroupButton().should('be.disabled');
   });
-  
+
   it('publish a page that links to unpublished contents or pages', () => {
     currentPage = openManagementPage();
     const code = generateRandomId();
     const name = 'unpublished page';
 
     // go to add page
-    currentPage = currentPage.getContent().clickAddButton();
+    currentPage = currentPage.getContent().openAddPagePage();
 
     currentPage.getContent()
             .fillRequiredData(name, name, code, 0, '1-2-column');
