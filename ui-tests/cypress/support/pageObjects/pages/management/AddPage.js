@@ -18,7 +18,7 @@ export default class AddPage extends Content {
     // SEO
     seoInfoContainer = `${htmlElements.div}[id=basic-tabs]`;
     seoInfoTabs = `${htmlElements.ul}[${DATA_TESTID}=common_SeoInfo_Tabs]`;
-    
+
     seoDescription = `${htmlElements.input}[name="seoData.seoDataByLang.{code}.description"]`
     seoKeywords = `${htmlElements.input}[name="seoData.seoDataByLang.{code}.keywords"]`
     seoFriendlyCode = `${htmlElements.input}[name="seoData.seoDataByLang.{code}.friendlyCode"]`
@@ -31,8 +31,6 @@ export default class AddPage extends Content {
     // buttons
     saveButton = `${htmlElements.button}[${DATA_TESTID}="save-page"]`;
     saveAndDesignButton = `${htmlElements.button}[${DATA_TESTID}="common_PageForm_Button"]`;
-
-    alertMessageDiv = `${htmlElements.div}[${DATA_TESTID}=form_ErrorsAlert_Alert]`;
 
     getPageForm () {
         return this.parent.get()
@@ -51,11 +49,6 @@ export default class AddPage extends Content {
     getSeoTabs() {
         return this.getSeoContainer()
                .children(this.seoInfoTabs);
-    }
-
-    getAlertMessage() {
-        return this.getContents()
-               .find(this.alertMessageDiv);
     }
 
     getOwnerGroupButton() {
@@ -116,7 +109,7 @@ export default class AddPage extends Content {
     setCode(value) {
         this.getCode().type(value);
     }
-    
+
     getPageTreeSelector() {
         return this.getPageForm().find(this.pageTreeSelector);
     }

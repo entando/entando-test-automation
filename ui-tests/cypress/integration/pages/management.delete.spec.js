@@ -39,7 +39,7 @@ describe('Pages Management - Delete', () => {
   it('should not delete a published page', () => {
     // add a new page
     const code = generateRandomId();
-    cy.pagesController().then(controller => { 
+    cy.pagesController().then(controller => {
       controller.addPage(code, 'published page', 'administrators', '1-2-column', 'homepage');
       controller.setPageStatus(code, 'published');
     });
@@ -49,7 +49,7 @@ describe('Pages Management - Delete', () => {
 
     // delete button should be disabled
     currentPage.getContent().getKebabMenu(code).getDelete().should('have.class', 'disabled');
-    
+
     // delete recently added page
     cy.pagesController().then(controller => {
       controller.setPageStatus(code, 'draft');
@@ -60,7 +60,7 @@ describe('Pages Management - Delete', () => {
   it('should not delete a drafted page', () => {
     // add a new page
     const code = generateRandomId();
-    cy.pagesController().then(controller => { 
+    cy.pagesController().then(controller => {
       controller.addPage(code, 'published page', 'administrators', '1-2-column', 'homepage');
       controller.setPageStatus(code, 'published');
       controller.addWidgetToPage(code, 0, 'search_form');
@@ -72,9 +72,9 @@ describe('Pages Management - Delete', () => {
     currentPage.getContent().getKebabMenu(code).open().clickDelete();
     currentPage.getDialog().confirm();
     cy.wait(1000);
-    
+
     // Error message should appear
-    currentPage.getContent().getErrorsContainer().should('contain', 'Online pages can not be deleted');
+    currentPage.getContent().getAlertMessage().should('contain', 'Online pages can not be deleted');
 
     // delete recently added page
     cy.pagesController().then(controller => {
@@ -87,7 +87,7 @@ describe('Pages Management - Delete', () => {
     // add a new page
     const code = generateRandomId();
     const childrenCode = generateRandomId();
-    cy.pagesController().then(controller => { 
+    cy.pagesController().then(controller => {
       controller.addPage(code, 'published page', 'administrators', '1-2-column', 'homepage');
       controller.setPageStatus(code, 'published');
       controller.addPage(childrenCode, 'published children', 'administrators', '1-2-column', code);
@@ -99,7 +99,7 @@ describe('Pages Management - Delete', () => {
 
     // delete button should be disabled
     currentPage.getContent().getKebabMenu(code).getDelete().should('have.class', 'disabled');
-    
+
 
     // delete recently added page
     cy.pagesController().then(controller => {
@@ -114,7 +114,7 @@ describe('Pages Management - Delete', () => {
     // add a new page
     const code = generateRandomId();
     const childrenCode = generateRandomId();
-    cy.pagesController().then(controller => { 
+    cy.pagesController().then(controller => {
       controller.addPage(code, 'published page', 'administrators', '1-2-column', 'homepage');
       controller.setPageStatus(code, 'published');
       controller.addPage(childrenCode, 'unpublished children', 'administrators', '1-2-column', code);
@@ -125,7 +125,7 @@ describe('Pages Management - Delete', () => {
 
     // delete button should be disabled
     currentPage.getContent().getKebabMenu(code).getDelete().should('have.class', 'disabled');
-    
+
 
     // delete recently added page
     cy.pagesController().then(controller => {
@@ -139,7 +139,7 @@ describe('Pages Management - Delete', () => {
     // add a new page
     const code = generateRandomId();
     const childrenCode = generateRandomId();
-    cy.pagesController().then(controller => { 
+    cy.pagesController().then(controller => {
       controller.addPage(code, 'unpublished page', 'administrators', '1-2-column', 'homepage');
       controller.addPage(childrenCode, 'unpublished children', 'administrators', '1-2-column', code);
     });
@@ -149,7 +149,7 @@ describe('Pages Management - Delete', () => {
 
     // delete button should be disabled
     currentPage.getContent().getKebabMenu(code).getDelete().should('have.class', 'disabled');
-    
+
     // delete recently added page
     cy.pagesController().then(controller => {
       controller.deletePage(childrenCode);

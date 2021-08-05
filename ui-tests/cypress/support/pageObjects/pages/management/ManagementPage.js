@@ -15,7 +15,6 @@ export default class ManagementPage extends Content {
     publishChild = `[aria-labelledby=WidgetListRow-dropown] li:nth-child(5) a`;
     deleteChild = `[aria-labelledby=WidgetListRow-dropown] li:nth-child(7) a`;
     expandAll = `${htmlElements.div}.PageTree__toggler--expand`;
-    errorsAlertContainer = `[${DATA_TESTID}=form_ErrorsAlert_div]`;
 
     getAddButton() {
         return this.get().find(this.add);
@@ -29,10 +28,6 @@ export default class ManagementPage extends Content {
         return this.getTableContainer()
                     .children(htmlElements.tbody)
                     .children(htmlElements.tr);
-    }
-
-    getErrorsContainer() {
-        return this.get().find(this.errorsAlertContainer);
     }
 
     getKebabMenu(code) {
@@ -77,37 +72,37 @@ class PagesKebabMenu extends KebabMenu {
       return this.get()
                  .find('.PageTreeActionMenuButton__menu-item-edit');
     }
-  
+
     getDesign() {
       return this.get()
                  .find('.PageTreeActionMenuButton__menu-item-configure');
     }
-  
+
     getClone() {
       return this.get()
                  .find('.PageTreeActionMenuButton__menu-item-clone');
     }
-  
+
     getPublish() {
       return this.get()
                  .find('.PageTreeActionMenuButton__menu-item-publish');
     }
-  
+
     getDetails() {
       return this.get()
                  .find('.PageTreeActionMenuButton__menu-item-details');
     }
-  
+
     getDelete() {
       return this.get()
                  .find('.PageTreeActionMenuButton__menu-item-delete');
     }
-  
+
     getPreview() {
       return this.get()
                  .find('.PageTreeActionMenuButton__menu-item-preview');
     }
-  
+
     getViewPublishedPage() {
       return this.get()
                  .find('.PageTreeActionMenuButton__menu-item-viewPublishedPage');
@@ -127,5 +122,5 @@ class PagesKebabMenu extends KebabMenu {
         this.getDelete().click();
         this.parent.parent.getDialog().setBody(DeleteDialog);
     }
-  
+
   }

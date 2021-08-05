@@ -4,6 +4,8 @@ export default class Content extends WebElement {
 
   content = `[${DATA_TESTID}=internal-page_InternalPage_div]`;
 
+  alertMessageDiv = `${htmlElements.div}[${DATA_TESTID}=form_ErrorsAlert_Alert]`;
+
   get() {
     return this.parent.get()
                .children(this.content);
@@ -25,6 +27,11 @@ export default class Content extends WebElement {
     return this.getContents()
                .children(htmlElements.div).eq(1)
                .find(htmlElements.h1);
+  }
+
+  getAlertMessage() {
+    return this.getContents()
+               .find(this.alertMessageDiv);
   }
 
 }
