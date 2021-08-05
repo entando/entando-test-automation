@@ -33,7 +33,7 @@ describe('Categories', () => {
         // in the same page (AddPage)
         currentPage.getContent().addCategory(`AAA${titleEn}`, titleIt, categoryCode, treePosition);
         currentPage.getContent().getAlertMessage().contains('span', categoryCode).should('be.visible');
-        cy.validateToast(currentPage, false, categoryCode);
+        cy.validateToast(currentPage, categoryCode, false);
         deleteTestCategory();
     })
 

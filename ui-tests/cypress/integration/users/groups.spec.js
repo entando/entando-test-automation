@@ -109,7 +109,7 @@ describe("Groups", () => {
                   cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should("have.text", updatedGroupName);
                 });
     });
-  
+
     it('Update a group used by a published page', () => {
       cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
 
@@ -130,7 +130,7 @@ describe("Groups", () => {
                   cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should("have.text", updatedGroupName);
                 });
     });
-  
+
     it('Delete a group used by an unpublished page - not allowed', () => {
       currentPage = openGroupsPage();
 
@@ -138,9 +138,9 @@ describe("Groups", () => {
       currentPage.getDialog().getBody().getStateInfo().should("contain", groupCode);
       currentPage.getDialog().confirm();
 
-      cy.validateToast(currentPage, false, groupCode);
+      cy.validateToast(currentPage, groupCode, false);
     });
-  
+
     it('Delete a group used by a published page - not allowed', () => {
       cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
 
@@ -150,7 +150,7 @@ describe("Groups", () => {
       currentPage.getDialog().getBody().getStateInfo().should("contain", groupCode);
       currentPage.getDialog().confirm();
 
-      cy.validateToast(currentPage, false, groupCode);
+      cy.validateToast(currentPage, groupCode, false);
     });
   });
 

@@ -4,13 +4,17 @@
  * @param isOk - a boolean value if success or not
  * @param text - the text message that should be visible in the toast notification
  */
-Cypress.Commands.add('validateToast', ( page, isOk = true , text) => {
-  const toast = page.getToastList().children('div');
-  toast.should('contain',text);
+Cypress.Commands.add("validateToast", (page, text = null, isOk = true) => {
+  const toast = page.getToastList().children("div");
+  if (text) {
+    toast.should("contain", text);
+  }
+  const icon = toast.children("span.pficon");
+  icon.should("be.visible");
   if (isOk) {
-    toast.children('span.pficon.pficon-ok').should('be.visible');
+    icon.should("have.class", "pficon-ok");
   } else {
-    toast.children('span.pficon.pficon-error-circle-o').should('be.visible');
+    icon.should("have.class", "pficon-error-circle-o");
   }
 });
 
@@ -19,10 +23,10 @@ Cypress.Commands.add('validateToast', ( page, isOk = true , text) => {
  * @param list - the list of html elements to be validated
  * @param values - the ordered expected texts
  */
-Cypress.Commands.add('validateListTexts', (list, values) => {
+Cypress.Commands.add("validateListTexts", (list, values) => {
   for (let i = 0; i < values.length; i++) {
     if (values[i]) {
-      cy.get(list).eq(i).should('have.text', values[i]);
+      cy.get(list).eq(i).should("have.text", values[i]);
     }
   }
 });

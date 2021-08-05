@@ -19,7 +19,7 @@ describe('Contents', () => {
 
     currentPage.getContent().addContent(`AAA-EN`, `AAA-IT`, 'description test');
 
-    cy.validateToast(currentPage, true, 'Saved');
+    cy.validateToast(currentPage, 'Saved');
   })
 
 
@@ -34,7 +34,7 @@ describe('Contents', () => {
   //   currentPage = currentPage.getContent().openEditContentPage();
 
   //   currentPage.getContent().editContent('description changed');
-  //   cy.validateToast(currentPage, true, 'Saved');
+  //   cy.validateToast(currentPage, 'Saved');
 
   //   // cy.kcLogout();
   // })
@@ -48,7 +48,7 @@ describe('Contents', () => {
     currentPage = currentPage.getMenu().getContent().open().openManagement();
     currentPage = currentPage.getContent().deleteLastAddedContent();
 
-    cy.validateToast(currentPage, true, 'removed');
+    cy.validateToast(currentPage, 'removed');
 
     cy.kcLogout();
   })
@@ -117,7 +117,7 @@ describe('Contents', () => {
       cy.wait(1000);
       currentPage.getContent().unpublishContent(contentId);
 
-      cy.validateToast(currentPage, false, contentId);
+      cy.validateToast(currentPage, contentId, false);
     });
 
     cy.pagesController().then(controller => controller.updateStatus(page.code, 'draft'));

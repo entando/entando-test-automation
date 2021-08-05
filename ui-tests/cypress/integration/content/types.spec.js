@@ -97,7 +97,7 @@ describe("Content Types", () => {
       cy.log(`Delete content type with code ${contentType.code}`);
       currentPage.getContent().getKebabMenu(contentType.code).open().clickDelete();
       currentPage.getDialog().confirm();
-      cy.validateToast(currentPage, false, contentType.code);
+      cy.validateToast(currentPage, contentType.code, false);
     });
 
     it("should allow adding an attribute", () => {
