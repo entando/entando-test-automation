@@ -1,7 +1,6 @@
 import {
   TEST_ID_LIST_PAGE_TREE,
   TEST_ID_PAGE_TREE,
-  TEST_ID_PAGE_TREE_SEARCH_FORM,
 } from '../../test-const/page-management-test-const';
 
 import TEST_ID_GENERIC_MODAL from '../../test-const/test-const';
@@ -54,29 +53,6 @@ function expandOrCollapseAll(label) {
  */
 Cypress.Commands.add('expandAllPageTreeFolders', () => {
   expandOrCollapseAll('Expand');
-});
-
-/**
- * Select the element we want to filter with and the value.
- * @param filterName the name in the UI dropdown list
- * @param value the value we want to search the page with
- */
-Cypress.Commands.add('searchPageBy', (filterName, value) => {
-  cy.getByTestId(TEST_ID_PAGE_TREE_SEARCH_FORM.DROPDOWN_BUTTON).click().then(() => {
-    cy.getByTestId(TEST_ID_PAGE_TREE_SEARCH_FORM.DROPDOWN_MENU_ITEM).contains(filterName)
-      .click().then(() => {
-        cy.getByTestId(TEST_ID_PAGE_TREE_SEARCH_FORM.SEARCH_FIELD).type(value).then(() => {
-          cy.getByTestId(TEST_ID_PAGE_TREE_SEARCH_FORM.SEARCH_BUTTON).click();
-        });
-      });
-  });
-});
-
-/**
- * Clear all the results after a research.
- */
-Cypress.Commands.add('clearSearchPageResults', () => {
-  cy.getByTestId(TEST_ID_LIST_PAGE_TREE.BUTTON).contains('Clear results').click();
 });
 
 /**

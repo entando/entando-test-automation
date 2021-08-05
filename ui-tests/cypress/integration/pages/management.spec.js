@@ -1,10 +1,11 @@
 import {generateRandomId} from "../../support/utils";
 
+import {htmlElements} from "../../support/pageObjects/WebElement";
+
 import {
   PAGE_WITHOUT_SEO_DATA,
   PAGE_FREE_OWNER_GROUP
-}                               from "../../mocks/pages";
-import {TEST_ID_LIST_PAGE_TREE} from "../../test-const/page-management-test-const";
+} from "../../mocks/pages";
 
 import HomePage from "../../support/pageObjects/HomePage";
 
@@ -158,24 +159,35 @@ describe("Page Management", () => {
 
   });
 
-  describe("Search Page", () => {
-    it("Should search the page by Name", () => {
-      const pageName = "Home";
-      cy.openPageFromMenu(["Pages", "Management"]);
-      cy.searchPageBy("Page Name", pageName);
-      cy.getTableRowsBySelector(pageName).should("be.visible");
-      cy.getTableRowsByTestId(TEST_ID_LIST_PAGE_TREE.SEARCH_TABLE).should("have.length", 2);
-      cy.clearSearchPageResults();
+  describe("Search a page", () => {
+
+    const page = {
+      code: "homepage",
+      name: "Home"
+    };
+
+    beforeEach(() => currentPage = openManagementPage());
+
+    it("Search by name", () => {
+      currentPage.getContent().selectSearchOption(0);
+      currentPage.getContent().typeSearch(page.name);
+      currentPage = currentPage.getContent().clickSearchButton();
+
+      currentPage.getContent().getTableRows()
+                 .should("have.length", 2)
+                 .each(row => cy.wrap(row).children(htmlElements.td).eq(2).should("contain", page.name));
     });
 
-    it("Should search the page by Code", () => {
-      const pageCode = "homepage";
-      cy.openPageFromMenu(["Pages", "Management"]);
-      cy.searchPageBy("Page Code", pageCode);
-      cy.getTableRowsBySelector(pageCode).should("be.visible");
-      cy.getTableRowsByTestId(TEST_ID_LIST_PAGE_TREE.SEARCH_TABLE).should("have.length", 2);
-      cy.clearSearchPageResults();
+    it("Search by code", () => {
+      currentPage.getContent().selectSearchOption(1);
+      currentPage.getContent().typeSearch(page.code);
+      currentPage = currentPage.getContent().clickSearchButton();
+
+      currentPage.getContent().getTableRows()
+                 .should("have.length", 2)
+                 .each(row => cy.wrap(row).children(htmlElements.td).eq(0).should("contain", page.code));
     });
+
   });
 
   describe("Change page position in the page tree", () => {
