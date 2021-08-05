@@ -6,18 +6,16 @@ import AppPage from "../../app/AppPage.js";
 
 import PagesKebabMenu from "./PagesKebabMenu";
 
-import AddPage          from "./AddPage.js";
-import SearchResultPage from "./SearchResultPage";
+import AddPage from "./AddPage.js";
 
-export default class ManagementPage extends Content {
+export default class SearchResultPage extends Content {
 
   searchForm   = `${htmlElements.form}[${DATA_TESTID}=list_PageSearchForm_form]`;
   searchOption = `${htmlElements.button}[${DATA_TESTID}=list_PageSearchForm_DropdownButton]`;
   searchInput  = `${htmlElements.input}[${DATA_TESTID}=list_PageSearchForm_Field]`;
   searchButton = `${htmlElements.button}[${DATA_TESTID}=list_PageSearchForm_Button]`;
 
-  tableContainer = `${htmlElements.div}.DDTable`;
-  expandAll      = `${htmlElements.div}.PageTree__toggler--expand`;
+  tableContainer = `${htmlElements.div}.PageListSearchTable `;
 
   addButton = `${htmlElements.button}[${DATA_TESTID}=button-step-5]`;
 
@@ -44,19 +42,19 @@ export default class ManagementPage extends Content {
   getTableContainer() {
     return this.get()
                .find(this.tableContainer)
-               .children(htmlElements.table);
-  }
-
-  getExpandAll() {
-    return this.getTableContainer()
-               .children(htmlElements.thead)
-               .find(this.expandAll);
+               .find(htmlElements.table);
   }
 
   getTableRows() {
     return this.getTableContainer()
                .children(htmlElements.tbody)
                .children(htmlElements.tr);
+  }
+
+  getTableRow(code) {
+    return this.getTableContainer()
+               .find(`#${code}-actions`)
+               .parents(htmlElements.tr);
   }
 
   getKebabMenu(code) {
@@ -84,11 +82,6 @@ export default class ManagementPage extends Content {
     this.getSearchButton().click();
     cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(SearchResultPage);
-  }
-
-  clickExpandAll() {
-    this.getExpandAll()
-        .click();
   }
 
   openAddPagePage() {
