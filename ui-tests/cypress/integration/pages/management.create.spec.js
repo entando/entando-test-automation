@@ -1,91 +1,95 @@
-import HomePage             from "../../support/pageObjects/HomePage";
-import { generateRandomId } from '../../support/utils';
+import {generateRandomId} from "../../support/utils";
+
+import HomePage           from "../../support/pageObjects/HomePage";
 
 let currentPage;
 
 const openManagementPage = () => {
-    cy.visit('/');
-    let currentPage = new HomePage();
-    currentPage = currentPage.getMenu().getPages().open();
-    return currentPage.openManagement();
-}
+  cy.visit("/");
+  let currentPage = new HomePage();
+  currentPage     = currentPage.getMenu().getPages().open();
+  return currentPage.openManagement();
+};
 
-const OOTB_PAGE_TEMPLATES = ['1-2-column', '1-2x2-1-column', '1-2x4-1-column', '1-column', 'content-page', 'home', 'single_frame_page']
+const OOTB_PAGE_TEMPLATES = ["1-2-column", "1-2x2-1-column", "1-2x4-1-column", "1-column", "content-page", "home", "single_frame_page"];
 
-describe('Pages Management - Create', () => {
-    beforeEach(() => {
-        cy.kcLogin("admin").as("tokens");
-    });
+describe("Pages Management - Create", () => {
+  beforeEach(() => {
+    cy.kcLogin("admin").as("tokens");
+  });
 
-    afterEach(() => {
-        cy.kcLogout();
-    });
+  afterEach(() => {
+    cy.kcLogout();
+  });
 
-  it('Create a page for every OOTB page-template', () => {
-    currentPage = openManagementPage();
+  describe("Create a page for every OOTB page-template", () => {
 
     OOTB_PAGE_TEMPLATES.forEach(template => {
-        const code = generateRandomId();
+      it(`Create ${template}`, () => {
+        currentPage = openManagementPage();
+
+        const code         = generateRandomId();
         const friendlyCode = generateRandomId();
 
         // go to add page
         currentPage = currentPage.getContent().openAddPagePage();
 
         currentPage.getContent()
-            .fillRequiredData(`${template} - test en`, `${template} - test it`, code, 0, template);
+                   .fillRequiredData(`${template} - test en`, `${template} - test it`, code, 0, template);
 
-        currentPage.getContent().fillSeoData('SEO description', 'keyword', friendlyCode);
+        currentPage.getContent().fillSeoData("SEO description", "keyword", friendlyCode);
 
         currentPage = currentPage.getContent().clickSaveButton();
 
         cy.wait(2000);
         // page should be created successfully
-        currentPage.getContent().getTableRows().should('contain', `${template} - test en`);
+        currentPage.getContent().getTableRows().should("contain", `${template} - test en`);
 
         // delete recently added page
         cy.pagesController().then(controller => controller.deletePage(code));
+      });
     });
   });
 
-  it('create a page with empty SEO data', () => {
+  it("create a page with empty SEO data", () => {
     currentPage = openManagementPage();
 
     const code = generateRandomId();
-    const name = 'empty SEO data';
+    const name = "empty SEO data";
 
     // go to add page
     currentPage = currentPage.getContent().openAddPagePage();
 
     currentPage.getContent()
-        .fillRequiredData(name, name, code, 0, OOTB_PAGE_TEMPLATES[0]);
+               .fillRequiredData(name, name, code, 0, OOTB_PAGE_TEMPLATES[0]);
 
     currentPage = currentPage.getContent().clickSaveButton();
 
     cy.wait(1000);
     // page should be created successfully
-    currentPage.getContent().getTableRows().should('contain', name);
+    currentPage.getContent().getTableRows().should("contain", name);
 
     // delete recently added page
     cy.pagesController().then(controller => controller.deletePage(code));
     cy.wait(1000);
   });
 
-  it('should not create a page with empty fields', () => {
+  it("should not create a page with empty fields", () => {
     currentPage = openManagementPage();
 
     // go to add page
     currentPage = currentPage.getContent().openAddPagePage();
 
     // save buttons should be disabled without mandatory fields
-    currentPage.getContent().getSaveButton().should('be.disabled');
-    currentPage.getContent().getSaveAndDesignButton().should('be.disabled');
+    currentPage.getContent().getSaveButton().should("be.disabled");
+    currentPage.getContent().getSaveAndDesignButton().should("be.disabled");
   });
 
-  it('should not create a page with missing required field', () => {
+  it("should not create a page with missing required field", () => {
     currentPage = openManagementPage();
 
     const code = generateRandomId();
-    const name = 'missing required field';
+    const name = "missing required field";
 
     // go to add page
     currentPage = currentPage.getContent().openAddPagePage();
@@ -97,27 +101,27 @@ describe('Pages Management - Create', () => {
         .fillRequiredData(name, name, code, 0, OOTB_PAGE_TEMPLATES[0]);
 
     // save buttons should be enabled
-    pageContent.getSaveButton().should('not.be.disabled');
-    pageContent.getSaveAndDesignButton().should('not.be.disabled');
+    pageContent.getSaveButton().should("not.be.disabled");
+    pageContent.getSaveAndDesignButton().should("not.be.disabled");
 
     pageContent.getCodeInput().clear();
 
     // save buttons should be disabled after cleaning required data
-    pageContent.getSaveButton().should('be.disabled');
-    pageContent.getSaveAndDesignButton().should('be.disabled');
+    pageContent.getSaveButton().should("be.disabled");
+    pageContent.getSaveAndDesignButton().should("be.disabled");
   });
 
-  it('create a child page', () => {
+  it("create a child page", () => {
     currentPage = openManagementPage();
 
     const code = generateRandomId();
-    const name = 'child page';
+    const name = "child page";
 
     // add a child page for sitemap
-    currentPage = currentPage.getContent().getKebabMenu('sitemap').open().openAdd();
+    currentPage = currentPage.getContent().getKebabMenu("sitemap").open().openAdd();
 
     currentPage.getContent()
-        .fillRequiredData(name, name, code, undefined, OOTB_PAGE_TEMPLATES[0]);
+               .fillRequiredData(name, name, code, undefined, OOTB_PAGE_TEMPLATES[0]);
 
     currentPage = currentPage.getContent().clickSaveButton();
 
@@ -127,7 +131,7 @@ describe('Pages Management - Create', () => {
     cy.wait(2000);
 
     // page should be created successfully
-    currentPage.getContent().getTableRows().should('contain', name);
+    currentPage.getContent().getTableRows().should("contain", name);
 
     // delete recently added page
     cy.pagesController().then(controller => controller.deletePage(code));
