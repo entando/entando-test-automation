@@ -14,52 +14,55 @@ describe("Page Management", () => {
 
   describe("Add a new page", () => {
 
-    let page            = {};
-    let pageToBeDeleted = false;
+    const OOTB_PAGE_TEMPLATES = ["1-2-column", "1-2x2-1-column", "1-2x4-1-column", "1-column", "content-page", "home", "single_frame_page"];
 
-    beforeEach(() => {
-      page = {
-        title: {
-          en: generateRandomId(),
-          it: generateRandomId()
-        },
-        code: generateRandomId(),
-        pageTree: 0,
-        ownerGroup: "Administrators",
-        template: "1-2-column",
-        seoData: {
-          en: {
-            description: generateRandomId(),
-            keywords: generateRandomId(),
-            friendlyCode: generateRandomId()
-          },
-          it: {
-            description: generateRandomId(),
-            keywords: generateRandomId(),
-            friendlyCode: generateRandomId()
-          }
-        },
-        metaTags: [
-          {
-            key: generateRandomId(),
-            type: "name",
-            value: generateRandomId()
-          },
-          {
-            key: generateRandomId(),
-            type: "http-equiv",
-            value: generateRandomId()
-          },
-          {
-            key: generateRandomId(),
-            type: "property",
-            value: generateRandomId()
-          }
-        ]
-      };
+    let page       = {};
+    let parentPage = {};
 
-      currentPage = openManagementPage();
-    });
+    let pageToBeDeleted   = false;
+    let parentToBeDeleted = false;
+
+    beforeEach(() =>
+        page = {
+          title: {
+            en: generateRandomId(),
+            it: generateRandomId()
+          },
+          code: generateRandomId(),
+          pageTree: 0,
+          ownerGroup: "Administrators",
+          template: "1-2-column",
+          seoData: {
+            en: {
+              description: generateRandomId(),
+              keywords: generateRandomId(),
+              friendlyCode: generateRandomId()
+            },
+            it: {
+              description: generateRandomId(),
+              keywords: generateRandomId(),
+              friendlyCode: generateRandomId()
+            }
+          },
+          metaTags: [
+            {
+              key: generateRandomId(),
+              type: "name",
+              value: generateRandomId()
+            },
+            {
+              key: generateRandomId(),
+              type: "http-equiv",
+              value: generateRandomId()
+            },
+            {
+              key: generateRandomId(),
+              type: "property",
+              value: generateRandomId()
+            }
+          ]
+        }
+    );
 
     afterEach(() => {
       if (pageToBeDeleted) {
@@ -70,39 +73,103 @@ describe("Page Management", () => {
           })
           .then(() => pageToBeDeleted = false);
       }
+      if (parentToBeDeleted) {
+        cy.pagesController()
+          .then(controller => {
+            controller.setPageStatus(parentPage.code, "draft");
+            controller.deletePage(parentPage.code);
+          })
+          .then(() => parentToBeDeleted = false);
+      }
     });
 
-    it("Add a new page without SEO attributes", () => {
-      currentPage = currentPage.getContent().openAddPagePage();
+    describe("Add a new page without SEO attributes", () => {
+      OOTB_PAGE_TEMPLATES.forEach(template => {
+        it(`Add ${template} template`, () => {
+          page.template = template;
+          currentPage   = openManagementPage();
+          currentPage   = currentPage.getContent().openAddPagePage();
+          cy.location("pathname").should("eq", "/page/add");
+
+          addPageMandatoryData(currentPage, page);
+          saveAndValidate(currentPage, page);
+        });
+      });
+    });
+
+    describe("Add a new page with SEO Attributes", () => {
+      OOTB_PAGE_TEMPLATES.forEach(template => {
+        it(`Add ${template} template`, () => {
+          page.template = template;
+          currentPage   = openManagementPage();
+          currentPage   = currentPage.getContent().openAddPagePage();
+          cy.location("pathname").should("eq", "/page/add");
+
+          addPageMandatoryData(currentPage, page);
+          addSeoData(currentPage, page.seoData);
+          page.metaTags.forEach(metaTag => addMetaTag(currentPage, metaTag));
+
+          saveAndValidate(currentPage, page);
+        });
+      });
+    });
+
+    it("Add a new child page", () => {
+      parentPage = {
+        code: generateRandomId(),
+        title: generateRandomId(),
+        parentCode: "homepage",
+        ownerGroup: "administrators",
+        template: "1-2-column"
+      };
+      cy.pagesController()
+        .then(controller => controller.addPage(parentPage.code, parentPage.title, parentPage.ownerGroup, parentPage.template, parentPage.parentCode))
+        .then(() => parentToBeDeleted = true);
+
+      currentPage = openManagementPage();
+      currentPage = currentPage.getContent().getKebabMenu(parentPage.code).open().openAdd();
       cy.location("pathname").should("eq", "/page/add");
 
+      page.pageTree = null;
       addPageMandatoryData(currentPage, page);
-      currentPage = currentPage.getContent().clickSaveButton();
+      currentPage     = currentPage.getContent().clickSaveButton();
       pageToBeDeleted = true;
 
-      cy.validateToast(currentPage);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", parentPage.title)
+      );
+
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
       currentPage.getContent().getTableRows().then(rows =>
           cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title.en)
       );
     });
 
-    it("Add a new page with SEO Attributes", () => {
+    it("Adding a new page with empty fields is forbidden", () => {
+      currentPage = openManagementPage();
+      currentPage = currentPage.getContent().openAddPagePage();
+      cy.location("pathname").should("eq", "/page/add");
+
+      currentPage.getContent().getSaveAndDesignButton().should("be.disabled");
+      currentPage.getContent().getSaveButton().should("be.disabled");
+    });
+
+    it("Adding a new page without mandatory fields is forbidden", () => {
+      currentPage = openManagementPage();
       currentPage = currentPage.getContent().openAddPagePage();
       cy.location("pathname").should("eq", "/page/add");
 
       addPageMandatoryData(currentPage, page);
-      addSeoData(currentPage, page.seoData);
-      page.metaTags.forEach(metaTag => addMetaTag(currentPage, metaTag));
-      currentPage = currentPage.getContent().clickSaveButton();
-      pageToBeDeleted = true;
+      currentPage.getContent().getSaveAndDesignButton().should("not.be.disabled");
+      currentPage.getContent().getSaveButton().should("not.be.disabled");
 
-      cy.validateToast(currentPage);
-      currentPage.getContent().getTableRows().then(rows =>
-          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title.en)
-      );
+      currentPage.getContent().clearCode();
+      currentPage.getContent().getSaveAndDesignButton().should("be.disabled");
+      currentPage.getContent().getSaveButton().should("be.disabled");
     });
 
     it("Adding a new page with existing code is forbidden", () => {
+      currentPage = openManagementPage();
       currentPage = currentPage.getContent().openAddPagePage();
       cy.location("pathname").should("eq", "/page/add");
 
@@ -123,7 +190,9 @@ describe("Page Management", () => {
       page.getContent().clearCode();
       page.getContent().typeCode(data.code);
 
-      page.getContent().selectPageOnPageTreeTable(data.pageTree);
+      if (data.pageTree !== null) {
+        page.getContent().selectPageOnPageTreeTable(data.pageTree);
+      }
 
       page.getContent().selectOwnerGroup(data.ownerGroup);
 
@@ -145,6 +214,15 @@ describe("Page Management", () => {
       page.getContent().selectMetaType(metaTag.type);
       page.getContent().typeMetaValue(metaTag.value);
       page.getContent().clickMetaTagAddButton();
+    };
+    const saveAndValidate      = (page, data) => {
+      currentPage     = page.getContent().clickSaveButton();
+      pageToBeDeleted = true;
+
+      cy.validateToast(currentPage);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", data.title.en)
+      );
     };
 
   });
