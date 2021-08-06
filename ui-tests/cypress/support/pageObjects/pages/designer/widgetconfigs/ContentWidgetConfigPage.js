@@ -3,6 +3,8 @@ import { htmlElements } from '../../../WebElement';
 import { DialogContent } from '../../../app/Dialog';
 
 import WidgetConfigPage from '../WidgetConfigPage';
+import AppPage from '../../../app/AppPage';
+import AddContentPage from '../../../content/management/AddPage';
 
 export class ContentListSelectModal extends DialogContent {
   getContentListTable() {
@@ -30,11 +32,35 @@ export class ContentListSelectModal extends DialogContent {
 }
 
 export default class ContentWidgetConfigPage extends WidgetConfigPage {
+
+  addButtonArea = `${htmlElements.div}.SingleContentConfigFormBody__addButtons`;
+  buttonClass = `${htmlElements.button}.btn.btn-primary`;
+  buttonDropdown = `${htmlElements.div}.dropdown.btn-group-primary`;
+  modelIdSelect = `${htmlElements.select}[name="modelId"]`;
+
+  getAddButtonsArea() {
+    return this.getInnerPanel().find(this.addButtonArea);
+  }
   
   getAddContentButton() {
-    // TODO - amend test id attributes for the buttons in appbuilder to avoid using `contains` method
-    return this.getInnerPanel().find('button.btn.btn-primary')
-      .contains(/^Add existing content$/);
+    return this.getAddButtonsArea().children(this.buttonClass);
+  }
+
+  getAddNewButtonDropdown() {
+    return this.getAddButtonsArea().children(this.buttonDropdown);
+  }
+
+  getButtonAddByContentTypeName(ctype) {
+    return this.getAddNewButtonDropdown()
+      .children(htmlElements.ul)
+      .children(htmlElements.li)
+      .contains(ctype);
+  }
+
+  clickNewContentWith(ctype) {
+    this.getAddNewButtonDropdown().click();
+    this.getButtonAddByContentTypeName(ctype);
+    return new AppPage(AddContentPage);
   }
 
   clickAddContentButton() {
@@ -43,8 +69,12 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   }
 
   getChangeContentButton() {
-    return this.getInnerPanel().find('button.btn.btn-primary')
-      .contains(/^Change content$/);
+    return this.getAddContentButton();
+  }
+
+  getModelIdSelect() {
+    return this.getInnerPanel()
+      .find(this.modelIdSelect);
   }
 
   clickChangeContentButton() {

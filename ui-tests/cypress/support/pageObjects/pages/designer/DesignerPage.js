@@ -1,4 +1,4 @@
-import { DATA_TESTID, htmlElements } from '../../WebElement';
+import { DATA_TESTID, htmlElements, WebElement } from '../../WebElement';
 
 import Content from '../../app/Content';
 import AppPage from '../../app/AppPage';
@@ -17,6 +17,8 @@ export default class DesignerPage extends Content {
   widgetItem = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGroupingItem_div]`;
   frameMenuItem = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_MenuItem]`;
   frameMenuLink = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_Link]`;
+  buttonToolbar = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_ButtonToolbar][role=toolbar]`;
+  buttonViewPublished = `${htmlElements.button}[${DATA_TESTID}=config_PageConfigPage_Button].PageConfigPage__btn--viewPublishedPage`;
   pageStatusIcon = `i[${DATA_TESTID}=common_PageStatusIcon_i]`;
   pageGridTab = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Tab]`;
   pageGridMain = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridCol_div]`;
@@ -88,6 +90,15 @@ export default class DesignerPage extends Content {
     },
   };
 
+  constructor(props) {
+    super(props);
+    cy.window().then((win) => {
+        cy.stub(win, 'open').as('windowOpen').callsFake(url => {
+            cy.visit(url);
+        });
+    })
+  }
+
   getMainContainer() {
     return this.get()
                 .children(this.grid)
@@ -112,22 +123,46 @@ export default class DesignerPage extends Content {
                .children(htmlElements.ol);
   }
 
-  getTitle() {
+  getInnerContent() {
     return this.getContents()
-               .children(`${htmlElements.div}#basic-tabs`)
-               .children(htmlElements.div)
-               .children(`${htmlElements.div}#basic-tabs-pane-1`)
-               .children(`${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_div]`)
-               .children(`${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_div]`)
+      .children(`${htmlElements.div}#basic-tabs`)
+      .children(htmlElements.div)
+      .children(`${this.pageGridTab}#basic-tabs-pane-1`)
+      .children(this.designerDiv);
+  }
+
+  getTitle() {
+    return this.getInnerContent()
+               .children(this.designerDiv).eq(0)
                .children(htmlElements.h1);
   }
 
+  getTopControlsArea() {
+    return this.getInnerContent()
+              .children(`${this.container}.PageConfigPage__toolbar-row`);
+  }
+
+  getTopRightControls() {
+    return this.getTopControlsArea()
+              .children(this.buttonToolbar);
+  }
+
+  getViewPublishedButton() {
+    return this.getTopRightControls()
+              .find(this.buttonViewPublished);
+  }
+
+  getViewPublishedWindow() {
+    return cy.get('@windowOpen');
+  }
+
+  viewPublished() {
+    this.getViewPublishedButton().click();
+    return new WebElement();
+  }
+
   getPageGrid() {
-    return this.getContents()
-      .children(htmlElements.div)
-      .children(htmlElements.div)
-      .children(this.pageGridTab)
-      .children(this.designerDiv)
+    return this.getInnerContent()
       .children(this.designerDiv).eq(1)
       .children(this.pageGridMain);
   }

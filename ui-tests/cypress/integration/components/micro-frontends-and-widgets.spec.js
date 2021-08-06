@@ -378,6 +378,60 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(2500);
       });
     });
+
+    describe('CMS Content Widget - Extended', () => {
+      const WIDGET_FRAME = {
+        frameName: 'Frame 3',
+        frameNum: 6,
+      };
+
+      it('select a content and a content template that is unrelated or inconsistent with the content type, then implement in Content widget. Publish the page and click on Preview/View published page', () => {
+        currentPage = currentPage.getMenu().getContent().open();
+        currentPage = currentPage.openTemplates();
+        cy.wait(500);
+
+        currentPage = currentPage.getContent().clickAddButton();
+        cy.wait(500);
+
+        currentPage.getContent().editFormFields({
+          id: '10079',
+          descr: 'Demo Faux',
+          contentType: 'Banner',
+          contentShape: '<article>$content.toto.text</article>',
+        });
+
+        currentPage = currentPage.getContent().submitForm();
+        cy.wait(500);
+
+        currentPage = currentPage.getMenu().getPages().open();
+        currentPage = currentPage.openDesigner();
+
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
+    
+        currentPage.getContent().clickAddContentButton();
+        cy.wait(3000);
+    
+        currentPage.getDialog().getBody()
+          .getCheckboxFromTitle('Sample Banner').click({ force: true });
+        currentPage.getDialog().getConfirmButton().click();
+        cy.wait(500);
+    
+        currentPage.getContent().getModelIdSelect().select('Demo Faux');
+        currentPage = currentPage.getContent().confirmConfig();
+        cy.wait(500);
+    
+        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().publishPageDesign();
+        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+
+        const viewPage = currentPage.getContent().viewPublished();
+        currentPage.getContent().getViewPublishedWindow().should('be.called');
+        viewPage.get().should('contain', '$content.toto.text');
+      });
+    });
     
     describe('CMS Content List Widget', () => {
       const WIDGET_FRAME = {
