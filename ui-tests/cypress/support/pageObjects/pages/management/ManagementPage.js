@@ -8,6 +8,7 @@ import PagesKebabMenu from "./PagesKebabMenu";
 
 import AddPage          from "./AddPage.js";
 import SearchResultPage from "./SearchResultPage";
+import DeleteDialog     from "../../app/DeleteDialog";
 
 export default class ManagementPage extends Content {
 
@@ -18,6 +19,7 @@ export default class ManagementPage extends Content {
 
   tableContainer = `${htmlElements.div}.DDTable`;
   expandAll      = `${htmlElements.div}.PageTree__toggler--expand`;
+  expandNode     = `[${DATA_TESTID}=tree-node_TreeNodeExpandedIcon_i]`;
 
   addButton = `${htmlElements.button}[${DATA_TESTID}=button-step-5]`;
 
@@ -59,6 +61,12 @@ export default class ManagementPage extends Content {
                .children(htmlElements.tr);
   }
 
+  getTableRow(code) {
+    return this.getKebabMenu(code)
+               .get()
+               .parents(htmlElements.tr);
+  }
+
   getKebabMenu(code) {
     return new PagesKebabMenu(this, code);
   }
@@ -89,6 +97,23 @@ export default class ManagementPage extends Content {
   clickExpandAll() {
     this.getExpandAll()
         .click();
+  }
+
+  toggleRowSubPages(code) {
+    this.getTableRow(code)
+        .find(this.expandNode)
+        .click();
+    cy.wait(1000); //TODO find a better way to identify when the page list is expanded
+  }
+
+  dragRow(source, target, pos = "top") {
+    this.getTableRow(target).then(row => {
+      this.getTableRow(source)
+          .children(htmlElements.td).eq(0)
+          .children(htmlElements.button)
+          .drag(row, {force: true, position: pos});
+      this.parent.getDialog().setBody(DeleteDialog); //TODO validate for what else this dialog is used and rename it accordingly
+    });
   }
 
   openAddPagePage() {

@@ -2,27 +2,15 @@ import {generateRandomId} from "../../support/utils";
 
 import {htmlElements} from "../../support/pageObjects/WebElement";
 
-import {
-  PAGE_WITHOUT_SEO_DATA,
-  PAGE_FREE_OWNER_GROUP
-} from "../../mocks/pages";
-
 import HomePage from "../../support/pageObjects/HomePage";
 
 describe("Page Management", () => {
 
-  const languages = ["en", "it"];
-
   let currentPage;
 
-  beforeEach(() => {
-    cy.kcLogin("admin").as("tokens");
-    currentPage = openManagementPage();
-  });
+  beforeEach(() => cy.kcLogin("admin").as("tokens"));
 
-  afterEach(() => {
-    cy.kcLogout();
-  });
+  afterEach(() => cy.kcLogout());
 
   describe("Add a new page", () => {
 
@@ -69,6 +57,8 @@ describe("Page Management", () => {
           }
         ]
       };
+
+      currentPage = openManagementPage();
     });
 
     afterEach(() => {
@@ -191,52 +181,191 @@ describe("Page Management", () => {
   });
 
   describe("Change page position in the page tree", () => {
-    it("Should move the page in the right place according the place chosen in the tree (Above)", () => {
-      cy.openPageFromMenu(["Pages", "Management"]);
-      cy.expandAllPageTreeFolders();
-      cy.dragAndDropPageAbove("Sitemap", "Error page");
-      cy.dragAndDropPageBelow("Error page", "Sitemap");
+
+    const homepageCode = "homepage";
+
+    const parentPage = {
+      code: generateRandomId(),
+      title: generateRandomId(),
+      parentCode: homepageCode,
+      ownerGroup: "administrators",
+      template: "1-2-column"
+    };
+
+    let page            = {};
+    let pageToBeDeleted = false;
+
+    before(() => {
+      cy.kcLogin("admin").as("tokens");
+      cy.pagesController().then(controller =>
+          controller.addPage(parentPage.code, parentPage.title, parentPage.ownerGroup, parentPage.template, parentPage.parentCode)
+      );
+      cy.kcLogout();
     });
 
-    it("Should move the page in the right place according the place chosen in the tree (Below)", () => {
-      cy.openPageFromMenu(["Pages", "Management"]);
-      cy.expandAllPageTreeFolders();
-      cy.dragAndDropPageBelow("Sitemap", "My Homepage");
-      cy.dragAndDropPageAbove("My Homepage", "Sitemap");
+    beforeEach(() => {
+      page = {
+        code: generateRandomId(),
+        title: generateRandomId(),
+        ownerGroup: "administrators",
+        template: "1-2-column"
+      };
     });
 
-    it("Should forbid to move a page with free owner group under a reserved page", () => {
-      cy.addPage(PAGE_WITHOUT_SEO_DATA, languages);
-      cy.closeToastNotification();
-      cy.openPageFromMenu(["Pages", "Management"]);
-      cy.expandAllPageTreeFolders();
-      cy.dragAndDropPageInto("Search Result", PAGE_WITHOUT_SEO_DATA.titles.en);
-      cy.validateToastNotificationError("Cannot move a free page under a reserved page");
-      cy.closeToastNotification();
-      cy.deletePage(PAGE_WITHOUT_SEO_DATA.code);
+    afterEach(() => {
+      if (pageToBeDeleted) {
+        cy.pagesController()
+          .then(controller => {
+            controller.setPageStatus(page.code, "draft");
+            controller.deletePage(page.code);
+          })
+          .then(() => pageToBeDeleted = false);
+      }
     });
 
-    it("Should forbid to move a published page under a no published page", () => {
-      cy.addPage(PAGE_FREE_OWNER_GROUP, languages);
-      cy.closeToastNotification();
-      cy.openPageFromMenu(["Pages", "Management"]);
-      cy.expandAllPageTreeFolders();
-      cy.wait(1000);
-      cy.dragAndDropPageInto("Service", PAGE_FREE_OWNER_GROUP.titles.en);
-      cy.validateToastNotificationError("Can not move a published page under an unpublished page");
-      cy.deletePage(PAGE_FREE_OWNER_GROUP.code);
+    after(() => {
+      cy.kcLogin("admin").as("tokens");
+      cy.pagesController().then(controller => {
+        controller.setPageStatus(parentPage.code, "draft");
+        controller.deletePage(parentPage.code);
+      });
+      cy.kcLogout();
     });
 
-    it("Should forbid to move a published page under his published child page", () => {
-      cy.openPageFromMenu(["Pages", "Management"]);
-      cy.expandAllPageTreeFolders();
-      cy.wait(1000);
-      cy.dragAndDropPageInto("Service", "Login");
-      cy.validateToastNotificationError("The page 'login' can not be the parent of 'service' because he is one of his child");
+    it("Move outside page", () => {
+      cy.pagesController()
+        .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, parentPage.code))
+        .then(() => pageToBeDeleted = true);
+
+      currentPage = openManagementPage();
+
+
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
+      currentPage.getContent().dragRow(page.code, "homepage", "bottom");
+      currentPage.getDialog().confirm();
+
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
     });
+
+    it("Move inside page", () => {
+      cy.pagesController()
+        .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, homepageCode))
+        .then(() => pageToBeDeleted = true);
+
+      currentPage = openManagementPage();
+
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
+
+      currentPage.getContent().dragRow(page.code, parentPage.code, "center");
+      currentPage.getDialog().confirm();
+
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
+
+      //FIXME first always tries to open it, even if it is already opened
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", parentPage.title)
+      );
+    });
+
+    it("Move inside subpages is forbidden", () => {
+      cy.pagesController()
+        .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, parentPage.code))
+        .then(() => pageToBeDeleted = true);
+
+      currentPage = openManagementPage();
+
+
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
+      currentPage.getContent().dragRow(parentPage.code, page.code, "center");
+      currentPage.getDialog().confirm();
+
+      cy.validateToast(currentPage, null, false);
+
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
+
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", parentPage.title)
+      );
+    });
+
+    it("Move free pages inside reserved pages is forbidden", () => {
+      page.ownerGroup = "free";
+
+      cy.pagesController()
+        .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, homepageCode))
+        .then(() => pageToBeDeleted = true);
+
+      currentPage = openManagementPage();
+
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
+
+      currentPage.getContent().dragRow(page.code, parentPage.code, "center");
+      currentPage.getDialog().confirm();
+
+      cy.validateToast(currentPage, null, false);
+
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
+
+      //FIXME first always tries to open it, even if it is already opened
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
+    });
+
+    it("Move published pages inside unpublished pages is forbidden", () => {
+      cy.pagesController()
+        .then(controller => {
+          controller.addPage(page.code, page.title, page.ownerGroup, page.template, homepageCode);
+          controller.setPageStatus(page.code, "published");
+        })
+        .then(() => pageToBeDeleted = true);
+
+      currentPage = openManagementPage();
+
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
+
+      currentPage.getContent().dragRow(page.code, parentPage.code, "center");
+      currentPage.getDialog().confirm();
+
+      cy.validateToast(currentPage, null, false);
+
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
+
+      //FIXME first always tries to open it, even if it is already opened
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
+      currentPage.getContent().toggleRowSubPages(parentPage.code);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+      );
+    });
+
   });
 
   describe("Change page status", () => {
+
+    beforeEach(() => currentPage = openManagementPage());
+
     it("Should publish and unpublish a page", () => {
       cy.openPageFromMenu(["Pages", "Management"]);
       cy.unpublishPageAction("login");
@@ -244,6 +373,7 @@ describe("Page Management", () => {
       cy.publishPageAction("login");
       cy.getPageStatusInPageTree("Login").should("match", new RegExp("^Published$"));
     });
+
   });
 
   const openManagementPage = () => {
