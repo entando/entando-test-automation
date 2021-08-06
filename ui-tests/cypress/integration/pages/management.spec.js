@@ -587,6 +587,105 @@ describe("Page Management", () => {
 
     });
 
+    describe("Delete a page", () => {
+
+      const page = {
+        code: generateRandomId(),
+        title: generateRandomId(),
+        parentCode: "homepage",
+        ownerGroup: "administrators",
+        template: "1-2-column"
+      };
+
+      let childPage        = {};
+      let childToBeDeleted = false;
+      let pageToBeDeleted  = false;
+
+      beforeEach(() => {
+        cy.pagesController().then(controller =>
+            controller.addPage(page.code, page.title, page.ownerGroup, page.template, page.parentCode)
+        );
+      });
+
+      afterEach(() => {
+        if (childToBeDeleted) {
+          cy.pagesController()
+            .then(controller => {
+              controller.setPageStatus(childPage.code, "draft");
+              controller.deletePage(childPage.code);
+            })
+            .then(() => childToBeDeleted = false);
+        }
+        if (pageToBeDeleted) {
+          cy.pagesController()
+            .then(controller => {
+              controller.setPageStatus(page.code, "draft");
+              controller.deletePage(page.code);
+            })
+            .then(() => pageToBeDeleted = false);
+        }
+      });
+
+      it("Delete an unpublished page", () => {
+        // try to delete unpublished page
+        currentPage = openManagementPage();
+
+        currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
+        currentPage.getDialog().getBody().getStateInfo()
+                   .should("contain", page.code);
+
+        currentPage.getDialog().confirm();
+
+        currentPage.getContent().getTableRows().should("not.contain", page.title);
+      });
+
+      it("Delete a published page is forbidden", () => {
+        cy.pagesController()
+          .then(controller => controller.setPageStatus(page.code, "published"))
+          .then(() => pageToBeDeleted = true);
+
+        currentPage = openManagementPage();
+
+        cy.pause();
+        currentPage.getContent().getKebabMenu(page.code).getDelete()
+                   .should("have.class", "disabled");
+      });
+
+      it("Delete a drafted page is forbidden", () => {
+        cy.pagesController()
+          .then(controller => {
+            controller.setPageStatus(page.code, "published");
+            controller.addWidgetToPage(page.code, 0, "search_form");
+          })
+          .then(() => pageToBeDeleted = true);
+
+        currentPage = openManagementPage();
+        currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
+        currentPage.getDialog().confirm();
+
+        currentPage.getContent().getAlertMessage().should("be.visible");
+      });
+
+      it("Delete a page with children is forbidden", () => {
+        pageToBeDeleted  = true;
+        childPage = {
+          code: generateRandomId(),
+          title: generateRandomId(),
+          parentCode: page.code,
+          ownerGroup: "administrators",
+          template: "1-2-column"
+        };
+        cy.pagesController()
+          .then(controller => controller.addPage(childPage.code, childPage.title, childPage.ownerGroup, childPage.template, childPage.parentCode))
+          .then(() => childToBeDeleted = true);
+
+        currentPage = openManagementPage();
+
+        currentPage.getContent().getKebabMenu(page.code).getDelete().should("have.class", "disabled");
+      });
+
+    });
+
   });
 
   const openManagementPage = () => {
