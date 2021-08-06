@@ -83,6 +83,11 @@ export default class PagesKebabMenu extends KebabMenu {
     this.parent.parent.getDialog().setBody(DeleteDialog); //TODO validate for what else this dialog is used and rename it accordingly
   }
 
+  clickUnpublish() {
+    this.getUnpublish().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog); //TODO validate for what else this dialog is used and rename it accordingly
+  }
+
   clickDelete() {
     this.getDelete().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);

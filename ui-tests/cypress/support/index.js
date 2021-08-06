@@ -19,9 +19,7 @@ import "./keycloak-oauth2";
 import "./command/command";
 import "./command/validation-commands";
 import "./command/upload-command";
-import "./command/page-command";
 import "./command/page-designer-command";
-import "./command/page-management-command";
 
 import "./restAPI/categoriesAPI.js";
 import "./restAPI/contentsAPI";

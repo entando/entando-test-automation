@@ -364,14 +364,54 @@ describe("Page Management", () => {
 
   describe("Change page status", () => {
 
-    beforeEach(() => currentPage = openManagementPage());
+    const page = {
+      code: generateRandomId(),
+      title: generateRandomId(),
+      parentCode: "homepage",
+      ownerGroup: "administrators",
+      template: "1-2-column"
+    };
 
-    it("Should publish and unpublish a page", () => {
-      cy.openPageFromMenu(["Pages", "Management"]);
-      cy.unpublishPageAction("login");
-      cy.getPageStatusInPageTree("Login").should("match", new RegExp("^Unpublished$"));
-      cy.publishPageAction("login");
-      cy.getPageStatusInPageTree("Login").should("match", new RegExp("^Published$"));
+    beforeEach(() => {
+      cy.pagesController().then(controller =>
+          controller.addPage(page.code, page.title, page.ownerGroup, page.template, page.parentCode)
+      );
+    });
+
+    afterEach(() => {
+      cy.pagesController()
+        .then(controller => {
+          controller.setPageStatus(page.code, "draft");
+          controller.deletePage(page.code);
+        });
+    });
+
+    it("Publish a page", () => {
+      currentPage = openManagementPage();
+
+      currentPage.getContent().getKebabMenu(page.code).open().clickPublish();
+      currentPage.getDialog().confirm();
+
+      currentPage.getContent().getTableRow(page.code).then(row =>
+          cy.wrap(row).children(htmlElements.td).eq(2).children(htmlElements.i)
+            .should("have.attr", "title")
+            .and("equal", "Published")
+      );
+    });
+
+    it("Unpublish a page", () => {
+      cy.pagesController().then(controller => controller.setPageStatus(page.code, "published"));
+
+      currentPage = openManagementPage();
+
+      currentPage.getContent().getKebabMenu(page.code).open().clickUnpublish();
+      currentPage.getDialog().confirm();
+
+      currentPage.getContent().getTableRow(page.code).then(row =>
+          cy.wrap(row).children(htmlElements.td).eq(2).children(htmlElements.i)
+            .should("have.attr", "title")
+            .and("equal", "Unpublished")
+      );
     });
 
   });
