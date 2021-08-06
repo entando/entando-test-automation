@@ -9,7 +9,3 @@ export const generateRandomTypeCode = () => {
   }
   return code;
 };
-
-// Page commands Utils
-export const replaceLangCodePlaceholder = (str, language) => str.replace('LANG-CODE', language);
-export const replaceMetaTagPlaceholders = (str, id, language) => str.replace('LANG-CODE', language).replace('META_TAG_ID', id);
