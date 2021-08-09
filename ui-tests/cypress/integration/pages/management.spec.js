@@ -17,11 +17,75 @@ describe("Page Management", () => {
   ];
   const OOTB_OWNER_GROUPS   = ["Administrators", "Free Access"];
 
+  const homePage = {
+    code: "homepage",
+    name: "Home"
+  };
+
   let currentPage;
+
+  let page    = {
+    pageTree: 0,
+    parentCode: homePage.code,
+    ownerGroup: {
+      code: "administrators",
+      name: "Administrators"
+    },
+    template: "1-2-column"
+  };
+  let subPage = {
+    ownerGroup: {
+      code: "administrators",
+      name: "Administrators"
+    },
+    template: "1-2-column"
+  };
+
+  let pageToBeDeleted    = false;
+  let subPageToBeDeleted = false;
 
   beforeEach(() => cy.kcLogin("admin").as("tokens"));
 
-  afterEach(() => cy.kcLogout());
+  afterEach(() => {
+    if (subPageToBeDeleted) {
+      cy.pagesController()
+        .then(controller => {
+          controller.setPageStatus(subPage.code, "draft");
+          controller.deletePage(subPage.code);
+        })
+        .then(() => {
+          subPage            = {
+            ownerGroup: {
+              code: "administrators",
+              name: "Administrators"
+            },
+            template: "1-2-column"
+          };
+          subPageToBeDeleted = false;
+        });
+    }
+    if (pageToBeDeleted) {
+      cy.pagesController()
+        .then(controller => {
+          controller.setPageStatus(page.code, "draft");
+          controller.deletePage(page.code);
+        })
+        .then(() => {
+          page            = {
+            pageTree: 0,
+            parentCode: homePage.code,
+            ownerGroup: {
+              code: "administrators",
+              name: "Administrators"
+            },
+            template: "1-2-column"
+          };
+          pageToBeDeleted = false;
+        });
+    }
+
+    cy.kcLogout();
+  });
 
   describe("UI", () => {
 
@@ -49,71 +113,41 @@ describe("Page Management", () => {
 
     describe("Add a new page", () => {
 
-      let page       = {};
-      let parentPage = {};
-
-      let pageToBeDeleted   = false;
-      let parentToBeDeleted = false;
-
-      beforeEach(() =>
-          page = {
-            title: {
-              en: generateRandomId(),
-              it: generateRandomId()
-            },
-            code: generateRandomId(),
-            pageTree: 0,
-            ownerGroup: "Administrators",
-            template: "1-2-column",
-            seoData: {
-              en: {
-                description: generateRandomId(),
-                keywords: generateRandomId(),
-                friendlyCode: generateRandomId()
-              },
-              it: {
-                description: generateRandomId(),
-                keywords: generateRandomId(),
-                friendlyCode: generateRandomId()
-              }
-            },
-            metaTags: [
-              {
-                key: generateRandomId(),
-                type: "name",
-                value: generateRandomId()
-              },
-              {
-                key: generateRandomId(),
-                type: "http-equiv",
-                value: generateRandomId()
-              },
-              {
-                key: generateRandomId(),
-                type: "property",
-                value: generateRandomId()
-              }
-            ]
+      beforeEach(() => {
+        page.code     = generateRandomId();
+        page.title    = {
+          en: generateRandomId(),
+          it: generateRandomId()
+        };
+        page.seoData  = {
+          en: {
+            description: generateRandomId(),
+            keywords: generateRandomId(),
+            friendlyCode: generateRandomId()
+          },
+          it: {
+            description: generateRandomId(),
+            keywords: generateRandomId(),
+            friendlyCode: generateRandomId()
           }
-      );
-
-      afterEach(() => {
-        if (pageToBeDeleted) {
-          cy.pagesController()
-            .then(controller => {
-              controller.setPageStatus(page.code, "draft");
-              controller.deletePage(page.code);
-            })
-            .then(() => pageToBeDeleted = false);
-        }
-        if (parentToBeDeleted) {
-          cy.pagesController()
-            .then(controller => {
-              controller.setPageStatus(parentPage.code, "draft");
-              controller.deletePage(parentPage.code);
-            })
-            .then(() => parentToBeDeleted = false);
-        }
+        };
+        page.metaTags = [
+          {
+            key: generateRandomId(),
+            type: "name",
+            value: generateRandomId()
+          },
+          {
+            key: generateRandomId(),
+            type: "http-equiv",
+            value: generateRandomId()
+          },
+          {
+            key: generateRandomId(),
+            type: "property",
+            value: generateRandomId()
+          }
+        ];
       });
 
       describe("Add a new page without SEO attributes", () => {
@@ -148,41 +182,39 @@ describe("Page Management", () => {
       });
 
       it("Add a new child page", () => {
-        parentPage = {
-          code: generateRandomId(),
-          title: generateRandomId(),
-          parentCode: "homepage",
-          ownerGroup: "administrators",
-          template: "1-2-column"
+        subPage.code       = generateRandomId();
+        subPage.title      = {
+          en: generateRandomId(),
+          it: generateRandomId()
         };
+        subPage.parentCode = page.code;
         cy.pagesController()
-          .then(controller => controller.addPage(parentPage.code, parentPage.title, parentPage.ownerGroup, parentPage.template, parentPage.parentCode))
-          .then(() => parentToBeDeleted = true);
+          .then(controller => controller.addPage(page.code, page.title.en, page.ownerGroup.code, page.template, page.parentCode))
+          .then(() => pageToBeDeleted = true);
 
         currentPage = openManagementPage();
-        currentPage = currentPage.getContent().getKebabMenu(parentPage.code).open().openAdd();
+        currentPage = currentPage.getContent().getKebabMenu(page.code).open().openAdd();
         cy.location("pathname").should("eq", "/page/add");
 
-        page.pageTree = null;
-        addPageMandatoryData(currentPage, page);
-        currentPage     = currentPage.getContent().clickSaveButton();
-        pageToBeDeleted = true;
+        addPageMandatoryData(currentPage, subPage);
+        currentPage        = currentPage.getContent().clickSaveButton();
+        subPageToBeDeleted = true;
 
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", parentPage.title)
-        );
-
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
         currentPage.getContent().getTableRows().then(rows =>
             cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title.en)
+        );
+
+        currentPage.getContent().toggleRowSubPages(page.code);
+        currentPage.getContent().getTableRows().then(rows =>
+            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", subPage.title.en)
         );
       });
 
       it("Adding a new page with non existing parent code is forbidden", () => {
+        openManagementPage();
         cy.visit("/page/add?parentCode=non-existing-page");
         cy.wait(3000);
 
-        // should redirect back to /page/add when parentCode does not exist
         cy.location().should(url => {
           expect(url.pathname).eq("/page/add");
           expect(url.search).eq("");
@@ -239,11 +271,11 @@ describe("Page Management", () => {
         page.getContent().clearCode();
         page.getContent().typeCode(data.code);
 
-        if (data.pageTree !== null) {
+        if (data.pageTree !== null && data.pageTree !== undefined) {
           page.getContent().selectPageOnPageTreeTable(data.pageTree);
         }
 
-        page.getContent().selectOwnerGroup(data.ownerGroup);
+        page.getContent().selectOwnerGroup(data.ownerGroup.name);
 
         page.getContent().selectPageTemplate(data.template);
       };
@@ -278,31 +310,28 @@ describe("Page Management", () => {
 
     describe("Search a page", () => {
 
-      const page = {
-        code: "homepage",
-        name: "Home"
-      };
-
-      beforeEach(() => currentPage = openManagementPage());
+      beforeEach(() => {
+        currentPage = openManagementPage();
+      });
 
       it("Search by name", () => {
         currentPage.getContent().selectSearchOption(0);
-        currentPage.getContent().typeSearch(page.name);
+        currentPage.getContent().typeSearch(homePage.name);
         currentPage = currentPage.getContent().clickSearchButton();
 
         currentPage.getContent().getTableRows()
                    .should("have.length", 2)
-                   .each(row => cy.wrap(row).children(htmlElements.td).eq(2).should("contain", page.name));
+                   .each(row => cy.wrap(row).children(htmlElements.td).eq(2).should("contain", homePage.name));
       });
 
       it("Search by code", () => {
         currentPage.getContent().selectSearchOption(1);
-        currentPage.getContent().typeSearch(page.code);
+        currentPage.getContent().typeSearch(homePage.code);
         currentPage = currentPage.getContent().clickSearchButton();
 
         currentPage.getContent().getTableRows()
                    .should("have.length", 2)
-                   .each(row => cy.wrap(row).children(htmlElements.td).eq(0).should("contain", page.code));
+                   .each(row => cy.wrap(row).children(htmlElements.td).eq(0).should("contain", homePage.code));
       });
 
     });
@@ -323,220 +352,125 @@ describe("Page Management", () => {
 
     describe("Change page position in the page tree", () => {
 
-      const homepageCode = "homepage";
-
-      const parentPage = {
-        code: generateRandomId(),
-        title: generateRandomId(),
-        parentCode: homepageCode,
-        ownerGroup: "administrators",
-        template: "1-2-column"
-      };
-
-      let page            = {};
-      let pageToBeDeleted = false;
-
       before(() => {
+        page.code  = generateRandomId();
+        page.title = generateRandomId();
+
         cy.kcLogin("admin").as("tokens");
         cy.pagesController().then(controller =>
-            controller.addPage(parentPage.code, parentPage.title, parentPage.ownerGroup, parentPage.template, parentPage.parentCode)
+            controller.addPage(page.code, page.title, page.ownerGroup.code, page.template, page.parentCode)
         );
         cy.kcLogout();
       });
 
       beforeEach(() => {
-        page = {
-          code: generateRandomId(),
-          title: generateRandomId(),
-          ownerGroup: "administrators",
-          template: "1-2-column"
-        };
-      });
-
-      afterEach(() => {
-        if (pageToBeDeleted) {
-          cy.pagesController()
-            .then(controller => {
-              controller.setPageStatus(page.code, "draft");
-              controller.deletePage(page.code);
-            })
-            .then(() => pageToBeDeleted = false);
-        }
+        subPage.code       = generateRandomId();
+        subPage.title      = generateRandomId();
       });
 
       after(() => {
         cy.kcLogin("admin").as("tokens");
         cy.pagesController().then(controller => {
-          controller.setPageStatus(parentPage.code, "draft");
-          controller.deletePage(parentPage.code);
+          controller.setPageStatus(page.code, "draft");
+          controller.deletePage(page.code);
         });
         cy.kcLogout();
       });
 
       it("Move outside page", () => {
-        cy.pagesController()
-          .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, parentPage.code))
-          .then(() => pageToBeDeleted = true);
+        postPage(subPage, page.code);
 
         currentPage = openManagementPage();
 
-
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
-        currentPage.getContent().dragRow(page.code, "homepage", "bottom");
+        currentPage.getContent().toggleRowSubPages(page.code);
+        currentPage.getContent().dragRow(subPage.code, homePage.code, "bottom");
         currentPage.getDialog().confirm();
 
         currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(1).children(htmlElements.td).eq(0).should("have.text", page.title)
+            cy.wrap(rows).eq(1).children(htmlElements.td).eq(0).should("have.text", subPage.title)
         );
       });
 
       it("Move inside page", () => {
-        cy.pagesController()
-          .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, homepageCode))
-          .then(() => pageToBeDeleted = true);
+        postPage(subPage, homePage.code);
+        currentPage = moveSubPageInPage();
 
-        currentPage = openManagementPage();
-
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
-        );
-
-        currentPage.getContent().dragRow(page.code, parentPage.code, "center");
-        currentPage.getDialog().confirm();
-
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
-        );
-
-        //FIXME first always tries to open it, even if it is already opened
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", parentPage.title)
-        );
+        checkPagesPosition(currentPage, page.code, subPage.title, page.title);
       });
 
       it("Move inside subpages is forbidden", () => {
-        cy.pagesController()
-          .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, parentPage.code))
-          .then(() => pageToBeDeleted = true);
+        postPage(subPage, page.code);
 
         currentPage = openManagementPage();
 
-
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
-        currentPage.getContent().dragRow(parentPage.code, page.code, "center");
+        currentPage.getContent().toggleRowSubPages(page.code);
+        currentPage.getContent().dragRow(page.code, subPage.code, "center");
         currentPage.getDialog().confirm();
 
         cy.validateToast(currentPage, null, false);
 
         currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", subPage.title)
         );
 
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
+        currentPage.getContent().toggleRowSubPages(page.code);
         currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", parentPage.title)
+            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
         );
       });
 
       it("Move free pages inside reserved pages is forbidden", () => {
-        page.ownerGroup = "free";
+        subPage.ownerGroup = {code: "free", name: "Free Access"};
 
-        cy.pagesController()
-          .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, homepageCode))
-          .then(() => pageToBeDeleted = true);
-
-        currentPage = openManagementPage();
-
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
-        );
-
-        currentPage.getContent().dragRow(page.code, parentPage.code, "center");
-        currentPage.getDialog().confirm();
+        postPage(subPage, homePage.code);
+        currentPage = moveSubPageInPage();
 
         cy.validateToast(currentPage, null, false);
 
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
-        );
-
-        //FIXME first always tries to open it, even if it is already opened
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
-        );
+        checkPagesPosition(currentPage, page.code, subPage.title, subPage.title);
       });
 
       it("Move published pages inside unpublished pages is forbidden", () => {
-        cy.pagesController()
-          .then(controller => {
-            controller.addPage(page.code, page.title, page.ownerGroup, page.template, homepageCode);
-            controller.setPageStatus(page.code, "published");
-          })
-          .then(() => pageToBeDeleted = true);
+        postPage(subPage, homePage.code);
+        cy.pagesController().then(controller => controller.setPageStatus(subPage.code, "published"));
 
+        currentPage = moveSubPageInPage();
+        cy.validateToast(currentPage, null, false);
+
+        checkPagesPosition(currentPage, page.code, subPage.title, subPage.title);
+      });
+
+      const moveSubPageInPage  = () => {
         currentPage = openManagementPage();
 
         currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", subPage.title)
         );
 
-        currentPage.getContent().dragRow(page.code, parentPage.code, "center");
+        currentPage.getContent().dragRow(subPage.code, page.code, "center");
         currentPage.getDialog().confirm();
+        cy.wait(1000); //TODO find a better way to identify when the page loaded
 
-        cy.validateToast(currentPage, null, false);
-
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+        return currentPage;
+      };
+      const checkPagesPosition = (page, parentPageCode, firstPageTitle, secondPageTitle) => {
+        page.getContent().getTableRows().then(rows =>
+            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", firstPageTitle)
         );
 
         //FIXME first always tries to open it, even if it is already opened
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
-        currentPage.getContent().toggleRowSubPages(parentPage.code);
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", page.title)
+        page.getContent().toggleRowSubPages(parentPageCode);
+        page.getContent().toggleRowSubPages(parentPageCode);
+        page.getContent().getTableRows().then(rows =>
+            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should("have.text", secondPageTitle)
         );
-      });
+      };
 
     });
 
     describe("Change page status", () => {
 
-      const page = {
-        code: generateRandomId(),
-        title: generateRandomId(),
-        parentCode: "homepage",
-        ownerGroup: "administrators",
-        template: "1-2-column"
-      };
-
-      let childPage        = {};
-      let childToBeDeleted = false;
-
-      beforeEach(() => {
-        cy.pagesController().then(controller =>
-            controller.addPage(page.code, page.title, page.ownerGroup, page.template, page.parentCode)
-        );
-      });
-
-      afterEach(() => {
-        if (childToBeDeleted) {
-          cy.pagesController()
-            .then(controller => {
-              controller.setPageStatus(childPage.code, "draft");
-              controller.deletePage(childPage.code);
-            })
-            .then(() => childToBeDeleted = false);
-        }
-        cy.pagesController()
-          .then(controller => {
-            controller.setPageStatus(page.code, "draft");
-            controller.deletePage(page.code);
-          });
-      });
+      beforeEach(() => postPage(page));
 
       it("Publish a page", () => {
         currentPage = openManagementPage();
@@ -567,21 +501,12 @@ describe("Page Management", () => {
       });
 
       it("Publish a subpage of an unpublished page is forbidden", () => {
-        childPage = {
-          code: generateRandomId(),
-          title: generateRandomId(),
-          parentCode: page.code,
-          ownerGroup: "administrators",
-          template: "1-2-column"
-        };
-        cy.pagesController()
-          .then(controller => controller.addPage(childPage.code, childPage.title, childPage.ownerGroup, childPage.template, childPage.parentCode))
-          .then(() => childToBeDeleted = true);
+        postPage(subPage, page.code);
 
         currentPage = openManagementPage();
         currentPage.getContent().toggleRowSubPages(page.code);
 
-        currentPage.getContent().getKebabMenu(childPage.code).getPublish()
+        currentPage.getContent().getKebabMenu(subPage.code).getPublish()
                    .should("have.class", "disabled");
       });
 
@@ -589,45 +514,9 @@ describe("Page Management", () => {
 
     describe("Delete a page", () => {
 
-      const page = {
-        code: generateRandomId(),
-        title: generateRandomId(),
-        parentCode: "homepage",
-        ownerGroup: "administrators",
-        template: "1-2-column"
-      };
-
-      let childPage        = {};
-      let childToBeDeleted = false;
-      let pageToBeDeleted  = false;
-
-      beforeEach(() => {
-        cy.pagesController().then(controller =>
-            controller.addPage(page.code, page.title, page.ownerGroup, page.template, page.parentCode)
-        );
-      });
-
-      afterEach(() => {
-        if (childToBeDeleted) {
-          cy.pagesController()
-            .then(controller => {
-              controller.setPageStatus(childPage.code, "draft");
-              controller.deletePage(childPage.code);
-            })
-            .then(() => childToBeDeleted = false);
-        }
-        if (pageToBeDeleted) {
-          cy.pagesController()
-            .then(controller => {
-              controller.setPageStatus(page.code, "draft");
-              controller.deletePage(page.code);
-            })
-            .then(() => pageToBeDeleted = false);
-        }
-      });
+      beforeEach(() => postPage(page));
 
       it("Delete an unpublished page", () => {
-        // try to delete unpublished page
         currentPage = openManagementPage();
 
         currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
@@ -637,12 +526,12 @@ describe("Page Management", () => {
         currentPage.getDialog().confirm();
 
         currentPage.getContent().getTableRows().should("not.contain", page.title);
+
+        pageToBeDeleted = false;
       });
 
       it("Delete a published page is forbidden", () => {
-        cy.pagesController()
-          .then(controller => controller.setPageStatus(page.code, "published"))
-          .then(() => pageToBeDeleted = true);
+        cy.pagesController().then(controller => controller.setPageStatus(page.code, "published"));
 
         currentPage = openManagementPage();
 
@@ -656,8 +545,7 @@ describe("Page Management", () => {
           .then(controller => {
             controller.setPageStatus(page.code, "published");
             controller.addWidgetToPage(page.code, 0, "search_form");
-          })
-          .then(() => pageToBeDeleted = true);
+          });
 
         currentPage = openManagementPage();
         currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
@@ -667,17 +555,7 @@ describe("Page Management", () => {
       });
 
       it("Delete a page with children is forbidden", () => {
-        pageToBeDeleted  = true;
-        childPage = {
-          code: generateRandomId(),
-          title: generateRandomId(),
-          parentCode: page.code,
-          ownerGroup: "administrators",
-          template: "1-2-column"
-        };
-        cy.pagesController()
-          .then(controller => controller.addPage(childPage.code, childPage.title, childPage.ownerGroup, childPage.template, childPage.parentCode))
-          .then(() => childToBeDeleted = true);
+        postPage(subPage, page.code);
 
         currentPage = openManagementPage();
 
@@ -693,6 +571,23 @@ describe("Page Management", () => {
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getPages().open();
     return currentPage.openManagement();
+  };
+
+  const postPage = (page, parent = null) => {
+    page.code  = generateRandomId();
+    page.title = generateRandomId();
+    if (parent) {
+      page.parentCode = parent;
+    }
+    cy.pagesController()
+      .then(controller => controller.addPage(page.code, page.title, page.ownerGroup.code, page.template, page.parentCode))
+      .then(() => {
+        if (parent) {
+          subPageToBeDeleted = true;
+        } else {
+          pageToBeDeleted = true;
+        }
+      });
   };
 
 });
