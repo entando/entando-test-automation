@@ -1,4 +1,4 @@
-import {generateRandomContentTypeCode, generateRandomId} from "../../support/utils";
+import {generateRandomTypeCode, generateRandomId} from "../../support/utils";
 
 import {htmlElements} from "../../support/pageObjects/WebElement";
 
@@ -16,7 +16,7 @@ describe("Content Types", () => {
   describe("Unreferenced", () => {
 
     beforeEach(() => {
-      contentType.code = generateRandomContentTypeCode();
+      contentType.code = generateRandomTypeCode();
       contentType.name = generateRandomId();
     });
 
@@ -68,7 +68,7 @@ describe("Content Types", () => {
     let contentId;
 
     beforeEach(() => {
-      contentType.code = generateRandomContentTypeCode();
+      contentType.code = generateRandomTypeCode();
       contentType.name = generateRandomId();
 
       postContentType(contentType.code, contentType.name);
@@ -147,7 +147,7 @@ describe("Content Types", () => {
     let additionalTextAttribute = null;
 
     before(() => {
-      contentType.code = generateRandomContentTypeCode();
+      contentType.code = generateRandomTypeCode();
       contentType.name = generateRandomId();
 
       cy.kcLogin("admin").as("tokens");
