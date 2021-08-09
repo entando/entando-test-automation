@@ -176,6 +176,54 @@ describe("Content Types", () => {
       cy.kcLogout();
     });
 
+    describe("Basic Attributes", () => {
+
+      const BASIC_ATTRIBUTES = ["Attach", "Boolean", "CheckBox", "Date", "Email", "Hypertext", "Image", "Link", "Longtext", "Monotext", "Number", "Text", "ThreeState", "Timestamp"];
+
+      BASIC_ATTRIBUTES.forEach(type => {
+        it(`Add ${type} attribute`, () => {
+          currentPage = openEditContentTypePage(contentType.code);
+
+          currentPage = currentPage.getContent().openAddAttributePage(type);
+          currentPage.getContent().typeCode(attribute.code);
+          currentPage = currentPage.getContent().continue(type);
+          currentPage.getContent().getAttributesTable().should("contain", attribute.code);
+
+          attributeToBeDeleted = true;
+        });
+      });
+
+      BASIC_ATTRIBUTES.forEach(type => {
+        it(`Edit ${type} attribute`, () => {
+          const updatedAttributeName = generateRandomId();
+
+          postBasicAttribute(type);
+
+          currentPage = editAttributeName(type, updatedAttributeName);
+          currentPage.getContent().getTableRow(attribute.code).should("contain", updatedAttributeName);
+        });
+      });
+
+      BASIC_ATTRIBUTES.forEach(type => {
+        it(`Delete ${type} attribute`, () => {
+          postTextAttribute();
+          postBasicAttribute(type);
+          attributeToBeDeleted = false;
+
+          currentPage = openEditContentTypePage(contentType.code);
+          deleteAttribute(currentPage, contentType.code, attribute.code);
+          currentPage.getContent().getAttributesTable().should("not.contain", attribute.code);
+        });
+      });
+
+      const postBasicAttribute = (type) => {
+        attribute.type = type;
+        cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(attribute));
+        attributeToBeDeleted = true;
+      };
+
+    });
+
     describe("List", () => {
 
       it("Un-allowed nested attribute types", () => {
