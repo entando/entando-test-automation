@@ -3,6 +3,7 @@ import Content from "../../app/Content.js";
 import AppPage from "../../app/AppPage.js";
 import ManagementPage from "./ManagementPage";
 import DropDownButton from "./DropDownButton";
+import ContentWidgetConfigPage from "../../pages/designer/widgetconfigs/ContentWidgetConfigPage";
 
 export default class AddPage extends Content {
 
@@ -94,8 +95,9 @@ export default class AddPage extends Content {
     this.getSaveApproveAction().click();
   }
 
-  addContent(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
+  fillBasicContentFields({ description, titleEn, titleIt, group }, append = false) {
     this.getGroupDropdown().click({ scrollBehavior: 'center' });
+    cy.wait(500);
     this.getGroupDropdown().contains(group).click({ scrollBehavior: 'center' });
     if (!append) {
       this.clearDescription();
@@ -105,7 +107,22 @@ export default class AddPage extends Content {
     this.typeAttrTitleEn(titleEn);
     this.getItLanguageTab().click();
     this.typeAttrTitleIt(titleIt);
+  }
 
+  addContentFromContentWidgetConfig(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false, ) {
+    this.fillBasicContentFields({ titleEn, titleIt, description, group }, append);
+    if (useApprove) {
+      this.submitApproveForm();
+    } else {
+      this.submitForm();
+    }
+
+    cy.wait(1000);
+    return new AppPage(ContentWidgetConfigPage);
+  }
+
+  addContent(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
+    this.fillBasicContentFields({ titleEn, titleIt, description, group }, append);
     if (useApprove) {
       this.submitApproveForm();
     } else {

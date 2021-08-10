@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement.js";
+import { htmlElements } from "../../WebElement.js";
 
 import Content from "../../app/Content.js";
 import AddPage from "./AddPage";
