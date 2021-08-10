@@ -6,7 +6,7 @@ import AppPage from '../../app/AppPage.js';
 
 import ProfileTypesPage from './ProfileTypesPage';
 
-export default class AddPage extends Content {
+export default class EditPage extends Content {
 
   codeInput  = `${htmlElements.input}[name=code]`;
   nameInput  = `${htmlElements.input}[name=name]`;
