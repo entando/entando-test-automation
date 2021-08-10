@@ -2,6 +2,8 @@ import { htmlElements } from '../../WebElement.js';
 
 import Content   from '../../app/Content.js';
 import AppPage      from '../../app/AppPage.js';
+import KebabMenu from '../../app/KebabMenu.js';
+import DeleteDialog from '../../app/DeleteDialog.js';
 
 import AddPage  from './AddPage.js';
 import EditPage from './EditPage.js';
@@ -9,8 +11,6 @@ import EditPage from './EditPage.js';
 export default class ProfileTypesPage extends Content {
 
   addButton = `${htmlElements.button}.ProfileType__add`;
-  editAction = `${htmlElements.li}.ProfileTypeListMenuAction__menu-item-edit`;
-  deleteAction = `${htmlElements.li}.ProfileTypeListMenuAction__menu-item-delete`;
 
   getTable() {
     return this.getContents()
@@ -29,14 +29,13 @@ export default class ProfileTypesPage extends Content {
                .closest(htmlElements.tr);
   }
 
-  getTableRowActions(code) {
-    return this.getTableRow(code)
-               .find(htmlElements.button);
-  }
-
   getAddButton() {
     return this.getContents()
                .find(this.addButton);
+  }
+
+  getKebabMenu(code) {
+    return new ProfileTypesKebabMenu(this, code);
   }
 
   openAddProfileTypePage() {
@@ -44,33 +43,38 @@ export default class ProfileTypesPage extends Content {
     return new AppPage(AddPage);
   }
 
-  openEditProfileTypePage(code) {
-    this.getTableRowActions(code)
-        .click();
-    
-    this.getTableRow(code)
-        .find(this.editAction)
-        .click();
+}
 
+class ProfileTypesKebabMenu extends KebabMenu {
+
+  edit   = `${htmlElements.li}.ProfileTypeListMenuAction__menu-item-edit`;
+  delete = `${htmlElements.li}.ProfileTypeListMenuAction__menu-item-delete`;
+
+  get() {
+    return this.parent.getTableRows()
+               .find(`#${this.code}-actions`)
+               .closest(htmlElements.div);
+  }
+
+  getEdit() {
+    return this.get()
+               .find(this.edit);
+  }
+
+  getDelete() {
+    return this.get()
+               .find(this.delete);
+  }
+
+  openEdit() {
+    this.getEdit().click();
     cy.wait(1000); //TODO find a better way to identify when the page loaded
-
     return new AppPage(EditPage);
   }
 
-  deleteProfileType(code) {
-    this.getTableRowActions(code)
-        .click();
-
-    this.getTableRow(code)
-        .find(this.deleteAction)
-        .click();
-    
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
-
-    this.parent
-        .getDialog()
-        .getConfirmButton()
-        .click();
+  clickDelete() {
+    this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
   }
 
 }
