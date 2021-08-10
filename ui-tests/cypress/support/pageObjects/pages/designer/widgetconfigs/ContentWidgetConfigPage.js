@@ -51,6 +51,7 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   }
 
   getButtonAddByContentTypeName(ctype) {
+    // FIXME: find a way to avoid using `contains`
     return this.getAddNewButtonDropdown()
       .children(htmlElements.ul)
       .children(htmlElements.li)

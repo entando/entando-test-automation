@@ -414,7 +414,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getMenu().getPages().open();
         currentPage = currentPage.openDesigner();
 
-        currentPage.getContent().initWindowOpenChecker();
+        cy.initWindowOpenChecker();
 
         selectPageFromSidebar();
         cy.wait(500);
@@ -438,7 +438,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().getPageStatus().should('match', /^Published$/);
 
         const viewPage = currentPage.getContent().viewPublished();
-        currentPage.getContent().getViewPublishedWindow().should('be.called');
+        cy.get('@windowOpen').should('be.called');
         viewPage.parent.get().should('contain', '$content.toto.text');
       }); */
 

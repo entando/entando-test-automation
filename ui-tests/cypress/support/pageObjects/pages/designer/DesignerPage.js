@@ -90,14 +90,6 @@ export default class DesignerPage extends Content {
     },
   };
 
-  initWindowOpenChecker() {
-    cy.window().then((win) => {
-      cy.stub(win, 'open').as('windowOpen').callsFake(url => {
-          cy.visit(url);
-      });
-    });
-  }
-
   getMainContainer() {
     return this.get()
                 .children(this.grid)
@@ -150,10 +142,6 @@ export default class DesignerPage extends Content {
   getViewPublishedButton() {
     return this.getTopRightControls()
               .find(this.buttonViewPublished);
-  }
-
-  getViewPublishedWindow() {
-    return cy.get('@windowOpen');
   }
 
   viewPublished() {
