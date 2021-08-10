@@ -59,7 +59,7 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
 
   clickNewContentWith(ctype) {
     this.getAddNewButtonDropdown().click();
-    this.getButtonAddByContentTypeName(ctype);
+    this.getButtonAddByContentTypeName(ctype).click();
     return new AppPage(AddContentPage);
   }
 

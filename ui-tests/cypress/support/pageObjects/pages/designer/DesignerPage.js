@@ -90,13 +90,12 @@ export default class DesignerPage extends Content {
     },
   };
 
-  constructor(props) {
-    super(props);
+  initWindowOpenChecker() {
     cy.window().then((win) => {
-        cy.stub(win, 'open').as('windowOpen').callsFake(url => {
-            cy.visit(url);
-        });
-    })
+      cy.stub(win, 'open').as('windowOpen').callsFake(url => {
+          cy.visit(url);
+      });
+    });
   }
 
   getMainContainer() {
@@ -139,7 +138,8 @@ export default class DesignerPage extends Content {
 
   getTopControlsArea() {
     return this.getInnerContent()
-              .children(`${this.container}.PageConfigPage__toolbar-row`);
+              .children(`${this.container}.PageConfigPage__toolbar-row`)
+              .children(this.contents);
   }
 
   getTopRightControls() {

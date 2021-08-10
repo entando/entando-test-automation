@@ -385,7 +385,15 @@ describe('Microfrontends and Widgets', () => {
         frameNum: 6,
       };
 
-      it('select a content and a content template that is unrelated or inconsistent with the content type, then implement in Content widget. Publish the page and click on Preview/View published page', () => {
+      const NEW_CONTENT_TYPE = {
+        code: 'BNR',
+        name: 'Banner',
+      };
+
+      // TODO: solve on how to make cypress access sites using `cy.visit` with different ports
+      // currently, Cypress is unable to access local PortalUI domain due to its web security restrictions
+
+      /* it('select a content and a content template that is unrelated or inconsistent with the content type, then implement in Content widget. Publish the page and click on Preview/View published page', () => {
         currentPage = currentPage.getMenu().getContent().open();
         currentPage = currentPage.openTemplates();
         cy.wait(500);
@@ -406,16 +414,18 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getMenu().getPages().open();
         currentPage = currentPage.openDesigner();
 
+        currentPage.getContent().initWindowOpenChecker();
+
         selectPageFromSidebar();
         cy.wait(500);
 
         currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
     
         currentPage.getContent().clickAddContentButton();
-        cy.wait(3000);
+        cy.wait(4500);
     
         currentPage.getDialog().getBody()
-          .getCheckboxFromTitle('Sample Banner').click({ force: true });
+          .getCheckboxFromTitle('Sample Banner').click();
         currentPage.getDialog().getConfirmButton().click();
         cy.wait(500);
     
@@ -429,7 +439,66 @@ describe('Microfrontends and Widgets', () => {
 
         const viewPage = currentPage.getContent().viewPublished();
         currentPage.getContent().getViewPublishedWindow().should('be.called');
-        viewPage.get().should('contain', '$content.toto.text');
+        viewPage.parent.get().should('contain', '$content.toto.text');
+      }); */
+
+      it('add a new no published content with a content type and content template, fill in all mandatory fields, save the content, then save the widget configuration', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
+        cy.wait(500);
+
+        currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
+        cy.validateUrlChanged(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
+
+        currentPage = currentPage.getContent().addContentFromContentWidgetConfig('Unpublish En Title', 'Unpublish It Title', 'Unpublish Sample Description');
+        cy.wait(500);
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.wait(4500);
+
+        currentPage = currentPage.getContent().confirmConfig();
+        cy.wait(500);
+        currentPage.getToastList().should('have.length', 1);
+      });
+
+      it('add a new content with a content type and content template, fill in all mandatory fields, save and approve, then save the configuration', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
+        cy.wait(500);
+
+        currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
+        cy.validateUrlChanged(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
+
+        currentPage = currentPage.getContent().addContentFromContentWidgetConfig('En Title', 'It Title', 'Sample Description', true);
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+
+        currentPage.getContent().getModelIdSelect().select('Banner - Text, Image, CTA');
+        currentPage = currentPage.getContent().confirmConfig();
+        cy.wait(500);
+        
+        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().publishPageDesign();
+        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+      });
+
+      it('cleanup test contents', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT);
+        currentPage.getContent().publishPageDesign();
+        cy.wait(1000);
+
+        currentPage = currentPage.getMenu().getContent().open();
+        currentPage = currentPage.openManagement();
+        cy.wait(500);
+        currentPage = currentPage.getContent().unpublishLastAddedContent();
+        currentPage = currentPage.getContent().deleteLastAddedContent();
+        currentPage = currentPage.getContent().deleteLastAddedContent();
       });
     });
     

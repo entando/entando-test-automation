@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement.js";
+import { htmlElements } from "../../WebElement.js";
 
 import Content from "../../app/Content.js";
 import AppPage from "../../app/AppPage.js";
@@ -53,7 +53,7 @@ export default class TemplatesPage extends Content {
   }
 
   clickAddButton() {
-    this.getAddButton();
+    this.getAddButton().click();
     return new AppPage(TemplateForm);
   }
 }

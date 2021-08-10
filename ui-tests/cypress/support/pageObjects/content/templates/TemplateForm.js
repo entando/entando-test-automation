@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from '../../WebElement';
+import { htmlElements } from '../../WebElement';
 
 import Content from '../../app/Content';
 import AppPage from '../../app/AppPage';
@@ -85,9 +85,8 @@ export default class TemplateForm extends Content {
   }
 
   getFootArea() {
-    return this.getFormBody()
-      .children(`${htmlElements.div}.row`)
-      .children(htmlElements.div).eq(2);
+    return this.getFormArea()
+      .children(`${htmlElements.div}.row`).eq(1);
   }
 
   getSaveButton() {
