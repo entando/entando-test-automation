@@ -56,6 +56,56 @@ describe('Categories', () => {
         currentPage.getContent().getCategoriesTree().should('not.contain',titleEn);
     })
 
+    describe('Category used in a content', () => {
+
+      let contentId;
+
+      const content = {
+        description: 'test',
+        mainGroup: 'administrators',
+        typeCode: 'BNR',
+        attributes: [{ code: 'title', values: { en: 'test', it: 'test' } }],
+        categories: [categoryCode]
+      };
+
+      beforeEach(() => {
+        postTestCategory();
+        cy.contentsController()
+          .then(controller => controller.postContent(content))
+          .then((response) => {
+              const { body: { payload } } = response;
+              contentId = payload[0].id;
+          });
+      });
+
+      afterEach(() => {
+        cy.contentsController().then(controller => controller.deleteContent(contentId));
+        deleteTestCategory();
+      });
+
+      it('Update a category used in an unpublished content', () => {
+        const newTitleEn = `${titleEn}-new`;
+        const newTitleIt = `${titleIt}-new`;
+        currentPage = openCategoriesPage();
+        currentPage = currentPage.getContent().openEditCategoryPage(categoryCode);
+        currentPage = currentPage.getContent().editCategory(newTitleEn, newTitleIt);
+        currentPage.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible');
+      });
+
+      it('Update a category used in an published content', () => {
+        cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
+
+        const newTitleEn = `${titleEn}-new`;
+        const newTitleIt = `${titleIt}-new`;
+        currentPage = openCategoriesPage();
+        currentPage = currentPage.getContent().openEditCategoryPage(categoryCode);
+        currentPage = currentPage.getContent().editCategory(newTitleEn, newTitleIt);
+        currentPage.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible');
+
+        cy.contentsController().then(controller => controller.updateStatus(contentId, 'draft'));
+      });
+    });
+
     const postTestCategory = () => {
         cy.categoriesController().then(controller => controller.postCategory(titleEn, titleIt, categoryCode, rootCode));
     }
