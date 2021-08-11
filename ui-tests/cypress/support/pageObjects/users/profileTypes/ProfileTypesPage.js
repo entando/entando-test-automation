@@ -1,8 +1,8 @@
-import { htmlElements } from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
-import Content   from '../../app/Content.js';
+import Content      from '../../app/Content.js';
 import AppPage      from '../../app/AppPage.js';
-import KebabMenu from '../../app/KebabMenu.js';
+import KebabMenu    from '../../app/KebabMenu.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
 
 import AddPage  from './AddPage.js';

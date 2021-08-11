@@ -1,6 +1,6 @@
-import {htmlElements} from "../WebElement";
+import {htmlElements} from '../WebElement';
 
-import {DialogContent} from "./Dialog";
+import {DialogContent} from './Dialog';
 
 export default class DeleteDialog extends DialogContent {
 

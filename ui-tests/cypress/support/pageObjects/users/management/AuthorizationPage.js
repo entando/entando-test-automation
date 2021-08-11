@@ -1,11 +1,11 @@
-import {DATA_TESTID, htmlElements} from "../../WebElement";
+import {DATA_TESTID, htmlElements} from '../../WebElement';
 
-import Content from "../../app/Content";
+import Content from '../../app/Content';
 
-import AppPage from "../../app/AppPage";
+import AppPage from '../../app/AppPage';
 
-import ManagementPage      from "./ManagementPage";
-import AuthorizationDialog from "./AuthorizationDialog";
+import ManagementPage      from './ManagementPage';
+import AuthorizationDialog from './AuthorizationDialog';
 
 export default class AuthorizationPage extends Content {
 

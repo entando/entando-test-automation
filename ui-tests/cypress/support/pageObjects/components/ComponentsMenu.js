@@ -1,11 +1,11 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {htmlElements} from '../WebElement.js';
 
-import {SubMenu} from "../app/MenuElement.js";
+import {SubMenu} from '../app/MenuElement.js';
 
-import AppPage from "../app/AppPage.js";
+import AppPage from '../app/AppPage.js';
 
-import MFEWidgetsPage from "./mfeWidgets/MFEWidgetsPage";
-import UXFragmentsPage from "./uxFragments/UXFragments";
+import MFEWidgetsPage  from './mfeWidgets/MFEWidgetsPage';
+import UXFragmentsPage from './uxFragments/UXFragments';
 
 export default class ComponentsMenu extends SubMenu {
 

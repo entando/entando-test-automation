@@ -1,6 +1,6 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {htmlElements} from '../WebElement.js';
 
-import {MenuElement} from "../app/MenuElement.js";
+import {MenuElement} from '../app/MenuElement.js';
 
 export default class RepositoryMenu extends MenuElement {
 

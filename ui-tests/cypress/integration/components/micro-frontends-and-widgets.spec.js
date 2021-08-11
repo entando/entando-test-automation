@@ -1,9 +1,9 @@
-import HomePage from '../../support/pageObjects/HomePage';
+import HomePage       from '../../support/pageObjects/HomePage';
 import DesignerPage   from '../../support/pageObjects/pages/designer/DesignerPage';
 import MFEWidgetsPage from '../../support/pageObjects/components/mfeWidgets/MFEWidgetsPage';
 
-const { CMS_WIDGETS, SYSTEM_WIDGETS, PAGE_WIDGETS } = DesignerPage;
-const { WIDGET_ACTIONS } = MFEWidgetsPage;
+const {CMS_WIDGETS, SYSTEM_WIDGETS, PAGE_WIDGETS} = DesignerPage;
+const {WIDGET_ACTIONS}                            = MFEWidgetsPage;
 
 const SAMPLE_BASIC_WIDGET_ID  = 'my_widget';
 const SAMPLE_DUPE_WIDGET_CODE = 'mio_widget';
@@ -22,7 +22,7 @@ const SITEMAP = {
 
 const DEMOPAGE = {
   title: 'Demo page',
-  code: 'demopage',
+  code: 'demopage'
 };
 
 const iconChoose = 'fa-android';
@@ -80,7 +80,7 @@ describe('Microfrontends and Widgets', () => {
       cy.wait(500);
       currentPage.getContent().editFormFields({
         code: 'momaco@',
-        customUi: 'a',
+        customUi: 'a'
       });
       currentPage.getContent().getCodeInput().closest('div.form-group').invoke('attr', 'class').should('contain', 'has-error');
       currentPage.getContent().getCodeInput().next().invoke('attr', 'class').should('contain', 'help-block');
@@ -93,7 +93,7 @@ describe('Microfrontends and Widgets', () => {
       currentPage.getContent().editFormFields({
         code: 'momaco',
         iconUpload,
-        customUi: '<h2>memecode</h2>',
+        customUi: '<h2>memecode</h2>'
       });
       currentPage.getContent().getSaveDropdownButton().click();
       currentPage.getContent().getRegularSaveButton().closest('li').invoke('attr', 'class').should('contain', 'disabled');
@@ -106,7 +106,7 @@ describe('Microfrontends and Widgets', () => {
       currentPage.getContent().editFormFields({
         name: SAMPLE_WIDGET_NAMES[1],
         group: 'Free Access',
-        iconChoose,
+        iconChoose
       });
       currentPage.getContent().submitContinueForm();
       cy.location('pathname').should('not.eq', '/widget');
@@ -116,19 +116,19 @@ describe('Microfrontends and Widgets', () => {
       cy.wait(500);
       currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[1]);
     });
-    
+
     it('Prerequisite - widget setup for the new user widget', () => {
       cy.log('Widget setup - create sample page');
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openManagement();
       cy.wait(500);
-      currentPage = currentPage.getContent().clickAddButton();
+      currentPage = currentPage.getContent().openAddPagePage();
       currentPage.getContent().fillRequiredData(
-        DEMOPAGE.title,
-        DEMOPAGE.title,
-        DEMOPAGE.code,
-        0,
-        '1-2-column',
+          DEMOPAGE.title,
+          DEMOPAGE.title,
+          DEMOPAGE.code,
+          0,
+          '1-2-column'
       );
       currentPage = currentPage.getContent().clickSaveButton();
       cy.wait(1000);
@@ -141,7 +141,7 @@ describe('Microfrontends and Widgets', () => {
 
       currentPage.getContent().dragWidgetToFrame({
         code: SAMPLE_BASIC_WIDGET_ID,
-        name: SAMPLE_WIDGET_NAMES[1],
+        name: SAMPLE_WIDGET_NAMES[1]
       }, WIDGET_FRAME);
       currentPage.getContent().getPageStatus().should('match', /^Unpublished$/);
       currentPage.getContent().publishPageDesign();
@@ -155,7 +155,7 @@ describe('Microfrontends and Widgets', () => {
       currentPage.getContent().editFormFields({
         iconUpload,
         name: SAMPLE_WIDGET_NAMES[2],
-        group: 'Administrators',
+        group: 'Administrators'
       });
       currentPage = currentPage.getContent().submitForm();
       cy.validateUrlChanged('/widget');
@@ -170,14 +170,14 @@ describe('Microfrontends and Widgets', () => {
       currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME);
       currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, {
         code: SAMPLE_BASIC_WIDGET_ID,
-        name: SAMPLE_WIDGET_NAMES[2],
+        name: SAMPLE_WIDGET_NAMES[2]
       });
       cy.wait(500);
       cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
         name: SAMPLE_WIDGET_NAMES[0],
         group: 'Free Access',
-        iconChoose,
+        iconChoose
       });
       currentPage = currentPage.getContent().submitForm();
       cy.wait(3000);
@@ -196,7 +196,7 @@ describe('Microfrontends and Widgets', () => {
       cy.log('set the page to unpublished first');
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openManagement();
-      currentPage.getContent().getPublishChild(DEMOPAGE.title).click();
+      currentPage.getContent().getKebabMenu(DEMOPAGE.code).open().clickPublish();
       currentPage.getDialog().getConfirmButton().click();
 
       cy.log('now attempt to delete the widget');
@@ -213,7 +213,7 @@ describe('Microfrontends and Widgets', () => {
       cy.log('delete the page');
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openManagement();
-      currentPage.getContent().getDeleteChild(DEMOPAGE.title).click();
+      currentPage.getContent().getKebabMenu(DEMOPAGE.code).open().clickDelete();
       currentPage.getDialog().getConfirmButton().click();
 
       currentPage = currentPage.getMenu().getComponents().open();
@@ -240,92 +240,92 @@ describe('Microfrontends and Widgets', () => {
     describe('CMS Content Widget', () => {
       const WIDGET_FRAME = {
         frameName: 'Frame 3',
-        frameNum: 6,
+        frameNum: 6
       };
-    
+
       it('Basic add with widget settings', () => {
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
         currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
-    
+
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().clickAddContentButton();
         cy.wait(3000);
-    
+
         currentPage.getDialog().getBody()
-          .getCheckboxFromTitle('Sample - About Us').click({ force: true });
+                   .getCheckboxFromTitle('Sample - About Us').click({force: true});
         currentPage.getDialog().getConfirmButton().click();
         cy.wait(500);
-    
+
         currentPage = currentPage.getContent().confirmConfig();
         cy.wait(500);
-    
+
         currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
         currentPage.getContent().publishPageDesign();
         currentPage.getContent().getPageStatus().should('match', /^Published$/);
       });
-    
+
       it('Basic edit with widget', () => {
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.CONTENT);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
-    
+
       it('Editing widget in Settings (widget config)', () => {
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT);
         cy.wait(500);
-    
+
         currentPage.getContent().clickChangeContentButton();
-    
+
         cy.wait(4500);
         currentPage.getDialog().getBody()
-          .getCheckboxFromTitle('Sample Banner').click({ force: true });
+                   .getCheckboxFromTitle('Sample Banner').click({force: true});
         currentPage.getDialog().getConfirmButton().click();
         cy.wait(500);
-        
+
         currentPage = currentPage.getContent().confirmConfig();
         cy.wait(500);
-    
+
         currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
         currentPage.getContent().publishPageDesign();
         currentPage.getContent().getPageStatus().should('match', /^Published$/);
       });
-    
+
       it('Open Widget Details from the widget dropped', () => {
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.CONTENT);
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT.code}`);
       });
-    
+
       it('Save As Widget', () => {
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT);
-    
+
         cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
         currentPage.getContent().getConfigTabConfiguration().should('exist');
@@ -333,31 +333,31 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
         currentPage.getContent().getFormBody().contains('Change content').should('exist');
         currentPage = currentPage.getContent().submitCloneWidget();
-    
+
         cy.wait(4500);
         cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
-    
+
         currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
         currentPage.getContent().publishPageDesign();
         currentPage.getContent().getPageStatus().should('match', /^Published$/);
       });
-    
+
       it('Test widget cleanup', () => {
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT);
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
-        
+
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByWidgetCode(
-          SAMPLE_DUPE_WIDGET_CODE,
-          MFEWidgetsPage.WIDGET_ACTIONS.DELETE,
+            SAMPLE_DUPE_WIDGET_CODE,
+            MFEWidgetsPage.WIDGET_ACTIONS.DELETE
         );
         currentPage.getDialog().getConfirmButton().click();
         currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
@@ -365,16 +365,151 @@ describe('Microfrontends and Widgets', () => {
         cy.validateUrlChanged('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.CONTENT.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            CMS_WIDGETS.CONTENT.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
+        cy.wait(2500);
+      });
+    });
+
+    describe('CMS Content List Widget', () => {
+      const WIDGET_FRAME = {
+        frameName: 'Frame 4',
+        frameNum: 7
+      };
+
+      it('Basic add with widget settings', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
+        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME.frameName);
+
+        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.wait(5000);
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Banner').click();
+        cy.wait(500);
+        currentPage.getContent().getModelIdDropdownByIndex(0).select('2-column-content');
+        currentPage.getContent().getModelIdDropdownByIndex(1).select('Banner - Text, Image, CTA');
+        currentPage = currentPage.getContent().confirmConfig();
+
+        cy.wait(500);
+        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().publishPageDesign();
+        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+      });
+
+      it('Basic edit with widget', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.CONTENT_LIST);
+        cy.wait(500);
+
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Administrator'
+        });
+        currentPage = currentPage.getContent().submitForm();
+
+        cy.wait(4500);
+        cy.validateUrlChanged('/widget');
+      });
+
+      it('Editing widget in Settings (widget config)', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT_LIST);
+        cy.wait(5000);
+
+        currentPage.getContent().getAddButtonFromTableRowWithTitle('A Modern Platform for Modern UX').click();
+        cy.wait(500);
+        currentPage.getContent().getModelIdDropdownByIndex(0).select('TCL - Search Results');
+        currentPage = currentPage.getContent().confirmConfig();
+
+        cy.wait(500);
+        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().publishPageDesign();
+        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+      });
+
+      it('Open Widget Details from the widget dropped', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.CONTENT_LIST);
+        cy.wait(500);
+        cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
+      });
+
+      it('Save As Widget', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT_LIST);
+
+        cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
+        currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
+        currentPage.getContent().getConfigTabConfiguration().should('exist');
+        currentPage.getContent().getConfigTabConfiguration().click();
+        cy.wait(500);
+        currentPage.getContent().getFormBody().contains('Content list').should('exist');
+        currentPage = currentPage.getContent().submitCloneWidget();
+
+        cy.wait(4500);
+        cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
+
+        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().publishPageDesign();
+        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+      });
+
+      it('Test widget cleanup', () => {
+        selectPageFromSidebar();
+        cy.wait(500);
+
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
+        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
+        currentPage.getContent().publishPageDesign();
+        cy.wait(1000);
+
+        currentPage = currentPage.getMenu().getComponents().open();
+        currentPage = currentPage.openMFE_Widgets();
+        cy.wait(500);
+
+        currentPage.getContent().openKebabMenuByWidgetCode(
+            SAMPLE_DUPE_WIDGET_CODE,
+            MFEWidgetsPage.WIDGET_ACTIONS.DELETE
+        );
+        currentPage.getDialog().getConfirmButton().click();
+        currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
+
+        cy.validateUrlChanged('/widget');
+
+        currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
+            CMS_WIDGETS.CONTENT_LIST.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
+        );
+
+        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
+        currentPage.getContent().editFormFields({
+          group: 'Free Access'
+        });
+        currentPage = currentPage.getContent().submitForm();
+
         cy.wait(2500);
       });
     });
@@ -382,65 +517,65 @@ describe('Microfrontends and Widgets', () => {
     describe('CMS Content Widget - Extended', () => {
       const WIDGET_FRAME = {
         frameName: 'Frame 3',
-        frameNum: 6,
+        frameNum: 6
       };
 
       const NEW_CONTENT_TYPE = {
         code: 'BNR',
-        name: 'Banner',
+        name: 'Banner'
       };
 
       // TODO: solve on how to make cypress access sites using `cy.visit` with different ports
       // currently, Cypress is unable to access local PortalUI domain due to its web security restrictions
 
       /* it('select a content and a content template that is unrelated or inconsistent with the content type, then implement in Content widget. Publish the page and click on Preview/View published page', () => {
-        currentPage = currentPage.getMenu().getContent().open();
-        currentPage = currentPage.openTemplates();
-        cy.wait(500);
+       currentPage = currentPage.getMenu().getContent().open();
+       currentPage = currentPage.openTemplates();
+       cy.wait(500);
 
-        currentPage = currentPage.getContent().clickAddButton();
-        cy.wait(500);
+       currentPage = currentPage.getContent().clickAddButton();
+       cy.wait(500);
 
-        currentPage.getContent().editFormFields({
-          id: '10079',
-          descr: 'Demo Faux',
-          contentType: 'Banner',
-          contentShape: '<article>$content.toto.text</article>',
-        });
+       currentPage.getContent().editFormFields({
+       id: '10079',
+       descr: 'Demo Faux',
+       contentType: 'Banner',
+       contentShape: '<article>$content.toto.text</article>',
+       });
 
-        currentPage = currentPage.getContent().submitForm();
-        cy.wait(500);
+       currentPage = currentPage.getContent().submitForm();
+       cy.wait(500);
 
-        currentPage = currentPage.getMenu().getPages().open();
-        currentPage = currentPage.openDesigner();
+       currentPage = currentPage.getMenu().getPages().open();
+       currentPage = currentPage.openDesigner();
 
-        cy.initWindowOpenChecker();
+       cy.initWindowOpenChecker();
 
-        selectPageFromSidebar();
-        cy.wait(500);
+       selectPageFromSidebar();
+       cy.wait(500);
 
-        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
-    
-        currentPage.getContent().clickAddContentButton();
-        cy.wait(4500);
-    
-        currentPage.getDialog().getBody()
-          .getCheckboxFromTitle('Sample Banner').click();
-        currentPage.getDialog().getConfirmButton().click();
-        cy.wait(500);
-    
-        currentPage.getContent().getModelIdSelect().select('Demo Faux');
-        currentPage = currentPage.getContent().confirmConfig();
-        cy.wait(500);
-    
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
-        currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+       currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
 
-        const viewPage = currentPage.getContent().viewPublished();
-        cy.get('@windowOpen').should('be.called');
-        viewPage.parent.get().should('contain', '$content.toto.text');
-      }); */
+       currentPage.getContent().clickAddContentButton();
+       cy.wait(4500);
+
+       currentPage.getDialog().getBody()
+       .getCheckboxFromTitle('Sample Banner').click();
+       currentPage.getDialog().getConfirmButton().click();
+       cy.wait(500);
+
+       currentPage.getContent().getModelIdSelect().select('Demo Faux');
+       currentPage = currentPage.getContent().confirmConfig();
+       cy.wait(500);
+
+       currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+       currentPage.getContent().publishPageDesign();
+       currentPage.getContent().getPageStatus().should('match', /^Published$/);
+
+       const viewPage = currentPage.getContent().viewPublished();
+       cy.get('@windowOpen').should('be.called');
+       viewPage.parent.get().should('contain', '$content.toto.text');
+       }); */
 
       it('add a new no published content with a content type and content template, fill in all mandatory fields, save the content, then save the widget configuration', () => {
         selectPageFromSidebar();
@@ -478,7 +613,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().getModelIdSelect().select('Banner - Text, Image, CTA');
         currentPage = currentPage.getContent().confirmConfig();
         cy.wait(500);
-        
+
         currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
         currentPage.getContent().publishPageDesign();
         currentPage.getContent().getPageStatus().should('match', /^Published$/);
@@ -501,160 +636,25 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().deleteLastAddedContent();
       });
     });
-    
-    describe('CMS Content List Widget', () => {
-      const WIDGET_FRAME = {
-        frameName: 'Frame 4',
-        frameNum: 7,
-      };
-    
-      it('Basic add with widget settings', () => {
-        selectPageFromSidebar();
-        cy.wait(500);
-    
-        cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME.frameName);
-    
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
-        cy.wait(5000);
-        currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
-        currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Banner').click();
-        cy.wait(500);
-        currentPage.getContent().getModelIdDropdownByIndex(0).select('2-column-content');
-        currentPage.getContent().getModelIdDropdownByIndex(1).select('Banner - Text, Image, CTA');
-        currentPage = currentPage.getContent().confirmConfig();
-    
-        cy.wait(500);
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
-        currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
-      });
-    
-      it('Basic edit with widget', () => {
-        selectPageFromSidebar();
-        cy.wait(500);
-    
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.CONTENT_LIST);
-        cy.wait(500);
-        
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
-        currentPage.getContent().editFormFields({
-          group: 'Administrator',
-        });
-        currentPage = currentPage.getContent().submitForm();
-    
-        cy.wait(4500);
-        cy.validateUrlChanged('/widget');
-      });
-    
-      it('Editing widget in Settings (widget config)', () => {
-        selectPageFromSidebar();
-        cy.wait(500);
-    
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT_LIST);
-        cy.wait(5000);
-    
-        currentPage.getContent().getAddButtonFromTableRowWithTitle('A Modern Platform for Modern UX').click();
-        cy.wait(500);
-        currentPage.getContent().getModelIdDropdownByIndex(0).select('TCL - Search Results');
-        currentPage = currentPage.getContent().confirmConfig();
-    
-        cy.wait(500);
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
-        currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
-      });
-    
-      it('Open Widget Details from the widget dropped', () => {
-        selectPageFromSidebar();
-        cy.wait(500);
-    
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.CONTENT_LIST);
-        cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
-      });
-    
-      it('Save As Widget', () => {
-        selectPageFromSidebar();
-        cy.wait(500);
-    
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT_LIST);
-    
-        cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
-        currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
-        currentPage.getContent().getConfigTabConfiguration().should('exist');
-        currentPage.getContent().getConfigTabConfiguration().click();
-        cy.wait(500);
-        currentPage.getContent().getFormBody().contains('Content list').should('exist');
-        currentPage = currentPage.getContent().submitCloneWidget();
-    
-        cy.wait(4500);
-        cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
-    
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
-        currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
-      });
-    
-      it('Test widget cleanup', () => {
-        selectPageFromSidebar();
-        cy.wait(500);
-    
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
-        currentPage.getContent().publishPageDesign();
-        cy.wait(1000);
-        
-        currentPage = currentPage.getMenu().getComponents().open();
-        currentPage = currentPage.openMFE_Widgets();
-        cy.wait(500);
-    
-        currentPage.getContent().openKebabMenuByWidgetCode(
-          SAMPLE_DUPE_WIDGET_CODE,
-          MFEWidgetsPage.WIDGET_ACTIONS.DELETE,
-        );
-        currentPage.getDialog().getConfirmButton().click();
-        currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
-
-        cy.validateUrlChanged('/widget');
-
-        currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.CONTENT_LIST.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
-        );
-
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
-        currentPage.getContent().editFormFields({
-          group: 'Free Access',
-        });
-        currentPage = currentPage.getContent().submitForm();
-    
-        cy.wait(2500);
-      });
-    });
 
     describe('CMS Content List Widget - Extended', () => {
       const WIDGET_FRAME = {
         frameName: 'Frame 3',
-        frameNum: 6,
+        frameNum: 6
       };
 
       const WIDGET_FRAME_2 = {
         frameName: 'Frame 4',
-        frameNum: 7,
+        frameNum: 7
       };
-    
+
       it('Add all existing published OOTB contents', () => {
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
         currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME.frameName);
-    
+
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         cy.wait(5000);
         currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
@@ -674,7 +674,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().getModelIdDropdownByIndex(4).select('Banner - Text, Image, CTA');
 
         currentPage = currentPage.getContent().confirmConfig();
-    
+
         cy.wait(500);
         currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
         currentPage.getContent().publishPageDesign();
@@ -682,7 +682,7 @@ describe('Microfrontends and Widgets', () => {
       });
 
       it('Add new existing published contents', () => {
-        
+
         currentPage = currentPage.getMenu().getContent().open();
         currentPage = currentPage.openManagement();
 
@@ -697,10 +697,10 @@ describe('Microfrontends and Widgets', () => {
 
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
         currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME_2.frameName);
-    
+
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME_2.frameNum}`);
         cy.wait(5000);
         currentPage.getContent().getAddButtonFromTableRowWithTitle('Another Content so its more than 1').click();
@@ -711,7 +711,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().getModelIdDropdownByIndex(1).select('Banner - Text, Image, CTA');
 
         currentPage = currentPage.getContent().confirmConfig();
-    
+
         cy.wait(500);
         currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
         currentPage.getContent().publishPageDesign();
@@ -721,18 +721,18 @@ describe('Microfrontends and Widgets', () => {
       it('Test widget cleanup', () => {
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
         currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
-        
+
         currentPage = currentPage.getMenu().getContent().open();
         currentPage = currentPage.openManagement();
         cy.wait(500);
-    
+
         currentPage = currentPage.getContent().unpublishLastAddedContent();
         currentPage = currentPage.getContent().deleteLastAddedContent();
         currentPage = currentPage.getContent().unpublishLastAddedContent();
@@ -770,28 +770,28 @@ describe('Microfrontends and Widgets', () => {
       it('Basic edit with widget', () => {
         selectPageFromSidebar();
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.CONTENT_QUERY);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
-    
+
       it('Editing widget in Settings (widget config)', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT_QUERY);
-        
+
         cy.wait(2500);
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().getPublishSettingsAccordButton().click();
@@ -863,16 +863,16 @@ describe('Microfrontends and Widgets', () => {
         cy.validateUrlChanged('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.CONTENT_QUERY.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            CMS_WIDGETS.CONTENT_QUERY.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(2500);
       });
     });
@@ -909,35 +909,35 @@ describe('Microfrontends and Widgets', () => {
       it('Basic edit with CMS Search Form widget', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.SEARCH_FORM);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
-    
+
       it('Basic edit with CMS Search Result widget', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.SEARCH_RESULT);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
@@ -980,13 +980,13 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.SEARCH_FORM.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            CMS_WIDGETS.SEARCH_FORM.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
 
@@ -995,13 +995,13 @@ describe('Microfrontends and Widgets', () => {
         cy.validateUrlChanged('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.SEARCH_RESULT.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            CMS_WIDGETS.SEARCH_RESULT.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
 
@@ -1040,17 +1040,17 @@ describe('Microfrontends and Widgets', () => {
       it('Basic edit with News Archive widget', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.NEWS_ARCHIVE);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
@@ -1058,17 +1058,17 @@ describe('Microfrontends and Widgets', () => {
       it('Basic edit with News Latest widget', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.NEWS_LATEST);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
@@ -1111,28 +1111,28 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.NEWS_ARCHIVE.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            CMS_WIDGETS.NEWS_ARCHIVE.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(1500);
 
         cy.validateUrlChanged('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.NEWS_LATEST.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            CMS_WIDGETS.NEWS_LATEST.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
 
@@ -1172,35 +1172,35 @@ describe('Microfrontends and Widgets', () => {
       it('Basic edit with Language widget', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, PAGE_WIDGETS.LANGUAGE);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
-    
+
       it('Basic edit with Logo widget', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
-    
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, PAGE_WIDGETS.LOGO);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
@@ -1243,13 +1243,13 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          PAGE_WIDGETS.LANGUAGE.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            PAGE_WIDGETS.LANGUAGE.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
 
@@ -1258,13 +1258,13 @@ describe('Microfrontends and Widgets', () => {
         cy.validateUrlChanged('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          PAGE_WIDGETS.LOGO.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            PAGE_WIDGETS.LOGO.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
 
@@ -1304,35 +1304,35 @@ describe('Microfrontends and Widgets', () => {
       it('Basic edit with APIs widget', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
-      
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, SYSTEM_WIDGETS.APIS);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-      
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
-      
+
       it('Basic edit with News Latest widget', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
-      
+
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
         currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, SYSTEM_WIDGETS.SYS_MSGS);
         cy.wait(500);
-        
+
         cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Administrator',
+          group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
-      
+
         cy.wait(4500);
         cy.validateUrlChanged('/widget');
       });
@@ -1375,28 +1375,28 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          SYSTEM_WIDGETS.APIS.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            SYSTEM_WIDGETS.APIS.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
-    
+
         cy.wait(1500);
 
         cy.validateUrlChanged('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          SYSTEM_WIDGETS.SYS_MSGS.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT,
+            SYSTEM_WIDGETS.SYS_MSGS.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
         cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
         currentPage.getContent().editFormFields({
-          group: 'Free Access',
+          group: 'Free Access'
         });
         currentPage = currentPage.getContent().submitForm();
 

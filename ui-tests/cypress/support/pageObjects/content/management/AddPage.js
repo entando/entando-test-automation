@@ -1,21 +1,21 @@
-import {htmlElements} from "../../WebElement";
-import Content from "../../app/Content.js";
-import AppPage from "../../app/AppPage.js";
-import ManagementPage from "./ManagementPage";
-import DropDownButton from "./DropDownButton";
-import ContentWidgetConfigPage from "../../pages/designer/widgetconfigs/ContentWidgetConfigPage";
+import {htmlElements}          from '../../WebElement';
+import Content                 from '../../app/Content.js';
+import AppPage                 from '../../app/AppPage.js';
+import ManagementPage          from './ManagementPage';
+import DropDownButton          from './DropDownButton';
+import ContentWidgetConfigPage from '../../pages/designer/widgetconfigs/ContentWidgetConfigPage';
 
 export default class AddPage extends Content {
 
   contentDescriptionInput = `${htmlElements.input}#description`;
-  contentGroupFormBody = `${htmlElements.div}.GroupsFormBody.EditContentForm__outer-fieldset`;
-  contentGroupInput = `${htmlElements.div}.DropdownTypeahead`;
-  contentTitleAttrInput = `.RenderTextInput`
-  contentAttrsItTab = `${htmlElements.a}#content-attributes-tabs-tab-it`;
-  contentTitleAttrInputIt = `attributes[0].values.it`
-  contentAttrEnPane = `${htmlElements.div}#content-attributes-tabs-pane-en`;
-  contentAttrItPane = `${htmlElements.div}#content-attributes-tabs-pane-it`;
-  groupsFormSection = `${htmlElements.div}.GroupsFormBody`;
+  contentGroupFormBody    = `${htmlElements.div}.GroupsFormBody.EditContentForm__outer-fieldset`;
+  contentGroupInput       = `${htmlElements.div}.DropdownTypeahead`;
+  contentTitleAttrInput   = `.RenderTextInput`;
+  contentAttrsItTab       = `${htmlElements.a}#content-attributes-tabs-tab-it`;
+  contentTitleAttrInputIt = `attributes[0].values.it`;
+  contentAttrEnPane       = `${htmlElements.div}#content-attributes-tabs-pane-en`;
+  contentAttrItPane       = `${htmlElements.div}#content-attributes-tabs-pane-it`;
+  groupsFormSection       = `${htmlElements.div}.GroupsFormBody`;
 
   getTitleAttrItInput() {
     return this.getContents().get(this.contentAttrItPane)
@@ -34,9 +34,9 @@ export default class AddPage extends Content {
 
   getGroupDropdown() {
     return this.getContents()
-              .find(this.contentGroupFormBody)
-              .find(this.contentGroupInput).eq(0)
-              .children(htmlElements.div).eq(1);
+               .find(this.contentGroupFormBody)
+               .find(this.contentGroupInput).eq(0)
+               .children(htmlElements.div).eq(1);
   }
 
   getItLanguageTab() {
@@ -95,10 +95,10 @@ export default class AddPage extends Content {
     this.getSaveApproveAction().click();
   }
 
-  fillBasicContentFields({ description, titleEn, titleIt, group }, append = false) {
-    this.getGroupDropdown().click({ scrollBehavior: 'center' });
+  fillBasicContentFields({description, titleEn, titleIt, group}, append = false) {
+    this.getGroupDropdown().click({scrollBehavior: 'center'});
     cy.wait(500);
-    this.getGroupDropdown().contains(group).click({ scrollBehavior: 'center' });
+    this.getGroupDropdown().contains(group).click({scrollBehavior: 'center'});
     if (!append) {
       this.clearDescription();
     }
@@ -109,8 +109,8 @@ export default class AddPage extends Content {
     this.typeAttrTitleIt(titleIt);
   }
 
-  addContentFromContentWidgetConfig(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false, ) {
-    this.fillBasicContentFields({ titleEn, titleIt, description, group }, append);
+  addContentFromContentWidgetConfig(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
+    this.fillBasicContentFields({titleEn, titleIt, description, group}, append);
     if (useApprove) {
       this.submitApproveForm();
     } else {
@@ -122,7 +122,7 @@ export default class AddPage extends Content {
   }
 
   addContent(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
-    this.fillBasicContentFields({ titleEn, titleIt, description, group }, append);
+    this.fillBasicContentFields({titleEn, titleIt, description, group}, append);
     if (useApprove) {
       this.submitApproveForm();
     } else {

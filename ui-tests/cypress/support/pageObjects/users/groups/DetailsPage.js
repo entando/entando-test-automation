@@ -1,6 +1,6 @@
-import {htmlElements} from "../../WebElement";
+import {htmlElements} from '../../WebElement';
 
-import Content from "../../app/Content.js";
+import Content from '../../app/Content.js';
 
 export default class DetailsPage extends Content {
 

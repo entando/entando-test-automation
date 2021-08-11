@@ -1,7 +1,7 @@
-const controller = `${Cypress.config("restAPI")}groups`;
+const controller = `${Cypress.config('restAPI')}groups`;
 
-Cypress.Commands.add("groupsController", () => {
-  cy.get("@tokens").then(tokens => {
+Cypress.Commands.add('groupsController', () => {
+  cy.get('@tokens').then(tokens => {
     return new GroupsController(tokens.access_token);
   });
 });
@@ -15,10 +15,10 @@ class GroupsController {
   addGroup(code, name) {
     cy.request({
       url: `${controller}`,
-      method: "POST",
+      method: 'POST',
       body: {
-        "code": code,
-        "name": name
+        'code': code,
+        'name': name
       },
       auth: {
         bearer: this.access_token
@@ -29,7 +29,7 @@ class GroupsController {
   deleteGroup(groupId) {
     cy.request({
       url: `${controller}/${groupId}`,
-      method: "DELETE",
+      method: 'DELETE',
       auth: {
         bearer: this.access_token
       }

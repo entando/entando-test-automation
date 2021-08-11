@@ -252,7 +252,7 @@ describe('Users Management', () => {
       currentPage = currentPage.getContent().openAddUserPage();
       currentPage.getContent().addUser(username, password, PROFILE_TYPE_CODE);
 
-      cy.validateToast(currentPage, false, `The user '${username}' already exists`);
+      cy.validateToast(currentPage, `The user '${username}' already exists`, false);
 
       cy.usersController().then(controller => controller.deleteUser(username));
     });
@@ -289,7 +289,7 @@ describe('Users Management', () => {
 
       currentPage = currentPage.getContent().editUser(null, FULL_NAME, EMAIL, null);
 
-      cy.validateToast(currentPage, true, 'User profile has been updated');
+      cy.validateToast(currentPage, 'User profile has been updated');
 
       currentPage.getContent().getTableRow(username).children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [username, `${PROFILE_TYPE_DESC} ${PROFILE_TYPE_CODE}`, FULL_NAME, EMAIL, '\u00a0Not active']));
@@ -377,7 +377,7 @@ describe('Users Management', () => {
       currentPage.getDialog().getBody().getStateInfo().should('contain', USERNAME_ADMIN);
       currentPage.getDialog().confirm();
 
-      cy.validateToast(currentPage, false, 'Sorry. You can\'t delete the administrator user');
+      cy.validateToast(currentPage, 'Sorry. You can\'t delete the administrator user', false);
     });
 
   });

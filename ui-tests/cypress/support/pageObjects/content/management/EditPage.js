@@ -1,8 +1,8 @@
-import {htmlElements} from "../../WebElement";
-import Content from "../../app/Content.js";
-import AppPage from "../../app/AppPage.js";
-import ManagementPage from "./ManagementPage";
-import DropDownButton from "./DropDownButton";
+import {htmlElements} from '../../WebElement';
+import Content        from '../../app/Content.js';
+import AppPage        from '../../app/AppPage.js';
+import ManagementPage from './ManagementPage';
+import DropDownButton from './DropDownButton';
 
 export default class EditPage extends Content {
 
