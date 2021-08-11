@@ -47,16 +47,16 @@ export default class ManagementPage extends Content {
         this.getExpandAll().click();
     }
 
-    getPublishChild (name) {
-        return this.getOptionsMenu(name).click().parent().find(this.publishChild);
+    getPublishChild (code) {
+        return this.getKebabMenu(code).open().get().find(this.publishChild);
     }
 
-    getDeleteChild (name) {
-        return this.getOptionsMenu(name).click().parent().find(this.deleteChild);
+    getDeleteChild (code) {
+        return this.getKebabMenu(code).open().get().find(this.deleteChild);
     }
 
-    clickAddChild (name) {
-        this.getOptionsMenu(name).click().parent().find(this.addChild).click();
+    clickAddChild (code) {
+        this.getKebabMenu(code).open().get().find(this.addChild).click();
         return new AppPage(AddPage);
     }
 

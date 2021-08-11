@@ -196,7 +196,7 @@ describe('Microfrontends and Widgets', () => {
       cy.log('set the page to unpublished first');
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openManagement();
-      currentPage.getContent().getPublishChild(DEMOPAGE.title).click();
+      currentPage.getContent().getPublishChild(DEMOPAGE.code).click();
       currentPage.getDialog().getConfirmButton().click();
 
       cy.log('now attempt to delete the widget');
@@ -213,7 +213,7 @@ describe('Microfrontends and Widgets', () => {
       cy.log('delete the page');
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openManagement();
-      currentPage.getContent().getDeleteChild(DEMOPAGE.title).click();
+      currentPage.getContent().getDeleteChild(DEMOPAGE.code).click();
       currentPage.getDialog().getConfirmButton().click();
 
       currentPage = currentPage.getMenu().getComponents().open();
