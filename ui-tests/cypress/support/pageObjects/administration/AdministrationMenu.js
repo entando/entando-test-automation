@@ -1,14 +1,14 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {htmlElements} from '../WebElement.js';
 
-import {SubMenu} from "../app/MenuElement.js";
+import {SubMenu} from '../app/MenuElement.js';
 
-import AppPage from "../app/AppPage.js";
+import AppPage from '../app/AppPage.js';
 
-import DatabasePage from "./database/DatabasePage";
-import FileBrowserPage from "./fileBrowser/FileBrowserPage";
-import Languages_LabelsPage from "./languages_Labels/Languages_LabelsPage";
-import EmailConfigurationPage from "./emailConfiguration/EmailConfigurationPage";
-import ReloadConfigurationPage from "./reloadConfiguration/ReloadConfigurationPage";
+import DatabasePage            from './database/DatabasePage';
+import FileBrowserPage         from './fileBrowser/FileBrowserPage';
+import Languages_LabelsPage    from './languages_Labels/Languages_LabelsPage';
+import EmailConfigurationPage  from './emailConfiguration/EmailConfigurationPage';
+import ReloadConfigurationPage from './reloadConfiguration/ReloadConfigurationPage';
 
 export default class AdministrationMenu extends SubMenu {
 

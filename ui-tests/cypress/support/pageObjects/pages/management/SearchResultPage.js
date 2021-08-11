@@ -6,20 +6,16 @@ import AppPage from '../../app/AppPage.js';
 
 import PagesKebabMenu from './PagesKebabMenu';
 
-import AddPage          from './AddPage.js';
-import SearchResultPage from './SearchResultPage';
-import DeleteDialog     from '../../app/DeleteDialog';
+import AddPage from './AddPage.js';
 
-export default class ManagementPage extends Content {
+export default class SearchResultPage extends Content {
 
   searchForm   = `${htmlElements.form}[${DATA_TESTID}=list_PageSearchForm_form]`;
   searchOption = `${htmlElements.button}[${DATA_TESTID}=list_PageSearchForm_DropdownButton]`;
   searchInput  = `${htmlElements.input}[${DATA_TESTID}=list_PageSearchForm_Field]`;
   searchButton = `${htmlElements.button}[${DATA_TESTID}=list_PageSearchForm_Button]`;
 
-  tableContainer = `${htmlElements.div}.DDTable`;
-  expandAll      = `${htmlElements.div}.PageTree__toggler--expand`;
-  expandNode     = `[${DATA_TESTID}=tree-node_TreeNodeExpandedIcon_i]`;
+  tableContainer = `${htmlElements.div}.PageListSearchTable `;
 
   addButton = `${htmlElements.button}[${DATA_TESTID}=button-step-5]`;
 
@@ -46,13 +42,7 @@ export default class ManagementPage extends Content {
   getTableContainer() {
     return this.get()
                .find(this.tableContainer)
-               .children(htmlElements.table);
-  }
-
-  getExpandAll() {
-    return this.getTableContainer()
-               .children(htmlElements.thead)
-               .find(this.expandAll);
+               .find(htmlElements.table);
   }
 
   getTableRows() {
@@ -62,8 +52,8 @@ export default class ManagementPage extends Content {
   }
 
   getTableRow(code) {
-    return this.getKebabMenu(code)
-               .get()
+    return this.getTableContainer()
+               .find(`#${code}-actions`)
                .parents(htmlElements.tr);
   }
 
@@ -92,28 +82,6 @@ export default class ManagementPage extends Content {
     this.getSearchButton().click();
     cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(SearchResultPage);
-  }
-
-  clickExpandAll() {
-    this.getExpandAll()
-        .click();
-  }
-
-  toggleRowSubPages(code) {
-    this.getTableRow(code)
-        .find(this.expandNode)
-        .click();
-    cy.wait(1000); //TODO find a better way to identify when the page list is expanded
-  }
-
-  dragRow(source, target, pos = 'top') {
-    this.getTableRow(target).then(row => {
-      this.getTableRow(source)
-          .children(htmlElements.td).eq(0)
-          .children(htmlElements.button)
-          .drag(row, {force: true, position: pos});
-      this.parent.getDialog().setBody(DeleteDialog); //TODO validate for what else this dialog is used and rename it accordingly
-    });
   }
 
   openAddPagePage() {

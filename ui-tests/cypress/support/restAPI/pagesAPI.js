@@ -1,12 +1,12 @@
-const apiURL = Cypress.config("restAPI");
+const apiURL     = Cypress.config('restAPI');
 const controller = `${apiURL}pages`;
-const addUrl = `${apiURL}plugins/seo/pages`
+const addUrl     = `${apiURL}plugins/seo/pages`;
 
 Cypress.Commands.add('pagesController', () => {
-  cy.get("@tokens").then(tokens => {
+  cy.get('@tokens').then(tokens => {
     return new PagesController(tokens.access_token);
   });
-})
+});
 
 class PagesController {
 
@@ -22,7 +22,7 @@ class PagesController {
         bearer: this.access_token
       },
       body: {
-        ...page,
+        ...page
       }
     });
   }
@@ -30,7 +30,7 @@ class PagesController {
   deletePage(id) {
     cy.request({
       url: `${controller}/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       auth: {
         bearer: this.access_token
       }
@@ -40,7 +40,7 @@ class PagesController {
   addPage(code, title, ownerGroup, pageModel, parentCode) {
     cy.request({
       url: `${addUrl}`,
-      method: "POST",
+      method: 'POST',
       auth: {
         bearer: this.access_token
       },
@@ -51,7 +51,7 @@ class PagesController {
         joinGroups: null,
         seo: false,
         titles: {
-          en: title,
+          en: title
         },
         code,
         ownerGroup,
@@ -64,12 +64,12 @@ class PagesController {
   setPageStatus(id, status) {
     cy.request({
       url: `${controller}/${id}/status`,
-      method: "PUT",
+      method: 'PUT',
       auth: {
         bearer: this.access_token
       },
       body: {
-        status,
+        status
       }
     });
   }
@@ -87,16 +87,16 @@ class PagesController {
       }
     });
   }
-  
+
   addWidgetToPage(pageId, frameId, widgetId) {
     cy.request({
       url: `${controller}/${pageId}/widgets/${frameId}`,
-      method: "PUT",
+      method: 'PUT',
       auth: {
         bearer: this.access_token
       },
       body: {
-        code: widgetId,
+        code: widgetId
       }
     });
   }

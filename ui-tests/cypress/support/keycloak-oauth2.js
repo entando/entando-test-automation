@@ -2,11 +2,11 @@
 /// <reference types="cypress" />
 
 Cypress.Commands.add('getOauth2Data', () => {
-  Cypress.log({ name: 'oauth2Data' });
+  Cypress.log({name: 'oauth2Data'});
 
-  const url = Cypress.env("auth_base_url");
-  const realm = Cypress.env("auth_realm");
-  const clientId = Cypress.env("auth_client_id");
+  const url      = Cypress.env('auth_base_url');
+  const realm    = Cypress.env('auth_realm');
+  const clientId = Cypress.env('auth_client_id');
 
   const data = {
     url,
@@ -19,20 +19,20 @@ Cypress.Commands.add('getOauth2Data', () => {
 });
 
 Cypress.Commands.add('keycloackLogin', (oauth2Data, user) => {
-  Cypress.log({ name: 'Login' });
+  Cypress.log({name: 'Login'});
 
   cy.fixture(`users/${user}`).then((userData) => {
     cy.request({
-      url: `${oauth2Data.realmPath}/protocol/openid-connect/auth`,
-      followRedirect: false,
-      qs: {
-        scope: 'openid',
-        response_type: 'code',
-        approval_prompt: 'auto',
-        redirect_uri: Cypress.config('baseUrl'),
-        client_id: oauth2Data.clientId,
-      },
-    })
+        url: `${oauth2Data.realmPath}/protocol/openid-connect/auth`,
+        followRedirect: false,
+        qs: {
+          scope: 'openid',
+          response_type: 'code',
+          approval_prompt: 'auto',
+          redirect_uri: Cypress.config('baseUrl'),
+          client_id: oauth2Data.clientId
+        }
+      })
       .then(() => {
         cy.visit(Cypress.config('baseUrl'));
         cy.get('#username').type(userData.username);
@@ -43,7 +43,7 @@ Cypress.Commands.add('keycloackLogin', (oauth2Data, user) => {
 });
 
 Cypress.Commands.add('keycloackLogout', oauth2Data => cy.request({
-  url: `${oauth2Data.realmPath}/protocol/openid-connect/logout`,
+  url: `${oauth2Data.realmPath}/protocol/openid-connect/logout`
 }));
 
 Cypress.Commands.add('clearCache', () => {

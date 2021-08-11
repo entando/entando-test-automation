@@ -1,7 +1,7 @@
-const controller = `${Cypress.config("restAPI")}users`;
+const controller = `${Cypress.config('restAPI')}users`;
 
-Cypress.Commands.add("usersController", () => {
-  cy.get("@tokens").then(tokens => {
+Cypress.Commands.add('usersController', () => {
+  cy.get('@tokens').then(tokens => {
     return new UsersController(tokens.access_token);
   });
 });
@@ -15,12 +15,12 @@ class UsersController {
   addUser(username, password, passwordConfirm, profileType) {
     cy.request({
       url: `${controller}`,
-      method: "POST",
+      method: 'POST',
       body: {
-        "username": username,
-        "password": password,
-        "passwordConfirm": passwordConfirm,
-        "profileType": profileType
+        'username': username,
+        'password': password,
+        'passwordConfirm': passwordConfirm,
+        'profileType': profileType
       },
       auth: {
         bearer: this.access_token
@@ -31,7 +31,7 @@ class UsersController {
   deleteUser(username) {
     cy.request({
       url: `${controller}/${username}`,
-      method: "DELETE",
+      method: 'DELETE',
       auth: {
         bearer: this.access_token
       }

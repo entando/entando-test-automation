@@ -1,13 +1,13 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {htmlElements} from '../WebElement.js';
 
-import {SubMenu} from "../app/MenuElement.js";
+import {SubMenu} from '../app/MenuElement.js';
 
-import AppPage from "../app/AppPage.js";
+import AppPage from '../app/AppPage.js';
 
-import ManagementPage from "./management/ManagementPage";
-import DesignerPage from "./designer/DesignerPage";
-import TemplatesPage from "./templates/TemplatesPage";
-import SettingsPage from "./settings/SettingsPage";
+import ManagementPage from './management/ManagementPage';
+import DesignerPage   from './designer/DesignerPage';
+import TemplatesPage  from './templates/TemplatesPage';
+import SettingsPage   from './settings/SettingsPage';
 
 export default class PagesMenu extends SubMenu {
 

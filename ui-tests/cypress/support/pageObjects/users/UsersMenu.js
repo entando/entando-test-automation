@@ -1,14 +1,14 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {htmlElements} from '../WebElement.js';
 
-import {SubMenu} from "../app/MenuElement.js";
+import {SubMenu} from '../app/MenuElement.js';
 
-import AppPage from "../app/AppPage.js";
+import AppPage from '../app/AppPage.js';
 
-import ManagementPage from "./management/ManagementPage";
-import RolesPage from "./roles/RolesPage.js";
-import GroupsPage from "./groups/GroupsPage";
-import ProfileTypesPage from "./profileTypes/ProfileTypesPage";
-import RestrictionsPage from "./restrictions/RestrictionsPage";
+import ManagementPage   from './management/ManagementPage';
+import RolesPage        from './roles/RolesPage.js';
+import GroupsPage       from './groups/GroupsPage';
+import ProfileTypesPage from './profileTypes/ProfileTypesPage';
+import RestrictionsPage from './restrictions/RestrictionsPage';
 
 export default class UsersMenu extends SubMenu {
 

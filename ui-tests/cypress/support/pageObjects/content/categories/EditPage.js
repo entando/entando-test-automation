@@ -1,14 +1,14 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../../WebElement";
-import Content from "../../app/Content.js";
-import AppPage from "../../app/AppPage.js";
-import CategoriesPage from "./CategoriesPage";
+import {DATA_TESTID, htmlElements} from '../../WebElement';
+import Content                     from '../../app/Content.js';
+import AppPage                     from '../../app/AppPage.js';
+import CategoriesPage              from './CategoriesPage';
 
 export default class EditPage extends Content {
 
   titleItInput = `${htmlElements.input}[name="titles.it"][${DATA_TESTID}=form_RenderTextInput_input]`;
   titleEnInput = `${htmlElements.input}[name="titles.en"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  codeInput = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  saveButton = `${htmlElements.button}[${DATA_TESTID}=common_CategoryForm_Button]`;
+  codeInput    = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
+  saveButton   = `${htmlElements.button}[${DATA_TESTID}=common_CategoryForm_Button]`;
 
   getTitleItInput() {
     return this.getContents()
@@ -45,6 +45,7 @@ export default class EditPage extends Content {
   clearTitleEn() {
     this.getTitleEnInput().clear();
   }
+
   typeCode(input) {
     this.getCodeInput().type(input);
   }
@@ -54,7 +55,7 @@ export default class EditPage extends Content {
   }
 
   editCategory(titleEn, titleIt, append = false) {
-    if (!append){
+    if (!append) {
       this.clearTitleEn();
       this.clearTitleIt();
     }

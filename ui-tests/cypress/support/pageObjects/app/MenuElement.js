@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {htmlElements, WebElement} from '../WebElement.js';
 
 export class MenuElement extends WebElement {
 

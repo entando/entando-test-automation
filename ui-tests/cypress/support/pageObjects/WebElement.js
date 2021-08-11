@@ -9,6 +9,7 @@ export const htmlElements = {
   h4: 'h4',
   p: 'p',
   span: 'span',
+  i: 'i',
   ol: 'ol',
   ul: 'ul',
   li: 'li',
@@ -26,9 +27,10 @@ export const htmlElements = {
   input: 'input',
   button: 'button',
   select: 'select',
+  option: 'option',
   fieldset: 'fieldset',
   legend: 'legend',
-  textarea: 'textarea',
+  textarea: 'textarea'
 };
 
 export class WebElement {
@@ -39,7 +41,7 @@ export class WebElement {
 
   get() {
     // each class must have it's own identifier described in the get method starting from this.parent.get()
-    throw new Error("Implement a specific get for the sub-class!");
+    throw new Error('Implement a specific get for the sub-class!');
   }
 
 }

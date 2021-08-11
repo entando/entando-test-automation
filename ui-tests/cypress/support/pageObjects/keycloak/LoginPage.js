@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {htmlElements, WebElement} from '../WebElement.js';
 
 export default class LoginPage extends WebElement {
 
@@ -28,11 +28,11 @@ export default class LoginPage extends WebElement {
 
 class LoginForm extends WebElement {
 
-  formWrapper = `${htmlElements.div}.LoginPage__formWrapper`;
-  form = `${htmlElements.form}.LoginPage__form`;
-  username = "#username";
-  password = "#password";
-  submitButton = ".LoginPage__button[type=submit]";
+  formWrapper  = `${htmlElements.div}.LoginPage__formWrapper`;
+  form         = `${htmlElements.form}.LoginPage__form`;
+  username     = '#username';
+  password     = '#password';
+  submitButton = '.LoginPage__button[type=submit]';
 
   get() {
     return this.parent.get()

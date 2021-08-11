@@ -1,12 +1,12 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {DATA_TESTID, htmlElements, WebElement} from '../WebElement.js';
 
 export class Dialog extends WebElement {
 
-  dialog = `${htmlElements.div}[role=dialog]`;
-  header = `${htmlElements.div}.modal-header`;
-  title = `${htmlElements.h4}.modal-title`;
+  dialog      = `${htmlElements.div}[role=dialog]`;
+  header      = `${htmlElements.div}.modal-header`;
+  title       = `${htmlElements.h4}.modal-title`;
   closeButton = `${htmlElements.button}[${DATA_TESTID}=modal_GenericModal_button]`;
-  footer = `${htmlElements.div}.modal-footer`;
+  footer      = `${htmlElements.div}.modal-footer`;
 
   get() {
     return this.parent.get()
@@ -75,7 +75,7 @@ export class DialogContent extends WebElement {
 
   get() {
     return this.parent.get()
-        .find(this.body);
+               .find(this.body);
   }
 
 }

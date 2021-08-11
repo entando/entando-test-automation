@@ -1,8 +1,8 @@
-import {htmlElements, WebElement} from "../WebElement.js";
+import {htmlElements, WebElement} from '../WebElement.js';
 
-import AppPage from "./AppPage";
+import AppPage from './AppPage';
 
-import Profile from "./Profile";
+import Profile from './Profile';
 
 export default class Navbar extends WebElement {
 
@@ -71,7 +71,7 @@ class UserMenu extends WebElement {
 
   get() {
     return this.parent.getUser()
-        .children(htmlElements.ul);
+               .children(htmlElements.ul);
   }
 
   getProfile() {

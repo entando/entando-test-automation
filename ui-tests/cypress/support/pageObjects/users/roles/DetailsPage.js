@@ -1,6 +1,6 @@
-import {DATA_TESTID, htmlElements} from "../../WebElement";
+import {DATA_TESTID, htmlElements} from '../../WebElement';
 
-import Content from "../../app/Content.js";
+import Content from '../../app/Content.js';
 
 export default class DetailsPage extends Content {
 
@@ -8,7 +8,7 @@ export default class DetailsPage extends Content {
 
   getDetailsDescription() {
     return this.getContents()
-        .find(this.description);
+               .find(this.description);
   }
 
   getCodeLabel() {
