@@ -37,10 +37,10 @@ describe('Microfrontends and Widgets', () => {
 
   const selectPageFromSidebar = (pageOpen = HOMEPAGE) => {
     const currentPageContent = currentPage.getContent();
-    currentPageContent.getSidebarTab('Page Tree').click();
+    currentPageContent.clickSidebarTab(1);
     cy.wait(3000);
     currentPageContent.getPageTreeItem(pageOpen.title).click();
-    currentPageContent.getSidebarTab('Widgets').click();
+    currentPageContent.clickSidebarTab(0);
   };
 
   describe('Widgets CRUD', () => {
@@ -143,9 +143,13 @@ describe('Microfrontends and Widgets', () => {
         code: SAMPLE_BASIC_WIDGET_ID,
         name: SAMPLE_WIDGET_NAMES[1]
       }, WIDGET_FRAME);
-      currentPage.getContent().getPageStatus().should('match', /^Unpublished$/);
+      currentPage.getContent().getPageStatusIcon()
+                 .should('have.class', 'PageStatusIcon--draft')
+                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
       currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatus().should('match', /^Published$/);
+      currentPage.getContent().getPageStatusIcon()
+                 .should('have.class', 'PageStatusIcon--published')
+                 .and('have.attr', 'title').should('eq', 'Published');
     });
 
     it('Editing a used widget via widget list modifying all mandatory fields', () => {
@@ -262,9 +266,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().confirmConfig();
         cy.wait(500);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Basic edit with widget', () => {
@@ -304,9 +312,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().confirmConfig();
         cy.wait(500);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Open Widget Details from the widget dropped', () => {
@@ -337,9 +349,13 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(4500);
         cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Test widget cleanup', () => {
@@ -402,9 +418,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().confirmConfig();
 
         cy.wait(500);
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Basic edit with widget', () => {
@@ -439,9 +459,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().confirmConfig();
 
         cy.wait(500);
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Open Widget Details from the widget dropped', () => {
@@ -472,9 +496,13 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(4500);
         cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Test widget cleanup', () => {
@@ -614,9 +642,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().confirmConfig();
         cy.wait(500);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('cleanup test contents', () => {
@@ -676,9 +708,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().confirmConfig();
 
         cy.wait(500);
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Add new existing published contents', () => {
@@ -713,9 +749,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().confirmConfig();
 
         cy.wait(500);
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Test widget cleanup', () => {
@@ -762,9 +802,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().confirmConfig();
 
         cy.wait(500);
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Basic edit with widget', () => {
@@ -801,9 +845,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().confirmConfig();
 
         cy.wait(500);
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Open Widget Details from the widget dropped', () => {
@@ -834,9 +882,13 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(4500);
         cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Test widget cleanup', () => {
@@ -901,9 +953,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.SEARCH_RESULT, WIDGET_FRAME_2.frameName);
         cy.wait(500);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Basic edit with CMS Search Form widget', () => {
@@ -1032,9 +1088,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.NEWS_LATEST, WIDGET_FRAME_2.frameName);
         cy.wait(500);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Basic edit with News Archive widget', () => {
@@ -1164,9 +1224,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().dragWidgetToFrame(PAGE_WIDGETS.LOGO, WIDGET_FRAME_2.frameName);
         cy.wait(500);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Basic edit with Language widget', () => {
@@ -1362,9 +1426,13 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().dragWidgetToFrame(SYSTEM_WIDGETS.SYS_MSGS, WIDGET_FRAME_2.frameName);
         cy.wait(500);
 
-        currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--draft')
+                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
         currentPage.getContent().publishPageDesign();
-        currentPage.getContent().getPageStatus().should('match', /^Published$/);
+        currentPage.getContent().getPageStatusIcon()
+                   .should('have.class', 'PageStatusIcon--published')
+                   .and('have.attr', 'title').should('eq', 'Published');
       });
 
       it('Basic edit with APIs widget', () => {
