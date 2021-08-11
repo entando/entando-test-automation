@@ -107,8 +107,8 @@ describe('Categories', () => {
   });
 
   const postTestCategory = () => {
-      cy.categoriesController().then(controller => controller.postCategory(titleEn, titleIt, categoryCode, rootCode));
-  }
+    cy.categoriesController().then(controller => controller.postCategory(titleEn, titleIt, categoryCode, rootCode));
+  };
 
   const deleteTestCategory = () => {
     cy.categoriesController().then(controller => controller.deleteCategory(categoryCode));
