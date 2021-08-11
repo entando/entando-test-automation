@@ -1,10 +1,10 @@
-import {DATA_TESTID, htmlElements} from "../../WebElement";
+import {DATA_TESTID, htmlElements} from '../../WebElement';
 
-import Content from "../../app/Content.js";
+import Content from '../../app/Content.js';
 
-import AppPage from "../../app/AppPage.js";
+import AppPage from '../../app/AppPage.js';
 
-import ManagementPage from "./ManagementPage.js";
+import ManagementPage from './ManagementPage.js';
 
 export default class ViewProfilePage extends Content {
 

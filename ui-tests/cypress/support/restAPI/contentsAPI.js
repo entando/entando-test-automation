@@ -1,11 +1,11 @@
-const apiURL = Cypress.config("restAPI");
+const apiURL     = Cypress.config('restAPI');
 const controller = `${apiURL}plugins/cms/contents`;
 
 Cypress.Commands.add('contentsController', () => {
-  cy.get("@tokens").then(tokens => {
+  cy.get('@tokens').then(tokens => {
     return new ContentsController(tokens.access_token);
   });
-})
+});
 
 class ContentsController {
 
@@ -16,12 +16,12 @@ class ContentsController {
   postContent(content) {
     return cy.request({
       url: `${controller}`,
-      method: "POST",
+      method: 'POST',
       auth: {
         bearer: this.access_token
       },
       body: [{
-        ...content,
+        ...content
       }]
     });
   }
@@ -29,7 +29,7 @@ class ContentsController {
   deleteContent(id) {
     cy.request({
       url: `${controller}/${id}`,
-      method: "DELETE",
+      method: 'DELETE',
       auth: {
         bearer: this.access_token
       }

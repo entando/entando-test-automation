@@ -1,4 +1,4 @@
-import { htmlElements } from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content.js';
 

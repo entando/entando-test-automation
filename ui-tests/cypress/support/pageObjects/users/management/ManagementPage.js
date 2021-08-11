@@ -1,16 +1,16 @@
-import {DATA_ID, DATA_TESTID, htmlElements} from "../../WebElement.js";
+import {DATA_ID, DATA_TESTID, htmlElements} from '../../WebElement.js';
 
-import Content   from "../../app/Content.js";
-import KebabMenu from "../../app/KebabMenu";
+import Content   from '../../app/Content.js';
+import KebabMenu from '../../app/KebabMenu';
 
-import AppPage      from "../../app/AppPage";
-import DeleteDialog from "../../app/DeleteDialog";
+import AppPage      from '../../app/AppPage';
+import DeleteDialog from '../../app/DeleteDialog';
 
-import AddPage           from "./AddPage";
-import EditPage          from "./EditPage";
-import AuthorizationPage from "./AuthorizationPage";
-import EditProfilePage   from "./EditProfilePage";
-import ViewProfilePage   from "./ViewProfilePage";
+import AddPage           from './AddPage';
+import EditPage          from './EditPage';
+import AuthorizationPage from './AuthorizationPage';
+import EditProfilePage   from './EditProfilePage';
+import ViewProfilePage   from './ViewProfilePage';
 
 export default class ManagementPage extends Content {
 

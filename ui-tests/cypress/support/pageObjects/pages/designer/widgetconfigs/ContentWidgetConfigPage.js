@@ -1,19 +1,19 @@
-import { htmlElements } from '../../../WebElement';
+import {htmlElements} from '../../../WebElement';
 
-import { DialogContent } from '../../../app/Dialog';
+import {DialogContent} from '../../../app/Dialog';
 
 import WidgetConfigPage from '../WidgetConfigPage';
-import AppPage from '../../../app/AppPage';
-import AddContentPage from '../../../content/management/AddPage';
+import AppPage          from '../../../app/AppPage';
+import AddContentPage   from '../../../content/management/AddPage';
 
 export class ContentListSelectModal extends DialogContent {
   getContentListTable() {
     return this.get()
-      .children('.Contents__body')
-      .children(htmlElements.div).eq(1)
-      .children(htmlElements.div)
-      .children('.Contents__table')
-      .children(htmlElements.table);
+               .children('.Contents__body')
+               .children(htmlElements.div).eq(1)
+               .children(htmlElements.div)
+               .children('.Contents__table')
+               .children(htmlElements.table);
   }
 
   getTableRows() {
@@ -24,24 +24,24 @@ export class ContentListSelectModal extends DialogContent {
 
   getCheckboxFromTitle(contentTitle) {
     return this.getTableRows()
-              .contains(contentTitle)
-              .closest(htmlElements.tr)
-              .children('td').eq(0)
-              .children('input[type=checkbox]');
+               .contains(contentTitle)
+               .closest(htmlElements.tr)
+               .children('td').eq(0)
+               .children('input[type=checkbox]');
   }
 }
 
 export default class ContentWidgetConfigPage extends WidgetConfigPage {
 
-  addButtonArea = `${htmlElements.div}.SingleContentConfigFormBody__addButtons`;
-  buttonClass = `${htmlElements.button}.btn.btn-primary`;
+  addButtonArea  = `${htmlElements.div}.SingleContentConfigFormBody__addButtons`;
+  buttonClass    = `${htmlElements.button}.btn.btn-primary`;
   buttonDropdown = `${htmlElements.div}.dropdown.btn-group-primary`;
-  modelIdSelect = `${htmlElements.select}[name="modelId"]`;
+  modelIdSelect  = `${htmlElements.select}[name="modelId"]`;
 
   getAddButtonsArea() {
     return this.getInnerPanel().find(this.addButtonArea);
   }
-  
+
   getAddContentButton() {
     return this.getAddButtonsArea().children(this.buttonClass);
   }
@@ -53,9 +53,9 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   getButtonAddByContentTypeName(ctype) {
     // FIXME: find a way to avoid using `contains`
     return this.getAddNewButtonDropdown()
-      .children(htmlElements.ul)
-      .children(htmlElements.li)
-      .contains(ctype);
+               .children(htmlElements.ul)
+               .children(htmlElements.li)
+               .contains(ctype);
   }
 
   clickNewContentWith(ctype) {
@@ -75,7 +75,7 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
 
   getModelIdSelect() {
     return this.getInnerPanel()
-      .find(this.modelIdSelect);
+               .find(this.modelIdSelect);
   }
 
   clickChangeContentButton() {

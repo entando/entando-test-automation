@@ -1,16 +1,16 @@
-import { generateRandomId, generateRandomTypeCode } from '../../support/utils';
+import {generateRandomId, generateRandomTypeCode} from '../../support/utils';
 
-import { htmlElements } from '../../support/pageObjects/WebElement';
+import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import HomePage from '../../support/pageObjects/HomePage.js';
 
-const addProfileType   = (code, name) => cy.profileTypesController().then(controller => controller.addProfileType(code, name));
+const addProfileType    = (code, name) => cy.profileTypesController().then(controller => controller.addProfileType(code, name));
 const deleteProfileType = (code) => cy.profileTypesController().then(controller => controller.deleteProfileType(code));
 
 const openProfileTypesPage = () => {
   cy.visit('/');
   let currentPage = new HomePage();
-  currentPage = currentPage.getMenu().getUsers().open();
+  currentPage     = currentPage.getMenu().getUsers().open();
   return currentPage.openProfileTypes();
 };
 
@@ -30,7 +30,7 @@ describe('Profile Types', () => {
 
   it('Add a new profile type', () => {
     currentPage = openProfileTypesPage();
-    
+
     cy.log(`Add profile type with code ${profileType.code}`);
     currentPage = currentPage.getContent().openAddProfileTypePage();
     currentPage = currentPage.getContent().addAndSaveProfileType(profileType.code, profileType.name);
@@ -49,7 +49,7 @@ describe('Profile Types', () => {
     currentPage = openProfileTypesPage();
 
     cy.log(`Edit profile type with code ${profileType.code}`);
-    currentPage = currentPage.getContent().getKebabMenu(profileType.code).open().openEdit();
+    currentPage              = currentPage.getContent().getKebabMenu(profileType.code).open().openEdit();
     const newProfileTypeName = generateRandomId();
     currentPage.getContent().clearName();
     currentPage.getContent().typeName(newProfileTypeName);

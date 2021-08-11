@@ -1,12 +1,12 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../../../WebElement";
+import {DATA_TESTID, htmlElements, WebElement} from '../../../WebElement';
 
-import Content from "../../../app/Content";
+import Content from '../../../app/Content';
 
-import AppPage from "../../../app/AppPage";
+import AppPage from '../../../app/AppPage';
 
-import EditPage      from "../EditPage";
-import AttributePage       from "./AttributePage";
-import NestedAttributePage from "./NestedAttributePage";
+import EditPage            from '../EditPage';
+import AttributePage       from './AttributePage';
+import NestedAttributePage from './NestedAttributePage';
 
 export default class CompositeAttributePage extends Content {
 
@@ -50,11 +50,11 @@ export default class CompositeAttributePage extends Content {
     return new AppPage(AttributePage);
   }
 
-  continue(attribute = "") {
+  continue(attribute = '') {
     this.getSubmitButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     switch (attribute) {
-      case "Monolist":
+      case 'Monolist':
         return new AppPage(NestedAttributePage);
       default:
         return new AppPage(EditPage);

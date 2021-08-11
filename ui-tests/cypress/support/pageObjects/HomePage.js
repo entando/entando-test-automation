@@ -1,6 +1,6 @@
 import AppPage from './app/AppPage';
 
-import Dashboard from "./dashboard/Dashboard.js";
+import Dashboard from './dashboard/Dashboard.js';
 
 export default class HomePage extends AppPage {
 

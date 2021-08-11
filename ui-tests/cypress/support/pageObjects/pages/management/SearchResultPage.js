@@ -1,12 +1,12 @@
-import {DATA_TESTID, htmlElements} from "../../WebElement.js";
+import {DATA_TESTID, htmlElements} from '../../WebElement.js';
 
-import Content from "../../app/Content.js";
+import Content from '../../app/Content.js';
 
-import AppPage from "../../app/AppPage.js";
+import AppPage from '../../app/AppPage.js';
 
-import PagesKebabMenu from "./PagesKebabMenu";
+import PagesKebabMenu from './PagesKebabMenu';
 
-import AddPage from "./AddPage.js";
+import AddPage from './AddPage.js';
 
 export default class SearchResultPage extends Content {
 

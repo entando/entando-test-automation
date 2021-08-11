@@ -1,12 +1,12 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {DATA_TESTID, htmlElements, WebElement} from '../WebElement.js';
 
-import DashboardMenu from "../dashboard/DashboardMenu.js"
-import PagesMenu from "../pages/PagesMenu";
-import ComponentsMenu from "../components/ComponentsMenu";
-import ContentMenu from "../content/ContentMenu";
-import UsersMenu from "../users/UsersMenu.js";
-import RepositoryMenu from "../repository/RepositoryMenu";
-import AdministrationMenu from "../administration/AdministrationMenu";
+import DashboardMenu      from '../dashboard/DashboardMenu.js';
+import PagesMenu          from '../pages/PagesMenu';
+import ComponentsMenu     from '../components/ComponentsMenu';
+import ContentMenu        from '../content/ContentMenu';
+import UsersMenu          from '../users/UsersMenu.js';
+import RepositoryMenu     from '../repository/RepositoryMenu';
+import AdministrationMenu from '../administration/AdministrationMenu';
 
 export default class Menu extends WebElement {
 

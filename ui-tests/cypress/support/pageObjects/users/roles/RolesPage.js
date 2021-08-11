@@ -1,14 +1,14 @@
-import {DATA_TESTID, DATA_ID, htmlElements} from "../../WebElement.js";
+import {DATA_TESTID, DATA_ID, htmlElements} from '../../WebElement.js';
 
-import Content   from "../../app/Content.js";
-import KebabMenu from "../../app/KebabMenu";
+import Content   from '../../app/Content.js';
+import KebabMenu from '../../app/KebabMenu';
 
-import AppPage      from "../../app/AppPage.js";
-import DeleteDialog from "../../app/DeleteDialog";
+import AppPage      from '../../app/AppPage.js';
+import DeleteDialog from '../../app/DeleteDialog';
 
-import AddPage     from "./AddPage.js";
-import EditPage    from "./EditPage.js";
-import DetailsPage from "./DetailsPage";
+import AddPage     from './AddPage.js';
+import EditPage    from './EditPage.js';
+import DetailsPage from './DetailsPage';
 
 export default class RolesPage extends Content {
 

@@ -1,11 +1,11 @@
-const apiURL = Cypress.config("restAPI");
+const apiURL     = Cypress.config('restAPI');
 const controller = `${apiURL}roles`;
 
 Cypress.Commands.add('rolesController', () => {
-  cy.get("@tokens").then(tokens => {
+  cy.get('@tokens').then(tokens => {
     return new RolesController(tokens.access_token);
   });
-})
+});
 
 class RolesController {
 
@@ -16,10 +16,10 @@ class RolesController {
   addRole(code, name) {
     cy.request({
       url: `${controller}`,
-      method: "POST",
+      method: 'POST',
       body: {
-        "code": code,
-        "name": name
+        'code': code,
+        'name': name
       },
       auth: {
         bearer: this.access_token
@@ -30,7 +30,7 @@ class RolesController {
   deleteRole(roleId) {
     cy.request({
       url: `${controller}/${roleId}`,
-      method: "DELETE",
+      method: 'DELETE',
       auth: {
         bearer: this.access_token
       }

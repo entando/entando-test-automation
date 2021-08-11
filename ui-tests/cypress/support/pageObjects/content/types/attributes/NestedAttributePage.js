@@ -1,10 +1,10 @@
-import {htmlElements} from "../../../WebElement";
+import {htmlElements} from '../../../WebElement';
 
-import Content  from "../../../app/Content";
+import Content from '../../../app/Content';
 
-import AppPage  from "../../../app/AppPage";
+import AppPage from '../../../app/AppPage';
 
-import EditPage from "../EditPage";
+import EditPage from '../EditPage';
 
 export default class NestedAttributePage extends Content {
 

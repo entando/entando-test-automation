@@ -1,10 +1,10 @@
-import {generateRandomId} from "../../support/utils";
+import {generateRandomId} from '../../support/utils';
 
-import {htmlElements} from "../../support/pageObjects/WebElement";
+import {htmlElements} from '../../support/pageObjects/WebElement';
 
-import HomePage from "../../support/pageObjects/HomePage";
+import HomePage from '../../support/pageObjects/HomePage';
 
-describe("Groups", () => {
+describe('Groups', () => {
 
   let currentPage;
 
@@ -12,7 +12,7 @@ describe("Groups", () => {
   let groupCode;
 
   beforeEach(() => {
-    cy.kcLogin("admin").as("tokens");
+    cy.kcLogin('admin').as('tokens');
 
     groupName = generateRandomId();
     groupCode = groupName.toLowerCase();
@@ -22,7 +22,7 @@ describe("Groups", () => {
     cy.kcLogout();
   });
 
-  it("Add a new group", () => {
+  it('Add a new group', () => {
     currentPage = openGroupsPage();
 
     currentPage = currentPage.getContent().openAddGroupPage();
@@ -34,7 +34,7 @@ describe("Groups", () => {
     cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
-  it("Update an existing group", () => {
+  it('Update an existing group', () => {
     const updatedGroupName = generateRandomId();
 
     cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
@@ -50,24 +50,24 @@ describe("Groups", () => {
     currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
     currentPage.getContent().getDetailsInfo()
                .within(info => {
-                 cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should("have.text", groupCode);
-                 cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should("have.text", updatedGroupName);
+                 cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
+                 cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
                });
 
     cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
-  it("Delete an existing group", () => {
+  it('Delete an existing group', () => {
     cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
 
     currentPage = openGroupsPage();
 
     currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
-    currentPage.getDialog().getBody().getStateInfo().should("contain", groupCode);
+    currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
 
     currentPage.getDialog().confirm();
     cy.reload(); //TODO the page does not automatically refresh the table
-    currentPage.getContent().getTableRows().should("not.contain", groupCode);
+    currentPage.getContent().getTableRows().should('not.contain', groupCode);
   });
 
   describe('Groups - referenced by a page', () => {
@@ -77,12 +77,12 @@ describe("Groups", () => {
       contentType: 'text/html',
       pageModel: '1-2-column',
       parentCode: 'homepage',
-      titles: { en: 'Test' }
+      titles: {en: 'Test'}
     };
 
     beforeEach(() => {
       cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
-      cy.pagesController().then(controller => controller.addNewPage({ ...page, ownerGroup: groupCode }));
+      cy.pagesController().then(controller => controller.addNewPage({...page, ownerGroup: groupCode}));
     });
 
     afterEach(() => {
@@ -104,10 +104,10 @@ describe("Groups", () => {
 
       currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
       currentPage.getContent().getDetailsInfo()
-                .within(info => {
-                  cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should("have.text", groupCode);
-                  cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should("have.text", updatedGroupName);
-                });
+                 .within(info => {
+                   cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
+                   cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
+                 });
     });
 
     it('Update a group used by a published page', () => {
@@ -125,17 +125,17 @@ describe("Groups", () => {
 
       currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
       currentPage.getContent().getDetailsInfo()
-                .within(info => {
-                  cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should("have.text", groupCode);
-                  cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should("have.text", updatedGroupName);
-                });
+                 .within(info => {
+                   cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
+                   cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
+                 });
     });
 
     it('Delete a group used by an unpublished page - not allowed', () => {
       currentPage = openGroupsPage();
 
       currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
-      currentPage.getDialog().getBody().getStateInfo().should("contain", groupCode);
+      currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
       currentPage.getDialog().confirm();
 
       cy.validateToast(currentPage, groupCode, false);
@@ -147,7 +147,7 @@ describe("Groups", () => {
       currentPage = openGroupsPage();
 
       currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
-      currentPage.getDialog().getBody().getStateInfo().should("contain", groupCode);
+      currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
       currentPage.getDialog().confirm();
 
       cy.validateToast(currentPage, groupCode, false);
@@ -155,7 +155,7 @@ describe("Groups", () => {
   });
 
   const openGroupsPage = () => {
-    cy.visit("/");
+    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getUsers().open();
     return currentPage.openGroups();

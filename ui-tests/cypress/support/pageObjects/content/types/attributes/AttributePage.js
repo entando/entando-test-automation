@@ -1,12 +1,12 @@
-import {htmlElements} from "../../../WebElement";
+import {htmlElements} from '../../../WebElement';
 
-import Content from "../../../app/Content";
+import Content from '../../../app/Content';
 
-import AppPage from "../../../app/AppPage";
+import AppPage from '../../../app/AppPage';
 
-import EditPage               from "../EditPage";
-import NestedAttributePage    from "./NestedAttributePage";
-import CompositeAttributePage from "./CompositeAttributePage";
+import EditPage               from '../EditPage';
+import NestedAttributePage    from './NestedAttributePage';
+import CompositeAttributePage from './CompositeAttributePage';
 
 export default class AttributePage extends Content {
 
@@ -22,7 +22,7 @@ export default class AttributePage extends Content {
 
   getNameInput(lang) {
     return this.getContents()
-               .find(this.nameInput.replace("{lang}", lang));
+               .find(this.nameInput.replace('{lang}', lang));
   }
 
   getNestedAttributeType() {
@@ -51,14 +51,14 @@ export default class AttributePage extends Content {
     this.getNestedAttributeType().select(value);
   }
 
-  continue(attribute = "", isComposite = false) {
+  continue(attribute = '', isComposite = false) {
     this.getContinueButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     switch (attribute) {
-      case "List":
-      case "Monolist":
+      case 'List':
+      case 'Monolist':
         return new AppPage(NestedAttributePage);
-      case "Composite":
+      case 'Composite':
         return new AppPage(CompositeAttributePage);
       default:
         if (isComposite) {

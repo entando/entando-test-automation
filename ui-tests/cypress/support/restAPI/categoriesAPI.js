@@ -1,11 +1,11 @@
-const apiURL = Cypress.config("restAPI");
+const apiURL     = Cypress.config('restAPI');
 const controller = `${apiURL}categories`;
 
 Cypress.Commands.add('categoriesController', () => {
-  cy.get("@tokens").then(tokens => {
+  cy.get('@tokens').then(tokens => {
     return new categoriesController(tokens.access_token);
   });
-})
+});
 
 class categoriesController {
 
@@ -16,17 +16,17 @@ class categoriesController {
   postCategory(titleEn, titleIt, code, parentCode) {
     cy.request({
       url: `${controller}`,
-      method: "POST",
+      method: 'POST',
       auth: {
         bearer: this.access_token
       },
       body: {
-        "code": code,
-        "titles": {
-          "en": titleEn,
-          "it": titleIt
+        'code': code,
+        'titles': {
+          'en': titleEn,
+          'it': titleIt
         },
-        "parentCode": parentCode
+        'parentCode': parentCode
       }
     });
   }
@@ -34,7 +34,7 @@ class categoriesController {
   deleteCategory(code) {
     cy.request({
       url: `${controller}/${code}`,
-      method: "DELETE",
+      method: 'DELETE',
       auth: {
         bearer: this.access_token
       }

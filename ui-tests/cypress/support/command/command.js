@@ -1,28 +1,28 @@
-const TEST_ID_KEY = "data-testid";
+const TEST_ID_KEY = 'data-testid';
 
 /**
  *  Get DOM elements by TEST_ID_KEY
  *  @param selector - The data-testid of the DOM elements
  */
-Cypress.Commands.add("getByTestId", (selector, ...args) => cy.get(`[${TEST_ID_KEY}=${selector}]`, ...args));
+Cypress.Commands.add('getByTestId', (selector, ...args) => cy.get(`[${TEST_ID_KEY}=${selector}]`, ...args));
 
 /**
  *  Get a Button by text
  *  @param text - the exact label text displayed in the UI
  */
-Cypress.Commands.add("getButtonByText", text => cy.get("button").contains(text));
+Cypress.Commands.add('getButtonByText', text => cy.get('button').contains(text));
 
 /**
  *  Get a row of the table using a selector
  *  @param selector - the selector of the row to get
  */
-Cypress.Commands.add("getTableRowsBySelector", selector => cy.contains("td", selector).siblings());
+Cypress.Commands.add('getTableRowsBySelector', selector => cy.contains('td', selector).siblings());
 
 /**
  *  Get the action menu (kebab menu) from a specific row of a table bu data test key
  *  @param selector - the action menu selector
  */
-Cypress.Commands.add("getTableActionsByTestId", (selector) => {
+Cypress.Commands.add('getTableActionsByTestId', (selector) => {
   cy.log(`getTableActionsByTestId ${selector}-actions`);
   cy.getByTestId(`${selector}-actions`);
 });
@@ -30,20 +30,20 @@ Cypress.Commands.add("getTableActionsByTestId", (selector) => {
 /**
  * Login to AppBuilder
  */
-Cypress.Commands.add("appBuilderLogin", () => {
-  cy.log("App-builder Login");
+Cypress.Commands.add('appBuilderLogin', () => {
+  cy.log('App-builder Login');
   cy.getOauth2Data();
-  cy.get("@oauth2Data").then((oauth2Data) => {
-    cy.keycloackLogin(oauth2Data, "user");
+  cy.get('@oauth2Data').then((oauth2Data) => {
+    cy.keycloackLogin(oauth2Data, 'user');
   });
 });
 
 /**
  * Logout from AppBuilder
  */
-Cypress.Commands.add("appBuilderLogout", () => {
-  cy.log("App-builder Logout");
-  cy.get("@oauth2Data").then((oauth2Data) => {
+Cypress.Commands.add('appBuilderLogout', () => {
+  cy.log('App-builder Logout');
+  cy.get('@oauth2Data').then((oauth2Data) => {
     cy.keycloackLogout(oauth2Data);
   });
   cy.clearCache();
@@ -53,28 +53,28 @@ Cypress.Commands.add("appBuilderLogout", () => {
  * Check if the url is changed as expected
  * @param expectedUrl - the changed expected url
  */
-Cypress.Commands.add("validateUrlChanged", (expectedUrl) => {
-  cy.location("pathname").should("eq", expectedUrl);
+Cypress.Commands.add('validateUrlChanged', (expectedUrl) => {
+  cy.location('pathname').should('eq', expectedUrl);
 });
 
 /**
  *  Close the wizard App Tour if it's visible
  */
-Cypress.Commands.add("closeWizardAppTour", () => {
-  cy.log("Close App Tour Wizard");
+Cypress.Commands.add('closeWizardAppTour', () => {
+  cy.log('Close App Tour Wizard');
   cy.wait(500);
-  const status = JSON.parse(localStorage.getItem("redux")).appTour.appTourProgress;
-  console.log("status", status);
+  const status = JSON.parse(localStorage.getItem('redux')).appTour.appTourProgress;
+  console.log('status', status);
   cy.log(`AppTourWizardDialog status ${status}`);
-  if (!status || status !== "cancelled") {
-    cy.log("AppTourWizardDialog is active");
-    cy.get(".reactour__helper--is-open").then(() => {
+  if (!status || status !== 'cancelled') {
+    cy.log('AppTourWizardDialog is active');
+    cy.get('.reactour__helper--is-open').then(() => {
       cy.wait(500); // Wait until the animation of the App Tour dialog is completed
-      cy.getButtonByText("Close").click();
-      cy.getButtonByText("Yes").click();
+      cy.getButtonByText('Close').click();
+      cy.getButtonByText('Yes').click();
     });
   } else {
-    cy.log("AppTourWizardDialog is NOT active");
+    cy.log('AppTourWizardDialog is NOT active');
   }
 });
 
@@ -83,17 +83,17 @@ Cypress.Commands.add("closeWizardAppTour", () => {
  *  @param menuLinks - an array with the exact Menu items names displayed in the UI
  *         e.g. ['Users', 'Management'],
  */
-Cypress.Commands.add("openPageFromMenu", (menuLinks) => {
-  cy.log("Open a page from menu");
-  cy.contains("Dashboard").click({force: true});
+Cypress.Commands.add('openPageFromMenu', (menuLinks) => {
+  cy.log('Open a page from menu');
+  cy.contains('Dashboard').click({force: true});
   cy.wait(500);
   cy.closeWizardAppTour();
-  cy.log("Click Menu Group", menuLinks[0]);
+  cy.log('Click Menu Group', menuLinks[0]);
   cy.contains(menuLinks[0]).click();
   cy.wait(500);
   if (menuLinks[1]) {
-    cy.log("Click Page Menu Item", menuLinks[1]);
-    cy.get("li.secondary-nav-item-pf.is-hover.list-group-item").contains(menuLinks[1]).click();
+    cy.log('Click Page Menu Item', menuLinks[1]);
+    cy.get('li.secondary-nav-item-pf.is-hover.list-group-item').contains(menuLinks[1]).click();
   }
 });
 
@@ -103,7 +103,7 @@ Cypress.Commands.add("openPageFromMenu", (menuLinks) => {
 Cypress.Commands.add('initWindowOpenChecker', () => {
   cy.window().then((win) => {
     cy.stub(win, 'open').as('windowOpen').callsFake(url => {
-        cy.visit(url);
+      cy.visit(url);
     });
   });
 });

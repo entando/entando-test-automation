@@ -1,4 +1,4 @@
-const apiURL = Cypress.config('restAPI');
+const apiURL     = Cypress.config('restAPI');
 const controller = `${apiURL}profileTypes`;
 
 Cypress.Commands.add('profileTypesController', () => {

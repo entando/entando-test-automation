@@ -1,13 +1,13 @@
-import {htmlElements} from "../../WebElement";
+import {htmlElements} from '../../WebElement';
 
-import Content   from "../../app/Content.js";
-import KebabMenu from "../../app/KebabMenu";
+import Content   from '../../app/Content.js';
+import KebabMenu from '../../app/KebabMenu';
 
-import AppPage      from "../../app/AppPage.js";
-import DeleteDialog from "../../app/DeleteDialog";
+import AppPage      from '../../app/AppPage.js';
+import DeleteDialog from '../../app/DeleteDialog';
 
-import TypesPage         from "./TypesPage.js";
-import AttributePage from "./attributes/AttributePage";
+import TypesPage     from './TypesPage.js';
+import AttributePage from './attributes/AttributePage';
 
 export default class EditPage extends Content {
 

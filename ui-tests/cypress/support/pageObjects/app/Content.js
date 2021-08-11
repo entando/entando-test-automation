@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {DATA_TESTID, htmlElements, WebElement} from '../WebElement.js';
 
 export default class Content extends WebElement {
 

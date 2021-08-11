@@ -1,10 +1,10 @@
-import {htmlElements} from "../../WebElement";
+import {htmlElements} from '../../WebElement';
 
-import Content from "../../app/Content.js";
+import Content from '../../app/Content.js';
 
-import AppPage from "../../app/AppPage.js";
+import AppPage from '../../app/AppPage.js';
 
-import EditPage from "./EditPage";
+import EditPage from './EditPage';
 
 export default class AddPage extends Content {
 

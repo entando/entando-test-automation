@@ -1,10 +1,10 @@
-import {DATA_TESTID, htmlElements} from "../../WebElement.js";
+import {DATA_TESTID, htmlElements} from '../../WebElement.js';
 
-import Content from "../../app/Content.js";
+import Content from '../../app/Content.js';
 
-import AppPage from "../../app/AppPage.js";
+import AppPage from '../../app/AppPage.js';
 
-import ManagementPage from "./ManagementPage.js";
+import ManagementPage from './ManagementPage.js';
 
 export default class AddPage extends Content {
 
@@ -47,23 +47,23 @@ export default class AddPage extends Content {
 
   getMultilangElement(name, lang) {
     return this.getSeoContainer()
-               .find(this[name].replace("{lang}", lang));
+               .find(this[name].replace('{lang}', lang));
   }
 
   getTitleInput(lang) {
-    return this.getMultilangElement("titleInput", lang);
+    return this.getMultilangElement('titleInput', lang);
   }
 
   getSeoDescriptionInput(lang) {
-    return this.getMultilangElement("seoDescriptionInput", lang);
+    return this.getMultilangElement('seoDescriptionInput', lang);
   }
 
   getSeoKeywordsInput(lang) {
-    return this.getMultilangElement("seoKeywordsInput", lang);
+    return this.getMultilangElement('seoKeywordsInput', lang);
   }
 
   getSeoFriendlyCodeInput(lang) {
-    return this.getMultilangElement("seoFriendlyCodeInput", lang);
+    return this.getMultilangElement('seoFriendlyCodeInput', lang);
   }
 
   getMetadataFormDiv() {
@@ -142,19 +142,19 @@ export default class AddPage extends Content {
     cy.wait(1000);
   }
 
-  typeTitle(value, lang = "en") {
+  typeTitle(value, lang = 'en') {
     this.getTitleInput(lang).type(value);
   }
 
-  typeSeoDescription(value, lang = "en") {
+  typeSeoDescription(value, lang = 'en') {
     this.getSeoDescriptionInput(lang).type(value);
   }
 
-  typeSeoKeywords(value, lang = "en") {
+  typeSeoKeywords(value, lang = 'en') {
     this.getSeoKeywordsInput(lang).type(value);
   }
 
-  typeSeoFriendlyCode(value, lang = "en") {
+  typeSeoFriendlyCode(value, lang = 'en') {
     this.getSeoFriendlyCodeInput(lang).type(value);
   }
 
@@ -227,9 +227,9 @@ export default class AddPage extends Content {
 
   fillRequiredData(enTitle, itTitle, code, pageIndex, pageTemplate) {
     this.selectSeoLanguage(0);
-    this.typeTitle(enTitle, "en");
+    this.typeTitle(enTitle, 'en');
     this.selectSeoLanguage(1);
-    this.typeTitle(itTitle, "it");
+    this.typeTitle(itTitle, 'it');
     this.getCodeInput().clear();
     this.typeCode(code);
     if (pageIndex !== undefined) {
@@ -244,9 +244,9 @@ export default class AddPage extends Content {
     this.typeSeoKeywords(keywords);
     this.typeSeoFriendlyCode(friendlyCode);
     this.selectSeoLanguage(1);
-    this.typeSeoDescription(description, "it");
-    this.typeSeoKeywords(keywords, "it");
-    this.typeSeoFriendlyCode(friendlyCode, "it");
+    this.typeSeoDescription(description, 'it');
+    this.typeSeoKeywords(keywords, 'it');
+    this.typeSeoFriendlyCode(friendlyCode, 'it');
   }
 
 }

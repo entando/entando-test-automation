@@ -2,7 +2,7 @@ import {
   TEST_ID_FOLDER_FILE_BROWSER,
   TEST_ID_BUTTON_FILE_BROWSER,
   TEST_ID_UPLOAD_FIELD_FILE_BROWSER,
-  TEST_ID_ACTION_BUTTON_FILE_BROWSER,
+  TEST_ID_ACTION_BUTTON_FILE_BROWSER
 } from '../../test-const/admin-test-const';
 
 describe('Pages', () => {

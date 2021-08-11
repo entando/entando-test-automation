@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement";
+import {DATA_TESTID, htmlElements, WebElement} from '../WebElement';
 
 export default class KebabMenu extends WebElement {
 

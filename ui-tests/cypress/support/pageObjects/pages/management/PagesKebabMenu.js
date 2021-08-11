@@ -1,22 +1,22 @@
-import KebabMenu from "../../app/KebabMenu";
+import KebabMenu from '../../app/KebabMenu';
 
-import AppPage      from "../../app/AppPage.js";
-import DeleteDialog from "../../app/DeleteDialog";
+import AppPage      from '../../app/AppPage.js';
+import DeleteDialog from '../../app/DeleteDialog';
 
-import AddPage from "./AddPage.js";
+import AddPage from './AddPage.js';
 
 export default class PagesKebabMenu extends KebabMenu {
 
-  add               = ".PageTreeActionMenuButton__menu-item-add";
-  edit              = ".PageTreeActionMenuButton__menu-item-edit";
-  design            = ".PageTreeActionMenuButton__menu-item-configure";
-  clone             = ".PageTreeActionMenuButton__menu-item-clone";
-  publish           = ".PageTreeActionMenuButton__menu-item-publish";
-  unpublish         = ".PageTreeActionMenuButton__menu-item-unpublish";
-  details           = ".PageTreeActionMenuButton__menu-item-details";
-  delete            = ".PageTreeActionMenuButton__menu-item-delete";
-  preview           = ".PageTreeActionMenuButton__menu-item-preview";
-  viewPublishedPage = ".PageTreeActionMenuButton__menu-item-viewPublishedPage";
+  add               = '.PageTreeActionMenuButton__menu-item-add';
+  edit              = '.PageTreeActionMenuButton__menu-item-edit';
+  design            = '.PageTreeActionMenuButton__menu-item-configure';
+  clone             = '.PageTreeActionMenuButton__menu-item-clone';
+  publish           = '.PageTreeActionMenuButton__menu-item-publish';
+  unpublish         = '.PageTreeActionMenuButton__menu-item-unpublish';
+  details           = '.PageTreeActionMenuButton__menu-item-details';
+  delete            = '.PageTreeActionMenuButton__menu-item-delete';
+  preview           = '.PageTreeActionMenuButton__menu-item-preview';
+  viewPublishedPage = '.PageTreeActionMenuButton__menu-item-viewPublishedPage';
 
   getAdd() {
     return this.get()

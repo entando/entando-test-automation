@@ -1,5 +1,5 @@
-import {htmlElements, WebElement} from "../../WebElement.js";
-import ActionItems from './ActionItems';
+import {htmlElements, WebElement} from '../../WebElement.js';
+import ActionItems                from './ActionItems';
 
 export default class DropDownButton extends WebElement {
 

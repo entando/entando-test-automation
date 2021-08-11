@@ -1,15 +1,15 @@
-import {htmlElements, WebElement} from "../../WebElement.js";
+import {htmlElements, WebElement} from '../../WebElement.js';
 
 export default class ActionItems extends WebElement {
 
-  contentSaveButtonUl = `${htmlElements.ul}`;
-  contentSaveButtonWrapper = `${htmlElements.div}.StickySave__row--top`;
+  contentSaveButtonUl         = `${htmlElements.ul}`;
+  contentSaveButtonWrapper    = `${htmlElements.div}.StickySave__row--top`;
   contentSaveButtonSaveAction = `${htmlElements.li}`;
 
   get(action = 0) {
     return this.parent.get()
-    .children().find(this.contentSaveButtonWrapper).find(this.contentSaveButtonUl)
-      .find(this.contentSaveButtonSaveAction).eq(action);
+               .children().find(this.contentSaveButtonWrapper).find(this.contentSaveButtonUl)
+               .find(this.contentSaveButtonSaveAction).eq(action);
   }
 
   click(action = 0) {

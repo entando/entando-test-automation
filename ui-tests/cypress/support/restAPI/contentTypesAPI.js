@@ -1,14 +1,14 @@
-const apiURL     = Cypress.config("restAPI");
+const apiURL     = Cypress.config('restAPI');
 const controller = `${apiURL}plugins/cms/contentTypes`;
 
-Cypress.Commands.add("contentTypesController", () => {
-  cy.get("@tokens").then(tokens => {
+Cypress.Commands.add('contentTypesController', () => {
+  cy.get('@tokens').then(tokens => {
     return new ContentTypesController(tokens.access_token);
   });
 });
 
-Cypress.Commands.add("contentTypeAttributeController", (contentTypeCode) => {
-  cy.get("@tokens").then(tokens => {
+Cypress.Commands.add('contentTypeAttributeController', (contentTypeCode) => {
+  cy.get('@tokens').then(tokens => {
     return new ContentTypeAttributesController(tokens.access_token, contentTypeCode);
   });
 });
@@ -22,7 +22,7 @@ class ContentTypesController {
   addContentType(code, name) {
     cy.request({
       url: `${controller}`,
-      method: "POST",
+      method: 'POST',
       auth: {
         bearer: this.access_token
       },
@@ -36,7 +36,7 @@ class ContentTypesController {
   deleteContentType(code) {
     cy.request({
       url: `${controller}/${code}`,
-      method: "DELETE",
+      method: 'DELETE',
       auth: {
         bearer: this.access_token
       }
@@ -55,7 +55,7 @@ class ContentTypeAttributesController {
   addAttribute(requestBody) {
     cy.request({
       url: `${controller}/${this.contentType}/attributes`,
-      method: "POST",
+      method: 'POST',
       auth: {
         bearer: this.access_token
       },
@@ -66,7 +66,7 @@ class ContentTypeAttributesController {
   deleteAttribute(code) {
     cy.request({
       url: `${controller}/${this.contentType}/attributes/${code}`,
-      method: "DELETE",
+      method: 'DELETE',
       auth: {
         bearer: this.access_token
       }

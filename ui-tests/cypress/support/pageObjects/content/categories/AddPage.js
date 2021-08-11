@@ -1,10 +1,10 @@
-import {DATA_TESTID, htmlElements} from "../../WebElement";
+import {DATA_TESTID, htmlElements} from '../../WebElement';
 
-import Content                     from "../../app/Content.js";
+import Content from '../../app/Content.js';
 
-import AppPage                     from "../../app/AppPage.js";
+import AppPage from '../../app/AppPage.js';
 
-import CategoriesPage              from "./CategoriesPage";
+import CategoriesPage from './CategoriesPage';
 
 export default class AddPage extends Content {
 

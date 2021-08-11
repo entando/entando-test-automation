@@ -1,14 +1,14 @@
-import {DATA_TESTID, htmlElements} from "../../WebElement.js";
+import {DATA_TESTID, htmlElements} from '../../WebElement.js';
 
-import Content from "../../app/Content.js";
+import Content from '../../app/Content.js';
 
-import AppPage from "../../app/AppPage.js";
+import AppPage from '../../app/AppPage.js';
 
-import PagesKebabMenu from "./PagesKebabMenu";
+import PagesKebabMenu from './PagesKebabMenu';
 
-import AddPage          from "./AddPage.js";
-import SearchResultPage from "./SearchResultPage";
-import DeleteDialog     from "../../app/DeleteDialog";
+import AddPage          from './AddPage.js';
+import SearchResultPage from './SearchResultPage';
+import DeleteDialog     from '../../app/DeleteDialog';
 
 export default class ManagementPage extends Content {
 
@@ -106,7 +106,7 @@ export default class ManagementPage extends Content {
     cy.wait(1000); //TODO find a better way to identify when the page list is expanded
   }
 
-  dragRow(source, target, pos = "top") {
+  dragRow(source, target, pos = 'top') {
     this.getTableRow(target).then(row => {
       this.getTableRow(source)
           .children(htmlElements.td).eq(0)

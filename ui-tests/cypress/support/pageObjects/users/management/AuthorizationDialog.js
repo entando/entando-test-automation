@@ -1,6 +1,6 @@
-import {DATA_TESTID, htmlElements} from "../../WebElement";
+import {DATA_TESTID, htmlElements} from '../../WebElement';
 
-import {DialogContent} from "../../app/Dialog";
+import {DialogContent} from '../../app/Dialog';
 
 export default class AuthorizationDialog extends DialogContent {
 

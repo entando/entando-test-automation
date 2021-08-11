@@ -1,9 +1,9 @@
-import {DATA_TESTID, htmlElements, WebElement} from "../WebElement.js";
+import {DATA_TESTID, htmlElements, WebElement} from '../WebElement.js';
 
-import AppTour  from "./AppTour.js";
-import {Dialog} from "./Dialog";
-import Navbar   from "./Navbar.js";
-import Menu     from "./Menu.js";
+import AppTour  from './AppTour.js';
+import {Dialog} from './Dialog';
+import Navbar   from './Navbar.js';
+import Menu     from './Menu.js';
 
 export default class AppPage extends WebElement {
 
