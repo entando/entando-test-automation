@@ -1,5 +1,5 @@
 import HomePage from "../../support/pageObjects/HomePage.js";
-import { generateRandomContentTypeCode, generateRandomId } from "../../support/utils.js";
+import { generateRandomTypeCode, generateRandomId } from "../../support/utils.js";
 
 describe('Contents', () => {
   beforeEach(() => {
@@ -67,7 +67,7 @@ describe('Contents', () => {
   });
 
   it('Update status of content referenced by a published page', () => {
-    const contentTypeCode = generateRandomContentTypeCode();
+    const contentTypeCode = generateRandomTypeCode();
     const contentTypeName = generateRandomId();
 
     const page = {
