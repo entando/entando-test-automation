@@ -1,46 +1,67 @@
-import {
-  TEST_ID_FOLDER_FILE_BROWSER,
-  TEST_ID_BUTTON_FILE_BROWSER,
-  TEST_ID_UPLOAD_FIELD_FILE_BROWSER,
-  TEST_ID_ACTION_BUTTON_FILE_BROWSER
-} from '../../test-const/admin-test-const';
+import {htmlElements} from '../../support/pageObjects/WebElement';
 
-describe('Pages', () => {
+import HomePage from '../../support/pageObjects/HomePage';
+
+describe('File browser', () => {
+
+  let currentPage;
+
   beforeEach(() => {
-    cy.appBuilderLogin();
-    cy.closeWizardAppTour();
+    cy.wrap(null).as('fileToBeDeleted');
+
+    cy.kcLogin('admin').as('tokens');
+
+    currentPage = openFileBrowserPage();
   });
 
   afterEach(() => {
-    cy.appBuilderLogout();
+    cy.get('@fileToBeDeleted')
+      .then(files => files.forEach(file => cy.fileBrowserController().then(controller => controller.deleteFile(file))));
+    cy.kcLogout();
   });
 
-  describe('Upload file in the administration', () => {
-    it('Should upload one file', () => {
-      cy.openPageFromMenu(['Administration', 'File browser']);
-      cy.getByTestId(TEST_ID_FOLDER_FILE_BROWSER).contains('public').click();
-      cy.getByTestId(TEST_ID_BUTTON_FILE_BROWSER).contains('Upload files').click();
-      cy.addAttachFile(TEST_ID_UPLOAD_FIELD_FILE_BROWSER, 'upload/data1.json');
-      cy.getByTestId(TEST_ID_ACTION_BUTTON_FILE_BROWSER).contains('Upload').click();
-      cy.getTableRowsBySelector('data1.json').should('be.visible');
+  describe('Upload file', () => {
+
+    it('Upload a json file', () => {
+      currentPage.getContent().openSubFolder(0);
+
+      currentPage = currentPage.getContent().openUploadFilesPage();
+      currentPage.getContent().attachUploadFilesInput('upload/data1.json');
+      currentPage = currentPage.getContent().confirmUpload();
+      cy.wrap(['data1.json']).as('fileToBeDeleted');
+
+      cy.validateToast(currentPage);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('contain.text', 'data1.json')
+      );
     });
 
-    it('Should upload multiple file', () => {
-      cy.openPageFromMenu(['Administration', 'File browser']);
-      cy.getByTestId(TEST_ID_FOLDER_FILE_BROWSER).contains('public').click();
-      cy.getByTestId(TEST_ID_BUTTON_FILE_BROWSER).contains('Upload files').click();
-      cy.addAttachFile(TEST_ID_UPLOAD_FIELD_FILE_BROWSER, ['upload/data2.json', 'upload/data3.json']);
-      cy.getByTestId(TEST_ID_ACTION_BUTTON_FILE_BROWSER).contains('Upload').click();
-      cy.getTableRowsBySelector('data2.json').should('be.visible');
-      cy.getTableRowsBySelector('data3.json').should('be.visible');
+    it('Upload multiple json file', () => {
+      currentPage.getContent().openSubFolder(0);
+
+      currentPage = currentPage.getContent().openUploadFilesPage();
+      currentPage.getContent().attachUploadFilesInput('upload/data1.json', 'upload/data2.json');
+      currentPage = currentPage.getContent().confirmUpload();
+      cy.wrap(['data1.json', 'data2.json']).as('fileToBeDeleted');
+
+      cy.validateToast(currentPage);
+      currentPage.getContent().getTableRows().then(rows => {
+        cy.wrap(rows).eq(-2).children(htmlElements.td).eq(0).should('contain.text', 'data1.json');
+        cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('contain.text', 'data2.json');
+      });
     });
 
-    it('Should upload file with drag and drop', () => {
-      cy.openPageFromMenu(['Administration', 'File browser']);
-      cy.getByTestId(TEST_ID_FOLDER_FILE_BROWSER).contains('public').click();
-      cy.getByTestId(TEST_ID_BUTTON_FILE_BROWSER).contains('Upload files').click();
-      cy.addAttachFileByDragAndDrop(TEST_ID_UPLOAD_FIELD_FILE_BROWSER, 'upload/data4.json');
-      cy.getByTestId(TEST_ID_ACTION_BUTTON_FILE_BROWSER).contains('Upload').click();
+    xit('Upload a json file via drag n drop', () => {
+      //TODO find how to simulate file drag 'n' drop
     });
+
   });
+
+  const openFileBrowserPage = () => {
+    cy.visit('/');
+    currentPage = new HomePage();
+    currentPage = currentPage.getMenu().getAdministration().open();
+    return currentPage.openFileBrowser();
+  };
+
 });
