@@ -1272,6 +1272,72 @@ describe('Microfrontends and Widgets', () => {
       });
     });
 
+    describe('Page Widgets - Logo - Extended', () => {
+      const WIDGET_FRAME_1 = {
+        frameName: 'Frame 2',
+        frameNum: 5
+      };
+      const CUSTOM_UI = '<#assign wp=JspTaglibs["/aps-core"]>{enter}{enter}\
+<@wp.info key="systemParam" paramName="applicationBaseURL" var="appUrl" />{enter}\
+<img src="${{}appUrl{}}resources/static/img/Entando_light.svg" aria-label="Entando" alt="Logo" role="logo" />';
+      
+      const CURRENT_LOGO = 'Entando_light.svg';
+      const CHANGE_LOGO = 'entando-logo_badge.png';
+
+      it('Add the Logo widget in page (config), edit the logo widget (in kebab actions) changing, in the Custom UI, the default logo\'s image with a new image (.svg/.png/.jpg)', () => {
+        selectPageFromSidebar(SITEMAP);
+        cy.wait(500);
+
+        cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
+        currentPage.getContent().dragWidgetToFrame(PAGE_WIDGETS.LOGO, WIDGET_FRAME_1.frameName);
+        cy.wait(500);
+
+        currentPage.getContent().publishPageDesign();
+        cy.wait(1000);
+
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
+        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, PAGE_WIDGETS.LOGO);
+        cy.wait(500);
+
+        currentPage.getContent().getCustomUiInput().clear();
+        currentPage.getContent().getCustomUiInput().type(CUSTOM_UI.replace(CURRENT_LOGO, CHANGE_LOGO));
+        cy.wait(500);
+
+        currentPage = currentPage.getContent().submitForm();
+        cy.wait(1000);
+
+        // TODO - add view published scenario to check the change of logo
+      });
+
+      it('Revert', () => {
+        selectPageFromSidebar(SITEMAP);
+        cy.wait(500);
+
+        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
+        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, PAGE_WIDGETS.LOGO);
+        
+        currentPage.getContent().publishPageDesign();
+        cy.wait(1000);
+
+        currentPage = currentPage.getMenu().getComponents().open();
+        currentPage = currentPage.openMFE_Widgets();
+        cy.wait(500);
+
+        currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
+            PAGE_WIDGETS.LOGO.code,
+            MFEWidgetsPage.WIDGET_ACTIONS.EDIT
+        );
+        cy.wait(500);
+
+        currentPage.getContent().getCustomUiInput().clear();
+        currentPage.getContent().getCustomUiInput().type(CUSTOM_UI);
+        cy.wait(500);
+
+        currentPage = currentPage.getContent().submitForm();
+        cy.wait(1500);
+      });
+    });
+
     describe('System Widgets - APIs and System Messages', () => {
 
       const WIDGET_FRAME_1 = {
