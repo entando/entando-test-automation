@@ -80,32 +80,6 @@ class PagesController {
     });
   }
 
-  updatePageWidget(pageCode, frameId, widgetCode, config) {
-    return cy.request({
-      url: `${controller}/${pageCode}/widgets/${frameId}`,
-      method: 'PUT',
-      auth: {
-        bearer: this.access_token
-      },
-      body: {
-        code: widgetCode,
-        config
-      }
-    });
-  }
-
-  addWidgetToPage(pageId, frameId, widgetId) {
-    cy.request({
-      url: `${controller}/${pageId}/widgets/${frameId}`,
-      method: 'PUT',
-      auth: {
-        bearer: this.access_token
-      },
-      body: {
-        code: widgetId
-      }
-    });
-  }
 }
 
 class WidgetsController {
@@ -115,7 +89,7 @@ class WidgetsController {
     this.pageCode     = pageCode;
   }
 
-  addWidget(frameCode, widgetCode) {
+  addWidget(frameCode, widgetCode, config) {
     cy.request({
       url: `${controller}/${this.pageCode}/widgets/${frameCode}`,
       method: 'PUT',
@@ -123,7 +97,8 @@ class WidgetsController {
         bearer: this.access_token
       },
       body: {
-        code: widgetCode
+        code: widgetCode,
+        config
       }
     });
   }
