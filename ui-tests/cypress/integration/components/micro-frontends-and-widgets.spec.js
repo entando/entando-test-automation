@@ -39,12 +39,12 @@ describe('Microfrontends and Widgets', () => {
     const currentPageContent = currentPage.getContent();
     currentPageContent.clickSidebarTab(1);
     cy.wait(3000);
-    currentPageContent.getPageTreeItem(pageOpen.title).click();
+    currentPageContent.selectPageFromSidebarPageTreeTable(pageOpen.code);
     currentPageContent.clickSidebarTab(0);
   };
 
   describe('Widgets CRUD', () => {
-    const WIDGET_FRAME = 'Frame 3';
+
     beforeEach(() => {
       cy.kcLogin('admin').as('tokens');
 
@@ -139,10 +139,8 @@ describe('Microfrontends and Widgets', () => {
       selectPageFromSidebar(DEMOPAGE);
       cy.wait(500);
 
-      currentPage.getContent().dragWidgetToFrame({
-        code: SAMPLE_BASIC_WIDGET_ID,
-        name: SAMPLE_WIDGET_NAMES[1]
-      }, WIDGET_FRAME);
+      currentPage.getContent().toggleSidebarWidgetSection(5);
+      currentPage.getContent().dragWidgetToGrid(5, 0, 2, 0);
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--draft')
                  .and('have.attr', 'title').should('eq', 'Published, with pending changes');
@@ -171,11 +169,9 @@ describe('Microfrontends and Widgets', () => {
       currentPage = currentPage.openDesigner();
       selectPageFromSidebar(DEMOPAGE);
       cy.wait(500);
-      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME);
-      currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, {
-        code: SAMPLE_BASIC_WIDGET_ID,
-        name: SAMPLE_WIDGET_NAMES[2]
-      });
+      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SAMPLE_BASIC_WIDGET_ID)
+                               .open()
+                               .openEdit();
       cy.wait(500);
       cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
@@ -228,6 +224,7 @@ describe('Microfrontends and Widgets', () => {
       currentPage.getDialog().getConfirmButton().click();
       currentPage.getContent().getListArea().should('not.contain', SAMPLE_BASIC_WIDGET_ID);
     });
+
   });
 
   describe('Widget Usages', () => {
@@ -242,6 +239,7 @@ describe('Microfrontends and Widgets', () => {
     });
 
     describe('CMS Content Widget', () => {
+
       const WIDGET_FRAME = {
         frameName: 'Frame 3',
         frameNum: 6
@@ -252,7 +250,7 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
+        currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 2, 0, CMS_WIDGETS.CONTENT.code);
 
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().clickAddContentButton();
@@ -279,8 +277,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.CONTENT);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
@@ -297,8 +296,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT.code)
+                                 .open()
+                                 .openSettings();
         cy.wait(500);
 
         currentPage.getContent().clickChangeContentButton();
@@ -325,8 +325,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.CONTENT);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT.code}`);
       });
@@ -335,8 +336,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT.code)
+                                 .open()
+                                 .openSaveAs();
 
         cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
@@ -362,8 +364,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT);
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT.code)
+                   .open()
+                   .clickDelete();
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
 
@@ -393,9 +396,11 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(2500);
       });
+
     });
 
     describe('CMS Content List Widget', () => {
+
       const WIDGET_FRAME = {
         frameName: 'Frame 4',
         frameNum: 7
@@ -406,7 +411,8 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME.frameName);
+
+        currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 2, 1, CMS_WIDGETS.CONTENT_LIST.code);
 
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         cy.wait(5000);
@@ -431,8 +437,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.CONTENT_LIST);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 1, CMS_WIDGETS.CONTENT_LIST.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
@@ -449,8 +456,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT_LIST);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 1, CMS_WIDGETS.CONTENT_LIST.code)
+                                 .open()
+                                 .openSettings();
         cy.wait(5000);
 
         currentPage.getContent().getAddButtonFromTableRowWithTitle('A Modern Platform for Modern UX').click();
@@ -472,8 +480,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.CONTENT_LIST);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 1, CMS_WIDGETS.CONTENT_LIST.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
       });
@@ -482,8 +491,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT_LIST);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 1, CMS_WIDGETS.CONTENT_LIST.code)
+                                 .open()
+                                 .openSaveAs();
 
         cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
@@ -509,8 +519,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 1, CMS_WIDGETS.CONTENT_LIST.code)
+                   .open()
+                   .clickDelete();
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
 
@@ -540,9 +551,11 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(2500);
       });
+
     });
 
     describe('CMS Content Widget - Extended', () => {
+
       const WIDGET_FRAME = {
         frameName: 'Frame 3',
         frameNum: 6
@@ -609,7 +622,7 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
+        currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 2, 0, CMS_WIDGETS.CONTENT.code);
         cy.wait(500);
 
         currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
@@ -629,7 +642,7 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
+        currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 2, 0, CMS_WIDGETS.CONTENT.code);
         cy.wait(500);
 
         currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
@@ -655,8 +668,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT);
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT.code)
+                   .open()
+                   .clickDelete();
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
 
@@ -667,9 +681,11 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().deleteLastAddedContent();
         currentPage = currentPage.getContent().deleteLastAddedContent();
       });
+
     });
 
     describe('CMS Content List Widget - Extended', () => {
+
       const WIDGET_FRAME = {
         frameName: 'Frame 3',
         frameNum: 6
@@ -685,7 +701,7 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME.frameName);
+        currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 2, 0, CMS_WIDGETS.CONTENT_LIST.code);
 
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         cy.wait(5000);
@@ -735,7 +751,7 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_LIST, WIDGET_FRAME_2.frameName);
+        currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 2, 1, CMS_WIDGETS.CONTENT_LIST.code);
 
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME_2.frameNum}`);
         cy.wait(5000);
@@ -762,10 +778,12 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_LIST);
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT_LIST.code)
+                   .open()
+                   .clickDelete();
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 1, CMS_WIDGETS.CONTENT_LIST.code)
+                   .open()
+                   .clickDelete();
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
 
@@ -778,9 +796,11 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().unpublishLastAddedContent();
         currentPage = currentPage.getContent().deleteLastAddedContent();
       });
+
     });
 
     describe('CMS Content Search Query Widget', () => {
+
       const WIDGET_FRAME = {
         frameName: 'Frame 3',
         frameNum: 6
@@ -791,7 +811,7 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-        currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT_QUERY, WIDGET_FRAME.frameName);
+        currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 3, 2, 0, CMS_WIDGETS.CONTENT_QUERY.code);
 
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().getContentTypeField().select('Banner');
@@ -815,8 +835,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.CONTENT_QUERY);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT_QUERY.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
@@ -833,8 +854,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SETTINGS, CMS_WIDGETS.CONTENT_QUERY);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT_QUERY.code)
+                                 .open()
+                                 .openSettings();
 
         cy.wait(2500);
         cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
@@ -858,8 +880,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.CONTENT_QUERY);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT_QUERY.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT_QUERY.code}`);
       });
@@ -868,8 +891,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.SAVE_AS, CMS_WIDGETS.CONTENT_QUERY);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT_QUERY.code)
+                                 .open()
+                                 .openSaveAs();
 
         cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_QUERY.code}/listViewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
@@ -895,8 +919,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar();
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.CONTENT_QUERY);
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.CONTENT_QUERY.code)
+                   .open()
+                   .clickDelete();
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
 
@@ -927,6 +952,7 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(2500);
       });
+
     });
 
     describe('CMS Search Form and Search Results Widgets', () => {
@@ -946,11 +972,11 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-        currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.SEARCH_FORM, WIDGET_FRAME_1.frameName);
+        currentPage.getContent().dragWidgetToGrid(0, 5, 1, 1);
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-        currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.SEARCH_RESULT, WIDGET_FRAME_2.frameName);
+        currentPage.getContent().dragWidgetToGrid(0, 6, 2, 0);
         cy.wait(500);
 
         currentPage.getContent().getPageStatusIcon()
@@ -966,8 +992,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.SEARCH_FORM);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, CMS_WIDGETS.SEARCH_FORM.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
@@ -984,8 +1011,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.SEARCH_RESULT);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_RESULT.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
@@ -1002,8 +1030,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.SEARCH_FORM);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, CMS_WIDGETS.SEARCH_FORM.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.SEARCH_FORM.code}`);
       });
@@ -1012,8 +1041,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.SEARCH_RESULT);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_RESULT.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.SEARCH_RESULT.code}`);
       });
@@ -1022,11 +1052,12 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.SEARCH_FORM);
-
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.SEARCH_RESULT);
+        currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, CMS_WIDGETS.SEARCH_FORM.code)
+                   .open()
+                   .clickDelete();
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_RESULT.code)
+                   .open()
+                   .clickDelete();
 
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
@@ -1063,6 +1094,7 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(1500);
       });
+
     });
 
     describe('CMS News Archive and News Latest Widgets', () => {
@@ -1082,10 +1114,10 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-        currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.NEWS_ARCHIVE, WIDGET_FRAME_1.frameName);
+        currentPage.getContent().dragWidgetToGrid(0, 0, 1, 1);
         cy.wait(500);
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-        currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.NEWS_LATEST, WIDGET_FRAME_2.frameName);
+        currentPage.getContent().dragWidgetToGrid(0, 1, 2, 0);
         cy.wait(500);
 
         currentPage.getContent().getPageStatusIcon()
@@ -1101,8 +1133,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.NEWS_ARCHIVE);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, CMS_WIDGETS.NEWS_ARCHIVE.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
@@ -1119,8 +1152,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, CMS_WIDGETS.NEWS_LATEST);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_LATEST.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
@@ -1137,8 +1171,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.NEWS_ARCHIVE);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, CMS_WIDGETS.NEWS_ARCHIVE.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
       });
@@ -1147,8 +1182,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, CMS_WIDGETS.NEWS_LATEST);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_LATEST.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.NEWS_LATEST.code}`);
       });
@@ -1157,11 +1193,12 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.NEWS_ARCHIVE);
-
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, CMS_WIDGETS.NEWS_LATEST);
+        currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, CMS_WIDGETS.NEWS_ARCHIVE.code)
+                   .open()
+                   .clickDelete();
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_LATEST.code)
+                   .open()
+                   .clickDelete();
 
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
@@ -1198,6 +1235,7 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(1500);
       });
+
     });
 
     describe('Page Widgets - Language and Logo', () => {
@@ -1216,12 +1254,14 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
+        currentPage.getContent().toggleSidebarWidgetSection(2);
+
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-        currentPage.getContent().dragWidgetToFrame(PAGE_WIDGETS.LANGUAGE, WIDGET_FRAME_1.frameName);
+        currentPage.getContent().dragWidgetToGrid(2, 0, 1, 1);
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-        currentPage.getContent().dragWidgetToFrame(PAGE_WIDGETS.LOGO, WIDGET_FRAME_2.frameName);
+        currentPage.getContent().dragWidgetToGrid(2, 1, 2, 0);
         cy.wait(500);
 
         currentPage.getContent().getPageStatusIcon()
@@ -1237,8 +1277,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, PAGE_WIDGETS.LANGUAGE);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, PAGE_WIDGETS.LANGUAGE.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
@@ -1255,8 +1296,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, PAGE_WIDGETS.LOGO);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LOGO.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
@@ -1273,8 +1315,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, PAGE_WIDGETS.LANGUAGE);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(1, 0, PAGE_WIDGETS.LANGUAGE.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${PAGE_WIDGETS.LANGUAGE.code}`);
       });
@@ -1283,8 +1326,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, PAGE_WIDGETS.LOGO);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LOGO.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${PAGE_WIDGETS.LOGO.code}`);
       });
@@ -1293,11 +1337,12 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, PAGE_WIDGETS.LANGUAGE);
-
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, PAGE_WIDGETS.LOGO);
+        currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, PAGE_WIDGETS.LANGUAGE.code)
+                   .open()
+                   .clickDelete();
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LOGO.code)
+                   .open()
+                   .clickDelete();
 
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
@@ -1334,6 +1379,7 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(1500);
       });
+
     });
 
     describe('Page Widgets - Logo - Extended', () => {
@@ -1418,12 +1464,14 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
+        currentPage.getContent().toggleSidebarWidgetSection(4);
+
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-        currentPage.getContent().dragWidgetToFrame(SYSTEM_WIDGETS.APIS, WIDGET_FRAME_1.frameName);
+        currentPage.getContent().dragWidgetToGrid(4, 0, 1, 1);
         cy.wait(500);
 
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-        currentPage.getContent().dragWidgetToFrame(SYSTEM_WIDGETS.SYS_MSGS, WIDGET_FRAME_2.frameName);
+        currentPage.getContent().dragWidgetToGrid(4, 4, 2, 0);
         cy.wait(500);
 
         currentPage.getContent().getPageStatusIcon()
@@ -1439,8 +1487,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, SYSTEM_WIDGETS.APIS);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, SYSTEM_WIDGETS.APIS.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
@@ -1457,8 +1506,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, SYSTEM_WIDGETS.SYS_MSGS);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.SYS_MSGS.code)
+                                 .open()
+                                 .openEdit();
         cy.wait(500);
 
         cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
@@ -1475,8 +1525,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, SYSTEM_WIDGETS.APIS);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, SYSTEM_WIDGETS.APIS.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${SYSTEM_WIDGETS.APIS.code}`);
       });
@@ -1485,8 +1536,9 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DETAILS, SYSTEM_WIDGETS.SYS_MSGS);
+        currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.SYS_MSGS.code)
+                                 .open()
+                                 .openDetails();
         cy.wait(500);
         cy.validateUrlChanged(`/widget/detail/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
       });
@@ -1495,11 +1547,12 @@ describe('Microfrontends and Widgets', () => {
         selectPageFromSidebar(SITEMAP);
         cy.wait(500);
 
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, SYSTEM_WIDGETS.APIS);
-
-        currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_2.frameName);
-        currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, SYSTEM_WIDGETS.SYS_MSGS);
+        currentPage.getContent().getDesignerGridFrameKebabMenu(1, 1, SYSTEM_WIDGETS.APIS.code)
+                   .open()
+                   .clickDelete();
+        currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.SYS_MSGS.code)
+                   .open()
+                   .clickDelete();
 
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
@@ -1536,6 +1589,9 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(1500);
       });
+
     });
+
   });
+
 });

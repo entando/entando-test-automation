@@ -9,6 +9,7 @@ import ContentWidgetConfigPage      from './widgetconfigs/ContentWidgetConfigPag
 import ContentListWidgetConfigPage  from './widgetconfigs/ContentListWidgetConfigPage';
 import ContentQueryWidgetConfigPage from './widgetconfigs/ContentQueryWidgetConfigPage';
 import MFEWidgetForm                from '../../components/mfeWidgets/MFEWidgetForm';
+import DetailsPage                  from '../../components/mfeWidgets/DetailsPage';
 
 export default class DesignerPage extends Content {
 
@@ -171,9 +172,13 @@ export default class DesignerPage extends Content {
                .children(this.gridCol);
   }
 
-  getDesignerGridRowCol(rowPos, colPos) {
+  getDesignerGridFrame(rowPos, colPos) {
     return this.getDesignerGridRowCols(rowPos)
                .eq(colPos);
+  }
+
+  getDesignerGridFrameKebabMenu(rowPos, colPos, widgetCode) {
+    return new GridFrameKebabMenu(this, rowPos, colPos, widgetCode);
   }
 
   getBottomToolbar() {
@@ -246,30 +251,13 @@ export default class DesignerPage extends Content {
   }
 
   getSidebarPageTreeKebabMenu(code) {
-    return new PageTreeKebabMenu(this, code);
-  }
-
-  clickSidebarTab(tabPos) {
-    this.getSidebarTabs()
-        .children(htmlElements.li).eq(tabPos)
-        .click();
-    cy.wait(1000); //TODO find a better way to identify when the sidebar loaded
-  }
-
-  selectPageFromSidebarPageTreeTable(code) {
-    this.getSidebarPageTreeTableRow(code).click();
-    cy.wait(3000); //TODO find a better way to identify when the grid loaded
-  }
-
-  dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol) {
-    this.getDesignerGridRowCol(gridRow, gridCol)
-        .then(frame => this.getSidebarWidgetSectionWidget(widgetSection, widgetPos).drag(frame, {position: 'center'}));
+    return new SidebarPageTreeKebabMenu(this, code);
   }
 
   dragGridWidgetToFrame(oriGridRow, oriGridCol, newGridRow, newGridCol) {
-    this.getDesignerGridRowCol(newGridRow, newGridCol).children(htmlElements.div)
+    this.getDesignerGridFrame(newGridRow, newGridCol).children(htmlElements.div)
         .then(frame =>
-            this.getDesignerGridRowCol(oriGridRow, oriGridCol).children(htmlElements.div)
+            this.getDesignerGridFrame(oriGridRow, oriGridCol).children(htmlElements.div)
                 .drag(frame, {force: true, position: 'center'})
         );
     cy.wait(1000); //TODO find a better way to identify when the grid is refreshed
@@ -283,27 +271,37 @@ export default class DesignerPage extends Content {
         .click();
   }
 
-  getDropQueryString(frameName) {
-    return `${htmlElements.div}[${DATA_TESTID}=WidgetFrame__${frameName.replace(/\s/g, '_')}]`;
+  clickSidebarTab(tabPos) {
+    this.getSidebarTabs()
+        .children(htmlElements.li).eq(tabPos)
+        .click();
+    cy.wait(1000); //TODO find a better way to identify when the sidebar loaded
   }
 
-  getWidgetItemByWidgetName(name) {
-    return this.getSidebarContent()
-               .children(this.widgetGroupings).eq(1)
-               .children(this.widgetGrouping).contains(name);
+  toggleSidebarWidgetSection(sectionPos) {
+    this.getSidebarWidgetSection(sectionPos).click();
   }
 
-  getPageTreeItem(title) {
-    return this.getSidebarContent()
-               .children(this.pageTreeTable)
-               .children(this.pageTreeTbody)
-               .children(this.pageTreeRow)
-               .contains(title);
+  dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol) {
+    this.getDesignerGridFrame(gridRow, gridCol)
+        .then(frame => this.getSidebarWidgetSectionWidget(widgetSection, widgetPos).drag(frame, {position: 'center'}));
   }
 
-  gatherWidgetConfigPage(forWidget) {
+  dragConfigurableWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol, widgetCode) {
+    this.dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol);
+
+    const WidgetConfigPage = this.gatherWidgetConfigPage(widgetCode);
+    return new AppPage(WidgetConfigPage);
+  }
+
+  selectPageFromSidebarPageTreeTable(code) {
+    this.getSidebarPageTreeTableRow(code).click();
+    cy.wait(3000); //TODO find a better way to identify when the grid loaded
+  }
+
+  gatherWidgetConfigPage(widgetCode) {
     const {CMS_WIDGETS} = DesignerPage;
-    switch (forWidget.code) {
+    switch (widgetCode) {
       case CMS_WIDGETS.CONTENT_LIST.code:
         return ContentListWidgetConfigPage;
       case CMS_WIDGETS.CONTENT_QUERY.code:
@@ -314,54 +312,80 @@ export default class DesignerPage extends Content {
     }
   }
 
-  dragWidgetToFrame(widget, frameName) {
-    this.getWidgetItemByWidgetName(widget.name)
-        .drag(this.getDropQueryString(frameName), {position: 'center', force: true});
+}
 
-    const WidgetConfigPage = this.gatherWidgetConfigPage(widget);
+class GridFrameKebabMenu extends KebabMenu {
 
-    return new AppPage(WidgetConfigPage);
+  settings = `${htmlElements.li}.WidgetFrame__settings-btn`;
+  saveAs   = `${htmlElements.li}.WidgetFrame__saveAs-btn`;
+  delete   = `${htmlElements.li}.WidgetFrame__delete-btn`;
+
+  constructor(parent, row, col, widgetCode) {
+    super(parent);
+    this.row        = row;
+    this.col        = col;
+    this.widgetCode = widgetCode;
   }
 
-  getKebabMenuByFrame(frameName) {
-    return this.getContents()
-               .find(this.getDropQueryString(frameName)).contains(frameName)
-               .parent().find(htmlElements.button);
+  get() {
+    return this.parent.getDesignerGridFrame(this.row, this.col)
+               .children(htmlElements.div)
+               .children(htmlElements.div)
+               .children(htmlElements.div).eq(1);
   }
 
-  openKebabMenuByFrame(frameName) {
-    this.getKebabMenuByFrame(frameName).click();
+  getDetails() {
+    return this.get()
+               .find(`#detail-widget-${this.widgetCode}`);
   }
 
-  getKebabMenuItem(menuName, isLink = false) {
-    return this.getContents()
-               .find(isLink ? this.frameMenuLink : this.frameMenuItem)
-               .filter(':visible').contains(menuName);
+  getEdit() {
+    return this.get()
+               .find(`#edit-widget-${this.widgetCode}`);
   }
 
-  getFrameAction(action) {
-    const menuLinks = [DesignerPage.FRAME_ACTIONS.DETAILS, DesignerPage.FRAME_ACTIONS.EDIT];
-    return this.getKebabMenuItem(action, menuLinks.includes(action));
+  getSettings() {
+    return this.get()
+               .find(this.settings);
   }
 
-  clickActionOnFrame(action, widget) {
-    this.getFrameAction(action).click();
-    switch (action) {
-      case DesignerPage.FRAME_ACTIONS.SETTINGS:
-        return new AppPage(this.gatherWidgetConfigPage(widget));
-      case DesignerPage.FRAME_ACTIONS.SAVE_AS:
-      case DesignerPage.FRAME_ACTIONS.EDIT:
-        return new AppPage(MFEWidgetForm);
-      case DesignerPage.FRAME_ACTIONS.DELETE:
-      case DesignerPage.FRAME_ACTIONS.DETAILS:
-      default:
-        return null;
-    }
+  getSaveAs() {
+    return this.get()
+               .find(this.saveAs);
+  }
+
+  getDelete() {
+    return this.get()
+               .find(this.delete);
+  }
+
+  openDetails() {
+    this.getDetails().click();
+    return new AppPage(DetailsPage);
+  }
+
+  openEdit() {
+    this.getEdit().click();
+    return new AppPage(MFEWidgetForm);
+  }
+
+  openSettings() {
+    this.getSettings().click();
+    return new AppPage(this.parent.gatherWidgetConfigPage(this.widgetCode));
+  }
+
+  openSaveAs() {
+    this.getSaveAs().click();
+    return new AppPage(MFEWidgetForm);
+  }
+
+  clickDelete() {
+    this.getDelete().click();
   }
 
 }
 
-class PageTreeKebabMenu extends KebabMenu {
+class SidebarPageTreeKebabMenu extends KebabMenu {
 
   get() {
     return this.parent.getSidebarPageTreeTableRows()

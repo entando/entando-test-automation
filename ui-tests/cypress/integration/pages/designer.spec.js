@@ -56,7 +56,7 @@ describe('Pages Designer', () => {
       selectPageFromPageTreeTable(currentPage, page.code);
       addWidgetToPageFrame(currentPage, page.template, 0, 0, 1, 0);
 
-      currentPage.getContent().getDesignerGridRowCol(1, 0).children(htmlElements.div).children()
+      currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                  .then(contents => {
                    cy.wrap(contents).children()
@@ -87,10 +87,10 @@ describe('Pages Designer', () => {
       currentPage.getContent().dragGridWidgetToFrame(1, 0, 1, 1);
       cy.wrap(getGridFrame(page.template, 1, 1)).as('widgetToBeDeleted');
 
-      currentPage.getContent().getDesignerGridRowCol(1, 0).children(htmlElements.div).children()
+      currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('SPAN'));
 
-      currentPage.getContent().getDesignerGridRowCol(1, 1).children(htmlElements.div).children()
+      currentPage.getContent().getDesignerGridFrame(1, 1).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                  .then(contents => {
                    cy.wrap(contents).children()
