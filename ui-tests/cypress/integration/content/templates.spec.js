@@ -28,7 +28,11 @@ describe('Content Templates', () => {
     cy.kcLogin('admin').as('tokens');
   });
 
-  afterEach(() => cy.kcLogout());
+  afterEach(() => {
+    deleteContentTemplate(template.id);
+
+    cy.kcLogout();
+  });
 
   it('Add content template', () => {
     currentPage = openContentTemplatesPage();
@@ -41,11 +45,11 @@ describe('Content Templates', () => {
     currentPage.getContent().typeHTMLModel(template.contentShape);
     
     currentPage = currentPage.getContent().submitForm();
-    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(0).should('contain.text', template.id);
-    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(2).should('contain.text', template.contentType);
-    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(4).should('contain.text', template.descr);
-
-    deleteContentTemplate(template.id);
+    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).then(($tds) => {
+      cy.wrap($tds).eq(0).should('contain.text', template.id);
+      cy.wrap($tds).eq(2).should('contain.text', template.contentType);
+      cy.wrap($tds).eq(4).should('contain.text', template.descr);
+    });
   });
 
   it('Edit content template', () => {
@@ -60,8 +64,6 @@ describe('Content Templates', () => {
 
     currentPage = currentPage.getContent().submitForm();
     currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(4).should('contain.text', template.descr);
-
-    deleteContentTemplate(template.id);
   });
 
   it('Delete content template', () => {
@@ -85,7 +87,5 @@ describe('Content Templates', () => {
     currentPage.getContent().clickSearch();
 
     currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(4).should('contain.text', template.descr);
-    
-    deleteContentTemplate(template.id);
   });
 });
