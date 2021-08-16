@@ -15,11 +15,14 @@ const deleteContentTemplate = id => cy.contentTemplatesController().then(control
 describe('Content Templates', () => {
 
   let currentPage;
+
   let template = {
     contentType: 'BNR',
     contentTypeText: 'Banner',
     contentShape: '<div>test</div>'
   };
+
+  let templateToBeDeleted = false;
 
   beforeEach(() => {
     template.id = generateRandomNumericId();
@@ -29,7 +32,7 @@ describe('Content Templates', () => {
   });
 
   afterEach(() => {
-    deleteContentTemplate(template.id);
+    if (templateToBeDeleted) deleteContentTemplate(template.id);
 
     cy.kcLogout();
   });
@@ -50,10 +53,13 @@ describe('Content Templates', () => {
       cy.wrap($tds).eq(2).should('contain.text', template.contentType);
       cy.wrap($tds).eq(4).should('contain.text', template.descr);
     });
+
+    templateToBeDeleted = true;
   });
 
   it('Edit content template', () => {
     addContentTemplate(template);
+    templateToBeDeleted = true;
   
     currentPage = openContentTemplatesPage();
 
@@ -79,6 +85,7 @@ describe('Content Templates', () => {
 
   it('Search for content template', () => {
     addContentTemplate(template);
+    templateToBeDeleted = true;
 
     currentPage = openContentTemplatesPage();
 
