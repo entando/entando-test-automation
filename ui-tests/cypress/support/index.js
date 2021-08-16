@@ -16,15 +16,13 @@
 import '@4tw/cypress-drag-drop';
 import 'cypress-keycloak-commands';
 
-import './keycloak-oauth2';
-
 import './command/command';
-import './command/upload-command';
 import './command/validation-commands';
 
 import './restAPI/categoriesAPI.js';
 import './restAPI/contentsAPI';
 import './restAPI/contentTypesAPI';
+import './restAPI/fileBrowserAPI';
 import './restAPI/groupsAPI.js';
 import './restAPI/pagesAPI.js';
 import './restAPI/profileTypesAPI';

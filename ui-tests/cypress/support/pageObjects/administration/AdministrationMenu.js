@@ -4,9 +4,9 @@ import {SubMenu} from '../app/MenuElement.js';
 
 import AppPage from '../app/AppPage.js';
 
-import DatabasePage            from './database/DatabasePage';
-import FileBrowserPage         from './fileBrowser/FileBrowserPage';
-import Languages_LabelsPage    from './languages_Labels/Languages_LabelsPage';
+import DatabasePage         from './database/DatabasePage';
+import FilesListPage        from './fileBrowser/FilesListPage';
+import Languages_LabelsPage from './languages_Labels/Languages_LabelsPage';
 import EmailConfigurationPage  from './emailConfiguration/EmailConfigurationPage';
 import ReloadConfigurationPage from './reloadConfiguration/ReloadConfigurationPage';
 
@@ -50,7 +50,7 @@ export default class AdministrationMenu extends SubMenu {
 
   openFileBrowser() {
     this.getFileBrowser().click();
-    return new AppPage(FileBrowserPage);
+    return new AppPage(FilesListPage);
   }
 
   openLanguages_Labels() {

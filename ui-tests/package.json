@@ -49,6 +49,7 @@
         "spread": true,
         "restParams": true
       }
-    }
+    },
+    "ignorePatterns": ["cypress/support/index.d.ts"]
   }
 }

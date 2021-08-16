@@ -56,17 +56,17 @@ describe('Microfrontends and Widgets', () => {
 
     it('Adding a basic widget with icon', () => {
       currentPage = currentPage.getContent().openAddWidgetForm();
-      cy.validateUrlChanged('/widget/add');
+      cy.validateUrlPathname('/widget/add');
       cy.wait(500);
       currentPage.getContent().fillWidgetForm(SAMPLE_WIDGET_NAMES[0], SAMPLE_BASIC_WIDGET_ID);
       currentPage = currentPage.getContent().submitForm();
-      cy.validateUrlChanged('/widget');
+      cy.validateUrlPathname('/widget');
       currentPage.getContent().getListArea().should('contain', SAMPLE_BASIC_WIDGET_ID);
     });
 
     it('Add a widget with existing code widget', () => {
       currentPage = currentPage.getContent().openAddWidgetForm();
-      cy.validateUrlChanged('/widget/add');
+      cy.validateUrlPathname('/widget/add');
       cy.wait(500);
       currentPage.getContent().fillWidgetForm(SAMPLE_WIDGET_NAMES[0], 'content_viewer');
       currentPage.getContent().submitForm();
@@ -76,7 +76,7 @@ describe('Microfrontends and Widgets', () => {
 
     it('Add a widget with invalid code', () => {
       currentPage = currentPage.getContent().openAddWidgetForm();
-      cy.validateUrlChanged('/widget/add');
+      cy.validateUrlPathname('/widget/add');
       cy.wait(500);
       currentPage.getContent().editFormFields({
         code: 'momaco@',
@@ -88,7 +88,7 @@ describe('Microfrontends and Widgets', () => {
 
     it('Add a widget without choosing group and title', () => {
       currentPage = currentPage.getContent().openAddWidgetForm();
-      cy.validateUrlChanged('/widget/add');
+      cy.validateUrlPathname('/widget/add');
       cy.wait(500);
       currentPage.getContent().editFormFields({
         code: 'momaco',
@@ -102,7 +102,7 @@ describe('Microfrontends and Widgets', () => {
     it('Editing the widget modifying all mandatory fields', () => {
       currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
       cy.wait(500);
-      cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
         name: SAMPLE_WIDGET_NAMES[1],
         group: 'Free Access',
@@ -110,7 +110,7 @@ describe('Microfrontends and Widgets', () => {
       });
       currentPage.getContent().submitContinueForm();
       cy.location('pathname').should('not.eq', '/widget');
-      cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage = currentPage.getMenu().getComponents().open();
       currentPage = currentPage.openMFE_Widgets();
       cy.wait(500);
@@ -153,14 +153,14 @@ describe('Microfrontends and Widgets', () => {
     it('Editing a used widget via widget list modifying all mandatory fields', () => {
       currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
       cy.wait(500);
-      cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
         iconUpload,
         name: SAMPLE_WIDGET_NAMES[2],
         group: 'Administrators'
       });
       currentPage = currentPage.getContent().submitForm();
-      cy.validateUrlChanged('/widget');
+      cy.validateUrlPathname('/widget');
       currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[2]);
     });
 
@@ -173,7 +173,7 @@ describe('Microfrontends and Widgets', () => {
                                .open()
                                .openEdit();
       cy.wait(500);
-      cy.validateUrlChanged(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
         name: SAMPLE_WIDGET_NAMES[0],
         group: 'Free Access',
@@ -181,7 +181,7 @@ describe('Microfrontends and Widgets', () => {
       });
       currentPage = currentPage.getContent().submitForm();
       cy.wait(3000);
-      cy.validateUrlChanged('/widget');
+      cy.validateUrlPathname('/widget');
       currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[0]);
     });
 
@@ -252,7 +252,7 @@ describe('Microfrontends and Widgets', () => {
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
         currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 2, 0, CMS_WIDGETS.CONTENT.code);
 
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().clickAddContentButton();
         cy.wait(3000);
 
@@ -282,14 +282,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Editing widget in Settings (widget config)', () => {
@@ -329,7 +329,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT.code}`);
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT.code}`);
       });
 
       it('Save As Widget', () => {
@@ -340,7 +340,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openSaveAs();
 
-        cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
+        cy.validateUrlPathname(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
         currentPage.getContent().getConfigTabConfiguration().should('exist');
         currentPage.getContent().getConfigTabConfiguration().click();
@@ -349,7 +349,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().submitCloneWidget();
 
         cy.wait(4500);
-        cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
+        cy.validateUrlPathname(`/page/configuration/${HOMEPAGE.code}`);
 
         currentPage.getContent().getPageStatusIcon()
                    .should('have.class', 'PageStatusIcon--draft')
@@ -381,14 +381,14 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getDialog().getConfirmButton().click();
         currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
 
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
             CMS_WIDGETS.CONTENT.code,
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -414,7 +414,7 @@ describe('Microfrontends and Widgets', () => {
 
         currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 2, 1, CMS_WIDGETS.CONTENT_LIST.code);
 
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         cy.wait(5000);
         currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
         currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Banner').click();
@@ -442,14 +442,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Editing widget in Settings (widget config)', () => {
@@ -484,7 +484,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
       });
 
       it('Save As Widget', () => {
@@ -495,7 +495,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openSaveAs();
 
-        cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
+        cy.validateUrlPathname(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
         currentPage.getContent().getConfigTabConfiguration().should('exist');
         currentPage.getContent().getConfigTabConfiguration().click();
@@ -504,7 +504,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().submitCloneWidget();
 
         cy.wait(4500);
-        cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
+        cy.validateUrlPathname(`/page/configuration/${HOMEPAGE.code}`);
 
         currentPage.getContent().getPageStatusIcon()
                    .should('have.class', 'PageStatusIcon--draft')
@@ -536,14 +536,14 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getDialog().getConfirmButton().click();
         currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
 
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
             CMS_WIDGETS.CONTENT_LIST.code,
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -626,11 +626,11 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
-        cy.validateUrlChanged(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
+        cy.validateUrlPathname(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
 
         currentPage = currentPage.getContent().addContentFromContentWidgetConfig('Unpublish En Title', 'Unpublish It Title', 'Unpublish Sample Description');
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         cy.wait(4500);
 
         currentPage = currentPage.getContent().confirmConfig();
@@ -646,10 +646,10 @@ describe('Microfrontends and Widgets', () => {
         cy.wait(500);
 
         currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
-        cy.validateUrlChanged(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
+        cy.validateUrlPathname(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
 
         currentPage = currentPage.getContent().addContentFromContentWidgetConfig('En Title', 'It Title', 'Sample Description', true);
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
 
         currentPage.getContent().getModelIdSelect().select('Banner - Text, Image, CTA');
         currentPage = currentPage.getContent().confirmConfig();
@@ -703,7 +703,7 @@ describe('Microfrontends and Widgets', () => {
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
         currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 2, 0, CMS_WIDGETS.CONTENT_LIST.code);
 
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         cy.wait(5000);
         currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
         cy.wait(500);
@@ -753,7 +753,7 @@ describe('Microfrontends and Widgets', () => {
         cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
         currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 2, 1, CMS_WIDGETS.CONTENT_LIST.code);
 
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME_2.frameNum}`);
+        cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME_2.frameNum}`);
         cy.wait(5000);
         currentPage.getContent().getAddButtonFromTableRowWithTitle('Another Content so its more than 1').click();
         cy.wait(500);
@@ -813,7 +813,7 @@ describe('Microfrontends and Widgets', () => {
         cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
         currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 3, 2, 0, CMS_WIDGETS.CONTENT_QUERY.code);
 
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().getContentTypeField().select('Banner');
         cy.wait(2500);
         currentPage.getContent().getPublishSettingsAccordButton().click();
@@ -840,14 +840,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Editing widget in Settings (widget config)', () => {
@@ -859,7 +859,7 @@ describe('Microfrontends and Widgets', () => {
                                  .openSettings();
 
         cy.wait(2500);
-        cy.validateUrlChanged(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+        cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${HOMEPAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
         currentPage.getContent().getPublishSettingsAccordButton().click();
         cy.wait(500);
         currentPage.getContent().getMaxElemForItemDropdown().select('6');
@@ -884,7 +884,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.CONTENT_QUERY.code}`);
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_QUERY.code}`);
       });
 
       it('Save As Widget', () => {
@@ -895,7 +895,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openSaveAs();
 
-        cy.validateUrlChanged(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_QUERY.code}/listViewerConfig`);
+        cy.validateUrlPathname(`/page/${HOMEPAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_QUERY.code}/listViewerConfig`);
         currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
         currentPage.getContent().getConfigTabConfiguration().should('exist');
         currentPage.getContent().getConfigTabConfiguration().click();
@@ -904,7 +904,7 @@ describe('Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().submitCloneWidget();
 
         cy.wait(4500);
-        cy.validateUrlChanged(`/page/configuration/${HOMEPAGE.code}`);
+        cy.validateUrlPathname(`/page/configuration/${HOMEPAGE.code}`);
 
         currentPage.getContent().getPageStatusIcon()
                    .should('have.class', 'PageStatusIcon--draft')
@@ -937,14 +937,14 @@ describe('Microfrontends and Widgets', () => {
         currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
 
 
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
             CMS_WIDGETS.CONTENT_QUERY.code,
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -997,14 +997,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Basic edit with CMS Search Result widget', () => {
@@ -1016,14 +1016,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Open Widget Details from the dropped CMS Search Form widget', () => {
@@ -1034,7 +1034,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.SEARCH_FORM.code}`);
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_FORM.code}`);
       });
 
       it('Open Widget Details from the dropped CMS Search Results widget', () => {
@@ -1045,7 +1045,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_RESULT.code}`);
       });
 
       it('Test widget cleanup', () => {
@@ -1071,7 +1071,7 @@ describe('Microfrontends and Widgets', () => {
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -1079,14 +1079,14 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(1500);
 
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
             CMS_WIDGETS.SEARCH_RESULT.code,
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -1138,14 +1138,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Basic edit with News Latest widget', () => {
@@ -1157,14 +1157,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Open Widget Details from the dropped CMS News Archive widget', () => {
@@ -1175,7 +1175,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
       });
 
       it('Open Widget Details from the dropped CMS News Latest widget', () => {
@@ -1186,7 +1186,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${CMS_WIDGETS.NEWS_LATEST.code}`);
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_LATEST.code}`);
       });
 
       it('Test widget cleanup', () => {
@@ -1212,7 +1212,7 @@ describe('Microfrontends and Widgets', () => {
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -1220,14 +1220,14 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(1500);
 
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
             CMS_WIDGETS.NEWS_LATEST.code,
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
+        cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -1282,14 +1282,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
+        cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Basic edit with Logo widget', () => {
@@ -1301,14 +1301,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
+        cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Open Widget Details from the dropped Language widget', () => {
@@ -1319,7 +1319,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${PAGE_WIDGETS.LANGUAGE.code}`);
+        cy.validateUrlPathname(`/widget/detail/${PAGE_WIDGETS.LANGUAGE.code}`);
       });
 
       it('Open Widget Details from the dropped Logo widget', () => {
@@ -1330,7 +1330,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${PAGE_WIDGETS.LOGO.code}`);
+        cy.validateUrlPathname(`/widget/detail/${PAGE_WIDGETS.LOGO.code}`);
       });
 
       it('Test widget cleanup', () => {
@@ -1356,7 +1356,7 @@ describe('Microfrontends and Widgets', () => {
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
+        cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -1364,14 +1364,14 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(1500);
 
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
             PAGE_WIDGETS.LOGO.code,
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
+        cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -1390,7 +1390,7 @@ describe('Microfrontends and Widgets', () => {
       const CUSTOM_UI = '<#assign wp=JspTaglibs["/aps-core"]>{enter}{enter}\
 <@wp.info key="systemParam" paramName="applicationBaseURL" var="appUrl" />{enter}\
 <img src="${{}appUrl{}}resources/static/img/Entando_light.svg" aria-label="Entando" alt="Logo" role="logo" />';
-      
+
       const CURRENT_LOGO = 'Entando_light.svg';
       const CHANGE_LOGO = 'entando-logo_badge.png';
 
@@ -1425,7 +1425,7 @@ describe('Microfrontends and Widgets', () => {
 
         currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
         currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, PAGE_WIDGETS.LOGO);
-        
+
         currentPage.getContent().publishPageDesign();
         cy.wait(1000);
 
@@ -1492,14 +1492,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
+        cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Basic edit with News Latest widget', () => {
@@ -1511,14 +1511,14 @@ describe('Microfrontends and Widgets', () => {
                                  .openEdit();
         cy.wait(500);
 
-        cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
+        cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
         currentPage.getContent().editFormFields({
           group: 'Administrator'
         });
         currentPage = currentPage.getContent().submitForm();
 
         cy.wait(4500);
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
       });
 
       it('Open Widget Details from the dropped APIs widget', () => {
@@ -1529,7 +1529,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${SYSTEM_WIDGETS.APIS.code}`);
+        cy.validateUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.APIS.code}`);
       });
 
       it('Open Widget Details from the dropped System Messages widget', () => {
@@ -1540,7 +1540,7 @@ describe('Microfrontends and Widgets', () => {
                                  .open()
                                  .openDetails();
         cy.wait(500);
-        cy.validateUrlChanged(`/widget/detail/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
+        cy.validateUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
       });
 
       it('Test widget cleanup', () => {
@@ -1566,7 +1566,7 @@ describe('Microfrontends and Widgets', () => {
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
+        cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });
@@ -1574,14 +1574,14 @@ describe('Microfrontends and Widgets', () => {
 
         cy.wait(1500);
 
-        cy.validateUrlChanged('/widget');
+        cy.validateUrlPathname('/widget');
 
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
             SYSTEM_WIDGETS.SYS_MSGS.code,
             MFEWidgetsPage.WIDGET_ACTIONS.EDIT
         );
 
-        cy.validateUrlChanged(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
+        cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
         currentPage.getContent().editFormFields({
           group: 'Free Access'
         });

@@ -23,7 +23,7 @@ describe('Users Management', () => {
     it('Users management page', () => {
       currentPage = openManagementPage();
 
-      cy.location('pathname').should('eq', '/user');
+      cy.validateUrlPathname('/user');
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -57,7 +57,7 @@ describe('Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEdit();
 
-      cy.location('pathname').should('eq', `/user/edit/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/user/edit/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -97,7 +97,7 @@ describe('Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEditProfile();
 
-      cy.location('pathname').should('eq', `/userprofile/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -140,7 +140,7 @@ describe('Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openViewProfile();
 
-      cy.location('pathname').should('eq', `/user/view/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/user/view/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -172,7 +172,7 @@ describe('Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openManageAuth();
 
-      cy.location('pathname').should('eq', `/authority/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/authority/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
