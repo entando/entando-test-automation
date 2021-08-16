@@ -9,3 +9,5 @@ export const generateRandomTypeCode = () => {
   }
   return code;
 };
+
+export const generateRandomNumericId = () => Math.floor(Math.random() * 1000000000);
