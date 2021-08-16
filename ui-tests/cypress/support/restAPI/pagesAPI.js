@@ -8,6 +8,12 @@ Cypress.Commands.add('pagesController', () => {
   });
 });
 
+Cypress.Commands.add('widgetsController', (pageCode) => {
+  cy.get('@tokens').then(tokens => {
+    return new WidgetsController(tokens.access_token, pageCode);
+  });
+});
+
 class PagesController {
 
   constructor(access_token) {
@@ -74,9 +80,18 @@ class PagesController {
     });
   }
 
-  updatePageWidget(pageCode, frameId, widgetCode, config) {
-    return cy.request({
-      url: `${controller}/${pageCode}/widgets/${frameId}`,
+}
+
+class WidgetsController {
+
+  constructor(access_token, pageCode) {
+    this.access_token = access_token;
+    this.pageCode     = pageCode;
+  }
+
+  addWidget(frameCode, widgetCode, config) {
+    cy.request({
+      url: `${controller}/${this.pageCode}/widgets/${frameCode}`,
       method: 'PUT',
       auth: {
         bearer: this.access_token
@@ -88,16 +103,14 @@ class PagesController {
     });
   }
 
-  addWidgetToPage(pageId, frameId, widgetId) {
+  deleteWidget(frameCode) {
     cy.request({
-      url: `${controller}/${pageId}/widgets/${frameId}`,
-      method: 'PUT',
+      url: `${controller}/${this.pageCode}/widgets/${frameCode}`,
+      method: 'DELETE',
       auth: {
         bearer: this.access_token
-      },
-      body: {
-        code: widgetId
       }
     });
   }
+
 }

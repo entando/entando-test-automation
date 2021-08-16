@@ -1,33 +1,50 @@
-import {DATA_TESTID, htmlElements, WebElement} from '../../WebElement';
+import {DATA_TESTID, htmlElements} from '../../WebElement';
 
-import Content                      from '../../app/Content';
-import AppPage                      from '../../app/AppPage';
+import Content   from '../../app/Content';
+import KebabMenu from '../../app/KebabMenu';
+
+import AppPage from '../../app/AppPage';
+
 import ContentWidgetConfigPage      from './widgetconfigs/ContentWidgetConfigPage';
 import ContentListWidgetConfigPage  from './widgetconfigs/ContentListWidgetConfigPage';
 import ContentQueryWidgetConfigPage from './widgetconfigs/ContentQueryWidgetConfigPage';
 import MFEWidgetForm                from '../../components/mfeWidgets/MFEWidgetForm';
+import DetailsPage                  from '../../components/mfeWidgets/DetailsPage';
 
 export default class DesignerPage extends Content {
 
-  grid                = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Grid]`;
-  container           = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Row]`;
-  contents            = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Col]`;
-  configTabs          = `${htmlElements.ul}[${DATA_TESTID}=config_ToolbarPageConfig_Tabs]`;
-  designerDiv         = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_div]`;
-  widgetItem          = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGroupingItem_div]`;
-  frameMenuItem       = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_MenuItem]`;
-  frameMenuLink       = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_Link]`;
-  buttonToolbar       = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_ButtonToolbar][role=toolbar]`;
-  buttonViewPublished = `${htmlElements.button}[${DATA_TESTID}=config_PageConfigPage_Button].PageConfigPage__btn--viewPublishedPage`;
-  pageStatusIcon      = `i[${DATA_TESTID}=common_PageStatusIcon_i]`;
-  pageGridTab         = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Tab]`;
-  pageGridMain        = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridCol_div]`;
-  pageGridRow         = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridRow_div]`;
-  pageTreeTable       = `${htmlElements.table}[${DATA_TESTID}=common_PageTreeCompact_table]`;
-  pageTreeTbody       = `${htmlElements.tbody}[${DATA_TESTID}=common_PageTreeCompact_tbody]`;
-  pageTreeRow         = `${htmlElements.tr}[${DATA_TESTID}=common_PageTreeCompact_tr]`;
-  widgetGroupings     = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGroupings_div]`;
-  widgetGrouping      = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGrouping_div]`;
+  // Structure
+  grid      = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Grid]`;
+  container = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Row]`;
+  contents  = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Col]`;
+
+  pageDiv = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_div]`;
+
+  pageStatusIcon = `${htmlElements.i}[${DATA_TESTID}=common_PageStatusIcon_i]`;
+
+  // Designer
+  basicTabs = `${htmlElements.div}#basic-tabs`;
+  paneOne   = `${htmlElements.div}#basic-tabs-pane-1`;
+  gridDiv   = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGrid_div]`;
+  gridRow   = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridRow_div]`;
+  gridCol   = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridCol_div]`;
+
+  // Sidebar
+  configTabs   = `${htmlElements.ul}[${DATA_TESTID}=config_ToolbarPageConfig_Tabs]`;
+  toggleButton = `${htmlElements.button}[${DATA_TESTID}=config_ToolbarPageConfig_Button]`;
+
+  // Widgets
+  widgetGroupings = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGroupings_div]`;
+  widgetList      = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGrouping_Collapse]`;
+  widgetGrouping  = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGrouping_div]`;
+
+  // Page tree
+  pageTreeTable = `${htmlElements.table}[${DATA_TESTID}=common_PageTreeCompact_table]`;
+  pageTreeTbody = `${htmlElements.tbody}[${DATA_TESTID}=common_PageTreeCompact_tbody]`;
+  pageTreeRow   = `${htmlElements.tr}[${DATA_TESTID}=common_PageTreeCompact_tr]`;
+
+  frameMenuItem = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_MenuItem]`;
+  frameMenuLink = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_Link]`;
 
   static FRAME_ACTIONS = {
     SAVE_AS: 'Save As',
@@ -101,93 +118,190 @@ export default class DesignerPage extends Content {
                .children(this.contents).eq(0);
   }
 
-  getSidebar() {
-    return this.getMainContainer()
-               .children(this.contents).eq(1)
-               .children(htmlElements.div)
-               .children(htmlElements.div)
-               .children(htmlElements.div);
-  }
-
   getBreadCrumb() {
     return this.getContents()
                .children(htmlElements.ol);
   }
 
-  getInnerContent() {
+  getDesigner() {
     return this.getContents()
-               .children(`${htmlElements.div}#basic-tabs`)
+               .children(this.basicTabs);
+  }
+
+  getDesignerTabs() {
+    return this.getDesigner()
+               .children(htmlElements.ul);
+  }
+
+  getDesignerContent() {
+    return this.getDesigner()
                .children(htmlElements.div)
-               .children(`${this.pageGridTab}#basic-tabs-pane-1`)
-               .children(this.designerDiv);
+               .children(this.paneOne)
+               .children(this.pageDiv);
   }
 
   getTitle() {
-    return this.getInnerContent()
-               .children(this.designerDiv).eq(0)
+    return this.getDesignerContent()
+               .children(this.pageDiv)
                .children(htmlElements.h1);
   }
 
-  getTopControlsArea() {
-    return this.getInnerContent()
-               .children(`${this.container}.PageConfigPage__toolbar-row`)
-               .children(this.contents);
+  getPageStatusIcon() {
+    return this.getTitle()
+               .children(this.pageStatusIcon);
   }
 
-  getTopRightControls() {
-    return this.getTopControlsArea()
-               .children(this.buttonToolbar);
+  getDesignerGrid() {
+    return this.getDesignerContent()
+               .children(this.gridDiv)
+               .children(htmlElements.div);
   }
 
-  getViewPublishedButton() {
-    return this.getTopRightControls()
-               .find(this.buttonViewPublished);
+  getDesignerGridRows() {
+    return this.getDesignerGrid()
+               .children(this.gridRow);
   }
 
-  viewPublished() {
-    this.getViewPublishedButton().click();
-    return new WebElement();
+  getDesignerGridRow(rowPos) {
+    return this.getDesignerGridRows()
+               .eq(rowPos);
   }
 
-  getPageGrid() {
-    return this.getInnerContent()
-               .children(this.designerDiv).eq(1)
-               .children(this.pageGridMain);
+  getDesignerGridRowCols(rowPos) {
+    return this.getDesignerGridRow(rowPos)
+               .children(this.gridCol);
   }
 
-  getDropQueryString(frameName) {
-    return `${htmlElements.div}[${DATA_TESTID}=WidgetFrame__${frameName.replace(/\s/g, '_')}]`;
+  getDesignerGridFrame(rowPos, colPos) {
+    return this.getDesignerGridRowCols(rowPos)
+               .eq(colPos);
   }
 
-  getSidebarTab(title) {
+  getDesignerGridFrameKebabMenu(rowPos, colPos, widgetCode) {
+    return new GridFrameKebabMenu(this, rowPos, colPos, widgetCode);
+  }
+
+  getBottomToolbar() {
+    return this.getContents()
+               .children(htmlElements.div).eq(1);
+  }
+
+  getSidebar() {
+    return this.getMainContainer()
+               .children(this.contents).eq(1)
+               .children(htmlElements.div)
+               .children(htmlElements.div);
+  }
+
+  getSidebarToggleButton() {
     return this.getSidebar()
-               .children(this.configTabs).contains(title);
+               .children(this.toggleButton);
+  }
+
+  getSidebarTabs() {
+    return this.getSidebar()
+               .children(htmlElements.div)
+               .children(this.configTabs);
   }
 
   getSidebarContent() {
     return this.getSidebar()
                .children(htmlElements.div)
+               .children(htmlElements.div)
+               .children(htmlElements.div)
                .children(htmlElements.div);
   }
 
-  getWidgetItemByWidgetName(name) {
+  getSidebarWidgets() {
     return this.getSidebarContent()
-               .children(this.widgetGroupings)
-               .children(this.widgetGroupings).eq(1)
-               .children(this.widgetGrouping).contains(name);
+               .children(htmlElements.div).eq(1);
   }
 
-  getPageTreeItem(title) {
-    return this.getSidebarContent()
-               .children(htmlElements.div)
-               .children(this.pageTreeTable)
-               .children(this.pageTreeTbody)
-               .children(this.pageTreeRow).contains(title);
+  getSidebarWidgetSection(sectionPos) {
+    return this.getSidebarWidgets()
+               .children(htmlElements.div).eq(sectionPos);
   }
 
-  gatherWidgetConfigPage(forWidget) {
+  getSidebarWidgetSectionWidgets(sectionPos) {
+    return this.getSidebarWidgetSection(sectionPos)
+               .children(this.widgetList)
+               .children(this.widgetGrouping);
+  }
+
+  getSidebarWidgetSectionWidget(sectionPos, widgetPos) {
+    return this.getSidebarWidgetSectionWidgets(sectionPos)
+               .children(htmlElements.div).eq(widgetPos);
+  }
+
+  getSidebarPageTreeTable() {
+    return this.getSidebarContent()
+               .children(this.pageTreeTable);
+  }
+
+  getSidebarPageTreeTableRows() {
+    return this.getSidebarPageTreeTable()
+               .children(htmlElements.tbody)
+               .children(htmlElements.tr);
+  }
+
+  getSidebarPageTreeTableRow(code) {
+    return this.getSidebarPageTreeKebabMenu(code)
+               .get()
+               .parents(htmlElements.tr);
+  }
+
+  getSidebarPageTreeKebabMenu(code) {
+    return new SidebarPageTreeKebabMenu(this, code);
+  }
+
+  dragGridWidgetToFrame(oriGridRow, oriGridCol, newGridRow, newGridCol) {
+    this.getDesignerGridFrame(newGridRow, newGridCol).children(htmlElements.div)
+        .then(frame =>
+            this.getDesignerGridFrame(oriGridRow, oriGridCol).children(htmlElements.div)
+                .drag(frame, {force: true, position: 'center'})
+        );
+    cy.wait(1000); //TODO find a better way to identify when the grid is refreshed
+  }
+
+  publishPageDesign() {
+    this.getBottomToolbar()
+        .children(htmlElements.div)
+        .children(htmlElements.div).eq(1)
+        .children(htmlElements.button).eq(1)
+        .click();
+  }
+
+  clickSidebarTab(tabPos) {
+    this.getSidebarTabs()
+        .children(htmlElements.li).eq(tabPos)
+        .click();
+    cy.wait(1000); //TODO find a better way to identify when the sidebar loaded
+  }
+
+  toggleSidebarWidgetSection(sectionPos) {
+    this.getSidebarWidgetSection(sectionPos).click();
+  }
+
+  dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol) {
+    this.getDesignerGridFrame(gridRow, gridCol)
+        .then(frame => this.getSidebarWidgetSectionWidget(widgetSection, widgetPos).drag(frame, {position: 'center'}));
+  }
+
+  dragConfigurableWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol, widgetCode) {
+    this.dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol);
+
+    const WidgetConfigPage = this.gatherWidgetConfigPage(widgetCode);
+    return new AppPage(WidgetConfigPage);
+  }
+
+  selectPageFromSidebarPageTreeTable(code) {
+    this.getSidebarPageTreeTableRow(code).click();
+    cy.wait(3000); //TODO find a better way to identify when the grid loaded
+  }
+
+  gatherWidgetConfigPage(widgetCode) {
     const {CMS_WIDGETS} = DesignerPage;
-    switch (forWidget.code) {
+    switch (widgetCode) {
       case CMS_WIDGETS.CONTENT_LIST.code:
         return ContentListWidgetConfigPage;
       case CMS_WIDGETS.CONTENT_QUERY.code:
@@ -198,59 +312,85 @@ export default class DesignerPage extends Content {
     }
   }
 
-  dragWidgetToFrame(widget, frameName) {
-    this.getWidgetItemByWidgetName(widget.name)
-        .drag(this.getDropQueryString(frameName), {position: 'center', force: true});
+}
 
-    const WidgetConfigPage = this.gatherWidgetConfigPage(widget);
+class GridFrameKebabMenu extends KebabMenu {
 
-    return new AppPage(WidgetConfigPage);
+  settings = `${htmlElements.li}.WidgetFrame__settings-btn`;
+  saveAs   = `${htmlElements.li}.WidgetFrame__saveAs-btn`;
+  delete   = `${htmlElements.li}.WidgetFrame__delete-btn`;
+
+  constructor(parent, row, col, widgetCode) {
+    super(parent);
+    this.row        = row;
+    this.col        = col;
+    this.widgetCode = widgetCode;
   }
 
-  getKebabMenuByFrame(frameName) {
-    return this.getContents()
-               .find(this.getDropQueryString(frameName)).contains(frameName)
-               .parent().find(htmlElements.button);
+  get() {
+    return this.parent.getDesignerGridFrame(this.row, this.col)
+               .children(htmlElements.div)
+               .children(htmlElements.div)
+               .children(htmlElements.div).eq(1);
   }
 
-  openKebabMenuByFrame(frameName) {
-    this.getKebabMenuByFrame(frameName).click();
+  getDetails() {
+    return this.get()
+               .find(`#detail-widget-${this.widgetCode}`);
   }
 
-  getKebabMenuItem(menuName, isLink = false) {
-    return this.getContents()
-               .find(isLink ? this.frameMenuLink : this.frameMenuItem)
-               .filter(':visible').contains(menuName);
+  getEdit() {
+    return this.get()
+               .find(`#edit-widget-${this.widgetCode}`);
   }
 
-  getFrameAction(action) {
-    const menuLinks = [DesignerPage.FRAME_ACTIONS.DETAILS, DesignerPage.FRAME_ACTIONS.EDIT];
-    return this.getKebabMenuItem(action, menuLinks.includes(action));
+  getSettings() {
+    return this.get()
+               .find(this.settings);
   }
 
-  clickActionOnFrame(action, widget) {
-    this.getFrameAction(action).click();
-    switch (action) {
-      case DesignerPage.FRAME_ACTIONS.SETTINGS:
-        return new AppPage(this.gatherWidgetConfigPage(widget));
-      case DesignerPage.FRAME_ACTIONS.SAVE_AS:
-      case DesignerPage.FRAME_ACTIONS.EDIT:
-        return new AppPage(MFEWidgetForm);
-      case DesignerPage.FRAME_ACTIONS.DELETE:
-      case DesignerPage.FRAME_ACTIONS.DETAILS:
-      default:
-        return null;
-    }
+  getSaveAs() {
+    return this.get()
+               .find(this.saveAs);
   }
 
-  getPageStatus() {
-    return this.getContents().find(this.pageStatusIcon).invoke('attr', 'title');
+  getDelete() {
+    return this.get()
+               .find(this.delete);
   }
 
-  publishPageDesign() {
-    return this.getContents()
-               .find('.PageConfigPage__bottom-options')
-               .contains(/^Publish$/)
-               .click();
+  openDetails() {
+    this.getDetails().click();
+    return new AppPage(DetailsPage);
   }
+
+  openEdit() {
+    this.getEdit().click();
+    return new AppPage(MFEWidgetForm);
+  }
+
+  openSettings() {
+    this.getSettings().click();
+    return new AppPage(this.parent.gatherWidgetConfigPage(this.widgetCode));
+  }
+
+  openSaveAs() {
+    this.getSaveAs().click();
+    return new AppPage(MFEWidgetForm);
+  }
+
+  clickDelete() {
+    this.getDelete().click();
+  }
+
+}
+
+class SidebarPageTreeKebabMenu extends KebabMenu {
+
+  get() {
+    return this.parent.getSidebarPageTreeTableRows()
+               .find(`[aria-labelledby=${this.code}]`)
+               .parent();
+  }
+
 }

@@ -1,4 +1,4 @@
-import HomePage from '../../support/pageObjects/HomePage.js';
+import HomePage                                   from '../../support/pageObjects/HomePage.js';
 import {generateRandomTypeCode, generateRandomId} from '../../support/utils.js';
 
 describe('Contents', () => {
@@ -66,7 +66,7 @@ describe('Contents', () => {
     currentPage.getContent().getSaveAction().should('have.class', 'disabled');
   });
 
-  it('Update status of content referenced by a published page', () => {
+  it.only('Update status of content referenced by a published page', () => {
     const contentTypeCode = generateRandomTypeCode();
     const contentTypeName = generateRandomId();
 
@@ -97,23 +97,27 @@ describe('Contents', () => {
       }
     };
 
-    cy.pagesController().then(controller => controller.addPage(page));
-    cy.contentTypesController().then(controller => controller.postContentType(contentTypeCode, contentTypeName));
+    cy.pagesController().then(controller => controller.addNewPage(page));
+    cy.contentTypesController().then(controller => controller.addContentType(contentTypeCode, contentTypeName));
     cy.contentsController().then(controller => controller.postContent({...content, typeCode: contentTypeCode}))
       .then((response) => {
         const {body: {payload}} = response;
         contentId               = payload[0].id;
       });
     cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
-    cy.pagesController().then(controller =>
-        controller.updatePageWidget(page.code, pageWidget.frameId, pageWidget.code, {
-          ...pageWidget.config,
-          contentId: contentId
-        }));
-    cy.pagesController().then(controller => {
-      controller.updateStatus(page.code, 'published');
+    cy.widgetsController(page.code)
+      .then(controller => controller
+          .addWidget(0,
+              'search_form',
+              {
+                ...pageWidget.config,
+                contentId: contentId
+              }
+          )
+      );
+    cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
 
-      cy.visit('/');
+    cy.visit('/').then(() => {
       let currentPage = new HomePage();
       currentPage     = currentPage.getMenu().getContent().open().openManagement();
       // TODO: find a way to avoid waiting for arbitrary time periods
@@ -123,10 +127,14 @@ describe('Contents', () => {
       cy.validateToast(currentPage, contentId, false);
     });
 
-    cy.pagesController().then(controller => controller.updateStatus(page.code, 'draft'));
-    cy.pagesController().then(controller => controller.deletePage(page.code));
-    cy.contentsController().then(controller => controller.updateStatus(contentId, 'draft'));
-    cy.contentsController().then(controller => controller.deleteContent(contentId));
+    cy.pagesController().then(controller => {
+      controller.setPageStatus(page.code, 'draft');
+      controller.deletePage(page.code);
+    });
+    cy.contentsController().then(controller => {
+      controller.updateStatus(contentId, 'draft');
+      controller.deleteContent(contentId);
+    });
     cy.contentTypesController().then(controller => controller.deleteContentType(contentTypeCode));
   });
 });
