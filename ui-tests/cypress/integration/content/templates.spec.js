@@ -95,4 +95,97 @@ describe('Content Templates', () => {
 
     currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(4).should('contain.text', template.descr);
   });
+
+  it('Delete content template referenced by a published content - not allowed', () => {
+    const content = {
+      description: 'test',
+      mainGroup: 'administrators',
+      typeCode: 'BNR',
+      attributes: [{ code: 'title', values: { en: 'test', it: 'test' } }],
+    };
+
+    const page = {
+      charset: 'utf-8',
+      code: generateRandomId(),
+      contentType: 'text/html',
+      pageModel: '1-2-column',
+      parentCode: 'homepage',
+      titles: { en: 'Test' },
+      ownerGroup: 'administrators'
+    };
+
+    const pageWidget = {
+      frameId: 4,
+      code: 'content_viewer',
+      config: {
+        ownerGroup: page.ownerGroup,
+        joinGroups: [],
+        contentDescription: content.description,
+        modelId: template.id
+      }
+    };
+
+    let contentId;
+
+    addContentTemplate(template);
+    templateToBeDeleted = true;
+
+    cy.contentsController()
+      .then(controller => controller.postContent(content))
+      .then((response) => {
+        const { body: { payload } } = response;
+        contentId = payload[0].id;
+      });
+    cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
+    cy.pagesController().then(controller => controller.addNewPage(page))
+    cy.widgetsController(page.code)
+      .then(controller =>
+        controller.addWidget(
+          pageWidget.frameId,
+          pageWidget.code,
+          {
+            ...pageWidget.config,
+            contentId
+          }
+        )
+      );
+
+    currentPage = openContentTemplatesPage();
+
+    cy.log(`Delete referenced content template with id ${template.id}`);
+    currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
+    currentPage.getDialog().confirm();
+    cy.validateToast(currentPage, 'referenced', false);
+
+    cy.pagesController().then(controller => controller.deletePage(page.code));
+    cy.contentsController().then(controller => {
+      controller.updateStatus(contentId, 'draft');
+      controller.deleteContent(contentId);
+    });
+  });
+
+  it('Edit mandatory fields', () => {
+    currentPage = openContentTemplatesPage();
+
+    currentPage = currentPage.getContent().clickAddButton();
+    currentPage.getContent().typeId(template.id);
+    currentPage.getContent().typeName(template.descr);
+    currentPage.getContent().selectContentType(template.contentTypeText);
+    currentPage.getContent().typeHTMLModel(template.contentShape);
+    currentPage.getContent().getSaveButton().should('not.be.disabled');
+
+    cy.log(`Verify that template id is mandatory`);
+    currentPage.getContent().clearId();
+    currentPage.getContent().getSaveButton().should('be.disabled');
+    currentPage.getContent().typeId(template.id);
+
+    cy.log(`Verify that template name is mandatory`);
+    currentPage.getContent().clearName();
+    currentPage.getContent().getSaveButton().should('be.disabled');
+    currentPage.getContent().typeName(template.descr);
+
+    cy.log(`Verify that template HTML model is mandatory`);
+    currentPage.getContent().clearHTMLModel();
+    currentPage.getContent().getSaveButton().should('be.disabled');
+  });
 });
