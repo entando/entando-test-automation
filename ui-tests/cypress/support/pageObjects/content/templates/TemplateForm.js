@@ -5,15 +5,15 @@ import AppPage       from '../../app/AppPage';
 import TemplatesPage from './TemplatesPage';
 
 export default class TemplateForm extends Content {
-  idInput           = `${htmlElements.input}[name="id"]`;
-  nameInput         = `${htmlElements.input}[name="descr"]`;
+  idInput           = `${htmlElements.input}[name='id']`;
+  nameInput         = `${htmlElements.input}[name='descr']`;
   contentTypeInput  = `${htmlElements.div}.DropdownTypeahead.form-group`;
-  assistButton      = `${htmlElements.button}[type="button"].AddContentTemplateForm__editassistbtn`;
+  assistButton      = `${htmlElements.button}[type='button'].AddContentTemplateForm__editassistbtn`;
   contentShapeInput = `${htmlElements.div}#contentShape`;
   aceTextInput      = `${htmlElements.textarea}.ace_text-input`;
-  stylesheetInput   = `${htmlElements.input}[name="stylesheet"]`;
-  submitButton      = `${htmlElements.button}[type="submit"].AddContentTypeFormBody__save--btn.btn-primary`;
-  cancelButton      = `${htmlElements.button}[type="button"].AddContentTypeFormBody__cancel--btn.btn-default`;
+  stylesheetInput   = `${htmlElements.input}[name='stylesheet']`;
+  submitButton      = `${htmlElements.button}[type='submit'].AddContentTypeFormBody__save--btn.btn-primary`;
+  cancelButton      = `${htmlElements.button}[type='button'].AddContentTypeFormBody__cancel--btn.btn-default`;
 
   getFormArea() {
     return this.get()
@@ -52,6 +52,27 @@ export default class TemplateForm extends Content {
                .find(this.stylesheetInput);
   }
 
+  typeId(value) {
+    this.getIDInput().type(value);
+  }
+
+  typeName(value) {
+    this.getNameInput().type(value);
+  }
+
+  selectContentType(value) {
+    this.getContentTypeDropdown().click()
+        .contains(value).click();
+  }
+
+  typeHTMLModel(value) {
+    this.getContentShapeInput().focus().type(value);
+  }
+
+  typeStylesheet(value) {
+    this.getStylesheetInput().type(value);
+  }
+
   editFormFields(payload) {
     const fields = Object.keys(payload);
     fields.forEach((field) => {
@@ -61,22 +82,21 @@ export default class TemplateForm extends Content {
       switch (field) {
         case 'id':
           this.getIDInput().clear();
-          this.getIDInput().type(payload[field]);
+          this.typeId(payload[field]);
           break;
         case 'descr':
           this.getNameInput().clear();
-          this.getNameInput().type(payload[field]);
+          this.typeName(payload[field]);
           break;
         case 'contentType':
-          this.getContentTypeDropdown().click()
-              .contains(payload[field]).click();
+          this.selectContentType(payload[field]);
           break;
         case 'contentShape':
-          this.getContentShapeInput().focus().type(payload[field]);
+          this.typeHTMLModel(payload[field]);
           break;
         case 'stylesheet':
           this.getStylesheetInput().clear();
-          this.getStylesheetInput().type(payload[field]);
+          this.typeStylesheet(payload[field]);
           break;
         default:
           break;
@@ -96,6 +116,7 @@ export default class TemplateForm extends Content {
 
   submitForm() {
     this.getSaveButton().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(TemplatesPage);
   }
 }

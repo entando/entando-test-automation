@@ -22,6 +22,7 @@ import './command/validation-commands';
 import './restAPI/categoriesAPI.js';
 import './restAPI/contentsAPI';
 import './restAPI/contentTypesAPI';
+import './restAPI/contentTemplatesAPI';
 import './restAPI/fileBrowserAPI';
 import './restAPI/groupsAPI.js';
 import './restAPI/pagesAPI.js';
