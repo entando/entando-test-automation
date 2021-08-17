@@ -73,6 +73,18 @@ export default class TemplateForm extends Content {
     this.getStylesheetInput().type(value);
   }
 
+  clearId() {
+    this.getIDInput().clear();
+  }
+
+  clearName() {
+    this.getNameInput().clear();
+  }
+
+  clearHTMLModel() {
+    this.getContentShapeInput().focus().clear();
+  }
+
   editFormFields(payload) {
     const fields = Object.keys(payload);
     fields.forEach((field) => {
@@ -81,11 +93,11 @@ export default class TemplateForm extends Content {
       }
       switch (field) {
         case 'id':
-          this.getIDInput().clear();
+          this.clearId();
           this.typeId(payload[field]);
           break;
         case 'descr':
-          this.getNameInput().clear();
+          this.clearName();
           this.typeName(payload[field]);
           break;
         case 'contentType':
