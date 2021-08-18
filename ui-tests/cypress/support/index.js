@@ -29,5 +29,6 @@ import './restAPI/pagesAPI.js';
 import './restAPI/profileTypesAPI';
 import './restAPI/rolesAPI.js';
 import './restAPI/usersAPI.js';
+import './restAPI/widgetsAPI.js';
 
 import './exception-handler';

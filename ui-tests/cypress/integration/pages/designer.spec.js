@@ -30,7 +30,7 @@ describe('Pages Designer', () => {
   afterEach(() => {
     cy.get('@widgetToBeDeleted').then(widgetToBeDeleted => {
       if (widgetToBeDeleted !== null) {
-        cy.widgetsController(page.code)
+        cy.widgetInstanceController(page.code)
           .then(controller => controller.deleteWidget(widgetToBeDeleted));
         cy.pagesController()
           .then(controller => controller.setPageStatus(page.code, 'draft'));
@@ -78,7 +78,7 @@ describe('Pages Designer', () => {
     });
 
     it('Move widget to different frame', () => {
-      cy.widgetsController(page.code)
+      cy.widgetInstanceController(page.code)
         .then(controller => controller.addWidget(4, 'NWS_Archive'))
         .then(() => cy.wrap(4).as('widgetToBeDeleted'));
 

@@ -105,7 +105,7 @@ describe('Contents', () => {
         contentId               = payload[0].id;
       });
     cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
-    cy.widgetsController(page.code)
+    cy.widgetInstanceController(page.code)
       .then(controller => controller
           .addWidget(0,
               'search_form',
