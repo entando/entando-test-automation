@@ -1,15 +1,15 @@
 import {generateRandomId} from '../../support/utils';
 import HomePage       from '../../support/pageObjects/HomePage';
 import DesignerPage   from '../../support/pageObjects/pages/designer/DesignerPage';
-import MFEWidgetsPage from '../../support/pageObjects/components/mfeWidgets/MFEWidgetsPage';
 
 const {CMS_WIDGETS, SYSTEM_WIDGETS, PAGE_WIDGETS} = DesignerPage;
 
 const SAMPLE_DUPE_WIDGET_CODE = 'mio_widget';
 
+const PAGE_NAME = generateRandomId();
 const THE_PAGE = {
-  code: generateRandomId(),
-  title: generateRandomId(),
+  code: PAGE_NAME,
+  title: PAGE_NAME,
   parentCode: 'homepage',
   ownerGroup: 'administrators',
   template: '1-column'
@@ -29,15 +29,78 @@ describe('Widgets Out-Of-The-Box Testing', () => {
   });
 
   beforeEach(() => {
-    cy.wrap(null).as('pageToDelete');
     cy.wrap(null).as('widgetToRemoveFromPage');
     cy.wrap(null).as('widgetToDelete');
+    cy.wrap(null).as('widgetToRevert');
+    cy.wrap(null).as('recentContentsToUnpublish');
+    cy.wrap(null).as('recentContentsToDelete');
     cy.kcLogin('admin').as('tokens');
     cy.visit('/');
     currentPage = new HomePage();
   });
 
   afterEach(() => {
+    cy.get('@widgetToRemoveFromPage').then(widgetToRemoveFromPage => {
+      if (widgetToRemoveFromPage !== null) {
+        const deleteWidgetFromPage = (widgetCode) => {
+          cy.widgetInstanceController(THE_PAGE.code)
+            .then(controller => controller.deleteWidget(widgetCode));
+        };
+        if (Array.isArray(widgetToRemoveFromPage)) {
+          widgetToRemoveFromPage.forEach((widgetCode) => {
+            deleteWidgetFromPage(widgetCode);
+          });
+        } else {
+          deleteWidgetFromPage(widgetToRemoveFromPage);
+        }
+        cy.pagesController()
+          .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
+      }
+    });
+    cy.get('@widgetToDelete').then((widgetToDelete) => {
+      if (widgetToDelete !== null) {
+        cy.widgetsController()
+          .then(controller => controller.deleteWidget(SAMPLE_DUPE_WIDGET_CODE));
+      }
+    });
+    cy.get('@widgetToRevert').then((widgetToRevert) => {
+      if (widgetToRevert !== null) {
+        const revertWidget = (widget) => {
+          cy.widgetsController(widget.code)
+            .then(controller => controller.getWidget())
+            .then(({ controller, formData }) => controller.putWidget({ ...formData, ...widget }));
+        };
+        if (Array.isArray(widgetToRevert)) {
+          widgetToRevert.forEach((widget) => {
+            revertWidget(widget);
+          });
+        } else {
+          revertWidget(widgetToRevert);
+        }
+      }
+    });
+    cy.get('@recentContentsToUnpublish').then((contentCounts) => {
+      if (contentCounts !== null && contentCounts > 0) {
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ controller, response }) => {
+            response.body.payload
+              .slice(0, contentCounts).map(content => content.id)
+              .forEach(contentId => controller.updateStatus(contentId, 'draft'));
+          });
+      }
+    });
+    cy.get('@recentContentsToDelete').then((contentCounts) => {
+      if (contentCounts !== null && contentCounts > 0) {
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ controller, response }) => {
+            response.body.payload
+              .slice(0, contentCounts).map(content => content.id)
+              .forEach(contentId => controller.deleteContent(contentId));
+          });
+      }
+    });
     cy.kcLogout();
   });
 
@@ -87,12 +150,13 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       cy.wait(500);
 
       currentPage = currentPage.getContent().confirmConfig();
-      cy.wait(500);
+      cy.wait(2000);
 
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--draft')
                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
       currentPage.getContent().publishPageDesign();
+      cy.wait(2000);
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--published')
                   .and('have.attr', 'title').should('eq', 'Published');
@@ -135,6 +199,7 @@ describe('Widgets Out-Of-The-Box Testing', () => {
                   .should('have.class', 'PageStatusIcon--draft')
                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
       currentPage.getContent().publishPageDesign();
+      cy.wait(1000);
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--published')
                   .and('have.attr', 'title').should('eq', 'Published');
@@ -168,40 +233,13 @@ describe('Widgets Out-Of-The-Box Testing', () => {
                   .should('have.class', 'PageStatusIcon--draft')
                   .and('have.attr', 'title').should('eq', 'Published, with pending changes');
       currentPage.getContent().publishPageDesign();
+      cy.wait(1000);
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--published')
                   .and('have.attr', 'title').should('eq', 'Published');
-    });
-
-    it('Remove widget', () => {
-      currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      cy.widgetsController()
-        .then(controller => controller.deleteWidget(SAMPLE_DUPE_WIDGET_CODE));
-      cy.wait(500);
-
-      currentPage = currentPage.getMenu().getComponents().open();
-      currentPage = currentPage.openMFE_Widgets();
-      cy.wait(500);
-
-      currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
-
-      cy.validateUrlPathname('/widget');
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.CONTENT.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(500);
+      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
+      cy.wrap({ code: CMS_WIDGETS.CONTENT.code, group: 'free' }).as('widgetToRevert');
+      cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToDelete');
     });
 
   });
@@ -312,41 +350,10 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--published')
                   .and('have.attr', 'title').should('eq', 'Published');
+      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
+      cy.wrap({ code: CMS_WIDGETS.CONTENT_LIST.code, group: 'free' }).as('widgetToRevert');
+      cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToDelete');
     });
-
-    it('Delete widget', () => {
-      currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      cy.widgetsController()
-        .then(controller => controller.deleteWidget(SAMPLE_DUPE_WIDGET_CODE));
-      cy.wait(500);
-
-      currentPage = currentPage.getMenu().getComponents().open();
-      currentPage = currentPage.openMFE_Widgets();
-      cy.wait(500);
-
-      currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
-
-      cy.validateUrlPathname('/widget');
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.CONTENT_LIST.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(500);
-    });
-
   });
 
   describe('CMS Content Widget - Extended', () => {
@@ -458,23 +465,10 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--published')
                   .and('have.attr', 'title').should('eq', 'Published');
+      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
+      cy.wrap(1).as('recentContentsToUnpublish');
+      cy.wrap(2).as('recentContentsToDelete');
     });
-
-    it('cleanup test contents', () => {
-      currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      currentPage = currentPage.getMenu().getContent().open();
-      currentPage = currentPage.openManagement();
-      cy.wait(500);
-      currentPage = currentPage.getContent().unpublishLastAddedContent();
-      currentPage = currentPage.getContent().deleteLastAddedContent();
-      currentPage = currentPage.getContent().deleteLastAddedContent();
-    });
-
   });
 
   describe('CMS Content List Widget - Extended', () => {
@@ -567,33 +561,11 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--published')
                   .and('have.attr', 'title').should('eq', 'Published');
+
+      cy.wrap([WIDGET_FRAME.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
+      cy.wrap(2).as('recentContentsToUnpublish');
+      cy.wrap(2).as('recentContentsToDelete');
     });
-
-    it('Test widget cleanup', () => {
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
-      selectPageFromSidebar();
-      cy.wait(500);
-
-      currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_LIST.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      currentPage = currentPage.getMenu().getContent().open();
-      currentPage = currentPage.openManagement();
-      cy.wait(500);
-
-      currentPage = currentPage.getContent().unpublishLastAddedContent();
-      currentPage = currentPage.getContent().deleteLastAddedContent();
-      currentPage = currentPage.getContent().unpublishLastAddedContent();
-      currentPage = currentPage.getContent().deleteLastAddedContent();
-    });
-
   });
 
   describe('CMS Content Search Query Widget', () => {
@@ -702,41 +674,9 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--published')
                   .and('have.attr', 'title').should('eq', 'Published');
-    });
-
-    it('Test widget cleanup', () => {
-      currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      currentPage = currentPage.getMenu().getComponents().open();
-      currentPage = currentPage.openMFE_Widgets();
-      cy.wait(500);
-
-      currentPage.getContent().openKebabMenuByWidgetCode(
-          SAMPLE_DUPE_WIDGET_CODE,
-          MFEWidgetsPage.WIDGET_ACTIONS.DELETE
-      );
-      currentPage.getDialog().getConfirmButton().click();
-      currentPage.getContent().getListArea().should('not.contain', SAMPLE_DUPE_WIDGET_CODE);
-
-
-      cy.validateUrlPathname('/widget');
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.CONTENT_QUERY.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(2500);
+      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
+      cy.wrap({ code: CMS_WIDGETS.CONTENT_QUERY.code, group: 'free' }).as('widgetToRevert');
+      cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToDelete');
     });
 
   });
@@ -824,52 +764,12 @@ describe('Widgets Out-Of-The-Box Testing', () => {
                                 .openDetails();
       cy.wait(500);
       cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+      cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
+      cy.wrap([
+        { code: CMS_WIDGETS.SEARCH_FORM.code, group: 'free' },
+        { code: CMS_WIDGETS.SEARCH_RESULT.code, group: 'free' },
+      ]).as('widgetToRevert');
     });
-
-    it('Test widget cleanup', () => {
-      currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_FORM.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.SEARCH_RESULT.code)
-                  .open()
-                  .clickDelete();
-
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      currentPage = currentPage.getMenu().getComponents().open();
-      currentPage = currentPage.openMFE_Widgets();
-      cy.wait(500);
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.SEARCH_FORM.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(1500);
-
-      cy.validateUrlPathname('/widget');
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.SEARCH_RESULT.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(1500);
-    });
-
   });
 
   describe('CMS News Archive and News Latest Widgets', () => {
@@ -954,52 +854,12 @@ describe('Widgets Out-Of-The-Box Testing', () => {
                                 .openDetails();
       cy.wait(500);
       cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_LATEST.code}`);
+      cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
+      cy.wrap([
+        { code: CMS_WIDGETS.NEWS_ARCHIVE.code, group: 'free' },
+        { code: CMS_WIDGETS.NEWS_LATEST.code, group: 'free' },
+      ]).as('widgetToRevert');
     });
-
-    it('Test widget cleanup', () => {
-      currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_ARCHIVE.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.NEWS_LATEST.code)
-                  .open()
-                  .clickDelete();
-
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      currentPage = currentPage.getMenu().getComponents().open();
-      currentPage = currentPage.openMFE_Widgets();
-      cy.wait(500);
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.NEWS_ARCHIVE.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(1500);
-
-      cy.validateUrlPathname('/widget');
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          CMS_WIDGETS.NEWS_LATEST.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(1500);
-    });
-
   });
 
   describe('Page Widgets - Language and Logo', () => {
@@ -1087,52 +947,12 @@ describe('Widgets Out-Of-The-Box Testing', () => {
                                 .openDetails();
       cy.wait(500);
       cy.validateUrlPathname(`/widget/detail/${PAGE_WIDGETS.LOGO.code}`);
+      cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
+      cy.wrap([
+        { code: PAGE_WIDGETS.LANGUAGE.code, group: 'free' },
+        { code: PAGE_WIDGETS.LOGO.code, group: 'free' },
+      ]).as('widgetToRevert');
     });
-
-    it('Test widget cleanup', () => {
-      currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LANGUAGE.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, PAGE_WIDGETS.LOGO.code)
-                  .open()
-                  .clickDelete();
-
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      currentPage = currentPage.getMenu().getComponents().open();
-      currentPage = currentPage.openMFE_Widgets();
-      cy.wait(500);
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          PAGE_WIDGETS.LANGUAGE.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(1500);
-
-      cy.validateUrlPathname('/widget');
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          PAGE_WIDGETS.LOGO.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(1500);
-    });
-
   });
 
   describe('Page Widgets - Logo - Extended', () => {
@@ -1147,23 +967,21 @@ describe('Widgets Out-Of-The-Box Testing', () => {
     const CURRENT_LOGO = 'Entando_light.svg';
     const CHANGE_LOGO = 'entando-logo_badge.png';
 
-    beforeEach(() => {
+    it('Add the Logo widget in page (config), edit the logo widget (in kebab actions) changing, in the Custom UI, the default logo\'s image with a new image (.svg/.png/.jpg)', () => {
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openDesigner();
       selectPageFromSidebar();
       cy.wait(500);
-    });
-
-    it('Add the Logo widget in page (config), edit the logo widget (in kebab actions) changing, in the Custom UI, the default logo\'s image with a new image (.svg/.png/.jpg)', () => {
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().dragWidgetToFrame(PAGE_WIDGETS.LOGO, WIDGET_FRAME_1.frameName);
+      currentPage.getContent().dragWidgetToGrid(2, 1, 2, 0);
       cy.wait(500);
 
       currentPage.getContent().publishPageDesign();
       cy.wait(1000);
 
-      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-      currentPage = currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.EDIT, PAGE_WIDGETS.LOGO);
+      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LOGO.code)
+                                .open()
+                                .openEdit();
       cy.wait(500);
 
       currentPage.getContent().getCustomUiInput().clear();
@@ -1174,31 +992,9 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       cy.wait(1000);
 
       // TODO - add view published scenario to check the change of logo
-    });
 
-    it('Revert', () => {
-      currentPage.getContent().openKebabMenuByFrame(WIDGET_FRAME_1.frameName);
-      currentPage.getContent().clickActionOnFrame(DesignerPage.FRAME_ACTIONS.DELETE, PAGE_WIDGETS.LOGO);
-      
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      currentPage = currentPage.getMenu().getComponents().open();
-      currentPage = currentPage.openMFE_Widgets();
-      cy.wait(500);
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          PAGE_WIDGETS.LOGO.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-      cy.wait(500);
-
-      currentPage.getContent().getCustomUiInput().clear();
-      currentPage.getContent().getCustomUiInput().type(CUSTOM_UI);
-      cy.wait(500);
-
-      currentPage = currentPage.getContent().submitForm();
-      cy.wait(1500);
+      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
+      cy.wrap({ code: PAGE_WIDGETS.LOGO.code, customUi: CUSTOM_UI }).as('widgetToRevert');
     });
   });
 
@@ -1287,50 +1083,12 @@ describe('Widgets Out-Of-The-Box Testing', () => {
                                 .openDetails();
       cy.wait(500);
       cy.validateUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
-    });
 
-    it('Test widget cleanup', () => {
-      currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.APIS.code)
-                  .open()
-                  .clickDelete();
-      currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, SYSTEM_WIDGETS.SYS_MSGS.code)
-                  .open()
-                  .clickDelete();
-
-      currentPage.getContent().publishPageDesign();
-      cy.wait(1000);
-
-      currentPage = currentPage.getMenu().getComponents().open();
-      currentPage = currentPage.openMFE_Widgets();
-      cy.wait(500);
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          SYSTEM_WIDGETS.APIS.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(1500);
-
-      cy.validateUrlPathname('/widget');
-
-      currentPage = currentPage.getContent().openKebabMenuByWidgetCode(
-          SYSTEM_WIDGETS.SYS_MSGS.code,
-          MFEWidgetsPage.WIDGET_ACTIONS.EDIT
-      );
-
-      cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Free Access'
-      });
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait(1500);
+      cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
+      cy.wrap([
+        { code: SYSTEM_WIDGETS.APIS.code, group: 'free' },
+        { code: SYSTEM_WIDGETS.SYS_MSGS.code, group: 'free' },
+      ]).as('widgetToRevert');
     });
 
   });
