@@ -13,6 +13,16 @@ class ContentsController {
     this.access_token = access_token;
   }
 
+  getContentList() {
+    return cy.request({
+      url: `${controller}?sort=lastModified&direction=DESC&mode=full&page=1&pageSize=5&lastPage=3&totalItems=11`,
+      method: 'GET',
+      auth: {
+        bearer: this.access_token
+      }
+    }).then(response => ({ controller: this, response }));
+  }
+
   postContent(content) {
     return cy.request({
       url: `${controller}`,

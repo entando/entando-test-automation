@@ -8,9 +8,9 @@ Cypress.Commands.add('pagesController', () => {
   });
 });
 
-Cypress.Commands.add('widgetsController', (pageCode) => {
+Cypress.Commands.add('widgetInstanceController', (pageCode) => {
   cy.get('@tokens').then(tokens => {
-    return new WidgetsController(tokens.access_token, pageCode);
+    return new WidgetInstanceController(tokens.access_token, pageCode);
   });
 });
 
@@ -82,7 +82,7 @@ class PagesController {
 
 }
 
-class WidgetsController {
+class WidgetInstanceController {
 
   constructor(access_token, pageCode) {
     this.access_token = access_token;

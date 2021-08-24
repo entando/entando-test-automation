@@ -542,7 +542,7 @@ describe('Page Management', () => {
 
       it('Delete a drafted page is forbidden', () => {
         cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
-        cy.widgetsController(page.code).then(controller => controller.addWidget(0, 'search_form'));
+        cy.widgetInstanceController(page.code).then(controller => controller.addWidget(0, 'search_form'));
 
         currentPage = openManagementPage();
         currentPage.getContent().getKebabMenu(page.code).open().clickDelete();

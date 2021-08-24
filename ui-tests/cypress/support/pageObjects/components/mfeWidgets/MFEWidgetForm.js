@@ -176,7 +176,7 @@ export default class MFEWidgetForm extends Content {
           break;
         case 'group':
           this.getGroupDropdown().click();
-          this.getGroupDropdown().contains(payload[field]).click();
+          this.getGroupDropdown().contains(payload[field]).click({ force: true });
           break;
         case 'customUi':
           this.getCustomUiInput().type(payload[field]);
