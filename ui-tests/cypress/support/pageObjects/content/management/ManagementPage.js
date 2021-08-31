@@ -20,11 +20,20 @@ export default class ManagementPage extends Content {
 
   modalDeleteButton = `${htmlElements.button}#DeleteContentModal__button-delete`;
 
-  getAddButton() {
+  getAddMenu() {
     return this.getContents()
                .get(this.contentLink).eq(0).click()
-               .find(this.actionOptions)
+               .find(this.actionOptions);    
+  }
+
+  getAddButton() {
+    return this.getAddMenu()
                .find(this.actionOption).eq(0);
+  }
+
+  getAddButtonByLabel(label) {
+    return this.getAddMenu()
+              .find(this.actionOption).contains(label);
   }
 
   getTable() {
@@ -39,6 +48,12 @@ export default class ManagementPage extends Content {
 
   openAddContentPage() {
     this.getAddButton().click();
+    cy.wait(1000);
+    return new AppPage(AddPage);
+  }
+
+  openAddContentPageWithContentType(contentTypeName) {
+    this.getAddButtonByLabel(contentTypeName).click();
     cy.wait(1000);
     return new AppPage(AddPage);
   }
