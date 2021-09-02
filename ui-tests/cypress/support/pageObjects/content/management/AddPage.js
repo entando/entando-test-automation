@@ -7,6 +7,7 @@ import ContentWidgetConfigPage from '../../pages/designer/widgetconfigs/ContentW
 import TextAttribute           from './attribute-fields/TextAttribute';
 import HypertextAttribute from './attribute-fields/HypertextAttribute';
 import AssetAttribute from './attribute-fields/AssetAttribute';
+import CompositeAttribute from './attribute-fields/CompositeAttribute';
 
 export default class AddPage extends Content {
 
@@ -191,6 +192,8 @@ export default class AddPage extends Content {
             .setValue(value);
           break;
         }
+        case 'Composite':
+          const field = new CompositeAttribute(this, idx, type, lang, attributes[${this.attributeIndex}].compositeelements)
       }
     });
     return this;

@@ -1,8 +1,8 @@
 import AttributeFormField from '../AttributeFormField';
 
 export default class HypertextAttribute extends AttributeFormField {
-  constructor(parent, attributeIndex, lang = 'en', prefix = 'attributes') {
-    super(parent, 'Hypertext', attributeIndex, lang);
+  constructor(parent, elementScope, attributeIndex, lang = 'en', prefix = 'attributes') {
+    super(parent, elementScope, 'Hypertext', attributeIndex, lang);
     this.prefix = prefix;
   }
 

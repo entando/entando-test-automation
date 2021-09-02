@@ -65,8 +65,8 @@ export default class AssetAttribute extends AttributeFormField {
   inputInfo = 'input.AssetAttributeField__input--inner[type="text"]';
   uploadButton = 'input[type=file][multiple]';
 
-  constructor(parent, attributeIndex, assetType = 'Image', lang = 'en', prefix = 'attributes') {
-    super(parent, assetType, attributeIndex, lang);
+  constructor(parent, elementScope, attributeIndex, assetType = 'Image', lang = 'en', prefix = 'attributes') {
+    super(parent, elementScope, assetType, attributeIndex, lang);
     this.prefix = prefix;
   }
 

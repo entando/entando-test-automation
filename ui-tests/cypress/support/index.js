@@ -30,5 +30,6 @@ import './restAPI/profileTypesAPI';
 import './restAPI/rolesAPI.js';
 import './restAPI/usersAPI.js';
 import './restAPI/widgetsAPI.js';
+import './restAPI/assetsAPI.js';
 
 import './exception-handler';

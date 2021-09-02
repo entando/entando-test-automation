@@ -1,11 +1,16 @@
 import { WebElement } from '../../WebElement';
 
 export default class AttributeFormField extends WebElement {
-  constructor(parent, attributeType, index, lang = 'en') {
-    super(parent);
+  constructor(pageParent, attributeType, index, lang = 'en') {
+    super(pageParent);
     this.attributeType = attributeType;
     this.index = index;
     this.lang = lang;
+    this.parentAttribute = null;
+  }
+
+  setParentAttribute(attribute) {
+    this.parentAttribute = attribute;
   }
 
   getLangPane() {
@@ -13,9 +18,13 @@ export default class AttributeFormField extends WebElement {
       .find(`#content-attributes-tabs-pane-${this.lang}`);
   }
 
-  get() {
-    return this.getLangPane()
+  getCollapseMain() {
+    this.getLangPane()
       .children('div.ContentFormFieldCollapse').eq(this.index);
+  }
+
+  get() {
+    return this.getCollapseMain();
   }
 
   isCollapsed() {

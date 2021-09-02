@@ -44,6 +44,7 @@ describe('Content Type Attributes Extensive Tests', () => {
     cy.wrap(null).as('attributeToDelete');
     cy.wrap(null).as('recentContentsToUnpublish');
     cy.wrap(null).as('recentContentsToDelete');
+    cy.wrap(null).as('recentAttachToDelete');
     cy.kcLogin('admin').as('tokens');
     cy.visit('/');
     currentPage = new HomePage();
@@ -72,6 +73,17 @@ describe('Content Type Attributes Extensive Tests', () => {
           });
       }
     });
+    cy.get('@recentAttachToDelete').then((attachCounts) => {
+      if (attachCounts !== null && attachCounts > 0) {
+        cy.assetsController()
+          .then(controller => controller.getAssetsList('file'))
+          .then(({ controller, response }) => {
+            response.body.payload
+              .slice(0, attachCounts).map(attach => attach.id)
+              .forEach(assetId => controller.deleteAsset(assetId));
+          });
+      }
+    });
     cy.get('@attributeToDelete').then((attributeToDelete) => {
       if (attributeToDelete !== null) {
         cy.contentTypeAttributeController(CONTENT_TYPE.code)
@@ -89,51 +101,48 @@ describe('Content Type Attributes Extensive Tests', () => {
   });
 
   describe('Multilanguage Attributes', () => {
-    /* beforeEach(() => {
-      currentPage = currentPage.getMenu().getContent().open();
-      currentPage = currentPage.openTypes();
-    }); */
-    describe('try to set the value for both languages and be sure they are preserved', () => {
-      const multilangValues = {
-        Text: {
-          en: 'Demo',
-          it: 'Demo It',
+    const multilangValues = {
+      Text: {
+        en: 'Demo',
+        it: 'Demo It',
+      },
+      Longtext: {
+        en: 'Demo Long',
+        it: 'Demo Long It',
+      },
+      Hypertext: {
+        en: 'Hypertext it is',
+        it: 'Hypertext e',
+      },
+      Attach: {
+        en: {
+          upload: { file: 'icon/blank.pdf' },
         },
-        Longtext: {
-          en: 'Demo Long',
-          it: 'Demo Long It',
+        it: {
+          upload: { file: 'icon/blank.pdf' },
         },
-        Hypertext: {
-          en: 'Hypertext it is',
-          it: 'Hypertext e',
-        },
-        Attach: {
-          en: {
-            upload: { file: 'icon/blank.pdf' },
-          },
-          it: {
-            upload: { file: 'icon/blank.pdf' },
-          },
-        },
-        Image: {
-          en: {
-            upload: 'entando_at_plan.jpg',
-            metadata: {
-              legend: 'TPlan',
-              alt: 'Entando at Plan',
-              description: 'At Plan',
-            },
-          },
-          it: {
-            upload: 'entando_at_plan.jpg',
-            metadata: {
-              legend: 'IPlan',
-              alt: 'Entando al piano',
-              description: 'It Plan',
-            },
+      },
+      Image: {
+        en: {
+          upload: 'entando_at_plan.jpg',
+          metadata: {
+            legend: 'TPlan',
+            alt: 'Entando at Plan',
+            description: 'At Plan',
           },
         },
-      };
+        it: {
+          upload: 'entando_at_plan.jpg',
+          metadata: {
+            legend: 'IPlan',
+            alt: 'Entando al piano',
+            description: 'It Plan',
+          },
+        },
+      },
+    };
+
+    /* describe('try to set the value for both languages and be sure they are preserved', () => {
       MULTILANG_ATTRIBUTES.forEach((attribute) => {
         it(`${attribute} attribute`, () => {
           cy.contentTypeAttributeController(CONTENT_TYPE.code)
@@ -155,6 +164,9 @@ describe('Content Type Attributes Extensive Tests', () => {
           currentPage = currentPage.getContent().submitApproveForm();
           cy.wrap(1).as('recentContentsToUnpublish');
           cy.wrap(1).as('recentContentsToDelete');
+          if (attribute === 'Attach') {
+            cy.wrap(1).as('recentAttachToDelete');
+          }
           cy.contentsController()
             .then(controller => controller.getContentList())
             .then(({ response }) => {
@@ -202,11 +214,102 @@ describe('Content Type Attributes Extensive Tests', () => {
             .should('deep.equal', multilangValues[attribute]);
         });
       });
-    });
-
-    /* it('if multilanguage nest it in a complex attribute, try to set the value for both languages and be sure they are preserved and correct', () => {
-
     }); */
+
+    describe('if multilanguage nest it in a complex attribute, try to set the value for both languages and be sure they are preserved and correct', () => {
+      const compositeFormat = {
+        type: 'Composite',
+        compositeAttributeType: 'Composite',
+        code: 'Composite',
+        nestedAttribute: { code: 'Composite' },
+        compositeAttributes: [],
+      };
+      
+      MULTILANG_ATTRIBUTES.forEach((attribute) => {
+        it(`${attribute} attribute`, () => {
+          cy.contentTypeAttributeController(CONTENT_TYPE.code)
+            .then(controller => controller.addAttribute({ 
+              ...compositeFormat,
+              compositeAttributes: [{
+                compositeAttributeType: 'Composite',
+                type: attribute,
+                code: attribute,
+              }]
+            }));
+          cy.wrap(attribute).as('attributeToDelete');
+          currentPage = currentPage.getMenu().getContent().open();
+          currentPage = currentPage.openManagement();
+          currentPage = currentPage.getContent().openAddContentPageWithContentType(CONTENT_TYPE.name);
+          currentPage.getContent()
+            .fillBeginContent('cypress demo desc')
+            .fillAttributes([{
+              type: 'Composite',
+              value: [{
+                type: attribute,
+                value: multilangValues[attribute].en,
+              }]
+            }])
+            .fillAttributes([{
+              type: 'Composite',
+              value: [{
+                type: attribute,
+                value: multilangValues[attribute].it,
+              }]
+            }], 'it');
+          currentPage = currentPage.getContent().submitApproveForm();
+          cy.wrap(1).as('recentContentsToUnpublish');
+          cy.wrap(1).as('recentContentsToDelete');
+          if (attribute === 'Attach') {
+            cy.wrap(1).as('recentAttachToDelete');
+          }
+          cy.contentsController()
+            .then(controller => controller.getContentList())
+            .then(({ response }) => {
+              const { body: { payload } } = response;
+              const { compositeelements: [attr] } = payload[0].attributes[0];
+              switch(attribute) {
+                case 'Text':
+                case 'Longtext':
+                case 'Hypertext':
+                  return attr.values;
+                case 'Attach': {
+                  const { values: { en, it } } = attr;
+                  return {
+                    en: {
+                      upload: { file: `icon/${en.name}` },
+                    },
+                    it: {
+                      upload: { file: `icon/${it.name}` },
+                    },
+                  };
+                }
+                case 'Image': {
+                  const { values: { en, it } } = attr;
+                  return {
+                    en: {
+                      upload: en.name,
+                      metadata: {
+                        legend: en.metadata.legend,
+                        alt: en.metadata.alt,
+                        description: en.metadata.description,
+                      },
+                    },
+                    it: {
+                      upload: it.name,
+                      metadata: {
+                        legend: it.metadata.legend,
+                        alt: it.metadata.alt,
+                        description: it.metadata.description,
+                      },
+                    },
+                  };
+                }
+              }
+            })
+            .should('deep.equal', multilangValues[attribute]);
+        });
+      });
+    });
   });
 
   /* describe('Basic Attributes', () => {

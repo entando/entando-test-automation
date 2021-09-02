@@ -1,8 +1,8 @@
 import AttributeFormField from '../AttributeFormField';
 
 export default class TextAttribute extends AttributeFormField {
-  constructor(parent, attributeIndex, lang = 'en', prefix = 'attributes', longText = false) {
-    super(parent, longText ? 'Longtext' : 'Text', attributeIndex, lang);
+  constructor(parent, elementScope, attributeIndex, lang = 'en', prefix = 'attributes', longText = false) {
+    super(parent, elementScope, longText ? 'Longtext' : 'Text', attributeIndex, lang);
     this.prefix = prefix;
     this.element = longText ? 'textarea' : 'input';
   }
