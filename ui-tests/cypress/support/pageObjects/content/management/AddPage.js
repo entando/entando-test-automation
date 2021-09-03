@@ -178,7 +178,8 @@ export default class AddPage extends Content {
         case 'Text':
         case 'Longtext':
         case 'Monotext':
-        case 'Email': {
+        case 'Email':
+        case 'Number': {
           const field = new TextAttribute(this, idx, type, lang);
           field.expand()
             .setValue(value);

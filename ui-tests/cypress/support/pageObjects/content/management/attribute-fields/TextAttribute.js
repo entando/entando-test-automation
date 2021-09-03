@@ -14,6 +14,7 @@ export default class TextAttribute extends AttributeFormField {
         return `${this.prefix}.values.${this.lang}`;
       case 'Monotext':
       case 'Email':
+      case 'Number':
         return `${this.prefix}.value`;
     }
   }
