@@ -5,40 +5,39 @@ import TextAttribute from './TextAttribute';
 
 export default class CompositeAttribute extends AttributeFormField {
   panelBody = 'div.panel-body';
-  constructor(parent, elementScope, attributeIndex, lang = 'en', prefix = 'attributes') {
-    super(parent, elementScope, 'Hypertext', attributeIndex, lang);
-    this.prefix = prefix;
+  constructor(parent, attributeIndex, lang = 'en') {
+    super(parent, 'Composite', attributeIndex, lang);
   }
 
   getAttributesArea() {
     return this.getContents().find(this.panelBody);
   }
 
-  setValues(values) {
+  getSubAttributeChildrenAt(idx) {
+    return this.getAttributesArea().children().eq(idx);
+  }
+
+  setValue(values) {
     values.forEach(({ type, value }, idx) => {
-      const attrname = `attributes[${this.attributeIndex}].compositeelements[${idx}].values.${this.lang}`;
+      let field;
       switch(type) {
         case 'Text':
         case 'Longtext': {
-          const field = new TextAttribute(this, idx, this.lang, attrname, type === 'Longtext');
-          field.expand()
-            .setValue(value);
+          field = new TextAttribute(this.parent, idx, type, this.lang);
           break;
         }
         case 'Hypertext': {
-          const field = new HypertextAttribute(this, idx, this.lang, attrname);
-          field.expand()
-            .setValue(value);
+          field = new HypertextAttribute(this.parent, idx, this.lang);
           break;
         } 
         case 'Attach':
         case 'Image': {
-          const field = new AssetAttribute(this, idx, type, this.lang, attrname);
-          field.expand()
-            .setValue(value);
+          field = new AssetAttribute(this.parent, idx, type, this.lang);
           break;
         }
       }
+      field.setParentAttribute(this);
+      field.setValue(value);
     });
   }
 }

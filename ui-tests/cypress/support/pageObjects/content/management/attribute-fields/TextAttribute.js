@@ -1,15 +1,26 @@
 import AttributeFormField from '../AttributeFormField';
 
 export default class TextAttribute extends AttributeFormField {
-  constructor(parent, elementScope, attributeIndex, lang = 'en', prefix = 'attributes', longText = false) {
-    super(parent, elementScope, longText ? 'Longtext' : 'Text', attributeIndex, lang);
-    this.prefix = prefix;
-    this.element = longText ? 'textarea' : 'input';
+  constructor(parent, attributeIndex, attributeType = 'Text', lang = 'en') {
+    super(parent, attributeType, attributeIndex, lang);
+    this.element = attributeType === 'Longtext' ? 'textarea' : 'input';
+  }
+
+  getInputName() {
+    switch(this.attributeType) {
+      case 'Text':
+      case 'Longtext':
+      default:
+        return `${this.prefix}.values.${this.lang}`;
+      case 'Monotext':
+      case 'Email':
+        return `${this.prefix}.value`;
+    }
   }
 
   getInput() {
     return this.getContents()
-      .find(`${this.element}[name="${this.prefix}[${this.index}].values.${this.lang}"]`);
+      .find(`${this.element}[name="${this.getInputName()}"]`);
   }
 
   setValue(text) {

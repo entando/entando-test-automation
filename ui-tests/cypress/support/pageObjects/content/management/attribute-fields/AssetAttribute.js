@@ -65,23 +65,16 @@ export default class AssetAttribute extends AttributeFormField {
   inputInfo = 'input.AssetAttributeField__input--inner[type="text"]';
   uploadButton = 'input[type=file][multiple]';
 
-  constructor(parent, elementScope, attributeIndex, assetType = 'Image', lang = 'en', prefix = 'attributes') {
-    super(parent, elementScope, assetType, attributeIndex, lang);
-    this.prefix = prefix;
-  }
-
-  getButtons() {
-    return this.getContents()
-      .children('.form-group')
-      .children('div.col-xs-12');
+  constructor(parent, attributeIndex, assetType = 'Image', lang = 'en') {
+    super(parent, assetType, attributeIndex, lang);
   }
 
   getBrowseButton() {
-    return this.getButtons().children('button');
+    return this.getContents().find('button').eq(0);
   }
 
   getUploadButton() {
-    return this.getButtons().find(this.uploadButton);
+    return this.getContents().find(this.uploadButton);
   }
 
   getSelectedInfoArea() {
@@ -90,27 +83,27 @@ export default class AssetAttribute extends AttributeFormField {
   }
 
   getInfoNameInput() {
-    return this.getContents()
+    return this.getSelectedInfoArea()
       .find(`${this.inputInfo}[name="name"]`)
   }
 
   getInfoLegendInput() {
-    return this.getContents()
+    return this.getSelectedInfoArea()
       .find(`${this.inputInfo}[name="legend"]`);
   }
 
   getInfoAltInput() {
-    return this.getContents()
+    return this.getSelectedInfoArea()
       .find(`${this.inputInfo}[name="alt"]`);
   }
 
   getInfoDescInput() {
-    return this.getContents()
+    return this.getSelectedInfoArea()
       .find(`${this.inputInfo}[name="description"]`);
   }
 
   getInfoTitleInput() {
-    return this.getContents()
+    return this.getSelectedInfoArea()
       .find(`${this.inputInfo}[name="title"]`);
   }
 
@@ -120,6 +113,7 @@ export default class AssetAttribute extends AttributeFormField {
       this.getInfoNameInput().type(metadata.name);
     }
     if (metadata.legend) {
+      this.getContents().debug();
       this.getInfoLegendInput().type(metadata.legend);
     }
     if (metadata.alt) {
@@ -138,7 +132,7 @@ export default class AssetAttribute extends AttributeFormField {
     if (this.lang === 'en') {
       if (!uploadMode) {
         this.getBrowseButton().click();
-        cy.wait(500);
+        cy.wait(3500);
         this.setDialogBodyWithClass(AssetSelector);
         this.getDialogBodyOfAttribute().getUseButtonFromAssetTitle(upload).click();
       } else {

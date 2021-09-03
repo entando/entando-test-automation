@@ -8,6 +8,9 @@ import TextAttribute           from './attribute-fields/TextAttribute';
 import HypertextAttribute from './attribute-fields/HypertextAttribute';
 import AssetAttribute from './attribute-fields/AssetAttribute';
 import CompositeAttribute from './attribute-fields/CompositeAttribute';
+import BooleanAttribute from './attribute-fields/BooleanAttribute';
+import EnumeratorAttribute from './attribute-fields/EnumeratorAttribute';
+import ThreeStateAttribute from './attribute-fields/ThreeStateAttribute';
 
 export default class AddPage extends Content {
 
@@ -164,7 +167,7 @@ export default class AddPage extends Content {
     this.typeAttrTitleIt(titleIt);
   }
 
-  fillAttributes(attributeValues, lang = 'en', prefix = 'attributes') {
+  fillAttributes(attributeValues, lang = 'en') {
     if (lang === 'it') {
       this.getItLanguageTab().click();
     } else {
@@ -173,27 +176,52 @@ export default class AddPage extends Content {
     attributeValues.forEach(({ type, value }, idx) => {
       switch(type) {
         case 'Text':
-        case 'Longtext': {
-          const field = new TextAttribute(this, idx, lang, prefix, type === 'Longtext');
+        case 'Longtext':
+        case 'Monotext':
+        case 'Email': {
+          const field = new TextAttribute(this, idx, type, lang);
+          field.expand()
+            .setValue(value);
+          break;
+        }
+        case 'Boolean': {
+          const field = new BooleanAttribute(this, idx);
+          field.expand()
+            .setValue(value);
+          break;
+        }
+        case 'ThreeState': {
+          const field = new ThreeStateAttribute(this, idx);
+          field.expand()
+            .setValue(value);
+          break;
+        }
+        case 'Enumerator':
+        case 'EnumeratorMap': {
+          const field = new EnumeratorAttribute(this, idx, type === 'EnumeratorMap');
           field.expand()
             .setValue(value);
           break;
         }
         case 'Hypertext': {
-          const field = new HypertextAttribute(this, idx, lang, prefix);
+          const field = new HypertextAttribute(this, idx, lang);
           field.expand()
             .setValue(value);
           break;
         } 
         case 'Attach':
         case 'Image': {
-          const field = new AssetAttribute(this, idx, type, lang, prefix);
+          const field = new AssetAttribute(this, idx, type, lang);
           field.expand()
             .setValue(value);
           break;
         }
-        case 'Composite':
-          const field = new CompositeAttribute(this, idx, type, lang, attributes[${this.attributeIndex}].compositeelements)
+        case 'Composite': {
+          const field = new CompositeAttribute(this, idx, lang);
+          field.expand()
+            .setValue(value);
+          break;
+        }
       }
     });
     return this;

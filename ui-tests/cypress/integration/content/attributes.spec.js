@@ -142,7 +142,7 @@ describe('Content Type Attributes Extensive Tests', () => {
       },
     };
 
-    /* describe('try to set the value for both languages and be sure they are preserved', () => {
+    describe('try to set the value for both languages and be sure they are preserved', () => {
       MULTILANG_ATTRIBUTES.forEach((attribute) => {
         it(`${attribute} attribute`, () => {
           cy.contentTypeAttributeController(CONTENT_TYPE.code)
@@ -214,7 +214,7 @@ describe('Content Type Attributes Extensive Tests', () => {
             .should('deep.equal', multilangValues[attribute]);
         });
       });
-    }); */
+    });
 
     describe('if multilanguage nest it in a complex attribute, try to set the value for both languages and be sure they are preserved and correct', () => {
       const compositeFormat = {
@@ -236,7 +236,7 @@ describe('Content Type Attributes Extensive Tests', () => {
                 code: attribute,
               }]
             }));
-          cy.wrap(attribute).as('attributeToDelete');
+          cy.wrap(compositeFormat.code).as('attributeToDelete');
           currentPage = currentPage.getMenu().getContent().open();
           currentPage = currentPage.openManagement();
           currentPage = currentPage.getContent().openAddContentPageWithContentType(CONTENT_TYPE.name);

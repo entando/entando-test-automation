@@ -1,15 +1,14 @@
 import AttributeFormField from '../AttributeFormField';
 
 export default class HypertextAttribute extends AttributeFormField {
-  constructor(parent, elementScope, attributeIndex, lang = 'en', prefix = 'attributes') {
-    super(parent, elementScope, 'Hypertext', attributeIndex, lang);
-    this.prefix = prefix;
+  constructor(parent, attributeIndex, lang = 'en') {
+    super(parent, 'Hypertext', attributeIndex, lang);
   }
 
   getInput() {
     // TODO: add field selector option when RTE option will be used for testing
     return this.getContents()
-      .find(`textarea[name="${this.prefix}[${this.index}].values.${this.lang}"]`);
+      .find(`textarea[name="${this.prefix}.values.${this.lang}"]`);
   }
 
   setValue(text) {

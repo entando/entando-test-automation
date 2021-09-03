@@ -19,20 +19,41 @@ export default class AttributeFormField extends WebElement {
   }
 
   getCollapseMain() {
-    this.getLangPane()
+    return this.getLangPane()
       .children('div.ContentFormFieldCollapse').eq(this.index);
   }
 
+  getTopContents() {
+    return this.getCollapseMain().children('div.ReactCollapse--collapse')
+      .children('div.ReactCollapse--content')
+      .children('div.ContentFormFieldCollapse__body');
+  }
+
   get() {
-    return this.getCollapseMain();
+    if (this.parentAttribute) {
+      return this.parentAttribute.getSubAttributeChildrenAt(this.index);
+    }
+    return this.getTopContents();
+  }
+
+  getContents() {
+    return this.get();
+  }
+
+  get prefix() {
+    if (!this.parentAttribute) {
+      return `attributes[${this.index}]`;
+    }
+    const { prefix } = this.parentAttribute;
+    return `${prefix}.compositeelements[${this.index}]`;
   }
 
   isCollapsed() {
-    return this.get().invoke('hasClass','closed');
+    return this.getCollapseMain().invoke('hasClass','closed');
   }
 
   getToggleTitle() {
-    return this.get().children('div[role="button"].SectionTitle');
+    return this.getCollapseMain().children('div[role="button"].SectionTitle');
   }
 
   toggleCollapse() {
@@ -68,11 +89,5 @@ export default class AttributeFormField extends WebElement {
       }
     });
     return this;
-  }
-
-  getContents() {
-    return this.get().children('div.ReactCollapse--collapse')
-      .children('div.ReactCollapse--content')
-      .children('div.ContentFormFieldCollapse__body');
   }
 }
