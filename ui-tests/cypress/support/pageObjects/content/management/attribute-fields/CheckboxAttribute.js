@@ -1,6 +1,6 @@
 import AttributeFormField from '../AttributeFormField';
 
-export default class BooleanAttribute extends AttributeFormField {
+export default class CheckboxAttribute extends AttributeFormField {
   getInputArea() {
     return this.getContents()
       .find('div.bootstrap-switch.wrapper');
@@ -11,14 +11,14 @@ export default class BooleanAttribute extends AttributeFormField {
   }
 
   setValue(value) {
-    return this.isInputChecked().then((checked) => {
+    this.isInputChecked().then((checked) => {
       if (value === true && !checked) {
         this.getInputArea().click();
       }
       if (value === false && checked) {
         this.getInputArea().click();
       }
-      return this;
     });
+    return this;
   }
 }

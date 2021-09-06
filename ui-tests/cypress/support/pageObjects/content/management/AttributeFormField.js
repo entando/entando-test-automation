@@ -20,7 +20,7 @@ export default class AttributeFormField extends WebElement {
 
   getCollapseMain() {
     return this.getLangPane()
-      .children('div.ContentFormFieldCollapse').eq(this.index);
+      .children('div.ContentFormFieldCollapse').then(el => Array.isArray(el) ? el[this.index] : el);
   }
 
   getTopContents() {

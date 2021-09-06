@@ -11,6 +11,7 @@ import CompositeAttribute from './attribute-fields/CompositeAttribute';
 import BooleanAttribute from './attribute-fields/BooleanAttribute';
 import EnumeratorAttribute from './attribute-fields/EnumeratorAttribute';
 import ThreeStateAttribute from './attribute-fields/ThreeStateAttribute';
+import CheckboxAttribute from './attribute-fields/CheckboxAttribute';
 
 export default class AddPage extends Content {
 
@@ -173,6 +174,7 @@ export default class AddPage extends Content {
     } else {
       this.getEnLanguageTab().click();
     }
+    cy.wait(500);
     attributeValues.forEach(({ type, value }, idx) => {
       switch(type) {
         case 'Text':
@@ -187,6 +189,12 @@ export default class AddPage extends Content {
         }
         case 'Boolean': {
           const field = new BooleanAttribute(this, idx);
+          field.expand()
+            .setValue(value);
+          break;
+        }
+        case 'CheckBox': {
+          const field = new CheckboxAttribute(this, idx);
           field.expand()
             .setValue(value);
           break;
