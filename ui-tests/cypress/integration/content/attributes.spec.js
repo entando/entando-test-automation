@@ -62,7 +62,18 @@ const attributeValues = {
       },
     },
   },
-  Link: null,
+  Link: {
+    link: {
+      destType: 1,
+      urlDest: 'https://entando.com',
+      target: '_blank',
+      hreflang: 'en'
+    },
+    values: {
+      en: 'Entando en',
+      it: 'Entando it',
+    },
+  },
   Longtext: {
     en: 'Demo Long',
     it: 'Demo Long It',
@@ -88,7 +99,17 @@ describe('Content Type Attributes Extensive Tests', () => {
   };
 
   const fillAttributeWithValue = (attribute, value) => {
-    if (isMultiLang(attribute)) {
+    if (attribute === 'Link') {
+      const { link, values } = value;
+      currentPage.getContent().fillAttributes([{
+        value: { link, value: values.en },
+        type: attribute,
+      }])
+      .fillAttributes([{
+        value: { link, value: values.it },
+        type: attribute,
+      }], 'it');
+    } else if (isMultiLang(attribute)) {
       currentPage.getContent().fillAttributes([{
         value: value.en,
         type: attribute,
@@ -138,6 +159,15 @@ describe('Content Type Attributes Extensive Tests', () => {
             },
           },
         };
+      }
+      case 'Link': {
+        const { value: linkValue, values } = value;
+        // eslint-disable-next-line no-unused-vars
+        const { symbolicDestination, resourceDest, ...linkProps } = linkValue;
+        const link = Object.keys(linkProps)
+          .filter(linkprop => linkValue[linkprop] !== null)
+          .reduce((acc, curr) => ({ ...acc, [curr]: linkProps[curr] }), {});
+        return { link, values };
       }
       default:
         return isMultiLang(attribute) ? value.values : value.value;

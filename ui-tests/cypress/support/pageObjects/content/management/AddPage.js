@@ -14,6 +14,7 @@ import ThreeStateAttribute from './attribute-fields/ThreeStateAttribute';
 import CheckboxAttribute from './attribute-fields/CheckboxAttribute';
 import DateAttribute from './attribute-fields/DateAttribute';
 import TimestampAttribute from './attribute-fields/TimestampAttribute';
+import LinkAttribute from './attribute-fields/LinkAttribute';
 
 export default class AddPage extends Content {
 
@@ -226,6 +227,12 @@ export default class AddPage extends Content {
             .setValue(value);
           break;
         } 
+        case 'Link': {
+          const field = new LinkAttribute(this, idx, lang);
+          field.expand()
+            .setValue(value);
+          break;
+        }
         case 'Timestamp': {
           const field = new TimestampAttribute(this, idx, lang);
           field.expand()
