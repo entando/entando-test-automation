@@ -12,6 +12,8 @@ import BooleanAttribute from './attribute-fields/BooleanAttribute';
 import EnumeratorAttribute from './attribute-fields/EnumeratorAttribute';
 import ThreeStateAttribute from './attribute-fields/ThreeStateAttribute';
 import CheckboxAttribute from './attribute-fields/CheckboxAttribute';
+import DateAttribute from './attribute-fields/DateAttribute';
+import TimestampAttribute from './attribute-fields/TimestampAttribute';
 
 export default class AddPage extends Content {
 
@@ -46,7 +48,7 @@ export default class AddPage extends Content {
     'Image',
     'Longtext',
     'Hypertext',
-    /* 'Attach', */
+    'Attach',
   ];
 
   contentDescriptionInput = `${htmlElements.input}#description`;
@@ -199,6 +201,12 @@ export default class AddPage extends Content {
             .setValue(value);
           break;
         }
+        case 'Date': {
+          const field = new DateAttribute(this, idx);
+          field.expand()
+            .setValue(value);
+          break;
+        }
         case 'ThreeState': {
           const field = new ThreeStateAttribute(this, idx);
           field.expand()
@@ -218,6 +226,12 @@ export default class AddPage extends Content {
             .setValue(value);
           break;
         } 
+        case 'Timestamp': {
+          const field = new TimestampAttribute(this, idx, lang);
+          field.expand()
+            .setValue(value);
+          break;
+        }
         case 'Attach':
         case 'Image': {
           const field = new AssetAttribute(this, idx, type, lang);
@@ -254,6 +268,16 @@ export default class AddPage extends Content {
     } else {
       return this.submitForm();
     }
+  }
+
+  editContent(description, append = false) {
+    if (!append) {
+      this.clearDescription();
+    }
+    this.typeDescription(description);
+    this.submitForm();
+    cy.wait(1000);
+    return new AppPage(ManagementPage);
   }
 
 }

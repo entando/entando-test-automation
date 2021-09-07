@@ -1,13 +1,19 @@
 import HomePage from '../../support/pageObjects/HomePage';
+import {
+  ATTRIBUTES,
+  COMPLEX_ATTRIBUTES,
+  MULTILANG_ATTRIBUTES,
+} from '../../support/pageObjects/content/management/AddPage';
 
 const CONTENT_TYPE = {
   code: 'CYP',
   name: 'Cypress Demo',
 };
 
-const BASIC_ATTRIBUTES = ['Attach', 'Boolean', 'CheckBox', 'Date', 'Email', 'Hypertext', 'Image', 'Link', 'Longtext', 'Monotext', 'Number', 'Text', 'ThreeState', 'Timestamp'];
+const BASIC_ATTRIBUTES = ATTRIBUTES.filter(attribute => !COMPLEX_ATTRIBUTES.includes(attribute));
+const isMultiLang = attribute => MULTILANG_ATTRIBUTES.includes(attribute);
 
-const NO_ATTRIBUTE_FOR_TYPE_LIST = [
+/* const NO_ATTRIBUTE_FOR_TYPE_LIST = [
   'Attach',
   'Boolean',
   'Image',
@@ -19,15 +25,7 @@ const NO_ATTRIBUTE_FOR_TYPE_LIST = [
   'Composite',
 ];
 
-const MULTILANG_ATTRIBUTES = [
-  'Attach',
-  'Image',
-  'Hypertext',
-  'Longtext',
-  'Text',
-];
-
-const NO_ATTRIBUTE_FOR_TYPE_MONOLIST = ['List', 'Monolist'];
+const NO_ATTRIBUTE_FOR_TYPE_MONOLIST = ['List', 'Monolist']; */
 
 const attributeValues = {
   Attach: {
@@ -40,7 +38,7 @@ const attributeValues = {
   },
   Boolean: true,
   CheckBox: true,
-  Date: '2021/06/12',
+  Date: '2021-06-12 00:00:00',
   Email: 'jeff@jepoy.com',
   Hypertext: {
     en: 'Hypertext it is',
@@ -76,12 +74,75 @@ const attributeValues = {
     it: 'Demo It',
   },
   ThreeState: false,
-  Timestamp: '2021/06/12 04:15:00',
+  Timestamp: '2021-04-12 04:15:00',
 };
 
 
 describe('Content Type Attributes Extensive Tests', () => {
   let currentPage;
+
+  const navigateCreateContent = () => {
+    currentPage = currentPage.getMenu().getContent().open();
+    currentPage = currentPage.openManagement();
+    currentPage = currentPage.getContent().openAddContentPageWithContentType(CONTENT_TYPE.name);
+  };
+
+  const fillAttributeWithValue = (attribute, value) => {
+    if (isMultiLang(attribute)) {
+      currentPage.getContent().fillAttributes([{
+        value: value.en,
+        type: attribute,
+      }])
+      .fillAttributes([{
+        value: value.it,
+        type: attribute,
+      }], 'it');
+    } else {
+      currentPage.getContent().fillAttributes([{
+        value,
+        type: attribute,
+      }]);
+    }
+  };
+
+  const formatCompareAttributeValues = (value, attribute) => {
+    switch(attribute) {
+      case 'Attach': {
+        const { values: { en, it } } = value;
+        return {
+          en: {
+            upload: { file: `icon/${en.name}` },
+          },
+          it: {
+            upload: { file: `icon/${it.name}` },
+          },
+        };
+      }
+      case 'Image': {
+        const { values: { en, it } } = value;
+        return {
+          en: {
+            upload: en.name,
+            metadata: {
+              legend: en.metadata.legend,
+              alt: en.metadata.alt,
+              description: en.metadata.description,
+            },
+          },
+          it: {
+            upload: it.name,
+            metadata: {
+              legend: it.metadata.legend,
+              alt: it.metadata.alt,
+              description: it.metadata.description,
+            },
+          },
+        };
+      }
+      default:
+        return isMultiLang(attribute) ? value.values : value.value;
+    }
+  };
 
   before(() => {
     cy.kcLogin('admin').as('tokens');
@@ -157,27 +218,10 @@ describe('Content Type Attributes Extensive Tests', () => {
           cy.contentTypeAttributeController(CONTENT_TYPE.code)
             .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
           cy.wrap(attribute).as('attributeToDelete');
-          currentPage = currentPage.getMenu().getContent().open();
-          currentPage = currentPage.openManagement();
-          currentPage = currentPage.getContent().openAddContentPageWithContentType(CONTENT_TYPE.name);
+          navigateCreateContent();
           currentPage.getContent()
             .fillBeginContent('cypress basic attribute');
-          const isMultilang = MULTILANG_ATTRIBUTES.includes(attribute);
-          if (isMultilang) {
-            currentPage.getContent().fillAttributes([{
-              value: attributeValues[attribute].en,
-              type: attribute,
-            }])
-            .fillAttributes([{
-              value: attributeValues[attribute].it,
-              type: attribute,
-            }], 'it');
-          } else {
-            currentPage.getContent().fillAttributes([{
-              value: attributeValues[attribute],
-              type: attribute,
-            }]);
-          }
+          fillAttributeWithValue(attribute, attributeValues[attribute]);
           currentPage = currentPage.getContent().submitApproveForm();
           cy.wrap(1).as('recentContentsToUnpublish');
           cy.wrap(1).as('recentContentsToDelete');
@@ -189,42 +233,7 @@ describe('Content Type Attributes Extensive Tests', () => {
             .then(({ response }) => {
               const { body: { payload } } = response;
               const { attributes: [attr] } = payload[0];
-              switch(attribute) {
-                case 'Attach': {
-                  const { values: { en, it } } = attr;
-                  return {
-                    en: {
-                      upload: { file: `icon/${en.name}` },
-                    },
-                    it: {
-                      upload: { file: `icon/${it.name}` },
-                    },
-                  };
-                }
-                case 'Image': {
-                  const { values: { en, it } } = attr;
-                  return {
-                    en: {
-                      upload: en.name,
-                      metadata: {
-                        legend: en.metadata.legend,
-                        alt: en.metadata.alt,
-                        description: en.metadata.description,
-                      },
-                    },
-                    it: {
-                      upload: it.name,
-                      metadata: {
-                        legend: it.metadata.legend,
-                        alt: it.metadata.alt,
-                        description: it.metadata.description,
-                      },
-                    },
-                  };
-                }
-                default:
-                  return isMultilang ? attr.values : attr.value;
-              }
+              return formatCompareAttributeValues(attr, attribute);
             }).then((value) => {
               if (typeof value === 'object') {
                 expect(value).to.deep.equal(attributeValues[attribute]);
@@ -247,9 +256,7 @@ describe('Content Type Attributes Extensive Tests', () => {
           cy.contentTypeAttributeController(CONTENT_TYPE.code)
             .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
           cy.wrap(attribute).as('attributeToDelete');
-          currentPage = currentPage.getMenu().getContent().open();
-          currentPage = currentPage.openManagement();
-          currentPage = currentPage.getContent().openAddContentPageWithContentType(CONTENT_TYPE.name);
+          navigateCreateContent();
           currentPage.getContent()
             .fillBeginContent('cypress demo desc')
             .fillAttributes([{
@@ -271,44 +278,7 @@ describe('Content Type Attributes Extensive Tests', () => {
             .then(({ response }) => {
               const { body: { payload } } = response;
               const { attributes: [attr] } = payload[0];
-              switch(attribute) {
-                case 'Text':
-                case 'Longtext':
-                case 'Hypertext':
-                  return attr.values;
-                case 'Attach': {
-                  const { values: { en, it } } = attr;
-                  return {
-                    en: {
-                      upload: { file: `icon/${en.name}` },
-                    },
-                    it: {
-                      upload: { file: `icon/${it.name}` },
-                    },
-                  };
-                }
-                case 'Image': {
-                  const { values: { en, it } } = attr;
-                  return {
-                    en: {
-                      upload: en.name,
-                      metadata: {
-                        legend: en.metadata.legend,
-                        alt: en.metadata.alt,
-                        description: en.metadata.description,
-                      },
-                    },
-                    it: {
-                      upload: it.name,
-                      metadata: {
-                        legend: it.metadata.legend,
-                        alt: it.metadata.alt,
-                        description: it.metadata.description,
-                      },
-                    },
-                  };
-                }
-              }
+              return formatCompareAttributeValues(attr, attribute);
             })
             .should('deep.equal', attributeValues[attribute]);
         });
@@ -366,44 +336,7 @@ describe('Content Type Attributes Extensive Tests', () => {
             .then(({ response }) => {
               const { body: { payload } } = response;
               const { compositeelements: [attr] } = payload[0].attributes[0];
-              switch(attribute) {
-                case 'Text':
-                case 'Longtext':
-                case 'Hypertext':
-                  return attr.values;
-                case 'Attach': {
-                  const { values: { en, it } } = attr;
-                  return {
-                    en: {
-                      upload: { file: `icon/${en.name}` },
-                    },
-                    it: {
-                      upload: { file: `icon/${it.name}` },
-                    },
-                  };
-                }
-                case 'Image': {
-                  const { values: { en, it } } = attr;
-                  return {
-                    en: {
-                      upload: en.name,
-                      metadata: {
-                        legend: en.metadata.legend,
-                        alt: en.metadata.alt,
-                        description: en.metadata.description,
-                      },
-                    },
-                    it: {
-                      upload: it.name,
-                      metadata: {
-                        legend: it.metadata.legend,
-                        alt: it.metadata.alt,
-                        description: it.metadata.description,
-                      },
-                    },
-                  };
-                }
-              }
+              return formatCompareAttributeValues(attr, attribute);
             })
             .should('deep.equal', attributeValues[attribute]);
         });

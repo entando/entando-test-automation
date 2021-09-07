@@ -1,6 +1,10 @@
 import AttributeFormField from '../AttributeFormField';
 
 export default class CheckboxAttribute extends AttributeFormField {
+  constructor(parent, attributeIndex, lang = 'en') {
+    super(parent, 'CheckBox', attributeIndex, lang);
+  }
+  
   getInputArea() {
     return this.getContents()
       .find('div.bootstrap-switch.wrapper');

@@ -2,7 +2,6 @@ import {htmlElements} from '../../WebElement.js';
 
 import Content  from '../../app/Content.js';
 import AddPage  from './AddPage';
-import EditPage from './EditPage';
 import AppPage  from '../../app/AppPage';
 
 export default class ManagementPage extends Content {
@@ -68,7 +67,7 @@ export default class ManagementPage extends Content {
         .get(this.contentsTableDiv)
         .find(this.contentsKebabMenuAction).eq(0)
         .click();
-    return new AppPage(EditPage);
+    return new AppPage(AddPage);
   }
 
   openKebabLastAddedContent() {
