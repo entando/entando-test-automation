@@ -28,6 +28,11 @@ export default class TextAttribute extends AttributeFormField {
     this.getInput().type(text);
   }
 
+  editValue(text) {
+    this.getInput().clear();
+    this.setValue(text);
+  }
+
   getValue() {
     this.getInput().invoke('val');
   }

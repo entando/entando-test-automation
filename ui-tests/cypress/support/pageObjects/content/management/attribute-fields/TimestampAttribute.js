@@ -1,8 +1,8 @@
 import DateAttribute from "./DateAttribute";
 
 export default class TimestampAttribute extends DateAttribute {
-  constructor(parent, attributeIndex, lang = 'en') {
-    super(parent, attributeIndex, lang, true);
+  constructor(parent, attributeIndex) {
+    super(parent, attributeIndex, 'en', true);
   }
 
   getComponentArea() {

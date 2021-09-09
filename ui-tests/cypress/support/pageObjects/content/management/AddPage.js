@@ -15,6 +15,7 @@ import CheckboxAttribute from './attribute-fields/CheckboxAttribute';
 import DateAttribute from './attribute-fields/DateAttribute';
 import TimestampAttribute from './attribute-fields/TimestampAttribute';
 import LinkAttribute from './attribute-fields/LinkAttribute';
+import ListAttribute from './attribute-fields/ListAttribute';
 
 export default class AddPage extends Content {
 
@@ -234,7 +235,7 @@ export default class AddPage extends Content {
           break;
         }
         case 'Timestamp': {
-          const field = new TimestampAttribute(this, idx, lang);
+          const field = new TimestampAttribute(this, idx);
           field.expand()
             .setValue(value);
           break;
@@ -250,6 +251,17 @@ export default class AddPage extends Content {
           const field = new CompositeAttribute(this, idx, lang);
           field.expand()
             .setValue(value);
+          break;
+        }
+        case 'List':
+        case 'Monolist': {
+          const field = new ListAttribute(this, idx, lang, type === 'Monolist');
+          field.expand();
+          if (type === 'Monolist') {
+            field.setValue(value);
+          } else {
+            field.setValue(value[this.lang]);
+          }
           break;
         }
       }

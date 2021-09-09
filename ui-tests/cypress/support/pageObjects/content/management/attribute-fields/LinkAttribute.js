@@ -107,7 +107,5 @@ export default class LinkAttribute extends AttributeFormField {
       this.getDialogBodyOfAttribute().confirm();
     }
     this.getTextInput().type(value);
-  }
-
-  
+  } 
 }
