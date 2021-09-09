@@ -88,41 +88,56 @@ const attributeValues = {
   Timestamp: '2021-04-12 04:15:00',
 };
 
+const CONTENT = {
+  description: 'basic content attribute test',
+  mainGroup: 'free',
+  typeCode: CONTENT_TYPE.code,
+  attributes: [],
+};
+
 
 describe('Content Type Attributes Extensive Tests', () => {
   let currentPage;
 
-  const navigateCreateContent = () => {
+  const navigateContentForm = (mode = 'create') => {
     currentPage = currentPage.getMenu().getContent().open();
     currentPage = currentPage.openManagement();
-    currentPage = currentPage.getContent().openAddContentPageWithContentType(CONTENT_TYPE.name);
+    switch(mode) {
+      case 'create':
+      default:
+        currentPage = currentPage.getContent().openAddContentPageWithContentType(CONTENT_TYPE.name);
+        break;
+      case 'edit':
+        currentPage = currentPage.getContent().openEditContentPage();
+        break;
+    }
   };
 
-  const fillAttributeWithValue = (attribute, value) => {
+  const fillAttributeWithValue = (attribute, value, editMode = false) => {
     if (attribute === 'Link') {
       const { link, values } = value;
       currentPage.getContent().fillAttributes([{
         value: { link, value: values.en },
         type: attribute,
-      }])
+      }], { editMode })
       .fillAttributes([{
         value: { link, value: values.it },
         type: attribute,
-      }], 'it');
+      }], { lang: 'it', editMode });
     } else if (isMultiLang(attribute)) {
       currentPage.getContent().fillAttributes([{
         value: value.en,
         type: attribute,
-      }])
+      }], { editMode })
       .fillAttributes([{
         value: value.it,
         type: attribute,
-      }], 'it');
+      }], { lang: 'it', editMode });
     } else {
       currentPage.getContent().fillAttributes([{
         value,
         type: attribute,
-      }]);
+      }], { editMode });
     }
   };
 
@@ -242,13 +257,416 @@ describe('Content Type Attributes Extensive Tests', () => {
   });
 
   describe('Basic Attributes', () => {
+    describe('Text attribute', () => {
+      const attribute = 'Text';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValues = {
+          en: 'Demo en',
+          it: 'Demo edited It',
+        };
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, values: attributeValues[attribute] }],
+          }));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValues, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', editedValues);
+      });
+    });
+
+    describe('Monotext attribute', () => {
+      const attribute = 'Monotext';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = 'the edited slow fox';
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
+      });
+    });
+
+    describe('Email attribute', () => {
+      const attribute = 'Email';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = 'mojo@jojo.com';
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
+      });
+    });
+
+    describe('Longtext attribute', () => {
+      const attribute = 'Longtext';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValues = {
+          en: 'Demo long edited en',
+          it: 'Demo long edited It',
+        };
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, values: attributeValues[attribute] }],
+          }));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValues, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', editedValues);
+      });
+    });
+
+    describe('Number attribute', () => {
+      const attribute = 'Number';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = '68';
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
+      });
+    });
+
+    describe('Hypertext attribute', () => {
+      const attribute = 'Hypertext';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValues = {
+          en: 'Hypertext edited it is',
+          it: 'Hypertext edited it e',
+        };
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, values: attributeValues[attribute] }],
+          }));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValues, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', editedValues);
+      });
+    });
+
+    describe('Image attribute', () => {
+      const attribute = 'Image';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        
+        const editedValues = {
+          en: {
+            id: 'entandoAtPlan',
+            
+            metadata: {
+              legend: 'legend',
+              alt: '_popup',
+              description: 'desc edited',
+            },
+          },
+          it: {
+            metadata: {
+              legend: 'lengend it',
+              alt: '_popup',
+              description: 'desc edited',
+            },
+          },
+        };
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, values: attributeValues[attribute] }],
+          }));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValues, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', {
+            en: {
+              ...attributeValues[attribute].en,
+              ...editedValues.en,
+            },
+            it: {
+              ...attributeValues[attribute].it,
+              ...editedValues.it,
+            }
+          });
+      });
+    });
+
+
+
     describe('CRUD', () => {
+
       BASIC_ATTRIBUTES.forEach((attribute) => {
         it(`Create ${attribute} attribute`, () => {
           cy.contentTypeAttributeController(CONTENT_TYPE.code)
             .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
           cy.wrap(attribute).as('attributeToDelete');
-          navigateCreateContent();
+          navigateContentForm();
           currentPage.getContent()
             .fillBeginContent('cypress basic attribute');
           fillAttributeWithValue(attribute, attributeValues[attribute]);
@@ -274,9 +692,7 @@ describe('Content Type Attributes Extensive Tests', () => {
         });        
       });
     });
-    /* it('try to set standard validation (required) and check it in content validation', () => {
-      
-    }); */
+    
   });
 
   describe('Multilanguage Attributes', () => {
@@ -286,7 +702,7 @@ describe('Content Type Attributes Extensive Tests', () => {
           cy.contentTypeAttributeController(CONTENT_TYPE.code)
             .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
           cy.wrap(attribute).as('attributeToDelete');
-          navigateCreateContent();
+          navigateContentForm();
           currentPage.getContent()
             .fillBeginContent('cypress demo desc')
             .fillAttributes([{
@@ -296,7 +712,7 @@ describe('Content Type Attributes Extensive Tests', () => {
             .fillAttributes([{
               value: attributeValues[attribute].it,
               type: attribute,
-            }], 'it');
+            }], { lang: 'it' });
           currentPage = currentPage.getContent().submitApproveForm();
           cy.wrap(1).as('recentContentsToUnpublish');
           cy.wrap(1).as('recentContentsToDelete');
@@ -354,7 +770,7 @@ describe('Content Type Attributes Extensive Tests', () => {
                 type: attribute,
                 value: attributeValues[attribute].it,
               }]
-            }], 'it');
+            }], { lang: 'it' });
           currentPage = currentPage.getContent().submitApproveForm();
           cy.wrap(1).as('recentContentsToUnpublish');
           cy.wrap(1).as('recentContentsToDelete');
@@ -373,6 +789,10 @@ describe('Content Type Attributes Extensive Tests', () => {
       });
     });
   });
+
+  /* it('try to set standard validation (required) and check it in content validation', () => {
+      
+  }); */
 
   /*
   describe('Nest to Complex Attributes', () => {

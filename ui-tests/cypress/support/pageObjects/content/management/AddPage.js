@@ -172,7 +172,8 @@ export default class AddPage extends Content {
     this.typeAttrTitleIt(titleIt);
   }
 
-  fillAttributes(attributeValues, lang = 'en', editMode = false) {
+  fillAttributes(attributeValues, options) {
+    const { lang, editMode } = { lang: 'en', editMode: false, ...options };
     if (lang === 'it') {
       this.getItLanguageTab().click();
     } else {
