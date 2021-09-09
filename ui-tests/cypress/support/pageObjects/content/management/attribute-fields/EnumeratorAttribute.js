@@ -13,4 +13,8 @@ export default class EnumeratorAttribute extends AttributeFormField {
   setValue(value) {
     this.getInputArea().select(value);
   }
+
+  editValue(value) {
+    this.setValue(value);
+  }
 }

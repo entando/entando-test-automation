@@ -23,6 +23,10 @@ export class ListAttributeItem extends WebElement {
     return this.parent.getSubAttributeCollapseAt(this.index);
   }
 
+  get field() {
+    return this.content;
+  }
+
   getCollapsePanelHead() {
     return this.get().find('div.panel-heading');
   }
@@ -68,6 +72,7 @@ export class ListAttributeItem extends WebElement {
 export default class ListAttribute extends AttributeFormField {
   listBody = 'div.RenderListField__body';
   attributeItems = [];
+  attributeType = '';
   constructor(parent, attributeIndex, lang = 'en', useMonolist = false) {
     super(parent, useMonolist ? 'Monolist' : 'List', attributeIndex, lang);
   }
@@ -92,18 +97,24 @@ export default class ListAttribute extends AttributeFormField {
     return this.getSubAttributeCollapseAt(idx)
       .find('div.ReactCollapse--content').children('div.panel-body');
   }
+
+  setAttributeType(type) {
+    this.attributeType = type;
+  }
   
-  setValue(values, type) {
+  setValue(values, editMode = false) {
     values.forEach((item, idx) => {
-      this.getAddListitemButton().click();
+      if (!editMode) {
+        this.getAddListitemButton().click();
+      }
       let field;
-      switch(type) {
+      switch(this.attributeType) {
         case 'Text':
         case 'Longtext':
         case 'Monotext':
         case 'Email':
         case 'Number': {
-          field = new TextAttribute(this.parent, idx, type, this.lang);
+          field = new TextAttribute(this.parent, idx, this.attributeType, this.lang);
           break;
         }
         case 'Boolean': {
@@ -124,7 +135,7 @@ export default class ListAttribute extends AttributeFormField {
         }
         case 'Enumerator':
         case 'EnumeratorMap': {
-          field = new EnumeratorAttribute(this.parent, idx, type === 'EnumeratorMap');
+          field = new EnumeratorAttribute(this.parent, idx, this.attributeType === 'EnumeratorMap');
           break;
         }
         case 'Hypertext': {
@@ -141,7 +152,7 @@ export default class ListAttribute extends AttributeFormField {
         } 
         case 'Attach':
         case 'Image': {
-          field = new AssetAttribute(this.parent, idx, type, this.lang);
+          field = new AssetAttribute(this.parent, idx, this.attributeType, this.lang);
           break;
         }
         case 'Composite': {
@@ -151,9 +162,17 @@ export default class ListAttribute extends AttributeFormField {
       }
       field.setParentAttribute(this);
       const attributeItem = new ListAttributeItem(this, field, idx);
-      field.setValue(item);
+      if (editMode) {
+        field.editValue(item);
+      } else {
+        field.setValue(item);
+      }
       this.attributeItems.push(attributeItem);
 
     });
+  }
+
+  editValue(value) {
+    this.setValue(value, true);
   }
 }

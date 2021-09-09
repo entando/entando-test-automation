@@ -107,6 +107,11 @@ export default class AssetAttribute extends AttributeFormField {
       .find(`${this.inputInfo}[name="title"]`);
   }
 
+  getDeleteButton() {
+    return this.getSelectedInfoArea()
+        .find('button.btn-danger');
+  }
+
   fillMetadata(metadata) {
     if (metadata === null) return;
     if (metadata.name) {
@@ -145,6 +150,15 @@ export default class AssetAttribute extends AttributeFormField {
     cy.wait(500);
     if (metadata) {
       this.fillMetadata(metadata);
+    }
+  }
+
+  editValue(value) {
+    if (value.upload && this.lang === 'en') {
+      this.getDeleteButton().click();
+      this.setValue(value);
+    } else {
+      this.fillMetadata(value.metadata);
     }
   }
 

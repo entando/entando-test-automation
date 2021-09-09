@@ -27,4 +27,8 @@ export default class BooleanAttribute extends AttributeFormField {
       this.getNoSwitch().click();
     }
   }
+
+  editValue(value) {
+    this.setValue(value);
+  }
 }

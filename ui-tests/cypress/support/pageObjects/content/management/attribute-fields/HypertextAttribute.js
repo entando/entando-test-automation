@@ -15,6 +15,11 @@ export default class HypertextAttribute extends AttributeFormField {
     this.getInput().type(text);
   }
 
+  editValue(value) {
+    this.getInput().clear();
+    this.setValue(value);
+  }
+
   getValue() {
     this.getInput().invoke('val');
   }

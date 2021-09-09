@@ -78,34 +78,53 @@ export default class LinkAttribute extends AttributeFormField {
     return this.getContents().find(`input[name="${this.prefix}.values.${this.lang}"]`);
   }
 
+  getEditButton() {
+    return this.getContents().find('div.panel-body').children('div.text-right').children('button.btn-default');
+  }
+
+  getDeleteButton() {
+    return this.getContents().find('div.panel-body').children('div.text-right').children('button.btn-danger');
+  }
+
+  setLinkInfo(link) {
+    this.setDialogBodyWithClass(LinkDialog);
+    const { destType, rel, target, hreflang } = link;
+    
+    switch(destType) {
+      case 1:
+      default:
+        this.getDialogBodyOfAttribute().setUrlValue(link.urlDest);
+        break;
+      case 2:
+      case 3:
+        // TO ADD: Page and Content option
+        break;
+    }
+    if (link.rel) {
+      this.getDialogBodyOfAttribute().setAttributeRelValue(rel);
+    }
+    if (link.target) {
+      this.getDialogBodyOfAttribute().setAttributesTargetValue(target);
+    }
+    if (link.hreflang) {
+      this.getDialogBodyOfAttribute().setAttributeshrefLangValue(hreflang);
+    }
+    this.getDialogBodyOfAttribute().confirm();
+  }
+
   setValue({ link, value }) {
     if (this.lang === 'en') {
       this.getAddButton().click();
-      this.setDialogBodyWithClass(LinkDialog);
-
-      const { destType, rel, target, hreflang } = link;
-      
-      switch(destType) {
-        case 1:
-        default:
-          this.getDialogBodyOfAttribute().setUrlValue(link.urlDest);
-          break;
-        case 2:
-        case 3:
-          // TO ADD: Page and Content option
-          break;
-      }
-      if (link.rel) {
-        this.getDialogBodyOfAttribute().setAttributeRelValue(rel);
-      }
-      if (link.target) {
-        this.getDialogBodyOfAttribute().setAttributesTargetValue(target);
-      }
-      if (link.hreflang) {
-        this.getDialogBodyOfAttribute().setAttributeshrefLangValue(hreflang);
-      }
-      this.getDialogBodyOfAttribute().confirm();
+      this.setLinkInfo(link);
     }
     this.getTextInput().type(value);
   } 
+
+  editValue({ link, value }) {
+    if (link && this.lang === 'en') {
+      this.getEditButton().click();
+      this.setLinkInfo(link);
+    }
+    this.getTextInput().type(value);
+  }
 }

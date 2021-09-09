@@ -20,4 +20,8 @@ export default class TimestampAttribute extends DateAttribute {
     this.getTimeElementBy('minutes').select(minutes);
     this.getTimeElementBy('seconds').select(seconds);
   }
+
+  editValue(value) {
+    this.setValue(value);
+  }
 }

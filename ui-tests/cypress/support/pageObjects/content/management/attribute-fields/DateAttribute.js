@@ -79,4 +79,8 @@ export default class DateAttribute extends AttributeFormField {
       this.getDayPickArea().contains(new RegExp(`^${dateValue.getDate()}$`)).click();
     });
   }
+
+  editValue(value) {
+    this.setValue(value);
+  }
 }

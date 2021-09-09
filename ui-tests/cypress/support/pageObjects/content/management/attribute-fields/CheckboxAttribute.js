@@ -25,4 +25,8 @@ export default class CheckboxAttribute extends AttributeFormField {
     });
     return this;
   }
+
+  editValue(value) {
+    this.setValue(value);
+  }
 }

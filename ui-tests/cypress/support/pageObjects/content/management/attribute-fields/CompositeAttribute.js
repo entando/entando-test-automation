@@ -24,7 +24,7 @@ export default class CompositeAttribute extends AttributeFormField {
     return this.getAttributesArea().children().eq(idx);
   }
 
-  setValue(values) {
+  setValue(values, editMode = false) {
     values.forEach(({ type, value }, idx) => {
       let field;
       switch(type) {
@@ -76,7 +76,15 @@ export default class CompositeAttribute extends AttributeFormField {
         }
       }
       field.setParentAttribute(this);
-      field.setValue(value);
+      if (editMode) {
+        field.editValue(value);
+      } else {
+        field.setValue(value);
+      }
     });
+  }
+
+  editValue(value) {
+    this.setValue(value, true);
   }
 }

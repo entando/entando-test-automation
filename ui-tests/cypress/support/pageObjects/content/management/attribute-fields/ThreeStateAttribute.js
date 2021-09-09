@@ -19,4 +19,8 @@ export default class ThreeStateAttribute extends BooleanAttribute {
       this.getBothSwitch();
     }
   }
+
+  editValue(value) {
+    this.setValue(value);
+  }
 }
