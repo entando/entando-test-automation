@@ -27,6 +27,52 @@ class UsersController {
       }
     });
   }
+  
+  addUserObj(user) {
+    cy.request({
+      url: `${controller}`,
+      method: 'POST',
+      body: user,
+      auth: {
+        bearer: this.access_token
+      }
+    });
+  }
+  
+  updateUser(user) {
+    cy.request({
+      url: `${controller}/${user.username}`,
+      method: 'PUT',
+      body: user,
+      auth: {
+        bearer: this.access_token
+      }
+    });
+  }
+
+  addAuthorities(username, group, role) {
+    cy.request({
+      url: `${controller}/${username}/authorities`,
+      method: 'POST',
+      body: [{
+        group,
+        role
+      }],
+      auth: {
+        bearer: this.access_token
+      }
+    });
+  }
+
+  deleteAuthorities(username) {
+    cy.request({
+      url: `${controller}/${username}/authorities`,
+      method: 'DELETE',
+      auth: {
+        bearer: this.access_token
+      }
+    });
+  }
 
   deleteUser(username) {
     cy.request({

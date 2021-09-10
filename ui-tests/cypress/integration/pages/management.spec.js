@@ -510,7 +510,78 @@ describe('Page Management', () => {
                    .should('have.class', 'disabled');
       });
 
+      it('Unpublish a page with published children is forbidden', () => {
+        postPage(subPage, page.code);
+        cy.pagesController().then(controller => {
+          controller.setPageStatus(page.code, 'published');
+          controller.setPageStatus(subPage.code, 'published');
+        });
+
+        currentPage = openManagementPage();
+        currentPage.getContent().toggleRowSubPages(page.code);
+
+        currentPage.getContent().getKebabMenu(page.code).getUnpublish()
+                   .should('have.class', 'disabled');
+      });
     });
+
+    describe('Non admin user', () => {
+      const groupCode = 'group1';
+      const groupName = 'Group1';
+      const newUser = {
+        username: 'user1',
+        password: '12345678',
+        passwordConfirm: '12345678',
+        profileType: 'PFL',
+        status: 'active',
+        accountNotExpired: true,
+        credentialsNotExpired: true,
+      }
+      
+      beforeEach(() => {
+        // create group
+        cy.groupsController().then(controller => {
+          controller.addGroup(groupCode, groupName);
+        })
+
+        // add new user with no permission
+        cy.usersController().then(controller => {
+          controller.addUserObj(newUser);
+          controller.updateUser(newUser);
+          controller.addAuthorities(newUser.username, groupCode, 'approver');
+        });
+      });
+
+      afterEach(() => {
+        cy.kcLogout();
+        cy.kcLogin('admin').as('tokens');
+        
+        cy.usersController().then(controller => {
+          controller.deleteAuthorities(newUser.username);
+          controller.deleteUser(newUser.username);
+        });
+        
+        cy.groupsController().then(controller => {
+          controller.deleteGroup(groupCode);
+        })
+      })
+
+      it('Unpublish a page without permission', () => {
+        postPage(page);
+        cy.pagesController().then(controller => {
+          controller.setPageStatus(page.code, 'published');
+        });
+        
+        // login with unauthorized user
+        cy.kcLogout();
+        cy.kcLogin(newUser.username).as('tokens');
+
+        currentPage = openManagementPage();
+        
+        // user should not be able to see the new page
+        currentPage.getContent().getTableRows().should('not.contain', page.title);
+      });
+    })
 
     describe('Delete a page', () => {
 
