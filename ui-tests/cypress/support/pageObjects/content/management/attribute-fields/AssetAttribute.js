@@ -112,22 +112,36 @@ export default class AssetAttribute extends AttributeFormField {
         .find('button.btn-danger');
   }
 
-  fillMetadata(metadata) {
+  fillMetadata(metadata, editMode = false) {
     if (metadata === null) return;
     if (metadata.name) {
+      if (editMode) {
+        this.getInfoNameInput().clear();  
+      }
       this.getInfoNameInput().type(metadata.name);
     }
     if (metadata.legend) {
-      this.getContents().debug();
+      if (editMode) {
+        this.getInfoLegendInput().clear();  
+      }
       this.getInfoLegendInput().type(metadata.legend);
     }
     if (metadata.alt) {
+      if (editMode) {
+        this.getInfoAltInput().clear();  
+      }
       this.getInfoAltInput().type(metadata.alt);
     }
     if (metadata.description) {
+      if (editMode) {
+        this.getInfoDescInput().clear();  
+      }
       this.getInfoDescInput().type(metadata.description);
     }
     if (metadata.title) {
+      if (editMode) {
+        this.getInfoTitleInput().clear();  
+      }
       this.getInfoTitleInput().type(metadata.title);
     }
   }
@@ -158,7 +172,7 @@ export default class AssetAttribute extends AttributeFormField {
       this.getDeleteButton().click();
       this.setValue(value);
     } else {
-      this.fillMetadata(value.metadata);
+      this.fillMetadata(value.metadata, true);
     }
   }
 

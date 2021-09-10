@@ -30,10 +30,10 @@ const NO_ATTRIBUTE_FOR_TYPE_MONOLIST = ['List', 'Monolist']; */
 const attributeValues = {
   Attach: {
     en: {
-      upload: { file: 'icon/blank.pdf' },
+      upload: { file: 'upload/blank.pdf' },
     },
     it: {
-      upload: { file: 'icon/blank.pdf' },
+      upload: { file: 'upload/blank.pdf' },
     },
   },
   Boolean: true,
@@ -147,10 +147,10 @@ describe('Content Type Attributes Extensive Tests', () => {
         const { values: { en, it } } = value;
         return {
           en: {
-            upload: { file: `icon/${en.name}` },
+            upload: { file: `upload/${en.name}` },
           },
           it: {
-            upload: { file: `icon/${it.name}` },
+            upload: { file: `upload/${it.name}` },
           },
         };
       }
@@ -606,8 +606,7 @@ describe('Content Type Attributes Extensive Tests', () => {
         
         const editedValues = {
           en: {
-            id: 'entandoAtPlan',
-            
+            upload: { file: 'entando_400x400.png' },
             metadata: {
               legend: 'legend',
               alt: '_popup',
@@ -615,6 +614,7 @@ describe('Content Type Attributes Extensive Tests', () => {
             },
           },
           it: {
+            upload: { file: 'entando_400x400.png' },
             metadata: {
               legend: 'lengend it',
               alt: '_popup',
@@ -629,7 +629,25 @@ describe('Content Type Attributes Extensive Tests', () => {
         cy.contentsController()
           .then(controller => controller.postContent({
             ...CONTENT,
-            attributes: [{ code: attribute, values: attributeValues[attribute] }],
+            attributes: [{
+              code: attribute,
+              values: {
+                en: {
+                  id: 'entandoAtPlan',
+                  name: 'entando_at_plan.jpg',
+                  metadata: {
+                    ...attributeValues[attribute].en.metadata,
+                  }
+                },
+                it: {
+                  id: 'entandoAtPlan',
+                  name: 'entando_at_plan.jpg',
+                  metadata: {
+                    ...attributeValues[attribute].it.metadata,
+                  }
+                },
+              },
+            }],
           }));
         
         navigateContentForm('edit');
@@ -657,9 +675,108 @@ describe('Content Type Attributes Extensive Tests', () => {
       });
     });
 
+    describe('Attach attribute', () => {
+      const attribute = 'Attach';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.wrap(1).as('recentAttachToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        
+        const editedValues = {
+          en: {
+            metadata: {
+              name: 'blanko.pdf',
+            },
+          },
+          it: {
+            metadata: {
+              name: 'blankow.pdf',
+            },
+          },
+        };
+        const fileInfo = { fixture: 'upload/blank.pdf', fileName: 'blank.pdf', fileType: 'application/pdf' };
+
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.assetsController()
+          .then(controller => controller.addAsset(fileInfo, { group: 'free', categories: [], type: 'file' }))
+          .then(({ response }) => {
+            return cy.contentsController()
+              .then(controller => controller.postContent({
+                ...CONTENT,
+                attributes: [{
+                  code: attribute,
+                  values: {
+                    en: {
+                      id: response.payload.id,
+                      name: 'blank.pdf',
+                      metadata: {
+                        ...attributeValues[attribute].en.metadata,
+                      }
+                    },
+                    it: {
+                      id: response.payload.id,
+                      name: 'blank.pdf',
+                      metadata: {
+                        ...attributeValues[attribute].it.metadata,
+                      }
+                    },
+                  },
+                }],
+              }));
+            });
+        cy.wrap(1).as('recentAttachToDelete');
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValues, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', {
+            en: {
+              upload: { file: fileInfo.fixture },
+              ...editedValues.en,
+            },
+            it: {
+              upload: { file: fileInfo.fixture },
+              ...editedValues.it,
+            }
+          });
+      });
+    });
 
 
-    describe('CRUD', () => {
+
+    /* describe('CRUD', () => {
 
       BASIC_ATTRIBUTES.forEach((attribute) => {
         it(`Create ${attribute} attribute`, () => {
@@ -691,11 +808,11 @@ describe('Content Type Attributes Extensive Tests', () => {
             });
         });        
       });
-    });
+    }); */
     
   });
 
-  describe('Multilanguage Attributes', () => {
+  /* describe('Multilanguage Attributes', () => {
     describe('try to set the value for both languages and be sure they are preserved', () => {
       MULTILANG_ATTRIBUTES.forEach((attribute) => {
         it(`${attribute} attribute`, () => {
@@ -788,7 +905,7 @@ describe('Content Type Attributes Extensive Tests', () => {
         });
       });
     });
-  });
+  }); */
 
   /* it('try to set standard validation (required) and check it in content validation', () => {
       
