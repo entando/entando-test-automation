@@ -36,7 +36,7 @@ class AssetsController {
   
   getAssetsList(type = 'image') {
     return cy.request({
-      url: `${controller}?type=${type}&page=1&pageSize=10`,
+      url: `${controller}?type=${type}&sort=createdAt&direction=DESC&page=1&pageSize=10`,
       method: 'GET',
       auth: {
         bearer: this.access_token
@@ -60,9 +60,8 @@ class AssetsController {
           method: 'POST',
           body,
           auth: { bearer: this.access_token },
-        })
-      )
-      .then(response => ({ controller: this, response: JSON.parse(response) }));
+    }))
+    .then(response => ({ controller: this, response: JSON.parse(response) }));
   }
 
   deleteAsset(id) {

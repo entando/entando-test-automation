@@ -125,6 +125,6 @@ export default class LinkAttribute extends AttributeFormField {
       this.getEditButton().click();
       this.setLinkInfo(link);
     }
-    this.getTextInput().type(value);
+    this.getTextInput().clear().type(value);
   }
 }

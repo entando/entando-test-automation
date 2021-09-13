@@ -33,7 +33,7 @@ class ContentsController {
       body: [{
         ...content
       }]
-    });
+    }).then(response => ({ controller: this, response }));
   }
 
   deleteContent(id) {

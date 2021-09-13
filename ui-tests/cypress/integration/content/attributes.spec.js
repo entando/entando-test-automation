@@ -40,6 +40,8 @@ const attributeValues = {
   CheckBox: true,
   Date: '2021-06-12 00:00:00',
   Email: 'jeff@jepoy.com',
+  Enumerator: 'b',
+  EnumeratorMap: 'y',
   Hypertext: {
     en: 'Hypertext it is',
     it: 'Hypertext e',
@@ -100,6 +102,8 @@ describe('Content Type Attributes Extensive Tests', () => {
   let currentPage;
 
   const navigateContentForm = (mode = 'create') => {
+    cy.visit('/');
+    currentPage = new HomePage();
     currentPage = currentPage.getMenu().getContent().open();
     currentPage = currentPage.openManagement();
     switch(mode) {
@@ -201,9 +205,8 @@ describe('Content Type Attributes Extensive Tests', () => {
     cy.wrap(null).as('recentContentsToUnpublish');
     cy.wrap(null).as('recentContentsToDelete');
     cy.wrap(null).as('recentAttachToDelete');
+    cy.wrap(null).as('recentImageToDelete');
     cy.kcLogin('admin').as('tokens');
-    cy.visit('/');
-    currentPage = new HomePage();
   });
 
   afterEach(() => {
@@ -237,6 +240,17 @@ describe('Content Type Attributes Extensive Tests', () => {
             response.body.payload
               .slice(0, attachCounts).map(attach => attach.id)
               .forEach(assetId => controller.deleteAsset(assetId));
+          });
+      }
+    });
+    cy.get('@recentImageToDelete').then((imageCounts) => {
+      if (imageCounts !== null && imageCounts > 0) {
+        cy.assetsController()
+          .then(controller => controller.getAssetsList('image'))
+          .then(({ controller, response }) => {
+            response.body.payload
+              .slice(0, imageCounts).map(image => image.id)
+              .forEach(imageId => controller.deleteAsset(imageId));
           });
       }
     });
@@ -294,7 +308,10 @@ describe('Content Type Attributes Extensive Tests', () => {
           .then(controller => controller.postContent({
             ...CONTENT,
             attributes: [{ code: attribute, values: attributeValues[attribute] }],
-          }));
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
         
         navigateContentForm('edit');
         fillAttributeWithValue(attribute, editedValues, true);
@@ -346,7 +363,10 @@ describe('Content Type Attributes Extensive Tests', () => {
           .then(controller => controller.postContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: attributeValues[attribute] }],
-          }));
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
         
         navigateContentForm('edit');
         fillAttributeWithValue(attribute, editedValue, true);
@@ -398,7 +418,10 @@ describe('Content Type Attributes Extensive Tests', () => {
           .then(controller => controller.postContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: attributeValues[attribute] }],
-          }));
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
         
         navigateContentForm('edit');
         fillAttributeWithValue(attribute, editedValue, true);
@@ -453,7 +476,10 @@ describe('Content Type Attributes Extensive Tests', () => {
           .then(controller => controller.postContent({
             ...CONTENT,
             attributes: [{ code: attribute, values: attributeValues[attribute] }],
-          }));
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
         
         navigateContentForm('edit');
         fillAttributeWithValue(attribute, editedValues, true);
@@ -505,7 +531,10 @@ describe('Content Type Attributes Extensive Tests', () => {
           .then(controller => controller.postContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: attributeValues[attribute] }],
-          }));
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
         
         navigateContentForm('edit');
         fillAttributeWithValue(attribute, editedValue, true);
@@ -560,7 +589,10 @@ describe('Content Type Attributes Extensive Tests', () => {
           .then(controller => controller.postContent({
             ...CONTENT,
             attributes: [{ code: attribute, values: attributeValues[attribute] }],
-          }));
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
         
         navigateContentForm('edit');
         fillAttributeWithValue(attribute, editedValues, true);
@@ -606,7 +638,7 @@ describe('Content Type Attributes Extensive Tests', () => {
         
         const editedValues = {
           en: {
-            upload: { file: 'entando_400x400.png' },
+            upload: { file: 'upload/entando_400x400.png' },
             metadata: {
               legend: 'legend',
               alt: '_popup',
@@ -614,7 +646,7 @@ describe('Content Type Attributes Extensive Tests', () => {
             },
           },
           it: {
-            upload: { file: 'entando_400x400.png' },
+            upload: { file: 'upload/entando_400x400.png' },
             metadata: {
               legend: 'lengend it',
               alt: '_popup',
@@ -648,19 +680,33 @@ describe('Content Type Attributes Extensive Tests', () => {
                 },
               },
             }],
-          }));
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
         
         navigateContentForm('edit');
         fillAttributeWithValue(attribute, editedValues, true);
         currentPage = currentPage.getContent().submitApproveForm();
         cy.wrap(1).as('recentContentsToUnpublish');
         cy.wrap(1).as('recentContentsToDelete');
+        cy.wrap(1).as('recentImageToDelete');
         cy.contentsController()
           .then(controller => controller.getContentList())
           .then(({ response }) => {
             const { body: { payload } } = response;
             const { attributes: [attr] } = payload[0];
-            return formatCompareAttributeValues(attr, attribute);
+            const formatCompare = formatCompareAttributeValues(attr, attribute);
+            return {
+              en: {
+                ...formatCompare.en,
+                upload: { file: `upload/${attr.values.en.name}` },
+              },
+              it: {
+                ...formatCompare.it,
+                upload: { file: `upload/${attr.values.it.name}` },
+              },
+            };
           })
           .should('deep.equal', {
             en: {
@@ -714,12 +760,11 @@ describe('Content Type Attributes Extensive Tests', () => {
             },
           },
         };
-        const fileInfo = { fixture: 'upload/blank.pdf', fileName: 'blank.pdf', fileType: 'application/pdf' };
+        const fileInfo = { fixture: 'upload/lorem.doc', fileName: 'blank.pdf', fileType: 'application/doc' };
 
         cy.contentTypeAttributeController(CONTENT_TYPE.code)
           .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
         cy.wrap(attribute).as('attributeToDelete');
-
         cy.assetsController()
           .then(controller => controller.addAsset(fileInfo, { group: 'free', categories: [], type: 'file' }))
           .then(({ response }) => {
@@ -745,12 +790,14 @@ describe('Content Type Attributes Extensive Tests', () => {
                     },
                   },
                 }],
-              }));
+              }))
+              .then(({ controller, response: { payload } }) => (
+                controller.updateStatus(payload.id, 'published')
+              ));
             });
-        cy.wrap(1).as('recentAttachToDelete');
         cy.wrap(1).as('recentContentsToUnpublish');
         cy.wrap(1).as('recentContentsToDelete');
-
+        cy.wrap(1).as('recentAttachToDelete');
         navigateContentForm('edit');
         fillAttributeWithValue(attribute, editedValues, true);
         currentPage = currentPage.getContent().submitApproveForm();
@@ -759,18 +806,494 @@ describe('Content Type Attributes Extensive Tests', () => {
           .then(({ response }) => {
             const { body: { payload } } = response;
             const { attributes: [attr] } = payload[0];
+            return {
+              en: {
+                metadata: {
+                  name: attr.values.en.name,
+                },
+              },
+              it: {
+                metadata: {
+                  name: attr.values.it.name,
+                },
+              },
+            };
+          })
+          .should('deep.equal', editedValues);
+      });
+    });
+
+    describe('Boolean attribute', () => {
+      const attribute = 'Boolean';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = false;
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
+      });
+    });
+
+    describe('CheckBox attribute', () => {
+      const attribute = 'CheckBox';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = false;
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
+      });
+    });
+
+    describe('ThreeState attribute', () => {
+      const attribute = 'ThreeState';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = null;
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
+      });
+    });
+
+    describe('Link attribute', () => {
+      const attribute = 'Link';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('deep.equal', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValues = {
+          values: {
+            en: 'Entando ENG',
+            it: 'Entando ITA',
+          },
+        };
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{
+              code: attribute,
+              value: attributeValues[attribute].link,
+              values: attributeValues[attribute].values,
+            }],
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
+        
+        cy.wait(500);
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValues, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
             return formatCompareAttributeValues(attr, attribute);
           })
           .should('deep.equal', {
-            en: {
-              upload: { file: fileInfo.fixture },
-              ...editedValues.en,
-            },
-            it: {
-              upload: { file: fileInfo.fixture },
-              ...editedValues.it,
-            }
+            ...editedValues,
+            link: attributeValues[attribute].link,
           });
+      });
+    });
+
+    describe('Date attribute', () => {
+      const attribute = 'Date';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = '2021-07-20 00:00:00';
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
+      });
+    });
+
+    describe('Enumerator attribute', () => {
+      const attribute = 'Enumerator';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({
+            type: attribute,
+            code: attribute,
+            enumeratorStaticItems: 'a,b,c',
+            enumeratorStaticItemsSeparator: ',',
+          }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = 'c';
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          enumeratorStaticItems: 'a,b,c',
+          enumeratorStaticItemsSeparator: ',',
+        }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
+      });
+    });
+
+    describe('EnumeratorMap attribute', () => {
+      const attribute = 'EnumeratorMap';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({
+            type: attribute,
+            code: attribute,
+            enumeratorStaticItems: 'x=1,y=2,z=3',
+            enumeratorStaticItemsSeparator: ',',
+          }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = 'z';
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          enumeratorStaticItems: 'x=1,y=2,z=3',
+          enumeratorStaticItemsSeparator: ',',
+        }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
+      });
+    });
+
+    describe('Timestamp attribute', () => {
+      const attribute = 'Timestamp';
+      
+      it ('Create', () => {
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+        navigateContentForm();
+        currentPage.getContent()
+          .fillBeginContent('cypress basic attribute');
+        fillAttributeWithValue(attribute, attributeValues[attribute]);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', attributeValues[attribute]);
+      });
+
+      it('Edit', () => {
+        const editedValue = '2021-07-20 03:30:00';
+        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+          .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+        cy.wrap(attribute).as('attributeToDelete');
+
+        cy.contentsController()
+          .then(controller => controller.postContent({
+            ...CONTENT,
+            attributes: [{ code: attribute, value: attributeValues[attribute] }],
+          }))
+          .then(({ controller, response }) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
+        
+        navigateContentForm('edit');
+        fillAttributeWithValue(attribute, editedValue, true);
+        currentPage = currentPage.getContent().submitApproveForm();
+        cy.wrap(1).as('recentContentsToUnpublish');
+        cy.wrap(1).as('recentContentsToDelete');
+        cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then(({ response }) => {
+            const { body: { payload } } = response;
+            const { attributes: [attr] } = payload[0];
+            return formatCompareAttributeValues(attr, attribute);
+          })
+          .should('eq', editedValue);
       });
     });
 

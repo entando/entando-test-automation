@@ -16,7 +16,7 @@ export default class ThreeStateAttribute extends BooleanAttribute {
     } else if (value === false) {
       this.getNoSwitch().click();
     } else {
-      this.getBothSwitch();
+      this.getBothSwitch().click();
     }
   }
 
