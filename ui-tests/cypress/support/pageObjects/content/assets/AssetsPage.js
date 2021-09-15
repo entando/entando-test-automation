@@ -87,8 +87,32 @@ class AddAssetDialog extends DialogContent {
 
 class EditAssetDialog extends DialogContent {
 
+
+
   getDescriptionInput() {
     return this.get()
                .find(`${htmlElements.input}[name=description]`);
+  }
+
+  crop(xOffset, yOffset) {
+    this.get().find('.cropper-point.point-se').then(($cropperPoint) => {
+      const { x, y } = $cropperPoint[0].getBoundingClientRect();
+      cy.wrap($cropperPoint)
+        .trigger('mousedown', { which: 1 })
+        .trigger('mousemove', { clientX: x + xOffset, clientY: y + yOffset })
+        .trigger('mouseup', { force: true });
+      this.apply();
+    });
+  }
+
+  rotate(direction) {
+    this.get()
+        .find(`[data-action=rotate${direction}]`)
+        .click();
+    this.apply();
+  }
+
+  apply() {
+    this.get().find('[data-action=save]').click();
   }
 }

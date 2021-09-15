@@ -27,61 +27,133 @@ describe('Assets', () => {
 
   afterEach(() => {
     if (assetToBeDeleted) {
-      cy.assetsController().then(controller => controller.deleteAsset(assetId));
+      cy.assetsController()
+        .then(controller => controller.deleteAsset(assetId))
+        .then(() => assetToBeDeleted = false);
     }
     
     cy.kcLogout();
   });
 
-  it('Add asset', () => {
-    cy.intercept('POST', assetsAPIUrl, (req) => {
-      req.continue((res) => {
-        assetId =  res.body.payload.id;
+  describe('Delete asset', () => {
+    beforeEach(() => {
+      addAsset(testFileInfo, testMetadata).then(({ response }) => {
+        assetId = response.payload.id;
       });
-    });
+    })
 
-    currentPage = openAssetsPage();
-    currentPage.getContent().attachFiles('upload/image1.JPG');
-    currentPage.getDialog().getBody().getGroupSelect().select('administrators');
-    currentPage.getDialog().getBody().submit();
-
-    cy.wait(2000);
-
-    currentPage.getContent().getTableRows().then(rows =>
-      cy.wrap(rows).eq(0).children(htmlElements.td).eq(2).should('contain.text', 'image1.JPG')
-    );
-
-    assetToBeDeleted = true;
-  });
-
-  it('Delete asset', () => {
-
-    addAsset(testFileInfo, testMetadata).then(({ response }) => {
-      assetId = response.payload.id;
-
+    it('Delete asset', () => {
       currentPage = openAssetsPage();
       cy.wait(2000);
+  
       currentPage.getContent().getKebabMenu(assetId).open().clickDelete();
       cy.wait(1000);
       currentPage.getDialog().confirm();
+  
+      cy.validateToast(currentPage);
+    });
+
+    it('Delete asset referenced by a content - not allowed', () => {
+      const content = {
+        description: 'test',
+        mainGroup: 'administrators',
+        typeCode: 'BNR',
+        attributes: [
+          { code: 'title', values: { en: 'test', it: 'test' } },
+          { code: 'image', values: { en: { id: assetId, correlationCode: assetId } }}
+        ],
+      };
+      let contentId;
+
+      cy.contentsController()
+        .then(controller => controller.postContent(content))
+        .then((response) => {
+          const { body: { payload } } = response;
+          contentId = payload[0].id;
+        });
+      cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
+
+      currentPage = openAssetsPage();
+      cy.wait(2000);
+  
+      currentPage.getContent().getKebabMenu(assetId).open().clickDelete();
+      cy.wait(1000);
+      currentPage.getDialog().confirm();
+  
+      cy.validateToast(currentPage, assetId, false);
+
+      cy.contentsController().then(controller => {
+        controller.updateStatus(contentId, 'draft');
+        controller.deleteContent(contentId);
+      });
+
+      assetToBeDeleted = true;
+    });
+  });
+
+  describe('Edit asset', () => {
+    beforeEach(() => {
+      addAsset(testFileInfo, testMetadata).then(({ response }) => {
+        assetId = response.payload.id;
+
+        assetToBeDeleted = true;
+      });
+    });
+
+    it('Edit description', () => {
+      currentPage = openAssetsPage();
+      cy.wait(2000);
+      currentPage.getContent().getKebabMenu(assetId).open().openEdit();
+  
+      currentPage.getDialog().getBody().getDescriptionInput().type('test');
+      currentPage.getDialog().confirm();
+
+      cy.validateToast(currentPage, 'test');
+    });
+
+    it('Crop image', () => {
+      currentPage = openAssetsPage();
+      cy.wait(2000);
+      currentPage.getContent().getKebabMenu(assetId).open().openEdit();
+
+      currentPage.getDialog().getBody().crop(-100, -100);
+      currentPage.getDialog().confirm();
+
+      cy.validateToast(currentPage);
+    });
+  
+    it('Rotate image', () => {
+      currentPage = openAssetsPage();
+      cy.wait(2000);
+      currentPage.getContent().getKebabMenu(assetId).open().openEdit();
+
+      currentPage.getDialog().getBody().rotate('left');
+      currentPage.getDialog().confirm();
+
       cy.validateToast(currentPage);
     });
   });
 
-  it('Edit asset - description', () => {
-
-    addAsset(testFileInfo, testMetadata).then(({ response }) => {
-      assetId = response.payload.id;
-
+  describe('Add asset', () => {
+    it('Add asset', () => {
+      cy.intercept('POST', assetsAPIUrl, (req) => {
+        req.continue((res) => {
+          assetId =  res.body.payload.id;
+        });
+      });
+  
       currentPage = openAssetsPage();
+      currentPage.getContent().attachFiles('upload/image1.JPG');
+      currentPage.getDialog().getBody().getGroupSelect().select('administrators');
+      currentPage.getDialog().getBody().submit();
+  
       cy.wait(2000);
-      currentPage.getContent().getKebabMenu(assetId).open().openEdit();
-      currentPage.getDialog().getBody().getDescriptionInput().type('test');
-      currentPage.getDialog().confirm();
-      cy.validateToast(currentPage, 'test');
+  
+      currentPage.getContent().getTableRows().then(rows =>
+        cy.wrap(rows).eq(0).children(htmlElements.td).eq(2).should('contain.text', 'image1.JPG')
+      );
+  
+      assetToBeDeleted = true;
     });
-
-    assetToBeDeleted = true;
   });
-
 });
