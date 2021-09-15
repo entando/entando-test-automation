@@ -13,20 +13,6 @@ class AssetsController {
     this.access_token = access_token;
   }
 
-  // addAsset(assetFormData) {
-  //   return cy.request({
-  //     url: `${controller}`,
-  //     method: 'POST',
-  //     body: assetFormData,
-  //     headers: {
-  //       'content-type': 'multipart/form-data'
-  //     },
-  //     auth: {
-  //       bearer: this.access_token
-  //     }
-  //   });
-  // }
-
   addAsset(fileInfo, metadata) {
     const { fileType, fileName, fixture } = fileInfo;
     return cy.fixture(fixture, 'base64')
