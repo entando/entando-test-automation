@@ -356,6 +356,39 @@ describe('Content Type Attributes', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
     });
+
+    it ('Try to set custom validation (regex) and check it in content validation (in every language)', () => {
+      const editedValues = {
+        en: 'xxYy',
+        it: 'defg',
+      };
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          validationRules: { regex: '^[aAbBcC]*$' },
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute')
+        .fillAttributes([{
+          value: editedValues.en,
+          type: attribute,
+        }]);
+      let fieldarea = currentPage.getContent().getAttributeByTypeIndex(attribute, 0);
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+      fieldarea.getHelpBlock().should('be.visible');
+
+      currentPage.getContent()
+        .fillAttributes([{
+          value: editedValues.it,
+          type: attribute,
+        }], { lang: 'it' });
+      fieldarea = currentPage.getContent().getAttributeByTypeIndex(attribute, 0, 'it');
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+      fieldarea.getHelpBlock().should('be.visible');
+    });
   });
 
   describe('Monotext attribute', () => {
@@ -401,6 +434,27 @@ describe('Content Type Attributes', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
     });
+
+    it ('Try to set custom validation (regex) and check it in content validation (in every language)', () => {
+      const editedValue = 'xxYy';
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          validationRules: { regex: '^[aAbBcC]*$' },
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute')
+        .fillAttributes([{
+          value: editedValue,
+          type: attribute,
+        }]);
+      let fieldarea = currentPage.getContent().getAttributeByTypeIndex(attribute, 0);
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+      fieldarea.getHelpBlock().should('be.visible');
+    });
   });
 
   describe('Email attribute', () => {
@@ -445,6 +499,23 @@ describe('Content Type Attributes', () => {
     it ('Nest in a complex (Composite) attribute', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
+    });
+
+    it ('Try to set custom validation (regex) and check it in content validation (in every language)', () => {
+      const editedValue = 'xxYy';
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute')
+        .fillAttributes([{
+          value: editedValue,
+          type: attribute,
+        }]);
+      let fieldarea = currentPage.getContent().getAttributeByTypeIndex(attribute, 0);
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+      fieldarea.getHelpBlock().should('be.visible');
     });
   });
 
@@ -497,6 +568,59 @@ describe('Content Type Attributes', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
     });
+
+    it ('Try to set custom validation (regex) and check it in content validation (in every language)', () => {
+      const wrongValues = {
+        en: 'xxYy',
+        it: 'defg',
+      };
+      const correctValues = {
+        en: 'http://booya.com',
+        it: 'https://osaji.kyoka.jp',
+      };
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          validationRules: { regex: '^(https?|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.;]*[-A-Za-z0-9+&@#/%=~_|]' },
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute')
+        .fillAttributes([{
+          value: wrongValues.en,
+          type: attribute,
+        }]);
+      let fieldarea = currentPage.getContent().getAttributeByTypeIndex(attribute, 0);
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+      fieldarea.getHelpBlock().should('exist');
+
+      currentPage.getContent()
+        .fillAttributes([{
+          value: correctValues.en,
+          type: attribute,
+        }], { editMode: true });
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.false');
+      fieldarea.getHelpBlock().should('not.exist');
+
+      currentPage.getContent()
+        .fillAttributes([{
+          value: wrongValues.it,
+          type: attribute,
+        }], { lang: 'it' });
+      fieldarea = currentPage.getContent().getAttributeByTypeIndex(attribute, 0, 'it');
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+      fieldarea.getHelpBlock().should('exist');
+
+      currentPage.getContent()
+        .fillAttributes([{
+          value: correctValues.it,
+          type: attribute,
+        }], { lang: 'it', editMode: true });
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.false');
+      fieldarea.getHelpBlock().should('not.exist');
+    });
   });
 
   describe('Number attribute', () => {
@@ -541,6 +665,49 @@ describe('Content Type Attributes', () => {
     it ('Nest in a complex (Composite) attribute', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
+    });
+
+    it ('Try to set custom validation (e.g. range) and check it in content validation (in default language)', () => {
+      const range = { 
+        start: '3',
+        end: '8',
+      };
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          validationRules: { 
+            rangeStartNumber: range.start,
+            rangeEndNumber: range.end,
+          },
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute')
+        .fillAttributes([{
+          value: String(Number(range.end) + 1),
+          type: attribute,
+        }]);
+      let fieldarea = currentPage.getContent().getAttributeByTypeIndex(attribute, 0);
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+      fieldarea.getHelpBlock().should('exist');
+
+      currentPage.getContent()
+        .fillAttributes([{
+          value: String(Number(range.start) - 1),
+          type: attribute,
+        }], { editMode: true });
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+      fieldarea.getHelpBlock().should('exist');
+
+      currentPage.getContent()
+        .fillAttributes([{
+          value: String(Number(range.start) + 1),
+          type: attribute,
+        }], { editMode: true });
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.false');
+      fieldarea.getHelpBlock().should('not.exist');
     });
   });
 

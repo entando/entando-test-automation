@@ -172,6 +172,44 @@ export default class AddPage extends Content {
     this.typeAttrTitleIt(titleIt);
   }
 
+  getAttributeByTypeIndex(type, idx, lang = 'en') {
+    switch(type) {
+      case 'Text':
+      case 'Longtext':
+      case 'Monotext':
+      case 'Email':
+      case 'Number':
+        return new TextAttribute(this, idx, type, lang);
+      case 'Boolean':
+        return new BooleanAttribute(this, idx);
+      case 'CheckBox':
+        return new CheckboxAttribute(this, idx);
+      case 'Date':
+        return new DateAttribute(this, idx);
+      case 'ThreeState':
+        return new ThreeStateAttribute(this, idx);
+      case 'Enumerator':
+      case 'EnumeratorMap':
+        return new EnumeratorAttribute(this, idx, type === 'EnumeratorMap');
+      case 'Hypertext':
+        return new HypertextAttribute(this, idx, lang);
+      case 'Link':
+        return new LinkAttribute(this, idx, lang);
+      case 'Timestamp':
+        return new TimestampAttribute(this, idx);
+      case 'Attach':
+      case 'Image':
+        return new AssetAttribute(this, idx, type, lang);
+      case 'Composite':
+        return new CompositeAttribute(this, idx, lang);
+      case 'List':
+      case 'Monolist':
+        return new ListAttribute(this, idx, lang, type === 'Monolist');
+      default:
+        return null;
+    }
+  }
+
   fillAttributes(attributeValues, options) {
     const { lang, editMode } = { lang: 'en', editMode: false, ...options };
     if (lang === 'it') {
@@ -180,65 +218,13 @@ export default class AddPage extends Content {
       this.getEnLanguageTab().click();
     }
     cy.wait(500);
-    let field;
     attributeValues.forEach(({ type, value }, idx) => {
-      switch(type) {
-        case 'Text':
-        case 'Longtext':
-        case 'Monotext':
-        case 'Email':
-        case 'Number': {
-          field = new TextAttribute(this, idx, type, lang);
-          break;
-        }
-        case 'Boolean': {
-          field = new BooleanAttribute(this, idx);
-          break;
-        }
-        case 'CheckBox': {
-          field = new CheckboxAttribute(this, idx);
-          break;
-        }
-        case 'Date': {
-          field = new DateAttribute(this, idx);
-          break;
-        }
-        case 'ThreeState': {
-          field = new ThreeStateAttribute(this, idx);
-          break;
-        }
-        case 'Enumerator':
-        case 'EnumeratorMap': {
-          field = new EnumeratorAttribute(this, idx, type === 'EnumeratorMap');
-          break;
-        }
-        case 'Hypertext': {
-          field = new HypertextAttribute(this, idx, lang);
-          break;
-        } 
-        case 'Link': {
-          field = new LinkAttribute(this, idx, lang);
-          break;
-        }
-        case 'Timestamp': {
-          field = new TimestampAttribute(this, idx);
-          break;
-        }
-        case 'Attach':
-        case 'Image': {
-          field = new AssetAttribute(this, idx, type, lang);
-          break;
-        }
-        case 'Composite': {
-          field = new CompositeAttribute(this, idx, lang);
-          break;
-        }
-        case 'List':
-        case 'Monolist': {
-          field = new ListAttribute(this, idx, lang, type === 'Monolist');
-          field.setAttributeType(value.type);
-          break;
-        }
+      const field = this.getAttributeByTypeIndex(type, idx, lang);
+      if (field === null) {
+        return;
+      }
+      if (['List', 'Monolist'].includes(type)) {
+        field.setAttributeType(value.type);
       }
       field.expand();
       const attributeValue = type === 'List' ? value[this.lang] : value;

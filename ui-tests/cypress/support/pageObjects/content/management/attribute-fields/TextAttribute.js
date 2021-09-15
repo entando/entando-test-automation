@@ -19,13 +19,25 @@ export default class TextAttribute extends AttributeFormField {
     }
   }
 
+  getContents() {
+    if (this.parentAttribute) {
+      return this.get();
+    }
+    return this.get().find('.form-group');
+  }
+
+  getHelpBlock() {
+    return this.getContents()
+      .find('.help-block');
+  }
+
   getInput() {
     return this.getContents()
       .find(`${this.element}[name="${this.getInputName()}"]`);
   }
 
   setValue(text) {
-    this.getInput().type(text);
+    this.getInput().type(text).blur();
   }
 
   editValue(text) {
