@@ -1228,6 +1228,43 @@ describe('Content Type Attributes', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
     });
+
+    it ('Try to set custom validation for Date (e.g. range)', () => {
+      const validationRules = { 
+        rangeStartDate: '2021-09-01 00:00:00',
+        rangeEndDate: '2021-09-30 00:00:00',
+      };
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          validationRules,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute')
+        .fillAttributes([{
+          value: '2021-06-12 00:00:00',
+          type: attribute,
+        }]);
+      let fieldarea = currentPage.getContent().getAttributeByTypeIndex(attribute, 0);
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+
+      currentPage.getContent()
+        .fillAttributes([{
+          value: '2021-12-25 00:00:00',
+          type: attribute,
+        }], { editMode: true });
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.true');
+
+      currentPage.getContent()
+        .fillAttributes([{
+          value: '2021-09-10 00:00:00',
+          type: attribute,
+        }], { editMode: true });
+      fieldarea.getContents().invoke('hasClass', 'has-error').should('be.false');
+    });
   });
 
   describe('Enumerator attribute', () => {

@@ -14,6 +14,13 @@ export default class DateAttribute extends AttributeFormField {
     super(parent, addTimestamp ? 'Timestamp' : 'Date', attributeIndex, lang);
   }
 
+  getContents() {
+    if (this.parentAttribute) {
+      return this.get();
+    }
+    return this.get().find('.form-group');
+  }
+
   getComponentArea() {
     return this.getContents()
       .find(this.pickerInput);
@@ -48,7 +55,6 @@ export default class DateAttribute extends AttributeFormField {
   }
 
   calculateMonthDiff(dateValue, monthyear) {
-    console.log(`monthyear ${monthyear}`);
     const dateHead = new Date(monthyear);
     const diff = 12 * (dateHead.getFullYear() - dateValue.getFullYear())
       + (dateHead.getMonth() - dateValue.getMonth());
@@ -77,6 +83,7 @@ export default class DateAttribute extends AttributeFormField {
         }
       }
       this.getDayPickArea().contains(new RegExp(`^${dateValue.getDate()}$`)).click();
+      this.getInputArea().find('input').blur();
     });
   }
 
