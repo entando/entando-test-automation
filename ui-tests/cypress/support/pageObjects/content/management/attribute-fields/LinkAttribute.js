@@ -3,7 +3,11 @@ import { htmlElements } from '../../../WebElement';
 import AttributeFormField from '../AttributeFormField';
 
 export class LinkDialog extends DialogContent {
-  typeSelected = 1;
+  typeSelected  = 1;
+  pageTreeTable = `${htmlElements.table}.PageTreeSelector`;
+  expandAll     = `${htmlElements.div}.PageTreeSelector__button--expand`;
+  contentSearch = `${htmlElements.div}.ContentSearch`;
+  contentTable  = `${htmlElements.table}.Contents__table-element`;
 
   getTabArea() {
     return this.get().find('ul[role="tablist"]');
@@ -45,6 +49,41 @@ export class LinkDialog extends DialogContent {
 
   setUrlValue(value) {
     this.getTabURL().find('input[name="url"]').type(value);
+  }
+
+  getPageTreeTable() {
+    return this.getTabPage().find(this.pageTreeTable);
+  }
+
+  getExpandAll() {
+    return this.getPageTreeTable()
+               .children(htmlElements.thead)
+               .find(this.expandAll);
+  }
+
+  getPageTreeRowByPageName(name) {
+    return this.getPageTreeTable().contains(name).closest(htmlElements.tr);
+  }
+
+  setPageValue(pageName) {
+    this.getExpandAll();
+    this.getPageTreeRowByPageName(pageName).click();
+  }
+
+  getContentSearchArea() {
+    return this.getTabContent().find(this.contentSearch);
+  }
+
+  getContentTable() {
+    return this.getTabContent().find(this.contentTable);
+  }
+
+  getContentRowRadio(contentId) {
+    return this.getContentTable().find(`input#content${contentId}`);
+  }
+
+  setContentValue(contentId) {
+    this.getContentRowRadio(contentId).click();
   }
 
   setAttributeRelValue(value) {
@@ -89,15 +128,18 @@ export default class LinkAttribute extends AttributeFormField {
   setLinkInfo(link) {
     this.setDialogBodyWithClass(LinkDialog);
     const { destType, rel, target, hreflang } = link;
-    
+    this.getDialogBodyOfAttribute().clickTabByDestType(destType);
+
     switch(destType) {
       case 1:
       default:
         this.getDialogBodyOfAttribute().setUrlValue(link.urlDest);
         break;
       case 2:
+        this.getDialogBodyOfAttribute().setPageValue(link.pageDest);
+        break;
       case 3:
-        // TO ADD: Page and Content option
+        this.getDialogBodyOfAttribute().setContentValue(link.contentDest);
         break;
     }
     if (link.rel) {
