@@ -357,6 +357,20 @@ describe('Content Type Attributes', () => {
       cy.get('@actualValue').should('deep.equal', testValue);
     });
 
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
+    });
+
     it ('Try to set custom validation (regex) and check it in content validation (in every language)', () => {
       const editedValues = {
         en: 'xxYy',
@@ -435,6 +449,21 @@ describe('Content Type Attributes', () => {
       cy.get('@actualValue').should('eq', testValue);
     });
 
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().submitApproveForm();
+      cy.validateToast(currentPage, attribute, false);
+    });
+
     it ('Try to set custom validation (regex) and check it in content validation (in every language)', () => {
       const editedValue = 'xxYy';
       cy.contentTypeAttributeController(CONTENT_TYPE.code)
@@ -501,7 +530,22 @@ describe('Content Type Attributes', () => {
       cy.get('@actualValue').should('eq', testValue);
     });
 
-    it ('Try to set custom validation (regex) and check it in content validation (in every language)', () => {
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().submitApproveForm();
+      cy.validateToast(currentPage, attribute, false);
+    });
+
+    it ('Check email address validation', () => {
       const editedValue = 'xxYy';
       cy.contentTypeAttributeController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
@@ -567,6 +611,20 @@ describe('Content Type Attributes', () => {
     it ('Nest in a complex (Composite) attribute', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
+    });
+
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
     });
 
     it ('Try to set custom validation (regex) and check it in content validation (in every language)', () => {
@@ -667,6 +725,21 @@ describe('Content Type Attributes', () => {
       cy.get('@actualValue').should('eq', testValue);
     });
 
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().submitApproveForm();
+      cy.validateToast(currentPage, attribute, false);
+    });
+
     it ('Try to set custom validation (e.g. range) and check it in content validation (in default language)', () => {
       const range = { 
         start: '3',
@@ -759,6 +832,20 @@ describe('Content Type Attributes', () => {
     it ('Nest in a complex (Composite) attribute', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
+    });
+
+    it ('try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
     });
   });
 
@@ -878,6 +965,21 @@ describe('Content Type Attributes', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
     });
+
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().submitApproveForm();
+      cy.validateToast(currentPage, attribute, false);
+    });
   });
 
   describe('Attach attribute', () => {
@@ -977,6 +1079,21 @@ describe('Content Type Attributes', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.wrap(1).as('recentAttachToDelete');
       cy.get('@actualValue').should('deep.equal', testValue);
+    });
+
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().submitApproveForm();
+      cy.validateToast(currentPage, attribute, false);
     });
   });
 
@@ -1183,6 +1300,21 @@ describe('Content Type Attributes', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
     });
+
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().submitApproveForm();
+      cy.validateToast(currentPage, attribute, false);
+    });
   });
 
   describe('Date attribute', () => {
@@ -1329,6 +1461,23 @@ describe('Content Type Attributes', () => {
       ).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
     });
+
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+          enumeratorStaticItems: 'a,b,c',
+          enumeratorStaticItemsSeparator: ',',
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().submitApproveForm();
+      cy.validateToast(currentPage, attribute, false);
+    });
   });
 
   describe('EnumeratorMap attribute', () => {
@@ -1392,6 +1541,23 @@ describe('Content Type Attributes', () => {
         },
       ).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
+    });
+
+    it ('Try to set standard validation (required) and check it in content validation', () => {
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+          mandatory: true,
+          enumeratorStaticItems: 'x=1,y=2,z=3',
+          enumeratorStaticItemsSeparator: ',',
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute');
+      currentPage.getContent().submitApproveForm();
+      cy.validateToast(currentPage, attribute, false);
     });
   });
 
