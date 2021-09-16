@@ -32,7 +32,9 @@ describe('Content Templates', () => {
   });
 
   afterEach(() => {
-    if (templateToBeDeleted) deleteContentTemplate(template.id);
+    if (templateToBeDeleted){
+      deleteContentTemplate(template.id).then(() => templateToBeDeleted = false);
+    }
 
     cy.kcLogout();
   });
