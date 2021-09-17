@@ -44,26 +44,6 @@ class AssetsController {
     }).then(response => ({ controller: this, response }));
   }
 
-  addAsset(fileInfo, metadata) {
-    const { fileType, fileName, fixture } = fileInfo;
-    return cy.fixture(fixture, 'base64')
-      .then(f => Cypress.Blob.base64StringToBlob(f, fileType))
-      .then((blob) => {
-        const file = new File([blob], fileName, { type: fileType });
-        const formData = new FormData();
-        formData.append('file', file);
-        formData.append('metadata', JSON.stringify(metadata));
-        return formData;
-      })
-      .then(body => cy.uploadRequest({
-          url: `${controller}`,
-          method: 'POST',
-          body,
-          auth: { bearer: this.access_token },
-    }))
-    .then(response => ({ controller: this, response: JSON.parse(response) }));
-  }
-
   deleteAsset(id) {
     cy.request({
       url: `${controller}/${id}`,
