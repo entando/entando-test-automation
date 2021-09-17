@@ -26,7 +26,7 @@ export default class HypertextAttribute extends AttributeFormField {
 
     const { destType, rel, target, hreflang } = link;
     this.getDialogBodyOfAttribute().clickTabByDestType(destType);
-    
+
     switch(destType) {
       case 1:
       default:

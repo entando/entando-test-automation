@@ -7,6 +7,7 @@ export class LinkDialog extends DialogContent {
   pageTreeTable = `${htmlElements.table}.PageTreeSelector`;
   expandAll     = `${htmlElements.div}.PageTreeSelector__button--expand`;
   contentSearch = `${htmlElements.div}.ContentSearch`;
+  contentsBody = `${htmlElements.div}.Contents__body`;
   contentTable  = `${htmlElements.table}.Contents__table-element`;
 
   getTabArea() {
@@ -18,15 +19,15 @@ export class LinkDialog extends DialogContent {
   }
 
   getTabURL() {
-    return this.getTabBlock().find('div#LinkConfigModal-Tabs-pane-url');
+    return this.getTabBlock().find('#LinkConfigModal-Tabs-pane-url');
   }
 
   getTabPage() {
-    return this.getTabBlock().find('div#LinkConfigModal-Tabs-pane-page');
+    return this.getTabBlock().find('#LinkConfigModal-Tabs-pane-page');
   }
 
   getTabContent() {
-    return this.getTabBlock().find('div#LinkConfigModal-Tabs-pane-url');
+    return this.getTabBlock().find('#LinkConfigModal-Tabs-pane-content');
   }
 
   getTabBlockByTypeSelected() {
@@ -75,7 +76,7 @@ export class LinkDialog extends DialogContent {
   }
 
   getContentTable() {
-    return this.getTabContent().find(this.contentTable);
+    return this.getTabContent().find(this.contentsBody).find(this.contentTable);
   }
 
   getContentRowRadio(contentId) {

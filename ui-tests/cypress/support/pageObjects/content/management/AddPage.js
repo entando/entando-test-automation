@@ -98,6 +98,11 @@ export default class AddPage extends Content {
     return this.getContents().find(this.contentAttrsItTab);
   }
 
+  getCopyToLangBtn() {
+    return this.getContents().get(this.contentAttrEnPane)
+      .find('.text-right > button.btn-default');
+  }
+
   getSaveDropDownButton() {
     return new DropDownButton(this);
   }
@@ -140,6 +145,10 @@ export default class AddPage extends Content {
 
   clearOwnerGroup() {
     this.getOwnerGroup().clear();
+  }
+
+  copyToAllLanguages() {
+    this.getCopyToLangBtn().click();
   }
 
   submitForm() {

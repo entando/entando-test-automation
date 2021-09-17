@@ -1,31 +1,13 @@
 import HomePage from '../../support/pageObjects/HomePage';
-import {
-  ATTRIBUTES,
-  COMPLEX_ATTRIBUTES,
-  MULTILANG_ATTRIBUTES,
-} from '../../support/pageObjects/content/management/AddPage';
+import { MULTILANG_ATTRIBUTES } from '../../support/pageObjects/content/management/AddPage';
 
 const CONTENT_TYPE = {
   code: 'CYP',
   name: 'Cypress Demo',
 };
 
-const BASIC_ATTRIBUTES = ATTRIBUTES.filter(attribute => !COMPLEX_ATTRIBUTES.includes(attribute));
+const testGroup = 'testgroup';
 const isMultiLang = attribute => MULTILANG_ATTRIBUTES.includes(attribute);
-
-/* const NO_ATTRIBUTE_FOR_TYPE_LIST = [
-  'Attach',
-  'Boolean',
-  'Image',
-  'Text',
-  'Longtext',
-  'Hypertext',
-  'Monolist',
-  'List',
-  'Composite',
-];
-
-const NO_ATTRIBUTE_FOR_TYPE_MONOLIST = ['List', 'Monolist']; */
 
 const CONTENT = {
   description: 'basic content attribute test',
@@ -230,6 +212,10 @@ describe('Content Type Attributes', () => {
 
   before(() => {
     cy.kcLogin('admin').as('tokens');
+    
+    cy.groupsController()
+      .then(controller => controller.addGroup(testGroup, testGroup));
+    
     cy.contentTypesController()
       .then(controller => controller.addContentType(CONTENT_TYPE.code, CONTENT_TYPE.name));
     cy.kcLogout();
@@ -241,6 +227,7 @@ describe('Content Type Attributes', () => {
     cy.wrap(null).as('recentContentsToDelete');
     cy.wrap(null).as('recentAttachToDelete');
     cy.wrap(null).as('recentImageToDelete');
+    cy.wrap(null).as('contentEditor');
     cy.kcLogin('admin').as('tokens');
     cy.visit('/');
     currentPage = new HomePage();
@@ -297,11 +284,19 @@ describe('Content Type Attributes', () => {
           .then(controller => controller.deleteAttribute(attributeToDelete));
       }
     });
+    cy.get('@contentEditor').then((resetContentEditor) => {
+      if (resetContentEditor !== null && resetContentEditor === true) {
+        cy.contentSettingsController()
+          .then(controller => controller.putContentEditor());
+      }
+    });
     cy.kcLogout();
   });
 
   after(() => {
     cy.kcLogin('admin').as('tokens');
+    cy.groupsController()
+          .then(controller => controller.deleteGroup(testGroup));
     cy.contentTypesController()
       .then(controller => controller.deleteContentType(CONTENT_TYPE.code));
     cy.kcLogout();
@@ -847,6 +842,59 @@ describe('Content Type Attributes', () => {
         .fillBeginContent('cypress basic attribute');
       currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
     });
+
+    it('try to add several internal link', () => {
+      cy.contentSettingsController().then(controller => controller.putContentEditor('fckeditor'));
+      cy.wrap(true).as('contentEditor');
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({
+          type: attribute,
+          code: attribute,
+        }));
+      cy.wrap(attribute).as('attributeToDelete');
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute')
+        .fillAttributes([{
+          type: attribute,
+          value: 'hello{selectall}',
+        }]);
+      const editor = currentPage.getContent().getAttributeByTypeIndex(attribute, 0);
+      editor.setLinkInfo({
+        destType: 3,
+        contentDest: 'NWS4',
+        target: '_blank',
+      });
+      editor.getInput()
+        .type('{movetoend} there, world!');
+      cy.realPress('ArrowLeft');
+      cy.realPress(['Shift', 'ArrowLeft']);
+      cy.realPress(['Shift', 'ArrowLeft']);
+      cy.realPress(['Shift', 'ArrowLeft']);
+      cy.realPress(['Shift', 'ArrowLeft']);
+      cy.realPress(['Shift', 'ArrowLeft']);
+      editor.setLinkInfo({
+          destType: 3,
+          contentDest: 'TCL6',
+          target: '_blank',
+        });
+      currentPage.getContent().copyToAllLanguages();
+      cy.wait(500);
+      currentPage = currentPage.getContent().submitApproveForm();
+      cy.wrap(1).as('recentContentsToUnpublish');
+      cy.wrap(1).as('recentContentsToDelete');
+      cy.contentsController()
+        .then(controller => controller.getContentList())
+        .then(({ response }) => {
+          const { body: { payload } } = response;
+          const { attributes: [attr] } = payload[0];
+          return formatCompareAttributeValues(attr, attribute);
+        })
+        .should('deep.equal', {
+          en: '<p><a href="#!C;NWS4!#" target="_blank">hello</a> there, <a href="#!C;TCL6!#" target="_blank">world</a>!</p>',
+          it: '<p><a href="#!C;NWS4!#" target="_blank">hello</a> there, <a href="#!C;TCL6!#" target="_blank">world</a>!</p>',
+        });
+    });
   });
 
   describe('Image attribute', () => {
@@ -979,6 +1027,52 @@ describe('Content Type Attributes', () => {
         .fillBeginContent('cypress basic attribute');
       currentPage.getContent().submitApproveForm();
       cy.validateToast(currentPage, attribute, false);
+    });
+
+    it ('Check that image group is compatible with current content', () => {
+      const addValues = {
+        en: {
+          upload: 'entando_400x400.png',
+          metadata: {
+            legend: 'Ent',
+            alt: 'Entando',
+            description: 'Entando Logo',
+          },
+        },
+        it: {
+          upload: 'entando_400x400.png',
+          metadata: {
+            legend: 'Ent',
+            alt: 'Entando',
+            description: 'Entando Logo',
+          },
+        },
+      };
+
+      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+      cy.wrap(attribute).as('attributeToDelete');
+
+      const fileInfo = { fixture: 'upload/entando_400x400.png', fileName: 'entando_400x400.png', fileType: 'image/png' };
+      cy.assetsController()
+        .then(controller => controller.addAsset(fileInfo, { group: testGroup, categories: [], type: 'image' }));
+      cy.wrap(1).as('recentImageToDelete');
+      
+      navigateContentForm();
+      currentPage.getContent()
+        .fillBeginContent('cypress basic attribute', testGroup);
+        fillAttributeWithValue(attribute, addValues);
+      currentPage = currentPage.getContent().submitApproveForm();
+      cy.wrap(1).as('recentContentsToUnpublish');
+      cy.wrap(1).as('recentContentsToDelete');
+      cy.contentsController()
+        .then(controller => controller.getContentList())
+        .then(({ response }) => {
+          const { body: { payload } } = response;
+          const { attributes: [attr] } = payload[0];
+          return formatCompareAttributeValues(attr, attribute);
+        })
+        .should('deep.equal', addValues);
     });
   });
 
@@ -1605,9 +1699,4 @@ describe('Content Type Attributes', () => {
       cy.get('@actualValue').should('eq', testValue);
     });
   });
-
-  /* it('try to set standard validation (required) and check it in content validation', () => {
-      
-  }); */
-
 });
