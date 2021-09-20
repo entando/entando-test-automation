@@ -263,22 +263,26 @@ describe('Content Type Attributes', () => {
     cy.get('@recentAttachToDelete').then((attachCounts) => {
       if (attachCounts !== null && attachCounts > 0) {
         cy.assetsController()
-          .then(controller => controller.getAssetsList('file'))
-          .then(({ controller, response }) => {
-            response.body.payload
-              .slice(0, attachCounts).map(attach => attach.id)
-              .forEach(assetId => controller.deleteAsset(assetId));
+          .then((controller) => {
+            controller.getAssetsList('file')
+              .then((response) => {
+                response.body.payload
+                  .slice(0, attachCounts).map(attach => attach.id)
+                  .forEach(assetId => controller.deleteAsset(assetId));
+              });
           });
       }
     });
     cy.get('@recentImageToDelete').then((imageCounts) => {
       if (imageCounts !== null && imageCounts > 0) {
         cy.assetsController()
-          .then(controller => controller.getAssetsList('image'))
-          .then(({ controller, response }) => {
-            response.body.payload
-              .slice(0, imageCounts).map(image => image.id)
-              .forEach(imageId => controller.deleteAsset(imageId));
+          .then((controller) => {
+            controller.getAssetsList('image')
+              .then((response) => {
+                response.body.payload
+                  .slice(0, imageCounts).map(image => image.id)
+                  .forEach(imageId => controller.deleteAsset(imageId));
+              });
           });
       }
     });
