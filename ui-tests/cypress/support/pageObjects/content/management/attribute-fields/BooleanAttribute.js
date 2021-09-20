@@ -1,8 +1,8 @@
 import AttributeFormField from '../AttributeFormField';
 
 export default class BooleanAttribute extends AttributeFormField {
-  constructor(parent, attributeIndex) {
-    super(parent, 'Boolean', attributeIndex);
+  constructor(parent, attributeIndex, threeStateMode = false) {
+    super(parent, threeStateMode ? 'ThreeState' : 'Boolean', attributeIndex);
   }
 
   getInputArea() {

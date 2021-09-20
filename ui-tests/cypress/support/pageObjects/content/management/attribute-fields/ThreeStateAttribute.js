@@ -2,7 +2,7 @@ import BooleanAttribute from './BooleanAttribute';
 
 export default class ThreeStateAttribute extends BooleanAttribute {
   constructor(parent, attributeIndex) {
-    super(parent, 'ThreeState', attributeIndex);
+    super(parent, attributeIndex, true);
   }
 
   getBothSwitch() {
