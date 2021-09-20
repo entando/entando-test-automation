@@ -45,7 +45,7 @@ export default class CompositeAttribute extends AttributeFormField {
           break;
         }
         case 'Date': {
-          field = new DateAttribute(this, idx);
+          field = new DateAttribute(this.parent, idx);
           break;
         }
         case 'ThreeState': {
