@@ -27,27 +27,3 @@ Cypress.Commands.add('uploadRequest', ({ method, url, body, headers, auth }) => 
     xhr.send(body);
   });
 });
-
-Cypress.Commands.add('uploadRequest', ({ method, url, body, headers, auth }) => {
-  return new Promise((resolve) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open(method, url);
-    if (headers) {
-      Object.keys(headers).forEach((header) => {
-        xhr.setRequestHeader(header, headers[header]);
-      });
-    }
-    if (auth) {
-      xhr.setRequestHeader('Authorization', `Bearer ${auth.bearer}`);
-    }
-    xhr.onload = () => {
-      resolve(xhr.response);
-    };
-    xhr.onerror = () => {
-      resolve(xhr.response);
-    };
-    xhr.send(body);
-  });
-});
-
-export {};
