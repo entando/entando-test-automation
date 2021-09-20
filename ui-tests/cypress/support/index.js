@@ -15,6 +15,7 @@
 
 import '@4tw/cypress-drag-drop';
 import 'cypress-keycloak-commands';
+import "cypress-real-events/support"
 
 import './command/command';
 import './command/validation-commands';
@@ -30,5 +31,7 @@ import './restAPI/profileTypesAPI';
 import './restAPI/rolesAPI.js';
 import './restAPI/usersAPI.js';
 import './restAPI/widgetsAPI.js';
+import './restAPI/assetsAPI.js';
+import './restAPI/contentSettingsAPI.js';
 
 import './exception-handler';

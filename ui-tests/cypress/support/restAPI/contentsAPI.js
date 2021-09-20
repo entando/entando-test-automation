@@ -15,12 +15,19 @@ class ContentsController {
 
   getContentList() {
     return cy.request({
-      url: `${controller}?sort=lastModified&direction=DESC&mode=full&page=1&pageSize=5&lastPage=3&totalItems=11`,
+      url: controller,
       method: 'GET',
       auth: {
         bearer: this.access_token
+      },
+      qs: {
+        sort: 'lastModified',
+        direction: 'DESC',
+        mode: 'full',
+        page: 1,
+        pageSize: 5,
       }
-    }).then(response => ({ controller: this, response }));
+    });
   }
 
   postContent(content) {

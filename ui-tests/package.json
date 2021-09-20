@@ -16,6 +16,7 @@
     "cypress": "^7.6.0",
     "cypress-file-upload": "^5.0.8",
     "cypress-keycloak-commands": "^1.2.0",
+    "cypress-real-events": "^1.5.1",
     "eslint": "^7.30.0",
     "eslint-plugin-cypress": "^2.11.3",
     "husky": "^1.3.1",
@@ -50,6 +51,8 @@
         "restParams": true
       }
     },
-    "ignorePatterns": ["cypress/support/index.d.ts"]
+    "ignorePatterns": [
+      "cypress/support/index.d.ts"
+    ]
   }
 }

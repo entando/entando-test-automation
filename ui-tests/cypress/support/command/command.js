@@ -27,5 +27,3 @@ Cypress.Commands.add('uploadRequest', ({ method, url, body, headers, auth }) => 
     xhr.send(body);
   });
 });
-
-export {};

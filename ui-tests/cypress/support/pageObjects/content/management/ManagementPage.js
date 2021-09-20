@@ -2,7 +2,6 @@ import {htmlElements} from '../../WebElement.js';
 
 import Content  from '../../app/Content.js';
 import AddPage  from './AddPage';
-import EditPage from './EditPage';
 import AppPage  from '../../app/AppPage';
 
 export default class ManagementPage extends Content {
@@ -20,11 +19,20 @@ export default class ManagementPage extends Content {
 
   modalDeleteButton = `${htmlElements.button}#DeleteContentModal__button-delete`;
 
-  getAddButton() {
+  getAddMenu() {
     return this.getContents()
                .get(this.contentLink).eq(0).click()
-               .find(this.actionOptions)
+               .find(this.actionOptions);    
+  }
+
+  getAddButton() {
+    return this.getAddMenu()
                .find(this.actionOption).eq(0);
+  }
+
+  getAddButtonByLabel(label) {
+    return this.getAddMenu()
+              .find(this.actionOption).contains(label);
   }
 
   getTable() {
@@ -43,6 +51,12 @@ export default class ManagementPage extends Content {
     return new AppPage(AddPage);
   }
 
+  openAddContentPageWithContentType(contentTypeName) {
+    this.getAddButtonByLabel(contentTypeName).click();
+    cy.wait(1000);
+    return new AppPage(AddPage);
+  }
+
   openEditContentPage() {
     this.getContents()
         .get(this.contentsTableDiv)
@@ -53,7 +67,7 @@ export default class ManagementPage extends Content {
         .get(this.contentsTableDiv)
         .find(this.contentsKebabMenuAction).eq(0)
         .click();
-    return new AppPage(EditPage);
+    return new AppPage(AddPage);
   }
 
   openKebabLastAddedContent() {
