@@ -44,8 +44,18 @@ export default class AttributeFormField extends WebElement {
     if (!this.parentAttribute) {
       return `attributes[${this.index}]`;
     }
-    const { prefix } = this.parentAttribute;
-    return `${prefix}.compositeelements[${this.index}]`;
+    const { prefix, attributeType } = this.parentAttribute;
+    switch (attributeType) {
+      default:
+        return `attributes[${this.index}]`;
+      case 'Composite':
+        return `${prefix}.compositeelements[${this.index}]`;
+      case 'List':
+        return `${prefix}.listelements.${this.lang}[${this.index}]`;
+      case 'Monolist':
+        return `${prefix}.elements[${this.index}]`;
+    }
+    
   }
 
   isCollapsed() {

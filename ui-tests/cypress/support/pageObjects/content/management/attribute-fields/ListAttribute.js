@@ -72,9 +72,15 @@ export class ListAttributeItem extends WebElement {
 export default class ListAttribute extends AttributeFormField {
   listBody = 'div.RenderListField__body';
   attributeItems = [];
-  attributeType = '';
+  nestedType = '';
   constructor(parent, attributeIndex, lang = 'en', useMonolist = false) {
     super(parent, useMonolist ? 'Monolist' : 'List', attributeIndex, lang);
+  }
+
+  getCollapseMain() {
+    return this.getLangPane()
+      .children('div').eq(this.index + (this.lang === 'en' ? 1 : 0))
+      .children('div.ContentFormFieldCollapse');
   }
 
   getAttributesArea() {
@@ -86,7 +92,7 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   getAddListitemButton() {
-    return this.getTopControlArea().find('button[title="add"]');
+    return this.getTopControlArea().find('button[title="Add"]');
   }
 
   getSubAttributeCollapseAt(idx) {
@@ -99,22 +105,40 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   setAttributeType(type) {
-    this.attributeType = type;
+    this.nestedType = type;
   }
   
   setValue(values, editMode = false) {
+    if (editMode) {
+      cy.wrap(0).as('toAddItem');
+      cy.wrap(0).as('toMinusItem');
+      this.getAttributesArea().children()
+        .then((attributeElements) => {
+          if (attributeElements.length === values.length) {
+            return;
+          }
+          const diff = values.length - attributeElements.length;
+          if (diff > 0) {
+            cy.wrap(diff).as('toAddItem');
+          } else {
+            cy.wrap(diff * -1).as('toMinusItem');
+          }
+        });
+    }
     values.forEach((item, idx) => {
-      if (!editMode) {
-        this.getAddListitemButton().click();
-      }
+      cy.get('@toAddItem').then((toAdd) => {
+        if (!editMode || toAdd <= idx) {
+          this.getAddListitemButton().click();
+        }
+      });
       let field;
-      switch(this.attributeType) {
+      switch(this.nestedType) {
         case 'Text':
         case 'Longtext':
         case 'Monotext':
         case 'Email':
         case 'Number': {
-          field = new TextAttribute(this.parent, idx, this.attributeType, this.lang);
+          field = new TextAttribute(this.parent, idx, this.nestedType, this.lang);
           break;
         }
         case 'Boolean': {
@@ -135,7 +159,7 @@ export default class ListAttribute extends AttributeFormField {
         }
         case 'Enumerator':
         case 'EnumeratorMap': {
-          field = new EnumeratorAttribute(this.parent, idx, this.attributeType === 'EnumeratorMap');
+          field = new EnumeratorAttribute(this.parent, idx, this.nestedType === 'EnumeratorMap');
           break;
         }
         case 'Hypertext': {
@@ -152,7 +176,7 @@ export default class ListAttribute extends AttributeFormField {
         } 
         case 'Attach':
         case 'Image': {
-          field = new AssetAttribute(this.parent, idx, this.attributeType, this.lang);
+          field = new AssetAttribute(this.parent, idx, this.nestedType, this.lang);
           break;
         }
         case 'Composite': {
@@ -168,7 +192,6 @@ export default class ListAttribute extends AttributeFormField {
         field.setValue(item);
       }
       this.attributeItems.push(attributeItem);
-
     });
   }
 
