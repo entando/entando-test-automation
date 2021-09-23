@@ -35,6 +35,19 @@ describe('Nested a in List Attribute', () => {
     }
   };
 
+  const fillAttributeWithValue = (attribute, value, editMode = false) => {
+    currentPage.getContent().fillAttributes([{
+      type: 'List',
+      nestedType: attribute,
+      value: value.en,
+    }], { editMode })
+    .fillAttributes([{
+      type: 'List',
+      nestedType: attribute,
+      value: value.it,
+    }], { lang: 'it', editMode });
+  };
+
   const formatCompareAttributeValues = (actualValue, attribute) => {
     const { listelements: { en, it } } = actualValue;
     switch(attribute) {
@@ -55,7 +68,58 @@ describe('Nested a in List Attribute', () => {
           nestedAttribute: { type: attribute, code: attribute },
           ...extraProps,
         }));
-      cy.wrap(attribute).as('attributeToDelete');
+      cy.wrap(listFormat.code).as('attributeToDelete');
+  };
+
+  const basicCreateContentAttributes = (attribute, testValues, addAttributeProps) => {
+    addAttributeToContentType(attribute, addAttributeProps);
+    navigateToContentForm();
+    currentPage.getContent()
+      .fillBeginContent(CONTENT_WITH_LIST.description);
+    fillAttributeWithValue(attribute, testValues);
+    currentPage = currentPage.getContent().submitApproveForm();
+    cy.wrap(1).as('recentContentsToUnpublish');
+    cy.wrap(1).as('recentContentsToDelete');
+    return cy.contentsController()
+      .then(controller => controller.getContentList())
+      .then((response) => {
+        const { body: { payload } } = response;
+        const { attributes: [attr] } = payload[0];
+        return formatCompareAttributeValues(attr, attribute);
+      });
+  };
+
+  const basicEditContentAttributes = (attribute, testValues, editedValues, addAttributeProps) => {
+    addAttributeToContentType(attribute, addAttributeProps);
+      cy.contentsController()
+        .then((controller) => {
+          controller.postContent({
+            ...CONTENT_WITH_LIST,
+            attributes: [{
+              code: 'List',
+              listelements: {
+                en: testValues.en.map(value => ({ code: 'List', value })),
+                it: testValues.it.map(value => ({ code: 'List', value })),
+              }
+            }],
+          }).then((response) => (
+            controller.updateStatus(response.body.payload.id, 'published')
+          ));
+        });
+      cy.wrap(1).as('recentContentsToDelete');
+      
+      navigateToContentForm('edit');
+      fillAttributeWithValue(attribute, editedValues, true);
+      currentPage = currentPage.getContent().submitApproveForm();
+      cy.wrap(1).as('recentContentsToUnpublish');
+
+      return cy.contentsController()
+        .then(controller => controller.getContentList())
+        .then((response) => {
+          const { body: { payload } } = response;
+          const { attributes: [attr] } = payload[0];
+          return formatCompareAttributeValues(attr, attribute);
+        });
   };
 
   before(() => {
@@ -128,69 +192,202 @@ describe('Nested a in List Attribute', () => {
     };
 
     it('Create', () => {
-      addAttributeToContentType(attribute);
-      navigateToContentForm();
-
-      currentPage.getContent()
-        .fillBeginContent(CONTENT_WITH_LIST.description)
-        .fillAttributes([{
-          type: 'List',
-          nestedType: attribute,
-          value: testValues.en,
-        }])
-        .fillAttributes([{
-          type: 'List',
-          nestedType: attribute,
-          value: testValues.it,
-        }], { lang: 'it' });
-      currentPage = currentPage.getContent().submitApproveForm();
-      cy.wrap(1).as('recentContentsToUnpublish');
-      cy.wrap(1).as('recentContentsToDelete');
-      return cy.contentsController()
-        .then(controller => controller.getContentList())
-        .then((response) => {
-          const { body: { payload } } = response;
-          const { attributes: [attr] } = payload[0];
-          return formatCompareAttributeValues(attr, attribute);
-        })
+      basicCreateContentAttributes(attribute, testValues)
         .should('deep.equal', testValues);
     });
 
-    /* it('Edit', () => {
-      addAttributeToContentType(attribute);
-
-    }); */
+    it('Edit', () => {
+      const editedValues = {
+        en: ['The', 'Quick', 'Brown', 'Fox', 'Jumped'],
+        it: ['Bella', 'Ciao'],
+      };
+      basicEditContentAttributes(attribute, testValues, editedValues)
+        .should('deep.equal', editedValues);
+    });
   });
 
-  /* describe('Email', () => {
+  describe('Email', () => {
+    const attribute = 'Email';
+    const testValues = {
+      en: ['abc@xyz.com', 'bbc@dde.com'],
+      it: ['bodo@dodo.com', 'bella@ciao.com', 'aa@xyz.com'],
+    };
+
+    it('Create', () => {
+      basicCreateContentAttributes(attribute, testValues)
+        .should('deep.equal', testValues);
+    });
+
+    it('Edit', () => {
+      const editedValues = {
+        en: ['bodo@coco.com', 'mama@papa.com', 'entando@entando.com'],
+        it: ['abc@xyz.com', 'jeff@gogo.com'],
+      };
+      basicEditContentAttributes(attribute, testValues, editedValues)
+        .should('deep.equal', editedValues);
+    });
 
   });
 
   describe('Number', () => {
+    const attribute = 'Number';
+    const testValues = {
+      en: ['14', '200', '5'],
+      it: ['620', '123'],
+    };
 
+    it('Create', () => {
+      basicCreateContentAttributes(attribute, testValues)
+        .should('deep.equal', testValues);
+    });
+
+    it('Edit', () => {
+      const editedValues = {
+        en: ['11'],
+        it: ['23', '350'],
+      };
+      basicEditContentAttributes(attribute, testValues, editedValues)
+        .should('deep.equal', editedValues);
+    });
   });
 
   describe('Date', () => {
+    const attribute = 'Date';
+    const testValues = {
+      en: ['2021-06-12 00:00:00', '2021-11-20 00:00:00'],
+      it: ['2021-04-22 00:00:00'],
+    };
 
+    it('Create', () => {
+      basicCreateContentAttributes(attribute, testValues)
+        .should('deep.equal', testValues);
+    });
+
+    it('Edit', () => {
+      const editedValues = {
+        en: ['2021-07-12 00:00:00'],
+        it: ['2021-05-10 00:00:00', '2021-12-25 00:00:00'],
+      };
+      basicEditContentAttributes(attribute, testValues, editedValues)
+        .should('deep.equal', editedValues);
+    });
   });
 
   describe('Enumerator', () => {
+    const attribute = 'Enumerator';
+    const enumProps = {
+      enumeratorStaticItems: 'a,b,c',
+      enumeratorStaticItemsSeparator: ',',
+    };
+    const testValues = {
+      en: ['a'],
+      it: ['b', 'b', 'a'],
+    };
 
+    it('Create', () => {
+      basicCreateContentAttributes(attribute, testValues, enumProps)
+        .should('deep.equal', testValues);
+    });
+
+    it('Edit', () => {
+      const editedValues = {
+        en: ['c', 'a'],
+        it: ['a', 'b'],
+      };
+      basicEditContentAttributes(attribute, testValues, editedValues, enumProps)
+        .should('deep.equal', editedValues);
+    });
   });
 
-  describe('Enumerator Map', () => {
+  describe('EnumeratorMap', () => {
+    const attribute = 'EnumeratorMap';
+    const enumProps = {
+      enumeratorStaticItems: 'x=1,y=2,z=3',
+      enumeratorStaticItemsSeparator: ',',
+    };
+    const testValues = {
+      en: ['z', 'x'],
+      it: ['y', 'y', 'z'],
+    };
 
+    it('Create', () => {
+      basicCreateContentAttributes(attribute, testValues, enumProps)
+        .should('deep.equal', testValues);
+    });
+
+    it('Edit', () => {
+      const editedValues = {
+        en: ['y', 'z'],
+        it: ['x'],
+      };
+      basicEditContentAttributes(attribute, testValues, editedValues, enumProps)
+        .should('deep.equal', editedValues);
+    });
   });
 
   describe('Boolean', () => {
+    const attribute = 'Boolean';
+    const testValues = {
+      en: [true, false],
+      it: [true],
+    };
 
+    it('Create', () => {
+      basicCreateContentAttributes(attribute, testValues)
+        .should('deep.equal', testValues);
+    });
+
+    it('Edit', () => {
+      const editedValues = {
+        en: [false, true, true],
+        it: [false, true, false, false],
+      };
+      basicEditContentAttributes(attribute, testValues, editedValues)
+        .should('deep.equal', editedValues);
+    });
   });
 
   describe('Checkbox', () => {
+    const attribute = 'Checkbox';
+    const testValues = {
+      en: [true, false],
+      it: [true],
+    };
 
+    it('Create', () => {
+      basicCreateContentAttributes(attribute, testValues)
+        .should('deep.equal', testValues);
+    });
+
+    it('Edit', () => {
+      const editedValues = {
+        en: [false, true, true],
+        it: [false, true, false, false],
+      };
+      basicEditContentAttributes(attribute, testValues, editedValues)
+        .should('deep.equal', editedValues);
+    });
   });
 
   describe('ThreeState', () => {
+    const attribute = 'ThreeState';
+    const testValues = {
+      en: [true, null],
+      it: [null, false],
+    };
 
-  }); */
+    it('Create', () => {
+      basicCreateContentAttributes(attribute, testValues)
+        .should('deep.equal', testValues);
+    });
+
+    it('Edit', () => {
+      const editedValues = {
+        en: [null, false, true],
+        it: [false, null, null, true],
+      };
+      basicEditContentAttributes(attribute, testValues, editedValues)
+        .should('deep.equal', editedValues);
+    });
+  });
 });

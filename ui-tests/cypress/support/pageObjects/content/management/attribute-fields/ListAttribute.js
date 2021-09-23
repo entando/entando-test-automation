@@ -37,7 +37,7 @@ export class ListAttributeItem extends WebElement {
 
   getSubAttributeItemDelete() {
     return this.getCollapsePanelHead()
-      .find(`button[title="Delete ${this.index}"].btn-danger`);
+      .find(`button[title="Delete ${this.index + 1}"].btn-danger`);
   }
 
   toggleSubAttributeCollapse() {
@@ -107,17 +107,53 @@ export default class ListAttribute extends AttributeFormField {
   setAttributeType(type) {
     this.nestedType = type;
   }
+
+  createFieldInstance(attribute, idx) {
+    switch(attribute) {
+      case 'Text':
+      case 'Longtext':
+      case 'Monotext':
+      case 'Email':
+      case 'Number':
+        return new TextAttribute(this.parent, idx, attribute, this.lang);
+      case 'Boolean':
+        return new BooleanAttribute(this.parent, idx);
+      case 'CheckBox':
+        return new CheckboxAttribute(this.parent, idx);
+      case 'Date':
+        return new DateAttribute(this, idx);
+      case 'ThreeState':
+        return new ThreeStateAttribute(this.parent, idx);
+      case 'Enumerator':
+      case 'EnumeratorMap':
+        return new EnumeratorAttribute(this.parent, idx, attribute === 'EnumeratorMap');
+      case 'Hypertext':
+        return new HypertextAttribute(this.parent, idx, this.lang);
+      case 'Link':
+        return new LinkAttribute(this.parent, idx, this.lang);
+      case 'Timestamp':
+        return new TimestampAttribute(this.parent, idx);
+      case 'Attach':
+      case 'Image':
+        return new AssetAttribute(this.parent, idx, attribute, this.lang);
+      case 'Composite':
+        return new CompositeAttribute(this.parent, idx, this.lang);
+    }
+  }
   
   setValue(values, editMode = false) {
+    cy.wrap(0).as('toAddItem');
     if (editMode) {
-      cy.wrap(0).as('toAddItem');
       cy.wrap(0).as('toMinusItem');
+      cy.wrap(0).as('attributeElementsLength');
       this.getAttributesArea().children()
         .then((attributeElements) => {
-          if (attributeElements.length === values.length) {
+          const attributeElementsLength = attributeElements.length - 1;
+          cy.wrap(attributeElementsLength).as('attributeElementsLength');
+          if (attributeElementsLength === values.length) {
             return;
           }
-          const diff = values.length - attributeElements.length;
+          const diff = values.length - attributeElementsLength;
           if (diff > 0) {
             cy.wrap(diff).as('toAddItem');
           } else {
@@ -127,63 +163,11 @@ export default class ListAttribute extends AttributeFormField {
     }
     values.forEach((item, idx) => {
       cy.get('@toAddItem').then((toAdd) => {
-        if (!editMode || toAdd <= idx) {
+        if (!editMode || (toAdd > 0 && values.length - toAdd <= idx)) {
           this.getAddListitemButton().click();
         }
       });
-      let field;
-      switch(this.nestedType) {
-        case 'Text':
-        case 'Longtext':
-        case 'Monotext':
-        case 'Email':
-        case 'Number': {
-          field = new TextAttribute(this.parent, idx, this.nestedType, this.lang);
-          break;
-        }
-        case 'Boolean': {
-          field = new BooleanAttribute(this.parent, idx);
-          break;
-        }
-        case 'CheckBox': {
-          field = new CheckboxAttribute(this.parent, idx);
-          break;
-        }
-        case 'Date': {
-          field = new DateAttribute(this, idx);
-          break;
-        }
-        case 'ThreeState': {
-          field = new ThreeStateAttribute(this.parent, idx);
-          break;
-        }
-        case 'Enumerator':
-        case 'EnumeratorMap': {
-          field = new EnumeratorAttribute(this.parent, idx, this.nestedType === 'EnumeratorMap');
-          break;
-        }
-        case 'Hypertext': {
-          field = new HypertextAttribute(this.parent, idx, this.lang);
-          break;
-        }
-        case 'Link': {
-          field = new LinkAttribute(this.parent, idx, this.lang);
-          break;
-        }
-        case 'Timestamp': {
-          field = new TimestampAttribute(this.parent, idx);
-          break;
-        } 
-        case 'Attach':
-        case 'Image': {
-          field = new AssetAttribute(this.parent, idx, this.nestedType, this.lang);
-          break;
-        }
-        case 'Composite': {
-          field = new CompositeAttribute(this.parent, idx, this.lang);
-          break;
-        }
-      }
+      const field = this.createFieldInstance(this.nestedType, idx);
       field.setParentAttribute(this);
       const attributeItem = new ListAttributeItem(this, field, idx);
       if (editMode) {
@@ -193,6 +177,19 @@ export default class ListAttribute extends AttributeFormField {
       }
       this.attributeItems.push(attributeItem);
     });
+    if (editMode) {
+      cy.get('@toMinusItem').then((toMinus) => {
+        if (toMinus > 0) {
+          cy.get('@attributeElementsLength').then((alength) => {
+            for (let count = alength - 1; count > alength - 1 - toMinus; --count) {
+              const attributeItem = new ListAttributeItem(this, null, count);
+              attributeItem.getSubAttributeItemDelete().click();
+            }
+          });
+          
+        }
+      });
+    }
   }
 
   editValue(value) {
