@@ -140,6 +140,12 @@ export default class ListAttribute extends AttributeFormField {
         return new CompositeAttribute(this.parent, idx, this.lang);
     }
   }
+
+  generateInstanceListItem(idx) {
+    const field = this.createFieldInstance(this.nestedType, idx);
+    field.setParentAttribute(this);
+    return new ListAttributeItem(this, field, idx);
+  }
   
   setValue(values, editMode = false) {
     cy.wrap(0).as('toAddItem');
@@ -167,13 +173,11 @@ export default class ListAttribute extends AttributeFormField {
           this.getAddListitemButton().click();
         }
       });
-      const field = this.createFieldInstance(this.nestedType, idx);
-      field.setParentAttribute(this);
-      const attributeItem = new ListAttributeItem(this, field, idx);
+      const attributeItem = this.generateInstanceListItem(idx);
       if (editMode) {
-        field.editValue(item);
+        attributeItem.field.editValue(item);
       } else {
-        field.setValue(item);
+        attributeItem.field.setValue(item);
       }
       this.attributeItems.push(attributeItem);
     });
