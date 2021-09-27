@@ -227,18 +227,17 @@ export default class AddPage extends Content {
       this.getEnLanguageTab().click();
     }
     cy.wait(500);
-    attributeValues.forEach(({ type, value }, idx) => {
+    attributeValues.forEach(({ type, value, nestedType }, idx) => {
       const field = this.getAttributeByTypeIndex(type, idx, lang);
       if (field === null) {
         return;
       }
       if (['List', 'Monolist'].includes(type)) {
-        field.setAttributeType(value.type);
+        field.setAttributeType(nestedType);
       }
       field.expand();
-      const attributeValue = type === 'List' ? value[this.lang] : value;
       if (editMode) {
-        field.editValue(attributeValue);
+        field.editValue(value);
       } else {
         field.setValue(value);
       }

@@ -37,7 +37,7 @@ export class ListAttributeItem extends WebElement {
 
   getSubAttributeItemDelete() {
     return this.getCollapsePanelHead()
-      .find(`button[title="Delete ${this.index}"].btn-danger`);
+      .find(`button[title="Delete ${this.index + 1}"].btn-danger`);
   }
 
   toggleSubAttributeCollapse() {
@@ -72,9 +72,15 @@ export class ListAttributeItem extends WebElement {
 export default class ListAttribute extends AttributeFormField {
   listBody = 'div.RenderListField__body';
   attributeItems = [];
-  attributeType = '';
+  nestedType = '';
   constructor(parent, attributeIndex, lang = 'en', useMonolist = false) {
     super(parent, useMonolist ? 'Monolist' : 'List', attributeIndex, lang);
+  }
+
+  getCollapseMain() {
+    return this.getLangPane()
+      .children('div').eq(this.index + (this.lang === 'en' ? 1 : 0))
+      .children('div.ContentFormFieldCollapse');
   }
 
   getAttributesArea() {
@@ -86,7 +92,7 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   getAddListitemButton() {
-    return this.getTopControlArea().find('button[title="add"]');
+    return this.getTopControlArea().find('button[title="Add"]');
   }
 
   getSubAttributeCollapseAt(idx) {
@@ -99,77 +105,95 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   setAttributeType(type) {
-    this.attributeType = type;
+    this.nestedType = type;
+  }
+
+  createFieldInstance(attribute, idx) {
+    switch(attribute) {
+      case 'Text':
+      case 'Longtext':
+      case 'Monotext':
+      case 'Email':
+      case 'Number':
+        return new TextAttribute(this.parent, idx, attribute, this.lang);
+      case 'Boolean':
+        return new BooleanAttribute(this.parent, idx);
+      case 'CheckBox':
+        return new CheckboxAttribute(this.parent, idx);
+      case 'Date':
+        return new DateAttribute(this, idx);
+      case 'ThreeState':
+        return new ThreeStateAttribute(this.parent, idx);
+      case 'Enumerator':
+      case 'EnumeratorMap':
+        return new EnumeratorAttribute(this.parent, idx, attribute === 'EnumeratorMap');
+      case 'Hypertext':
+        return new HypertextAttribute(this.parent, idx, this.lang);
+      case 'Link':
+        return new LinkAttribute(this.parent, idx, this.lang);
+      case 'Timestamp':
+        return new TimestampAttribute(this.parent, idx);
+      case 'Attach':
+      case 'Image':
+        return new AssetAttribute(this.parent, idx, attribute, this.lang);
+      case 'Composite':
+        return new CompositeAttribute(this.parent, idx, this.lang);
+    }
+  }
+
+  generateInstanceListItem(idx) {
+    const field = this.createFieldInstance(this.nestedType, idx);
+    field.setParentAttribute(this);
+    return new ListAttributeItem(this, field, idx);
   }
   
   setValue(values, editMode = false) {
+    cy.wrap(0).as('toAddItem');
+    if (editMode) {
+      cy.wrap(0).as('toMinusItem');
+      cy.wrap(0).as('attributeElementsLength');
+      this.getAttributesArea().children()
+        .then((attributeElements) => {
+          const attributeElementsLength = attributeElements.length - 1;
+          cy.wrap(attributeElementsLength).as('attributeElementsLength');
+          if (attributeElementsLength === values.length) {
+            return;
+          }
+          const diff = values.length - attributeElementsLength;
+          if (diff > 0) {
+            cy.wrap(diff).as('toAddItem');
+          } else {
+            cy.wrap(diff * -1).as('toMinusItem');
+          }
+        });
+    }
     values.forEach((item, idx) => {
-      if (!editMode) {
-        this.getAddListitemButton().click();
-      }
-      let field;
-      switch(this.attributeType) {
-        case 'Text':
-        case 'Longtext':
-        case 'Monotext':
-        case 'Email':
-        case 'Number': {
-          field = new TextAttribute(this.parent, idx, this.attributeType, this.lang);
-          break;
+      cy.get('@toAddItem').then((toAdd) => {
+        if (!editMode || (toAdd > 0 && values.length - toAdd <= idx)) {
+          this.getAddListitemButton().click();
         }
-        case 'Boolean': {
-          field = new BooleanAttribute(this.parent, idx);
-          break;
-        }
-        case 'CheckBox': {
-          field = new CheckboxAttribute(this.parent, idx);
-          break;
-        }
-        case 'Date': {
-          field = new DateAttribute(this, idx);
-          break;
-        }
-        case 'ThreeState': {
-          field = new ThreeStateAttribute(this.parent, idx);
-          break;
-        }
-        case 'Enumerator':
-        case 'EnumeratorMap': {
-          field = new EnumeratorAttribute(this.parent, idx, this.attributeType === 'EnumeratorMap');
-          break;
-        }
-        case 'Hypertext': {
-          field = new HypertextAttribute(this.parent, idx, this.lang);
-          break;
-        }
-        case 'Link': {
-          field = new LinkAttribute(this.parent, idx, this.lang);
-          break;
-        }
-        case 'Timestamp': {
-          field = new TimestampAttribute(this.parent, idx);
-          break;
-        } 
-        case 'Attach':
-        case 'Image': {
-          field = new AssetAttribute(this.parent, idx, this.attributeType, this.lang);
-          break;
-        }
-        case 'Composite': {
-          field = new CompositeAttribute(this.parent, idx, this.lang);
-          break;
-        }
-      }
-      field.setParentAttribute(this);
-      const attributeItem = new ListAttributeItem(this, field, idx);
+      });
+      const attributeItem = this.generateInstanceListItem(idx);
       if (editMode) {
-        field.editValue(item);
+        attributeItem.field.editValue(item);
       } else {
-        field.setValue(item);
+        attributeItem.field.setValue(item);
       }
       this.attributeItems.push(attributeItem);
-
     });
+    if (editMode) {
+      cy.get('@toMinusItem').then((toMinus) => {
+        if (toMinus > 0) {
+          cy.get('@attributeElementsLength').then((alength) => {
+            for (let count = alength - 1; count > alength - 1 - toMinus; --count) {
+              const attributeItem = new ListAttributeItem(this, null, count);
+              attributeItem.getSubAttributeItemDelete().click();
+            }
+          });
+          
+        }
+      });
+    }
   }
 
   editValue(value) {

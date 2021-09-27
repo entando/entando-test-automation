@@ -68,6 +68,9 @@ export default class DateAttribute extends AttributeFormField {
   }
 
   setValue(value) {
+    if (!value) {
+      return;
+    }
     const dateValue = new Date(value);
     this.getInputArea().click();
     this.getMonthYearCaptionText().then((monthyear) => 

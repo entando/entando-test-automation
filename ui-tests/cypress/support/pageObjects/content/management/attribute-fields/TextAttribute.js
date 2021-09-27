@@ -37,6 +37,9 @@ export default class TextAttribute extends AttributeFormField {
   }
 
   setValue(text) {
+    if (!text) {
+      return;
+    }
     this.getInput().type(text).blur();
   }
 
