@@ -1,5 +1,5 @@
 const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}plugins/cms/contents`;
+export const controller = `${apiURL}plugins/cms/contents`;
 
 Cypress.Commands.add('contentsController', () => {
   cy.get('@tokens').then(tokens => {
