@@ -99,8 +99,10 @@ export default class AddPage extends Content {
   }
 
   getCopyToLangBtn() {
-    return this.getContents().get(this.contentAttrEnPane)
-      .find('.text-right > button.btn-default');
+    return this.getContents()
+               .get(this.contentAttrEnPane)
+               .find('.text-right > button.btn-default')
+               .eq(0);
   }
 
   getSaveDropDownButton() {

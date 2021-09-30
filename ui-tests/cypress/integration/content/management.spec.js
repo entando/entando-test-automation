@@ -1,72 +1,98 @@
 import HomePage                                   from '../../support/pageObjects/HomePage.js';
-import {generateRandomTypeCode, generateRandomId} from '../../support/utils.js';
+import { generateRandomTypeCode, generateRandomId } from '../../support/utils.js';
+import { controller as contentsAPIUrl } from '../../support/restAPI/contentsAPI';
+import { htmlElements } from '../../support/pageObjects/WebElement.js';
+
+const openContentMgmtPage = () => {
+  cy.visit('/');
+  let currentPage = new HomePage();
+  currentPage = currentPage.getMenu().getContent().open();
+  return currentPage.openManagement();
+};
 
 describe('Contents', () => {
+
+  const testContent = {
+    typeCode: 'BNR',
+    description: 'test content',
+    mainGroup: 'administrators',
+    attributes: [
+      { code: 'title', values: { en: 'test', it: 'test' } }
+    ]
+  };
+  const contentType = 'Banner';
+
+  let contentToBeDeleted = false;
+  let currentPage;
+  let contentCode;
+
   beforeEach(() => {
     cy.kcLogin('admin').as('tokens');
   });
 
   afterEach(() => {
-    cy.kcLogout();
-  });
-
-  it('Create a new content', () => {
-    cy.visit('/');
-    let currentPage = new HomePage();
-
-    currentPage = currentPage.getMenu().getContent().open().openManagement();
-    currentPage = currentPage.getContent().openAddContentPage();
-
-    currentPage.getContent().addContent(`AAA-EN`, `AAA-IT`, 'description test');
-
-    cy.validateToast(currentPage, 'Saved');
-  });
-
-
-  // @TODO uncomment when edit of content bug is fixed (simulate bug: create a new content, then go to content management and edit it. You cannot save it)
-  // it('Edit a newly created content', () => {
-  //   cy.kcLogin("admin").as("tokens");
-
-  //   cy.visit('/');
-  //   let currentPage = new HomePage();
-
-  //   currentPage = currentPage.getMenu().getContent().open().openManagement();
-  //   currentPage = currentPage.getContent().openEditContentPage();
-
-  //   currentPage.getContent().editContent('description changed');
-  //   cy.validateToast(currentPage, 'Saved');
-
-  //   // cy.kcLogout();
-  // })
-
-  it('Delete a newly created content', () => {
-    cy.kcLogin('admin').as('tokens');
-
-    cy.visit('/');
-    let currentPage = new HomePage();
-
-    currentPage = currentPage.getMenu().getContent().open().openManagement();
-    currentPage = currentPage.getContent().deleteLastAddedContent();
-
-    cy.validateToast(currentPage, 'removed');
+    if (contentToBeDeleted) {
+      cy.contentsController()
+        .then(controller => controller.deleteContent(contentCode))
+        .then(() => contentToBeDeleted = false);
+    }
 
     cy.kcLogout();
   });
 
-  it('Create a content without an owner group - not allowed', () => {
-    cy.visit('/');
-    let currentPage = new HomePage();
+  describe('Delete content', () => {
+    beforeEach(() => {
+      cy.contentsController().then(controller => controller.postContent(testContent))
+        .then((response) => {
+          const { body: { payload } } = response;
+          contentCode = payload[0].id;
+        });
+    });
 
-    currentPage = currentPage.getMenu().getContent().open().openManagement();
-    currentPage = currentPage.getContent().openAddContentPage();
+    it('Delete content', () => {
+      currentPage = openContentMgmtPage();
+      currentPage.getContent().getKebabMenu(contentCode).open().clickDelete();
+      cy.wait(1000);
+      currentPage.getDialog().confirm();
 
-    currentPage.getContent().typeDescription('test description');
-    currentPage.getContent().clearOwnerGroup();
+      cy.validateToast(currentPage, 'removed');
+    });
 
-    currentPage.getContent().getSaveAction().should('have.class', 'disabled');
+    it('Delete published content - not allowed', () => {
+      cy.contentsController().then(controller => controller.updateStatus(contentCode, 'published'));
+
+      currentPage = openContentMgmtPage();
+      currentPage.getContent().getKebabMenu(contentCode).open().getDelete().should('have.class', 'disabled');
+
+      cy.contentsController().then(controller => controller.updateStatus(contentCode, 'draft'));
+      contentToBeDeleted = true;
+    });
   });
 
-  it.only('Update status of content referenced by a published page', () => {
+  describe('Edit content', () => {
+    beforeEach(() => {
+      cy.contentsController().then(controller => controller.postContent(testContent))
+        .then((response) => {
+          const { body: { payload } } = response;
+          contentCode = payload[0].id;
+          contentToBeDeleted = true;
+        });
+    });
+
+    it('Edit content', () => {
+      const updatedDescription = `${testContent.description}-updated`;
+
+      currentPage = openContentMgmtPage();
+      currentPage = currentPage.getContent().getKebabMenu(contentCode).open().openEdit();
+      currentPage.getContent().clearDescription();
+      currentPage.getContent().typeDescription(updatedDescription);
+      currentPage = currentPage.getContent().submitForm();
+
+      currentPage.getContent().getTableRow(contentCode).find(htmlElements.td).eq(2).should('contain.text', updatedDescription);
+    });
+  });
+
+  it('Update status of content referenced by a published page', () => {
     const contentTypeCode = generateRandomTypeCode();
     const contentTypeName = generateRandomId();
 
@@ -137,4 +163,36 @@ describe('Contents', () => {
     });
     cy.contentTypesController().then(controller => controller.deleteContentType(contentTypeCode));
   });
+
+
+  describe('Add content', () => {
+    it('Add content', () => {
+      cy.intercept('POST', contentsAPIUrl, (req) => {
+        req.continue((res) => {
+          contentCode =  res.body.payload[0].id;
+        });
+      });
+  
+      currentPage = openContentMgmtPage();
+      currentPage = currentPage.getContent().openAddContentPage(contentType);
+      currentPage.getContent().fillBeginContent(testContent.description);
+      currentPage.getContent().fillAttributes([{ type: 'Text', value: 'test text' }]);
+      currentPage.getContent().copyToAllLanguages();
+      cy.wait(1000);
+      currentPage = currentPage.getContent().submitForm();
+      
+      cy.validateToast(currentPage, 'Saved');
+
+      contentToBeDeleted = true;
+    });
+
+    it('Add content without an owner group - not allowed', () => {
+      currentPage = openContentMgmtPage();
+      currentPage = currentPage.getContent().openAddContentPage(contentType);
+      currentPage.getContent().typeDescription(testContent.description);
+      currentPage.getContent().clearOwnerGroup();
+  
+      currentPage.getContent().getSaveAction().should('have.class', 'disabled');
+    });
+  })
 });
