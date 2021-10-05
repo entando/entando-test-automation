@@ -34,7 +34,7 @@ describe('Content Type Attributes', () => {
     switch(mode) {
       case 'create':
       default:
-        currentPage = currentPage.getContent().openAddContentPageWithContentType(CONTENT_TYPE.name);
+        currentPage = currentPage.getContent().openAddContentPage(CONTENT_TYPE.name);
         break;
       case 'edit':
         currentPage = currentPage.getContent().openEditContentPage();
