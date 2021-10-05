@@ -27,7 +27,7 @@ describe('Nested a in List Attribute', () => {
     switch(mode) {
       case 'create':
       default:
-        currentPage = currentPage.getContent().openAddContentPageWithContentType(CONTENT_TYPE_WITH_LIST.name);
+        currentPage = currentPage.getContent().openAddContentPage(CONTENT_TYPE_WITH_LIST.name);
         break;
       case 'edit':
         currentPage = currentPage.getContent().openEditContentPage();

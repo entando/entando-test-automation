@@ -32,11 +32,6 @@ export default class ManagementPage extends Content {
                .find(htmlElements.ul);
   }
 
-  getAddButtonByLabel(label) {
-    return this.getAddMenu()
-              .find(this.actionOption).contains(label);
-  }
-
   getTable() {
     return this.getContents()
                .find(htmlElements.table);
@@ -61,12 +56,6 @@ export default class ManagementPage extends Content {
     this.getAddContentDropdownList()
         .contains(contentType)
         .click();
-    cy.wait(1000);
-    return new AppPage(AddPage);
-  }
-
-  openAddContentPageWithContentType(contentTypeName) {
-    this.getAddButtonByLabel(contentTypeName).click();
     cy.wait(1000);
     return new AppPage(AddPage);
   }
