@@ -125,6 +125,10 @@ export default class AddPage extends Content {
                .eq(0);
   }
 
+  getSaveContinueAction() {
+    return this.getSaveDropDownListItems().get(1);
+  }
+
   getSaveApproveAction() {
     return this.getSaveDropDownListItems().get(2);
   }
@@ -153,15 +157,21 @@ export default class AddPage extends Content {
     this.getCopyToLangBtn().click();
   }
 
-  submitForm() {
+  submitForm(confirmTranslation = false) {
     this.getSaveAction().click();
     cy.wait(1000);
+    if (confirmTranslation) {
+      this.getOpenedDialog().getFooter().children(htmlElements.button).eq(1).click();
+    }
     return new AppPage(ManagementPage);
   }
 
-  submitApproveForm() {
+  submitApproveForm(confirmTranslation = false) {
     this.getSaveApproveAction().click();
     cy.wait(1000);
+    if (confirmTranslation) {
+      this.getOpenedDialog().getFooter().children(htmlElements.button).eq(1).click();
+    }
     return new AppPage(ManagementPage);
   }
 
@@ -174,6 +184,10 @@ export default class AddPage extends Content {
     }
     this.typeDescription(description);
     return this;
+  }
+
+  getOpenedDialog() {
+    return this.parent.getDialog();
   }
 
   fillBasicContentFields({description, titleEn, titleIt, group}, append = false) {

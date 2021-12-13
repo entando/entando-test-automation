@@ -194,5 +194,34 @@ describe('Contents', () => {
   
       currentPage.getContent().getSaveAction().should('have.class', 'disabled');
     });
+
+    it('Add new content and does not fill values for any language but the default one, a modal must present to inform for other languages (ENG-2714)', () => {
+      cy.intercept('POST', contentsAPIUrl, (req) => {
+        req.continue((res) => {
+          contentCode =  res.body.payload[0].id;
+        });
+      });
+
+      currentPage = openContentMgmtPage();
+      currentPage = currentPage.getContent().openAddContentPage(contentType);
+      currentPage.getContent().fillBeginContent(testContent.description);
+      currentPage.getContent().fillAttributes([{ type: 'Text', value: 'test text' }]);
+      cy.wait(1000);
+      currentPage.getContent().getSaveAction().invoke('hasClass', 'disabled').should('be.false');
+      currentPage.getContent().getSaveContinueAction().invoke('hasClass', 'disabled').should('be.false');
+      const saveApproveBtn = currentPage.getContent().getSaveApproveAction();
+      saveApproveBtn.should('not.have.class', 'disabled');
+      saveApproveBtn.click();
+      currentPage.getContent().getOpenedDialog().getHeader().should('contain.text', 'Missing Translations');
+      currentPage.getContent().getOpenedDialog().getCancelButton().click();
+      currentPage.getContent().getOpenedDialog().get().should('not.exist');
+      currentPage.getContent().getSaveApproveAction().click();
+      currentPage.getContent().getOpenedDialog().getFooter().children(htmlElements.button).eq(2).click();
+      currentPage.getContent().getItLanguageTab().invoke('attr', 'aria-selected').should('eq', 'true');
+      
+      currentPage = currentPage.getContent().submitForm(true);
+      cy.validateToast(currentPage, 'Saved');
+      contentToBeDeleted = true;
+    });
   })
 });
