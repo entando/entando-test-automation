@@ -161,7 +161,7 @@ export default class AddPage extends Content {
     this.getSaveAction().click();
     cy.wait(1000);
     if (confirmTranslation) {
-      this.getOpenedDialog().getFooter().children(htmlElements.button).eq(1).click();
+      this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
     }
     return new AppPage(ManagementPage);
   }
@@ -170,7 +170,7 @@ export default class AddPage extends Content {
     this.getSaveApproveAction().click();
     cy.wait(1000);
     if (confirmTranslation) {
-      this.getOpenedDialog().getFooter().children(htmlElements.button).eq(1).click();
+      this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
     }
     return new AppPage(ManagementPage);
   }
@@ -184,10 +184,6 @@ export default class AddPage extends Content {
     }
     this.typeDescription(description);
     return this;
-  }
-
-  getOpenedDialog() {
-    return this.parent.getDialog();
   }
 
   fillBasicContentFields({description, titleEn, titleIt, group}, append = false) {

@@ -212,11 +212,11 @@ describe('Contents', () => {
       const saveApproveBtn = currentPage.getContent().getSaveApproveAction();
       saveApproveBtn.should('not.have.class', 'disabled');
       saveApproveBtn.click();
-      currentPage.getContent().getOpenedDialog().getHeader().should('contain.text', 'Missing Translations');
-      currentPage.getContent().getOpenedDialog().getCancelButton().click();
-      currentPage.getContent().getOpenedDialog().get().should('not.exist');
+      currentPage.getDialog().getHeader().should('contain.text', 'Missing Translations');
+      currentPage.getDialog().getCancelButton().click();
+      currentPage.getDialog().get().should('not.exist');
       currentPage.getContent().getSaveApproveAction().click();
-      currentPage.getContent().getOpenedDialog().getFooter().children(htmlElements.button).eq(2).click();
+      currentPage.getDialog().getFooter().children(htmlElements.button).eq(2).click();
       currentPage.getContent().getItLanguageTab().invoke('attr', 'aria-selected').should('eq', 'true');
       
       currentPage = currentPage.getContent().submitForm(true);
