@@ -1,4 +1,4 @@
-import LoginPage from '../support/pageObjects/keyCloak/LoginPage.js';
+import LoginPage from '../support/pageObjects/keycloak/LoginPage.js';
 import HomePage  from '../support/pageObjects/HomePage';
 
 describe('Keycloack', () => {
