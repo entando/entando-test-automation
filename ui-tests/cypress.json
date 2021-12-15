@@ -1,6 +1,7 @@
 {
-  "baseUrl": "http://entando.apps-crc.testing.apps.okd.eng-entando.com/app-builder/",
-  "restAPI": "http://entando.apps-crc.testing.apps.okd.eng-entando.com/entando-de-app/api/",
+  "baseUrl": "http://entando.apps-crc.testing.apps.okd.eng-entando.com",
+  "basePath": "/app-builder",
+  "restAPI": "http://entando.apps-crc.testing.apps.okd.eng-entando.com/entando-de-app/api",
   "env": {
     "auth_base_url": "http://entando.apps-crc.testing.apps.okd.eng-entando.com/auth",
     "auth_realm": "entando",
