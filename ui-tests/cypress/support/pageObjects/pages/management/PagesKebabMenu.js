@@ -74,7 +74,7 @@ export default class PagesKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getAdd().click();
+    this.getEdit().click();
     return new AppPage(AddPage);
   }
 

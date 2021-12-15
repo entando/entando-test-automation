@@ -348,6 +348,23 @@ describe('Page Management', () => {
         currentPage.getContent().getOwnerGroupButton().should('be.disabled');
       });
 
+      it('Change a page\'s owner group - not allowed', () => {
+        page.code = generateRandomId();
+        page.title    = {
+          en: generateRandomId(),
+          it: generateRandomId()
+        };
+        cy.pagesController()
+          .then(controller => controller.addPage(page.code, page.title.en, page.ownerGroup.code, page.template, page.parentCode))
+          .then(() => pageToBeDeleted = true);
+
+        currentPage = openManagementPage();
+        currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+
+        currentPage.getContent().getOwnerGroupButton().click({ force: true });
+        currentPage.getContent().getOwnerGroupDropdown().should('not.exist');
+      });
+
     });
 
     describe('Change page position in the page tree', () => {
