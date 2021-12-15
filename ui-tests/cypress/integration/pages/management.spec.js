@@ -649,6 +649,47 @@ describe('Page Management', () => {
 
     });
 
+    describe('Form Validations', () => {
+      describe('Page form should be not possible to save NULL title in default language (ENG-2687)', () => {      
+        it('There must be a page title for default language, otherwise it will not allow to save', () => {
+          postPage(page);
+          pageToBeDeleted = true;
+
+          currentPage = openManagementPage();
+          currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+          
+          currentPage.getContent().getTitleInput('en').clear();
+          currentPage.getContent().selectSeoLanguage(1);
+
+          currentPage.getContent().getSaveAndDesignButton().should('be.disabled');
+          currentPage.getContent().getSaveButton().should('be.disabled');
+        });
+
+        it('Adding a title from default language without other languages will be allowed to save', () => {
+          page.code = generateRandomId();
+          page.title = generateRandomId();
+
+          currentPage = openManagementPage();
+          currentPage = currentPage.getContent().openAddPagePage();
+
+          currentPage.getContent().selectSeoLanguage(0);
+          currentPage.getContent().typeTitle(page.title, 'en');
+
+          currentPage.getContent().clearCode();
+          currentPage.getContent().typeCode(page.code);
+
+          currentPage.getContent().selectPageOnPageTreeTable(page.pageTree);
+
+          currentPage.getContent().selectOwnerGroup(page.ownerGroup.name);
+          currentPage.getContent().selectPageTemplate(page.template);
+
+          currentPage.getContent().getSaveAndDesignButton().should('not.be.disabled');
+          currentPage.getContent().getSaveButton().should('not.be.disabled');
+
+        });
+      });
+    });
+
   });
 
   const openManagementPage = () => {
