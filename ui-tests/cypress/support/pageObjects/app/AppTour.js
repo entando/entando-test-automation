@@ -43,10 +43,7 @@ export default class AppTour extends WebElement {
   }
 
   close() {
-    //TODO find a better way to identify when the page loaded
-    cy.wait(1000); // Wait until the page loads
-    //TODO find a better way to identify when the dialog animation is completed
-    cy.wait(2000); // Wait until the animation of the App Tour dialog is completed
+    cy.wait(1000);
     this.getCloseButton().click();
   }
 
