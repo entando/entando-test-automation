@@ -43,7 +43,7 @@ export default class AppTour extends WebElement {
   }
 
   close() {
-    cy.wait(1000);
+    cy.wait(1000); // Wait until the page loads
     this.getCloseButton().click();
   }
 
