@@ -22,7 +22,7 @@ class PagesController {
 
   addNewPage(page) {
     return cy.request({
-      url: `${controller}`,
+      url: `${addUrl}`,
       method: 'POST',
       auth: {
         bearer: this.access_token

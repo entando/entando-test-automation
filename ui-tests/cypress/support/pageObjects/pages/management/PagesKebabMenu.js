@@ -4,6 +4,8 @@ import AppPage      from '../../app/AppPage.js';
 import DeleteDialog from '../../app/DeleteDialog';
 
 import AddPage from './AddPage.js';
+import ClonePage from './ClonePage';
+import DesignerPage from '../designer/DesignerPage';
 
 export default class PagesKebabMenu extends KebabMenu {
 
@@ -91,6 +93,18 @@ export default class PagesKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDelete().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
+  }
+
+  clickClone() {
+    this.getClone().click();
+    cy.wait(1000);
+    return new AppPage(ClonePage);
+  }
+
+  openDesigner() {
+    this.getDesign().click();
+    cy.wait(1000);
+    return new AppPage(DesignerPage);
   }
 
 }
