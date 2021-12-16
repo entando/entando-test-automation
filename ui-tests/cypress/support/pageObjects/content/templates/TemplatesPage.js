@@ -2,7 +2,8 @@ import {htmlElements} from '../../WebElement.js';
 
 import Content      from '../../app/Content.js';
 import AppPage      from '../../app/AppPage.js';
-import KebabMenu from '../../app/KebabMenu.js';
+import KebabMenu    from '../../app/KebabMenu.js';
+import Pagination   from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
 import TemplateForm from './TemplateForm.js';
 
@@ -50,6 +51,10 @@ export default class TemplatesPage extends Content {
   getFootArea() {
     return this.get()
                .find(this.filterRow).eq(1);
+  }
+
+  getPagination() {
+    return new Pagination(this);
   }
 
   getAddButton() {
