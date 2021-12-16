@@ -1,9 +1,10 @@
-import {htmlElements} from '../../WebElement.js';
+import {DATA_TESTID, htmlElements} from '../../WebElement.js';
 
 import Content  from '../../app/Content.js';
 import AddPage  from './AddPage';
 import AppPage  from '../../app/AppPage';
 import KebabMenu from '../../app/KebabMenu.js';
+import Pagination from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
 
 export default class ManagementPage extends Content {
@@ -13,10 +14,17 @@ export default class ManagementPage extends Content {
   actionOptions = `${htmlElements.ul}.dropdown-menu`;
   actionOption  = `${htmlElements.li}`;
 
-  contentsTableDiv        = `${htmlElements.div}.Contents__table`;
-  contentsKebabMenu       = `${htmlElements.div}.dropdown-kebab-pf`;
-  contentsKebabMenuButton = `${htmlElements.button}`;
-  contentsKebabMenuAction = `${htmlElements.li}`;
+  contentsTableDiv         = `${htmlElements.div}.Contents__table`;
+  contentsKebabMenu        = `${htmlElements.div}.dropdown-kebab-pf`;
+  contentsKebabMenuButton  = `${htmlElements.button}`;
+  contentsKebabMenuAction  = `${htmlElements.li}`;
+  contentsFilter           = `${htmlElements.div}.ContentsFilter[${DATA_TESTID}=contents_ContentsFilter_div]`;
+  searchFilterTextfield    = `${htmlElements.input}[type=text]`;
+  searchFilterSubmitButton = `${htmlElements.button}.ContentsFilter__search-button`;
+
+  listPagination           = `${htmlElements.form}.table-view-pf-pagination`;
+  paginationItemsCurrent   = `${htmlElements.span}.pagination-pf-items-current`;
+  paginationItemsTotal     = `${htmlElements.span}.pagination-pf-items-total`;
 
   modalDeleteButton = `${htmlElements.button}#DeleteContentModal__button-delete`;
 
@@ -30,6 +38,21 @@ export default class ManagementPage extends Content {
     return this.getAddButton()
                .closest(htmlElements.div)
                .find(htmlElements.ul);
+  }
+
+  getSearchPanel() {
+    return this.getContents()
+               .find(this.contentsFilter);
+  }
+
+  getSearchTextField() {
+    return this.getSearchPanel()
+               .find(this.searchFilterTextfield);
+  }
+
+  getSearchSubmitButton() {
+    return this.getSearchPanel()
+               .find(this.searchFilterSubmitButton);
   }
 
   getTable() {
@@ -49,6 +72,18 @@ export default class ManagementPage extends Content {
 
   getKebabMenu(code) {
     return new ManagementKebabMenu(this, code);
+  }
+
+  getPagination() {
+    return new Pagination(this);
+  }
+
+  doSearch(text = '') {
+    this.getSearchTextField().clear();
+    if (text !== '') {
+      this.getSearchTextField().type(text);
+    }
+    this.getSearchSubmitButton().click();
   }
 
   openAddContentPage(contentType) {

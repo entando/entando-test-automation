@@ -156,4 +156,15 @@ describe('Assets', () => {
       assetToBeDeleted = true;
     });
   });
+
+  describe('Asset Browsing', () => {
+    it('Displaying correct item counts when searching with zero results (ENG-2680)', () => {
+      currentPage = openAssetsPage();
+      currentPage.getContent().getSearchTextfield().clear();
+      currentPage.getContent().getSearchTextfield().type('z');
+      currentPage.getContent().getSearchButton().click();
+      cy.wait(1000);
+      currentPage.getContent().getFilterResultItemCount().invoke('text').should('be.equal', '0 of 0 items');
+    });
+  });
 });

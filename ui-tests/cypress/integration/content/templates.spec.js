@@ -98,6 +98,19 @@ describe('Content Templates', () => {
     currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(4).should('contain.text', template.descr);
   });
 
+  it('Check pagination for zero results if info displayed is correct (ENG-2680)', () => {
+    currentPage = openContentTemplatesPage();
+
+    currentPage.getContent().typeSearchKeyword('z');
+    currentPage.getContent().clickSearch();
+
+    cy.wait(1000);
+    currentPage.getContent().getPagination()
+                .getItemsCurrent().invoke('text').should('be.equal', '0-0');
+    currentPage.getContent().getPagination()
+                .getItemsTotal().invoke('text').should('be.equal', '0');
+  });
+
   it('Delete content template referenced by a published content - not allowed', () => {
     const content = {
       description: 'test',

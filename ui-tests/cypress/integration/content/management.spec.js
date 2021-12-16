@@ -223,5 +223,17 @@ describe('Contents', () => {
       cy.validateToast(currentPage, 'Saved');
       contentToBeDeleted = true;
     });
-  })
+  });
+
+  describe('Browse Contents', () => {
+    it ('Filter contents with zero results and checking pagination info if the information is correct', () => {
+      currentPage = openContentMgmtPage();
+      currentPage.getContent().doSearch('z');
+      cy.wait(1000);
+      currentPage.getContent().getPagination()
+                 .getItemsCurrent().invoke('text').should('be.equal', '0-0');
+      currentPage.getContent().getPagination()
+                 .getItemsTotal().invoke('text').should('be.equal', '0');
+    })
+  });
 });
