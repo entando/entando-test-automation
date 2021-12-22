@@ -218,6 +218,31 @@ describe('Users Management', () => {
                  .and('have.text', 'Add');
     });
 
+    it('Edit user profile page - save button to be disabled with invalid profile', () => {
+      currentPage = openManagementPage();
+      currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
+      currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEditProfile();
+
+      cy.validateUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
+
+      currentPage.getContent().selectProfileType('')
+      currentPage.getContent().getSaveButton()
+                 .should('be.disabled')
+
+      currentPage.getContent().selectProfileType('PFL')
+      currentPage.getContent().getSaveButton()
+                 .should('be.enabled')
+    });
+
+    it('Users management page - to not have "User without a profile" filter', () => {
+      currentPage = openManagementPage();
+      
+      cy.validateUrlPathname(`/user`);
+
+      currentPage.getContent().getSearchForm().contains('User without a profile')
+                 .should('have.length', 0);
+    });
+
   });
 
   describe('Actions', () => {
