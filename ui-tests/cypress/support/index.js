@@ -27,6 +27,7 @@ import './restAPI/contentTemplatesAPI';
 import './restAPI/fileBrowserAPI';
 import './restAPI/groupsAPI.js';
 import './restAPI/pagesAPI.js';
+import './restAPI/pageTemplatesAPI';
 import './restAPI/profileTypesAPI';
 import './restAPI/rolesAPI.js';
 import './restAPI/usersAPI.js';

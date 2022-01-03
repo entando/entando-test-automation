@@ -12,7 +12,6 @@ class TemplatesKebabMenu extends KebabMenu {
     DETAILS: 'detailsTemplate',
     DELETE: 'detailsDelete',
   };
-  filterRow = `[${DATA_TESTID}=list_PageTemplateListPage_Row].row`;
 
   get() {
     return this.getKebabButton()
@@ -58,6 +57,8 @@ class TemplatesKebabMenu extends KebabMenu {
 }
 
 export default class TemplatesPage extends Content {
+  filterRow = `[${DATA_TESTID}=list_PageTemplateListPage_Row]`;
+  
   getTable() {
     return this.get()
                .find(htmlElements.table);
@@ -113,7 +114,7 @@ export default class TemplatesPage extends Content {
   }
 
   openAddPage() {
-    this.getAddButton().click();
+    this.getAddButton().click({ force: true });
     return new AppPage(AddPage);
   }
 }

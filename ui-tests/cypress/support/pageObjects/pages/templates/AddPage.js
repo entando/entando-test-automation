@@ -8,9 +8,10 @@ export default class AddPage extends Content {
   nameInput = `${htmlElements.input}[name="descr"][${DATA_TESTID}=formik-field_RenderTextInput_input]`;
   jsonConfigDiv = `[${DATA_TESTID}=formik-field_JsonCodeEditorRenderer_div]`;
   templateDiv = `[${DATA_TESTID}=formik-field_HtmlCodeEditorRenderer_div]`;
+  codeMirror = '.CodeMirror-code';
   formRowDiv = `[${DATA_TESTID}=common_PageTemplateForm_Row]`;
   cancelButton = `[${DATA_TESTID}=common_PageTemplateForm_Button]`;
-  saveDropdownContainer = `${htmlElements.div}.dropdown]`;
+  saveDropdownContainer = `${htmlElements.div}.dropdown`;
   saveDropdownButton    = `${htmlElements.button}[${DATA_TESTID}=common_PageTemplateForm_DropdownButton]`;
   regularSaveButton     = `${htmlElements.a}#regularSaveButton`;
   continueSaveButton    = `${htmlElements.a}#continueSaveButton`;
@@ -38,13 +39,13 @@ export default class AddPage extends Content {
   getJsonConfigInput() {
     return this.getFormArea()
                .find(this.jsonConfigDiv)
-               .find(htmlElements.textarea);
+               .find(this.codeMirror);
   }
 
   getTemplateInput() {
     return this.getFormArea()
                .find(this.templateDiv)
-               .find(htmlElements.textarea);
+               .find(this.codeMirror);
   }
 
   typeName(input) {
@@ -55,12 +56,26 @@ export default class AddPage extends Content {
     this.getCodeInput().type(input);
   }
 
+  clearJsonConfig() {
+    this.getJsonConfigInput().type('{movetoend}');
+    cy.realPress(['Meta', 'A']);
+    cy.realType('{backspace}');
+  }
+
   typeJsonConfig(input) {
-    this.getJsonConfigInput().type(input);
+    this.clearJsonConfig();
+    this.getJsonConfigInput().type(input, { parseSpecialCharSequences: false });
+  }
+
+  clearTemplate() {
+    this.getTemplateInput().type('{movetoend}');
+    cy.realPress(['Meta', 'A']);
+    cy.realType('{backspace}');
   }
 
   typeTemplate(input) {
-    this.getTemplateInput().type(input);
+    this.clearTemplate();
+    this.getTemplateInput().type(input, { parseSpecialCharSequences: false });
   }
 
   fillForm(data) {

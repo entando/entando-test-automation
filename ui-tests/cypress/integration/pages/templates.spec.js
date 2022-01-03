@@ -1,4 +1,5 @@
 import HomePage from '../../support/pageObjects/HomePage';
+import { htmlElements } from '../../support/pageObjects/WebElement';
 
 const sampleData = {
   code: '2-2_democol',
@@ -17,9 +18,18 @@ const openPageTemplateMgmtPage = () => {
 
 describe('Page Templates', () => {
 
-  beforeEach(() => cy.kcLogin('admin').as('tokens'));
+  beforeEach(() => {
+    cy.wrap(null).as('templateToBeDeleted');
+    cy.kcLogin('admin').as('tokens');
+  });
 
   afterEach(() => {
+    cy.get('@templateToBeDeleted').then(templateToBeDeleted => {
+      if (templateToBeDeleted !== null) {
+        cy.pageTemplatesController()
+          .then(controller => controller.deletePageTemplate(templateToBeDeleted));
+      }
+    });
     cy.kcLogout();
   });
   
@@ -32,7 +42,10 @@ describe('Page Templates', () => {
       currentPage = currentPage.getContent().openAddPage();
       currentPage.getContent().fillForm(sampleData);
       currentPage = currentPage.getContent().submitForm();
-      currentPage.getContent().getTableRow(sampleData.code).should('contain.text', sampleData.name);
+      cy.wrap(sampleData.code).as('templateToBeDeleted');
+      cy.wait(100);
+      currentPage.getContent().getTableRow(sampleData.code).children(htmlElements.td).eq(2).should('contain.text', sampleData.descr);
+      
     });
 
   });
