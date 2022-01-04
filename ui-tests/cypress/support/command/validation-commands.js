@@ -24,4 +24,10 @@ Cypress.Commands.add('validateToast', (page, text = null, isOk = true) => {
   }
 });
 
+Cypress.Commands.add('closeAllToasts', (page) => {
+  page.getToastList().children('div').each(($el) => {
+    $el.find('span.pficon-close').click();
+  });
+});
+
 export {};
