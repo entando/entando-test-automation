@@ -36,9 +36,13 @@ export default class AddPage extends Content {
                .find(this.codeInput);
   }
 
-  getJsonConfigInput() {
+  getJsonConfigArea() {
     return this.getFormArea()
-               .find(this.jsonConfigDiv)
+               .find(this.jsonConfigDiv);
+  }
+
+  getJsonConfigInput() {
+    return this.getJsonConfigArea()
                .find(this.codeMirror);
   }
 

@@ -81,22 +81,26 @@ export default class TemplatesPage extends Content {
 
   openEdit(code) {
     const menu = this.getKebabMenuByCode(code);
+    menu.getKebabButton().click();
     menu.getEditButton().click();
     return new AppPage(AddPage);
   }
 
   openClone(code) {
     const menu = this.getKebabMenuByCode(code);
+    menu.getKebabButton().click();
     menu.getCloneButton().click();
   }
 
   openDetails(code) {
     const menu = this.getKebabMenuByCode(code);
+    menu.getKebabButton().click();
     menu.getDetailsButton().click();
   }
 
   openDelete(code) {
     const menu = this.getKebabMenuByCode(code);
+    menu.getKebabButton().click();
     menu.getDeleteButton().click();
   }
 

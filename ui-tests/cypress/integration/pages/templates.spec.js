@@ -8,7 +8,6 @@ const sampleData = {
   template: '<h1>hello there a frame</h1>'
 };
 
-
 const openPageTemplateMgmtPage = () => {
   cy.visit('/');
   let currentPage = new HomePage();
@@ -36,7 +35,6 @@ describe('Page Templates', () => {
   let currentPage;
 
   describe('Page Template Form', () => {
-
     it('Add Template', () => {
       currentPage = openPageTemplateMgmtPage();
       currentPage = currentPage.getContent().openAddPage();
@@ -45,8 +43,26 @@ describe('Page Templates', () => {
       cy.wrap(sampleData.code).as('templateToBeDeleted');
       cy.wait(100);
       currentPage.getContent().getTableRow(sampleData.code).children(htmlElements.td).eq(2).should('contain.text', sampleData.descr);
-      
     });
 
+    it('If the "descr" property of any object in the JSON configuration is an object, it should accept. Other mis-types under "descr" will display an error beneath (ENG-2711)', () => {
+      cy.pageTemplatesController()
+        .then(controller => controller.addPageTemplate({
+          ...sampleData,
+          configuration: JSON.parse(sampleData.configuration),
+        }));
+      cy.wrap(sampleData.code).as('templateToBeDeleted');
+      currentPage = openPageTemplateMgmtPage();
+      currentPage = currentPage.getContent().openEdit(sampleData.code);
+      currentPage.getContent().getJsonConfigInput().click();
+      cy.realPress(['Meta', 'F']);
+      cy.realType('"descr":{enter}{rightarrow}{rightarrow}');
+      cy.realPress(['Meta', 'Shift', 'ArrowRight']);
+      cy.realType('{backspace}');
+      cy.realType('{', { parseSpecialCharSequences: false });
+      currentPage.getContent().getJsonConfigArea().invoke('hasClass', 'has-error').should('be.true');
+      cy.realType('},', { parseSpecialCharSequences: false });
+      currentPage.getContent().getJsonConfigArea().invoke('hasClass', 'has-error').should('be.false');
+    });
   });
 });
