@@ -365,6 +365,29 @@ describe('Page Management', () => {
         currentPage.getContent().getOwnerGroupDropdown().should('not.exist');
       });
 
+      it('when adding secondary language, editing a page automatically adds default page code from default language (ENG-2695)', () => {
+        page.code = generateRandomId();
+        page.title    = {
+          en: generateRandomId(),
+          it: generateRandomId()
+        };
+        cy.pagesController()
+          .then(controller => controller.addPage(page.code, page.title.en, page.ownerGroup.code, page.template, page.parentCode))
+          .then(() => pageToBeDeleted = true);
+
+        cy.languagesController()
+          .then(controller => controller.putLanguage('cs', 'Czech', true, false));
+        
+        currentPage = openManagementPage();
+        currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+        currentPage.getContent().getTitleInput('en').invoke('val').should('eq', page.title.en);
+        currentPage.getContent().selectSeoLanguage(1);
+        currentPage.getContent().getTitleInput('cs').invoke('val').should('eq', page.title.en);
+
+        cy.languagesController()
+          .then(controller => controller.putLanguage('cs', 'Czech', false, false));
+      });
+
     });
 
     describe('Change page position in the page tree', () => {

@@ -34,5 +34,6 @@ import './restAPI/usersAPI.js';
 import './restAPI/widgetsAPI.js';
 import './restAPI/assetsAPI.js';
 import './restAPI/contentSettingsAPI.js';
+import './restAPI/languagesAPI.js';
 
 import './exception-handler';
