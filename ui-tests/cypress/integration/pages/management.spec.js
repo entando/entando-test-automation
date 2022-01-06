@@ -388,6 +388,25 @@ describe('Page Management', () => {
           .then(controller => controller.putLanguage('cs', 'Czech', false, false));
       });
 
+      it('Avoid accept blank page titles in an inactive language tab (ENG-2642)', () => {
+        page.code = generateRandomId();
+        page.title    = {
+          en: generateRandomId(),
+          it: generateRandomId()
+        };
+        cy.pagesController()
+          .then(controller => controller.addPage(page.code, page.title.en, page.ownerGroup.code, page.template, page.parentCode))
+          .then(() => pageToBeDeleted = true);
+        
+        currentPage = openManagementPage();
+        currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+        currentPage.getContent().getTitleInput('en').clear();
+        currentPage.getContent().selectSeoLanguage(1);
+        currentPage.getContent().getTitleInput('it').type(`${page.title.it}_1`);
+        currentPage.getContent().getSaveButton().invoke('attr', 'disabled').should('eq', 'disabled');
+        currentPage.getContent().getSaveAndDesignButton().invoke('attr', 'disabled').should('eq', 'disabled');
+      });
+
     });
 
     describe('Change page position in the page tree', () => {

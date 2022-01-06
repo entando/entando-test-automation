@@ -5,6 +5,7 @@ import Content from '../../app/Content.js';
 import AppPage from '../../app/AppPage.js';
 
 import ManagementPage from './ManagementPage.js';
+import DesignerPage from '../designer/DesignerPage.js';
 
 export default class AddPage extends Content {
 
@@ -32,7 +33,7 @@ export default class AddPage extends Content {
   pageTemplateSelect = `${htmlElements.select}[name=pageModel]`;
 
   // buttons
-  saveAndDesignButton = `${htmlElements.button}[${DATA_TESTID}="common_PageForm_Button"]`;
+  saveAndDesignButton = `${htmlElements.button}[${DATA_TESTID}="common_PageForm_Button"].PageForm__save-and-configure-btn`;
   saveButton          = `${htmlElements.button}[${DATA_TESTID}="save-page"]`;
 
   getSeoContainer() {
@@ -216,7 +217,7 @@ export default class AddPage extends Content {
 
   clickSaveAndDesignButton() {
     this.getSaveAndDesignButton().click();
-    //TODO add returned page
+    return new AppPage(DesignerPage);
   }
 
   clickSaveButton() {
