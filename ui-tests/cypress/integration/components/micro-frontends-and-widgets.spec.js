@@ -309,7 +309,7 @@ describe('Microfrontends and Widgets', () => {
       cy.kcLogout();
     });
 
-    it.only('Widgets page should not be accessible without superuser role', () => {
+    it('Widgets page should not be accessible without superuser role', () => {
       cy.rolesController()
         .then(controller => controller.addRole(role.code, role.name, {
           managePages: true,
