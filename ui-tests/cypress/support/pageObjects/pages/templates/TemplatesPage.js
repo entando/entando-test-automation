@@ -3,6 +3,7 @@ import Content from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu.js';
 import Pagination from '../../app/Pagination.js';
 import { DATA_TESTID, htmlElements } from '../../WebElement.js';
+import DeleteDialog from '../../app/DeleteDialog';
 import AddPage from './AddPage.js';
 
 class TemplatesKebabMenu extends KebabMenu {
@@ -54,6 +55,25 @@ class TemplatesKebabMenu extends KebabMenu {
   getDeleteButton() {
     return this.getListItemByOption(TemplatesKebabMenu.MENU_OPTIONS.DELETE).children(htmlElements.a);
   }
+
+  openEdit() {
+    this.getEditButton().click();
+    return new AppPage(AddPage);
+  }
+
+  openClone() {
+    this.getCloneButton().click();
+    return new AppPage(AddPage);
+  }
+
+  clickDetails() {
+    this.getDetailsButton().click();
+  }
+
+  clickDelete() {
+    this.getDeleteButton().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
+  }
 }
 
 export default class TemplatesPage extends Content {
@@ -77,31 +97,6 @@ export default class TemplatesPage extends Content {
   getTableRow(code) {
     const menu = this.getKebabMenuByCode(code);
     return menu.get().closest(htmlElements.tr);
-  }
-
-  openEdit(code) {
-    const menu = this.getKebabMenuByCode(code);
-    menu.getKebabButton().click();
-    menu.getEditButton().click();
-    return new AppPage(AddPage);
-  }
-
-  openClone(code) {
-    const menu = this.getKebabMenuByCode(code);
-    menu.getKebabButton().click();
-    menu.getCloneButton().click();
-  }
-
-  openDetails(code) {
-    const menu = this.getKebabMenuByCode(code);
-    menu.getKebabButton().click();
-    menu.getDetailsButton().click();
-  }
-
-  openDelete(code) {
-    const menu = this.getKebabMenuByCode(code);
-    menu.getKebabButton().click();
-    menu.getDeleteButton().click();
   }
 
   getPagination() {
