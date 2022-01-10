@@ -45,6 +45,75 @@ describe('Page Templates', () => {
       currentPage.getContent().getTableRow(sampleData.code).children(htmlElements.td).eq(2).should('contain.text', sampleData.descr);
     });
 
+    it('Edit Template', () => {
+      cy.pageTemplatesController()
+        .then(controller => controller.addPageTemplate({
+          ...sampleData,
+          configuration: JSON.parse(sampleData.configuration),
+        }));
+      cy.wrap(sampleData.code).as('templateToBeDeleted');
+      const newDescr = 'edited 2-2 Demo col';
+
+      currentPage = openPageTemplateMgmtPage();
+      currentPage = currentPage.getContent().getKebabMenuByCode(sampleData.code).open().openEdit();
+
+      currentPage.getContent().getNameInput().clear().type(newDescr);
+      
+      currentPage.getContent().getJsonConfigInput().click();
+      cy.realPress(['Meta', 'F']);
+      cy.realType('"descr":{enter}{rightarrow}{rightarrow}');
+      cy.realPress(['Meta', 'Shift', 'ArrowRight']);
+      cy.realType('{backspace}"Not Logo",');
+
+      currentPage = currentPage.getContent().submitForm();
+      cy.wait(100);
+      currentPage.getContent().getTableRow(sampleData.code).children(htmlElements.td).eq(2).should('contain.text', newDescr);
+    });
+
+    it('Clone Template', () => {
+      const cloneCode = `${sampleData.code}-2`;
+      currentPage = openPageTemplateMgmtPage();
+      currentPage = currentPage.getContent().getKebabMenuByCode('1-column').open().openClone();
+
+      currentPage.getContent().typeCode(cloneCode);
+      currentPage.getContent().typeName(sampleData.descr);
+      
+      currentPage = currentPage.getContent().submitForm();
+      cy.wrap(cloneCode).as('templateToBeDeleted');
+      cy.wait(100);
+      currentPage.getContent().getTableRow(cloneCode).children(htmlElements.td).eq(2).should('contain.text', sampleData.descr);
+    });
+
+    it('Delete Template', () => {
+      cy.pageTemplatesController()
+        .then(controller => controller.addPageTemplate({
+          ...sampleData,
+          configuration: JSON.parse(sampleData.configuration),
+        }));
+      cy.wrap(sampleData.code).as('templateToBeDeleted');
+
+      currentPage = openPageTemplateMgmtPage();
+      currentPage.getContent().getKebabMenuByCode(sampleData.code).open().clickDelete();
+      currentPage.getDialog().confirm();
+      cy.wait(100);
+
+      cy.validateToast(currentPage);
+    });
+
+    it('Open Template Details', () => {
+      cy.pageTemplatesController()
+        .then(controller => controller.addPageTemplate({
+          ...sampleData,
+          configuration: JSON.parse(sampleData.configuration),
+        }));
+      cy.wrap(sampleData.code).as('templateToBeDeleted');
+
+      currentPage = openPageTemplateMgmtPage();
+      currentPage.getContent().getKebabMenuByCode(sampleData.code).open().clickDetails();
+
+      cy.validateUrlPathname(`/page-template/view/${sampleData.code}`);
+    });
+
     it('If the "descr" property of any object in the JSON configuration is an object, it should accept. Other mis-types under "descr" will display an error beneath (ENG-2711)', () => {
       cy.pageTemplatesController()
         .then(controller => controller.addPageTemplate({
@@ -53,7 +122,7 @@ describe('Page Templates', () => {
         }));
       cy.wrap(sampleData.code).as('templateToBeDeleted');
       currentPage = openPageTemplateMgmtPage();
-      currentPage = currentPage.getContent().openEdit(sampleData.code);
+      currentPage = currentPage.getContent().getKebabMenuByCode(sampleData.code).open().openEdit();
       currentPage.getContent().getJsonConfigInput().click();
       cy.realPress(['Meta', 'F']);
       cy.realType('"descr":{enter}{rightarrow}{rightarrow}');
