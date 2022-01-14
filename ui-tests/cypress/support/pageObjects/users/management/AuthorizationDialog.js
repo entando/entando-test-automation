@@ -4,8 +4,8 @@ import {DialogContent} from '../../app/Dialog';
 
 export default class AuthorizationDialog extends DialogContent {
 
-  group = `${htmlElements.select}[${DATA_TESTID}=UserAuthorityModal__groupsField]`;
-  role  = `${htmlElements.select}[${DATA_TESTID}=UserAuthorityModal__rolesField]`;
+  group = `${htmlElements.select}[name="group"]`;
+  role  = `${htmlElements.select}[name="roles"]`;
 
   getGroup() {
     return this.get()

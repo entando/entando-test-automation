@@ -13,7 +13,7 @@ export default class DetailsPage extends Content {
 
   getDetailsInfo() {
     return this.getDetailsTable()
-               .children(htmlElements.div).eq(0);
+               .children(htmlElements.div).eq(1);
   }
 
   getDetailsRows() {

@@ -51,7 +51,7 @@ export default class EditPage extends Content {
   getTableRow(code) {
     return this.getKebabMenu(code)
                .get()
-               .parents(htmlElements.tr);
+               .closest(htmlElements.tr);
   }
 
   getKebabMenu(code) {

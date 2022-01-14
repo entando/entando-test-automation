@@ -76,29 +76,32 @@ class AttributeKebabMenu extends WebElement {
 
   get() {
     return this.parent.getAttributesTable()
-               .find(`${htmlElements.div}[${DATA_TESTID}=${this.code}-actions]`)
-               .children(htmlElements.div);
+               .find(`${htmlElements.button}#${this.code}-actions`)
+               //.children(htmlElements.div);
   }
 
   open() {
     this.get()
-        .children(htmlElements.button)
+        .closest(htmlElements.button)
         .click();
     return this;
   }
 
   getMoveUp() {
     return this.get()
+               .parent()
                .find(this.moveUp);
   }
 
   getMoveDown() {
     return this.get()
+               .parent()
                .find(this.moveDown);
   }
 
   getDelete() {
     return this.get()
+               .parent()
                .find(this.delete);
   }
 

@@ -14,32 +14,32 @@ import DetailsPage                  from '../../components/mfeWidgets/DetailsPag
 export default class DesignerPage extends Content {
 
   // Structure
-  grid      = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Grid]`;
-  container = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Row]`;
-  contents  = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_Col]`;
+  grid      = `${htmlElements.div}.container-fluid`;
+  container = `${htmlElements.div}.row`;
+  contents  = `${htmlElements.div}`;
 
-  pageDiv = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigPage_div]`;
+  pageDiv = `${htmlElements.div}`;
 
-  pageStatusIcon = `${htmlElements.i}[${DATA_TESTID}=common_PageStatusIcon_i]`;
+  pageStatusIcon = `${htmlElements.i}.PageStatusIcon`;
 
   // Designer
   basicTabs = `${htmlElements.div}#basic-tabs`;
   paneOne   = `${htmlElements.div}#basic-tabs-pane-1`;
-  gridDiv   = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGrid_div]`;
-  gridRow   = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridRow_div]`;
-  gridCol   = `${htmlElements.div}[${DATA_TESTID}=config_PageConfigGridCol_div]`;
+  gridDiv   = `${htmlElements.div}.PageConfigGrid`;
+  gridRow   = `${htmlElements.div}.PageConfigGridRow`;
+  gridCol   = `${htmlElements.div}.PageConfigGridCol`;
 
   // Sidebar
-  configTabs   = `${htmlElements.ul}[${DATA_TESTID}=config_ToolbarPageConfig_Tabs]`;
+  configTabs   = `${htmlElements.ul}.nav`;
   toggleButton = `${htmlElements.button}[${DATA_TESTID}=config_ToolbarPageConfig_Button]`;
 
   // Widgets
   widgetGroupings = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGroupings_div]`;
-  widgetList      = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGrouping_Collapse]`;
-  widgetGrouping  = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGrouping_div]`;
+  widgetList      = `${htmlElements.div}.collapse`;
+  widgetGrouping  = `${htmlElements.div}.WidgetGrouping__item-area`;
 
   // Page tree
-  pageTreeTable = `${htmlElements.table}[${DATA_TESTID}=common_PageTreeCompact_table]`;
+  pageTreeTable = `${htmlElements.table}.PageTreeCompact`;
   pageTreeTbody = `${htmlElements.tbody}[${DATA_TESTID}=common_PageTreeCompact_tbody]`;
   pageTreeRow   = `${htmlElements.tr}[${DATA_TESTID}=common_PageTreeCompact_tr]`;
 
@@ -109,8 +109,8 @@ export default class DesignerPage extends Content {
 
   getMainContainer() {
     return this.get()
-               .children(this.grid)
-               .children(this.container);
+               .find(this.grid)
+               .find(this.container);
   }
 
   getContents() {
@@ -125,7 +125,7 @@ export default class DesignerPage extends Content {
 
   getDesigner() {
     return this.getContents()
-               .children(this.basicTabs);
+               .find(this.basicTabs);
   }
 
   getDesignerTabs() {
@@ -159,7 +159,7 @@ export default class DesignerPage extends Content {
 
   getDesignerGridRows() {
     return this.getDesignerGrid()
-               .children(this.gridRow);
+               .find(this.gridRow);
   }
 
   getDesignerGridRow(rowPos) {
@@ -235,7 +235,7 @@ export default class DesignerPage extends Content {
 
   getSidebarPageTreeTable() {
     return this.getSidebarContent()
-               .children(this.pageTreeTable);
+               .find(this.pageTreeTable);
   }
 
   getSidebarPageTreeTableRows() {

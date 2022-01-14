@@ -8,11 +8,11 @@ import CategoriesPage from './CategoriesPage';
 
 export default class AddPage extends Content {
 
-  titleItInput      = `${htmlElements.input}[name="titles.it"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  titleEnInput      = `${htmlElements.input}[name="titles.en"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  codeInput         = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  treePositionInput = `${htmlElements.table}[${DATA_TESTID}=common_CategoryTreeSelector_table]`;
-  saveButton        = `${htmlElements.button}[${DATA_TESTID}=common_CategoryForm_Button]`;
+  titleItInput      = `${htmlElements.input}[name="titles.it"]`;
+  titleEnInput      = `${htmlElements.input}[name="titles.en"]`;
+  codeInput         = `${htmlElements.input}[name="code"]`;
+  treePositionInput = `${htmlElements.table}.CategoryTreeSelector`;
+  saveButton        = `${htmlElements.button}.CategoryForm__save-btn`;
 
   getTitleItInput() {
     return this.getContents()

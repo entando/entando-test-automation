@@ -14,9 +14,9 @@ export default class GroupsPage extends Content {
 
   tableDiv = `${htmlElements.div}[${DATA_TESTID}=list_GroupListTable_div]`;
   tableCol = `${htmlElements.div}[${DATA_TESTID}=list_GroupListTable_Col]`;
-  table    = `${htmlElements.table}[${DATA_TESTID}=groups-table]`;
-  pageCol  = `${htmlElements.div}[${DATA_TESTID}=list_ListGroupPage_Col]`;
-  pageLink = `${htmlElements.a}[${DATA_TESTID}=list_ListGroupPage_Link]`;
+  table    = `${htmlElements.table}.GroupListTable__table`;
+  pageCol  = `${htmlElements.div}.col-md-12`;
+  pageLink = `${htmlElements.a}`;
 
   getGroupsTable() {
     return this.getContents()
@@ -55,7 +55,8 @@ export default class GroupsPage extends Content {
 
   getAddButton() {
     return this.getContents()
-               .children(htmlElements.div).eq(4)
+               .children(htmlElements.div)
+               .children(htmlElements.div).eq(6)
                .children(this.pageCol)
                .children(this.pageLink)
                .children(htmlElements.button);
@@ -83,7 +84,7 @@ class GroupsKebabMenu extends KebabMenu {
 
   getDelete() {
     return this.get()
-               .find(`[${DATA_TESTID}=group-delete-action]`);
+               .find(`${htmlElements.li}.GroupListMenuAction__menu-item-delete`);
   }
 
   openDetails() {

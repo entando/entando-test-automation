@@ -4,7 +4,7 @@ import Content from '../../app/Content.js';
 
 export default class DetailsPage extends Content {
 
-  description = `${htmlElements.dl}[${DATA_TESTID}=detail_DetailRoleTable_dl]`;
+  description = `${htmlElements.dl}.DetailRole__detail-list`;
 
   getDetailsDescription() {
     return this.getContents()

@@ -21,7 +21,7 @@ export default class ManagementPage extends Content {
   expandAll      = `${htmlElements.div}.PageTree__toggler--expand`;
   expandNode     = `[${DATA_TESTID}=tree-node_TreeNodeExpandedIcon_i]`;
 
-  addButton = `${htmlElements.button}[${DATA_TESTID}=button-step-5]`;
+  addButton = `${htmlElements.button}.app-tour-step-5`;
 
   getSearchForm() {
     return this.getContents()

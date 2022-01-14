@@ -95,7 +95,7 @@ describe('Page Management', () => {
 
       currentPage = openManagementPage();
       currentPage = currentPage.getContent().openAddPagePage();
-      cy.validateUrlPathname('/page/add');
+      cy.validateUrlPathname('/app-builder/page/add');
 
       currentPage.getContent().openOwnerGroupMenu();
       currentPage.getContent().getOwnerGroupDropdown().children(htmlElements.li)
@@ -156,7 +156,7 @@ describe('Page Management', () => {
             page.template = template;
             currentPage   = openManagementPage();
             currentPage   = currentPage.getContent().openAddPagePage();
-            cy.validateUrlPathname('/page/add');
+            cy.validateUrlPathname('/app-builder/page/add');
 
             addPageMandatoryData(currentPage, page);
             saveAndValidate(currentPage, page);
@@ -170,7 +170,7 @@ describe('Page Management', () => {
             page.template = template;
             currentPage   = openManagementPage();
             currentPage   = currentPage.getContent().openAddPagePage();
-            cy.validateUrlPathname('/page/add');
+            cy.validateUrlPathname('/app-builder/page/add');
 
             addPageMandatoryData(currentPage, page);
             addSeoData(currentPage, page.seoData);
@@ -194,7 +194,7 @@ describe('Page Management', () => {
 
         currentPage = openManagementPage();
         currentPage = currentPage.getContent().getKebabMenu(page.code).open().openAdd();
-        cy.validateUrlPathname('/page/add');
+        cy.validateUrlPathname('/app-builder/page/add');
 
         addPageMandatoryData(currentPage, subPage);
         currentPage        = currentPage.getContent().clickSaveButton();
@@ -216,7 +216,7 @@ describe('Page Management', () => {
         cy.wait(3000);
 
         cy.location().should(url => {
-          expect(url.pathname).eq('/page/add');
+          expect(url.pathname).eq('/app-builder/page/add');
           expect(url.search).eq('');
         });
       });
@@ -224,7 +224,7 @@ describe('Page Management', () => {
       it('Adding a new page with empty fields is forbidden', () => {
         currentPage = openManagementPage();
         currentPage = currentPage.getContent().openAddPagePage();
-        cy.validateUrlPathname('/page/add');
+        cy.validateUrlPathname('/app-builder/page/add');
 
         currentPage.getContent().getSaveAndDesignButton().should('be.disabled');
         currentPage.getContent().getSaveButton().should('be.disabled');
@@ -233,7 +233,7 @@ describe('Page Management', () => {
       it('Adding a new page without mandatory fields is forbidden', () => {
         currentPage = openManagementPage();
         currentPage = currentPage.getContent().openAddPagePage();
-        cy.validateUrlPathname('/page/add');
+        cy.validateUrlPathname('/app-builder/page/add');
 
         addPageMandatoryData(currentPage, page);
         currentPage.getContent().getSaveAndDesignButton().should('not.be.disabled');
@@ -249,7 +249,7 @@ describe('Page Management', () => {
 
         currentPage = openManagementPage();
         currentPage = currentPage.getContent().openAddPagePage();
-        cy.validateUrlPathname('/page/add');
+        cy.validateUrlPathname('/app-builder/page/add');
 
         page.code = homepageCode;
         addPageMandatoryData(currentPage, page);

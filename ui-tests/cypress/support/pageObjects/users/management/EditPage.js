@@ -8,12 +8,12 @@ import ManagementPage from './ManagementPage.js';
 
 export default class EditPage extends Content {
 
-  usernameInput        = `${htmlElements.input}[name=username][${DATA_TESTID}=form_RenderTextInput_input]`;
-  passwordInput        = `${htmlElements.input}[name=password][${DATA_TESTID}=form_RenderTextInput_input]`;
-  passwordConfirmInput = `${htmlElements.input}[name=passwordConfirm][${DATA_TESTID}=form_RenderTextInput_input]`;
-  status               = `${htmlElements.div}[${DATA_TESTID}=status-switchField]`;
-  saveButton           = `${htmlElements.button}[${DATA_TESTID}=UserForm__saveButton]`;
-  cancelButton         = `${htmlElements.button}[${DATA_TESTID}=common_UserForm_Button]`;
+  usernameInput        = `${htmlElements.input}[name=username]`;
+  passwordInput        = `${htmlElements.input}[name=password]`;
+  passwordConfirmInput = `${htmlElements.input}[name=passwordConfirm]`;
+  status               = `${htmlElements.div}.bootstrap-switch`;
+  saveButton           = `${htmlElements.button}.btn-primary`;
+  cancelButton         = `${htmlElements.button}.UserForm__action-button`;
 
   getUsernameInput() {
     return this.getContents()
@@ -55,7 +55,7 @@ export default class EditPage extends Content {
 
   changeStatus() {
     this.getStatus()
-        .children(htmlElements.div)
+        .children(htmlElements.div).eq(1)
         .click();
   }
 

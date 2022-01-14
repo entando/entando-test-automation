@@ -9,10 +9,10 @@ import AuthorizationDialog from './AuthorizationDialog';
 
 export default class AuthorizationPage extends Content {
 
-  addButton  = `${htmlElements.button}[${DATA_TESTID}=UserAuthorityTable__addButton]`;
-  table      = `${htmlElements.table}[${DATA_TESTID}=UserAuthorityTable__table]`;
+  addButton  = `${htmlElements.button}.UserAuthorityTable__addNew`;
+  table      = `${htmlElements.table}.table`;
   tableAlert = `${htmlElements.div}[${DATA_TESTID}=authority_UserAuthorityTable_Alert]`;
-  saveButton = `${htmlElements.button}[${DATA_TESTID}=UserAuthorityPageForm__saveButton]`;
+  saveButton = `${htmlElements.button}.btn-primary`;
 
   getTitle() {
     return this.getContents()
@@ -49,6 +49,12 @@ export default class AuthorizationPage extends Content {
 
   getSaveButton() {
     return this.get()
+               .children(`${htmlElements.div}.container-fluid`)
+               .children(htmlElements.div)
+               .children(htmlElements.div).eq(3)
+               .children(htmlElements.form)
+               .children(htmlElements.div)
+               .children(htmlElements.div).eq(1)
                .find(this.saveButton);
   }
 

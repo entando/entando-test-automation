@@ -55,7 +55,7 @@ describe('Pages Designer', () => {
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
       addWidgetToPageFrame(currentPage, page.template, 0, 0, 1, 0);
-
+      cy.wait(1000); //time to load element
       currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                  .then(contents => {

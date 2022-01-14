@@ -6,22 +6,23 @@ import AppPage                     from '../../app/AppPage';
 
 export default class CategoriesPage extends Content {
 
-  categoryTreeCol   = `${htmlElements.div}[${DATA_TESTID}=list_CategoryTree_Col]`;
-  pageCol           = `${htmlElements.div}[${DATA_TESTID}=list_ListCategoryPage_Col]`;
-  pageLink          = `${htmlElements.a}[${DATA_TESTID}=list_ListCategoryPage_Link]`;
+  categoryTreeCol   = `${htmlElements.div}.col-xs-12`;
+  pageCol           = `${htmlElements.div}.col-xs-12`;
+  pageLink          = `${htmlElements.a}`;
   modalDeleteButton = `${htmlElements.button}#DeleteCategoryModal__button-delete`;
   actionDelete      = `${htmlElements.li}.CategoryListMenuAction__menu-item-delete`;
 
   getCategoriesTree() {
     return this.getContents()
                .children(htmlElements.div).eq(2)
-               .children(this.categoryTreeCol);
+               .find(this.categoryTreeCol);
   }
 
   getAddButton() {
     return this.getContents()
-               .children(htmlElements.div).eq(3)
-               .children(this.pageCol)
+               .children(htmlElements.div)
+               //.children(htmlElements.div).eq(3)
+               .find(this.pageCol)
                .children(this.pageLink)
                .children(htmlElements.button);
   }

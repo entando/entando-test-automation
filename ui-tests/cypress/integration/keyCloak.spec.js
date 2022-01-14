@@ -26,7 +26,7 @@ describe('Keycloack', () => {
 
     cy.location().should((location) => {
       expect(location.origin).to.eq(Cypress.config('baseUrl'));
-      expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
+      expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard/');
     });
 
     currentPage = new HomePage();
@@ -44,7 +44,7 @@ describe('Keycloack', () => {
     cy.visit('/');
     cy.location().should((location) => {
       expect(location.origin).to.eq(Cypress.config('baseUrl'));
-      expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
+      expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard/');
     });
 
     cy.kcLogout();

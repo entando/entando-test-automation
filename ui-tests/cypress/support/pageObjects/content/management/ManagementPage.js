@@ -64,8 +64,8 @@ export default class ManagementPage extends Content {
     this.getContents()
         .get(this.contentsTableDiv)
         .find(this.contentsKebabMenu).eq(0)
-        .find(this.contentsKebabMenuButton)
-        .click();
+        .find(this.contentsKebabMenuButton).as('kebabButton')
+    cy.get('@kebabButton').click();
     this.getContents()
         .get(this.contentsTableDiv)
         .find(this.contentsKebabMenuAction).eq(0)

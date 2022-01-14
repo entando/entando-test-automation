@@ -6,12 +6,12 @@ import DesignerPage from './DesignerPage';
 import AppPage      from '../../app/AppPage';
 
 export default class WidgetConfigPage extends Content {
-  grid  = `${htmlElements.div}[${DATA_TESTID}=config_WidgetConfigPage_Grid]`;
-  panel = `${htmlElements.div}[${DATA_TESTID}=config_WidgetConfigPage_Panel]`;
+  grid  = `${htmlElements.div}.container-fluid`;
+  panel = `${htmlElements.div}.PageConfigPage__panel-body`;
 
   getMainContainer() {
     return this.get()
-               .children(this.grid);
+               .find(this.grid);
   }
 
   getInnerPanel() {

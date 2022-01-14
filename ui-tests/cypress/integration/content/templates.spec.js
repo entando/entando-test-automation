@@ -140,7 +140,7 @@ describe('Content Templates', () => {
       });
     cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
     cy.pagesController().then(controller => controller.addNewPage(page))
-    cy.widgetsController(page.code)
+    cy.widgetInstanceController(page.code) //(era widgetsController)
       .then(controller =>
         controller.addWidget(
           pageWidget.frameId,

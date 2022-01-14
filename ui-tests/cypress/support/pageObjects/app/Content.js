@@ -2,13 +2,13 @@ import {DATA_TESTID, htmlElements, WebElement} from '../WebElement.js';
 
 export default class Content extends WebElement {
 
-  content = `[${DATA_TESTID}=internal-page_InternalPage_div]`;
+  //content = `[${DATA_TESTID}=internal-page_InternalPage_div]`;
 
-  alertMessageDiv = `${htmlElements.div}[${DATA_TESTID}=form_ErrorsAlert_Alert]`;
+  alertMessageDiv = `${htmlElements.div}.ErrorsAlert`;
 
   get() {
     return this.parent.get()
-               .children(this.content);
+               //.children(this.content);
   }
 
   getContents() {
@@ -18,6 +18,7 @@ export default class Content extends WebElement {
 
   getBreadCrumb() {
     return this.getContents()
+               .children(`${htmlElements.div}.container-fluid`)
                .children(htmlElements.div).eq(0)
                .children(htmlElements.div)
                .children(htmlElements.ol);
@@ -25,6 +26,7 @@ export default class Content extends WebElement {
 
   getTitle() {
     return this.getContents()
+               .children(`${htmlElements.div}.container-fluid`)
                .children(htmlElements.div).eq(1)
                .find(htmlElements.h1);
   }

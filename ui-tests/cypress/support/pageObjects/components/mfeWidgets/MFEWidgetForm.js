@@ -18,17 +18,17 @@ export default class MFEWidgetForm extends Content {
   formConfigSection     = `${htmlElements.div}.WidgetForm__container`;
   formInfoSection       = `${htmlElements.div}.WidgetForm__info`;
   configTabs            = `${htmlElements.div}#basic-tabs ${htmlElements.ul}[role=tablist]`;
-  iconFieldContainer    = `${htmlElements.div}.IconUploader__container[${DATA_TESTID}=common_IconUploader_div]`;
-  iconUploadInput       = `${htmlElements.input}[type="file"][${DATA_TESTID}=common_IconUploader_input]`;
-  iconFieldInnerDiv     = `${htmlElements.div}[${DATA_TESTID}=common_IconUploader_div]`;
-  iconList              = `${htmlElements.div}.IconLibrary__icon-list[${DATA_TESTID}=common_IconLibrary_div]`;
-  enTitleInput          = `${htmlElements.input}[name="titles.en"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  itTitleInput          = `${htmlElements.input}[name="titles.it"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  codeInput             = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  groupInput            = `${htmlElements.div}[${DATA_TESTID}=group-typeahead]`;
-  customUiInput         = `textarea[name="customUi"][${DATA_TESTID}=form_RenderTextAreaInput_textarea]`;
-  saveDropdownContainer = `${htmlElements.div}.FragmentForm__dropdown[${DATA_TESTID}=common_WidgetForm_div]`;
-  saveDropdownButton    = `${htmlElements.button}[${DATA_TESTID}=common_WidgetForm_DropdownButton]`;
+  iconFieldContainer    = `${htmlElements.div}.IconUploader`;
+  iconUploadInput       = `${htmlElements.input}[type="file"]`;
+  iconFieldInnerDiv     = `${htmlElements.div}.col-xs-10`;
+  iconList              = `${htmlElements.div}.IconLibrary__icon-list`;
+  enTitleInput          = `${htmlElements.input}[name="titles.en"]`;
+  itTitleInput          = `${htmlElements.input}[name="titles.it"]`;
+  codeInput             = `${htmlElements.input}[name="code"]`;
+  groupInput            = `${htmlElements.div}.rbt`;
+  customUiInput         = `textarea[name="customUi"]`;
+  saveDropdownContainer = `${htmlElements.div}.FragmentForm__dropdown`;
+  saveDropdownButton    = `${htmlElements.button}#saveopts`;
   saveReplaceButton     = `${htmlElements.button}[type=submit]`;
   regularSaveButton     = `${htmlElements.a}#regularSaveButton`;
   continueSaveButton    = `${htmlElements.a}#continueSaveButton`;
@@ -140,8 +140,8 @@ export default class MFEWidgetForm extends Content {
   getIconChooseButton() {
     return this.getFormBody()
                .find(this.iconFieldContainer)
-               .children(this.iconFieldInnerDiv).eq(1)
-               .children(htmlElements.button).eq(0);
+               .children(this.iconFieldInnerDiv)
+               .find(htmlElements.button).eq(0);
   }
 
   getSaveButton() {

@@ -50,8 +50,8 @@ describe('Groups', () => {
     currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
     currentPage.getContent().getDetailsInfo()
                .within(info => {
-                 cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
-                 cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
+                 cy.get(info).children(`${htmlElements.div}.DetailGroupPage__header`).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
+                 cy.get(info).children(`${htmlElements.div}.DetailGroupPage__header`).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
                });
 
     cy.groupsController().then(controller => controller.deleteGroup(groupCode));
@@ -67,6 +67,7 @@ describe('Groups', () => {
 
     currentPage.getDialog().confirm();
     cy.reload(); //TODO the page does not automatically refresh the table
+    cy.wait(1000) //time to reload
     currentPage.getContent().getTableRows().should('not.contain', groupCode);
   });
 
@@ -105,8 +106,8 @@ describe('Groups', () => {
       currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
       currentPage.getContent().getDetailsInfo()
                  .within(info => {
-                   cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
-                   cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
+                   cy.get(info).children(`${htmlElements.div}.DetailGroupPage__header`).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
+                   cy.get(info).children(`${htmlElements.div}.DetailGroupPage__header`).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
                  });
     });
 
@@ -126,8 +127,8 @@ describe('Groups', () => {
       currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
       currentPage.getContent().getDetailsInfo()
                  .within(info => {
-                   cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
-                   cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
+                   cy.get(info).children(`${htmlElements.div}.DetailGroupPage__header`).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
+                   cy.get(info).children(`${htmlElements.div}.DetailGroupPage__header`).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
                  });
     });
 

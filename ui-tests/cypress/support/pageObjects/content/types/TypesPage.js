@@ -26,7 +26,7 @@ export default class TypesPage extends Content {
 
   getTableRow(code) {
     return this.getTable()
-               .find(`[${DATA_TESTID}=${code}-actions]`)
+               .find(`${htmlElements.button}#ContentTypeList-dropdown-${code}`)
                .closest(htmlElements.tr);
   }
 

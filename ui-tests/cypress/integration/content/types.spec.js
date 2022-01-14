@@ -297,7 +297,7 @@ describe('Content Types', () => {
           currentPage.getContent().typeCode(attribute.code);
           currentPage.getContent().selectNestedAttributeType(ATTRIBUTE_TYPES.COMPOSITE);
           currentPage = currentPage.getContent().continue(ATTRIBUTE_TYPES.COMPOSITE);
-          cy.validateUrlPathname(`/cms/content-type/attribute/${contentType.code}/MonolistAdd/${attribute.code}`);
+          cy.validateUrlPathname(`/app-builder/cms/content-type/attribute/${contentType.code}/MonolistAdd/${attribute.code}`);
           attributeToBeDeleted = true;
 
           addCompositeSubAttributes(currentPage, attribute.code);
@@ -438,7 +438,7 @@ describe('Content Types', () => {
       currentPage = openEditContentTypePage(contentType.code);
 
       currentPage = currentPage.getContent().getKebabMenu(attribute.code).open().openEdit();
-      cy.validateUrlPathname(`/cms/content-type/attribute/${contentType.code}/edit/${attribute.code}`);
+      cy.validateUrlPathname(`/app-builder/cms/content-type/attribute/${contentType.code}/edit/${attribute.code}`);
       return currentPage;
     };
     const editAttributeName = (attributeType, updatedAttributeName) => {
@@ -456,10 +456,10 @@ describe('Content Types', () => {
       currentPage.getContent().typeCode(attribute.code);
       currentPage.getContent().selectNestedAttributeType(nestedAttributeType);
       currentPage = currentPage.getContent().continue(attributeType);
-      cy.validateUrlPathname(`/cms/content-type/attribute/${contentType.code}/MonolistAdd/${attribute.code}`);
+      cy.validateUrlPathname(`/app-builder/cms/content-type/attribute/${contentType.code}/MonolistAdd/${attribute.code}`);
 
       currentPage = currentPage.getContent().continue();
-      cy.validateUrlPathname(`/cms/content-types/edit/${contentType.code}`);
+      cy.validateUrlPathname(`/app-builder/cms/content-types/edit/${contentType.code}`);
       currentPage.getContent().getAttributesTable().should('contain', attribute.code);
 
       attributeToBeDeleted = true;
@@ -476,10 +476,10 @@ describe('Content Types', () => {
       attributeToBeDeleted = true;
 
       currentPage = editAttributeName(attributeType, updatedAttributeName);
-      cy.validateUrlPathname(`/cms/content-type/attribute/${contentType.code}/MonolistAdd/${attribute.code}`);
+      cy.validateUrlPathname(`/app-builder/cms/content-type/attribute/${contentType.code}/MonolistAdd/${attribute.code}`);
 
       currentPage = currentPage.getContent().continue();
-      cy.validateUrlPathname(`/cms/content-types/edit/${contentType.code}`);
+      cy.validateUrlPathname(`/app-builder/cms/content-types/edit/${contentType.code}`);
 
       cy.log('check if new name of list attribute exists');
       currentPage.getContent().getTableRow(attribute.code).should('contain', updatedAttributeName);

@@ -8,8 +8,8 @@ import ManagementPage from './ManagementPage.js';
 
 export default class ViewProfilePage extends Content {
 
-  table      = `${htmlElements.table}[${DATA_TESTID}=DetailUserTable__table]`;
-  backButton = `${htmlElements.button}[${DATA_TESTID}=DetailUserTable__backButton]`;
+  table      = `${htmlElements.table}.table`;
+  backButton = `${htmlElements.button}.btn-primary`;
 
   getDetailsTable() {
     return this.getContents()

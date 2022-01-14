@@ -23,7 +23,7 @@ describe('Users Management', () => {
     it('Users management page', () => {
       currentPage = openManagementPage();
 
-      cy.validateUrlPathname('/user');
+      cy.validateUrlPathname('/app-builder/user');
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -57,7 +57,7 @@ describe('Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEdit();
 
-      cy.validateUrlPathname(`/user/edit/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/app-builder/user/edit/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -71,15 +71,15 @@ describe('Users Management', () => {
       currentPage.getContent().getUsernameInput()
                  .should('be.visible')
                  .and('have.value', USERNAME_ADMIN);
-      currentPage.getContent().getUsernameInput().parent().parent().children(htmlElements.div).eq(0)
+      currentPage.getContent().getUsernameInput().parent().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Username ');
       currentPage.getContent().getPasswordInput()
                  .should('be.visible');
-      currentPage.getContent().getPasswordInput().parent().parent().children(htmlElements.div).eq(0)
+      currentPage.getContent().getPasswordInput().parent().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Password ');
       currentPage.getContent().getPasswordConfirmInput()
                  .should('be.visible');
-      currentPage.getContent().getPasswordConfirmInput().parent().parent().children(htmlElements.div).eq(0)
+      currentPage.getContent().getPasswordConfirmInput().parent().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Confirm password ');
       currentPage.getContent().getStatus()
                  .should('be.visible');
@@ -97,7 +97,7 @@ describe('Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEditProfile();
 
-      cy.validateUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/app-builder/userprofile/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -115,19 +115,19 @@ describe('Users Management', () => {
       currentPage.getContent().getUsernameInput()
                  .should('be.visible')
                  .and('be.disabled');
-      currentPage.getContent().getUsernameInput().parent().parent().children(htmlElements.div).eq(0)
+      currentPage.getContent().getUsernameInput().parent().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Username ');
       currentPage.getContent().getFullNameInput()
                  .should('be.visible');
-      currentPage.getContent().getFullNameInput().parent().parent().children(htmlElements.div).eq(0)
+      currentPage.getContent().getFullNameInput().parent().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Full Name ');
       currentPage.getContent().getEmailInput()
                  .should('be.visible');
-      currentPage.getContent().getEmailInput().parent().parent().children(htmlElements.div).eq(0)
+      currentPage.getContent().getEmailInput().parent().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Email ');
       currentPage.getContent().getProfilePictureInput()
                  .should('be.visible');
-      currentPage.getContent().getProfilePictureInput().parent().parent().children(htmlElements.div).eq(0)
+      currentPage.getContent().getProfilePictureInput().parent().parent().parent().children(htmlElements.div).eq(0)
                  .should('have.text', 'Profile Picture ');
 
       currentPage.getContent().getSaveButton()
@@ -140,7 +140,7 @@ describe('Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openViewProfile();
 
-      cy.validateUrlPathname(`/user/view/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/app-builder/user/view/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -172,7 +172,7 @@ describe('Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openManageAuth();
 
-      cy.validateUrlPathname(`/authority/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/app-builder/authority/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')

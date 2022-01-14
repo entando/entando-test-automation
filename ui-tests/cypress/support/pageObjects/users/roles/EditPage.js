@@ -8,11 +8,11 @@ import RolesPage from './RolesPage.js';
 
 export default class EditPage extends Content {
 
-  nameInput    = `${htmlElements.input}[name="name"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  codeInput    = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  permissions  = `${htmlElements.fieldset}[${DATA_TESTID}=common_RoleForm_fieldset]`;
-  cancelButton = `${htmlElements.button}[${DATA_TESTID}=RoleForm__cancelButton]`;
-  saveButton   = `${htmlElements.button}[${DATA_TESTID}=RoleForm__saveButton]`;
+  nameInput    = `${htmlElements.input}[name="name"]`;
+  codeInput    = `${htmlElements.input}[name="code"]`;
+  permissions  = `${htmlElements.fieldset}.no-padding`;
+  cancelButton = `${htmlElements.button}.btn-default`;
+  saveButton   = `${htmlElements.button}.btn-primary`;
 
   getNameInput() {
     return this.getContents()
@@ -37,6 +37,9 @@ export default class EditPage extends Content {
 
   getPermissionsGrid() {
     return this.getContents()
+               .children(`${htmlElements.div}.container-fluid`)
+               .children(htmlElements.div).eq(2)
+               .find(`${htmlElements.div}.row`).eq(1)
                .find(this.permissions)
                .children(htmlElements.div)
                .children(htmlElements.div);

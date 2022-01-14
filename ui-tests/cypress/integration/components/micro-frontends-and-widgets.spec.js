@@ -109,10 +109,10 @@ describe('Microfrontends and Widgets', () => {
     })
 
     it('Adding a basic widget with icon', () => {
-      cy.validateUrlPathname('/widget/add');
+      cy.validateUrlPathname('/app-builder/widget/add');
       currentPage.getContent().fillWidgetForm(SAMPLE_WIDGET_NAMES[0], SAMPLE_BASIC_WIDGET_ID);
       currentPage = currentPage.getContent().submitForm();
-      cy.validateUrlPathname('/widget');
+      cy.validateUrlPathname('/app-builder/widget');
       currentPage.getContent().getListArea().should('contain', SAMPLE_BASIC_WIDGET_ID);
       cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToDelete');
     });
@@ -120,7 +120,7 @@ describe('Microfrontends and Widgets', () => {
     it('Add a widget with existing code widget', () => {
       currentPage.getContent().fillWidgetForm(SAMPLE_WIDGET_NAMES[0], 'content_viewer');
       currentPage.getContent().submitForm();
-      cy.location('pathname').should('not.eq', '/widget');
+      cy.location('pathname').should('not.eq', '/app-builder/widget');
       currentPage.getToastList().should('contain', 'The Widget content_viewer already exists');
     });
 
@@ -130,7 +130,7 @@ describe('Microfrontends and Widgets', () => {
         customUi: 'a'
       });
       currentPage.getContent().getCodeInput().closest('div.form-group').invoke('attr', 'class').should('contain', 'has-error');
-      currentPage.getContent().getCodeInput().next().invoke('attr', 'class').should('contain', 'help-block');
+      currentPage.getContent().getCodeInput().parent().next().invoke('attr', 'class').should('contain', 'help-block');
     });
 
     it('Add a widget without choosing group and title', () => {
@@ -156,15 +156,15 @@ describe('Microfrontends and Widgets', () => {
     it('Editing widget by modifying all mandatory fields', () => {
       currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      cy.validateUrlPathname(`/app-builder/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
         name: SAMPLE_WIDGET_NAMES[1],
         group: 'Free Access',
         iconChoose
       });
       currentPage.getContent().submitContinueForm();
-      cy.location('pathname').should('not.eq', '/widget');
-      cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      cy.location('pathname').should('not.eq', '/app-builder/widget');
+      cy.validateUrlPathname(`/app-builder/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage = currentPage.getMenu().getComponents().open();
       currentPage = currentPage.openMFE_Widgets();
       cy.wait(500);
@@ -174,14 +174,14 @@ describe('Microfrontends and Widgets', () => {
     it('Editing a used widget via widget list modifying all mandatory fields', () => {
       currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      cy.validateUrlPathname(`/app-builder/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
         iconUpload,
         name: SAMPLE_WIDGET_NAMES[2],
         group: 'Administrators'
       });
       currentPage = currentPage.getContent().submitForm();
-      cy.validateUrlPathname('/widget');
+      cy.validateUrlPathname('/app-builder/widget');
       currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[2]);
     });
   });
@@ -202,7 +202,7 @@ describe('Microfrontends and Widgets', () => {
                                 .open()
                                 .openEdit();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+      cy.validateUrlPathname(`/app-builder/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
       currentPage.getContent().editFormFields({
         name: SAMPLE_WIDGET_NAMES[1],
         group: 'Free Access',
@@ -210,7 +210,7 @@ describe('Microfrontends and Widgets', () => {
       });
       currentPage = currentPage.getContent().submitForm();
       cy.wait(3000);
-      cy.validateUrlPathname('/widget');
+      cy.validateUrlPathname('/app-builder/widget');
       currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[1]);
     });
   });

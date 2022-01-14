@@ -13,7 +13,7 @@ export default class NestedAttributePage extends Content {
                .children(htmlElements.div).eq(2)
                .children(htmlElements.div)
                .children(htmlElements.div)
-               .children(htmlElements.form)
+               .find(htmlElements.form)
                .children(htmlElements.div).eq(1)
                .find(htmlElements.button);
   }

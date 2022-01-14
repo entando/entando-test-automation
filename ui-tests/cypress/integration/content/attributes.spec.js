@@ -855,8 +855,8 @@ describe('Content Type Attributes', () => {
         .fillBeginContent('cypress basic attribute');
       currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
     });
-
-    it('try to add several internal link', () => {
+    
+    it.only('try to add several internal link', () => {
       cy.contentSettingsController().then(controller => controller.putContentEditor('fckeditor'));
       cy.wrap(true).as('contentEditor');
       cy.contentTypeAttributeController(CONTENT_TYPE.code)
@@ -909,7 +909,7 @@ describe('Content Type Attributes', () => {
         });
     });
   });
-
+  
   describe('Image attribute', () => {
     const attribute = 'Image';
     const testValue = {

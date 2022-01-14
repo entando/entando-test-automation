@@ -25,7 +25,7 @@ describe('User Roles', () => {
     it('Roles page', () => {
       currentPage = openRolesPage();
 
-      cy.validateUrlPathname('/role');
+      cy.validateUrlPathname('/app-builder/role');
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -52,7 +52,7 @@ describe('User Roles', () => {
 
       currentPage = currentPage.getContent().openAddRolePage();
 
-      cy.validateUrlPathname('/role/add');
+      cy.validateUrlPathname('/app-builder/role/add');
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -102,7 +102,7 @@ describe('User Roles', () => {
 
       currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openEdit();
 
-      cy.validateUrlPathname(`/role/edit/${ROLE_CODE_ADMIN}`);
+      cy.validateUrlPathname(`/app-builder/role/edit/${ROLE_CODE_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -153,7 +153,7 @@ describe('User Roles', () => {
 
       currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openDetails();
 
-      cy.validateUrlPathname(`/role/view/${ROLE_CODE_ADMIN}`);
+      cy.validateUrlPathname(`/app-builder/role/view/${ROLE_CODE_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')

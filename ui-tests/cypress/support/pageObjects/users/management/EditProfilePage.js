@@ -8,12 +8,12 @@ import ManagementPage from './ManagementPage.js';
 
 export default class EditProfilePage extends Content {
 
-  profileTypeSelect   = `${htmlElements.select}[${DATA_TESTID}=form_RenderSelectInput_select]`;
-  usernameInput       = `${htmlElements.input}[name=id][${DATA_TESTID}=form_RenderTextInput_input]`;
-  fullNameInput       = `${htmlElements.input}[name=fullname][${DATA_TESTID}=form_RenderTextInput_input]`;
-  emailInput          = `${htmlElements.input}[name=email][${DATA_TESTID}=form_RenderTextInput_input]`;
-  profilePictureInput = `${htmlElements.input}[name=profilepicture][${DATA_TESTID}=form_RenderTextInput_input]`;
-  saveButton          = `${htmlElements.button}[${DATA_TESTID}=UserProfileForm__saveButton]`;
+  profileTypeSelect   = `${htmlElements.select}.RenderSelectInput`;
+  usernameInput       = `${htmlElements.input}[name=id]`;
+  fullNameInput       = `${htmlElements.input}[name=fullname]`;
+  emailInput          = `${htmlElements.input}[name=email]`;
+  profilePictureInput = `${htmlElements.input}[name=profilepicture]`;
+  saveButton          = `${htmlElements.button}.btn-primary`;
 
   getProfileTypeSelect() {
     return this.getContents()
