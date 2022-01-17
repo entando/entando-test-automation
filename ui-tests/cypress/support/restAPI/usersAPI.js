@@ -84,4 +84,17 @@ class UsersController {
     });
   }
 
+  changePassword(username, passwords) {
+    cy.request({
+      url: `${controller}/${username}/password`,
+      method: 'POST',
+      body: {
+        ...passwords
+      },
+      auth: {
+        bearer: this.access_token
+      }
+    });
+  }
+
 }
