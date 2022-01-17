@@ -30,7 +30,8 @@ export const htmlElements = {
   option: 'option',
   fieldset: 'fieldset',
   legend: 'legend',
-  textarea: 'textarea'
+  textarea: 'textarea',
+  img: 'img'
 };
 
 export class WebElement {
