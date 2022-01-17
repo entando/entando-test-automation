@@ -8,7 +8,7 @@ import Menu     from './Menu.js';
 export default class AppPage extends WebElement {
 
   root      = `${htmlElements.div}#root`;
-  page      = `[${DATA_TESTID}=internal-page]`;
+  page      = `${htmlElements.div}.InternalPage`;
   toastList = `${htmlElements.div}.toast-notifications-list-pf`;
 
   constructor(content) {
@@ -62,7 +62,7 @@ export default class AppPage extends WebElement {
 
 class Menus extends WebElement {
 
-  menus = `[${DATA_TESTID}=internal-page_VerticalMenuContainer_div]`;
+  menus = `${htmlElements.div}.safari-menu-fix`;
 
   constructor(parent) {
     super(parent);
