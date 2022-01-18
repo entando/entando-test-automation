@@ -1,3 +1,5 @@
+import ContentQueryWidgetConfigPage from '../../../pages/designer/widgetconfigs/ContentQueryWidgetConfigPage';
+import { htmlElements } from '../../../WebElement';
 import AttributeFormField from '../AttributeFormField';
 
 export default class DateAttribute extends AttributeFormField {
@@ -71,23 +73,55 @@ export default class DateAttribute extends AttributeFormField {
     if (!value) {
       return;
     }
+
     const dateValue = new Date(value);
     this.getInputArea().click();
-    this.getMonthYearCaptionText().then((monthyear) => 
-      this.calculateMonthDiff(dateValue, monthyear)
-    ).then(({ direction: dir, steps }) => {
-      if (dir !== '') {
-        for (let i = 0; i < steps; i++) {
-          if (dir === 'previous') {
-            this.getPreviousMonthButton().click();
-          } else {
-            this.getNextMonthButton().click();
-          }
-        }
+
+    //Keeps opening and closing the collapse until the calendar opens up
+    this.parent.get().find(`${htmlElements.div}.react-datepicker__header`).as('button');
+
+    cy.get("body").then($body => {
+      if ($body.find(`${htmlElements.div}.react-datepicker__header`).length > 0) {   
+      //evaluates as true if button exists at all
+          cy.get('@button').then($header => {
+            if ($header.is(':visible')){
+              //you get here only if button EXISTS and is VISIBLE
+              this.getMonthYearCaptionText().then((monthyear) => 
+              this.calculateMonthDiff(dateValue, monthyear)
+              ).then(({ direction: dir, steps }) => {
+               if (dir !== '') {
+                 for (let i = 0; i < steps; i++) {
+               if (dir === 'previous') {
+               this.getPreviousMonthButton().click();
+              }else {
+               this.getNextMonthButton().click();
+              }
+                 }
+              }
+              this.getDayPickArea().contains(new RegExp(`^${dateValue.getDate()}$`)).click();
+              this.getInputArea().find('input').blur();
+              });
+            } else {
+                 //you get here only if button EXISTS but is INVISIBLE
+                 this.parent.get()
+                            .find(`${htmlElements.div}#content-attributes-tabs`)
+                            .find(`${htmlElements.div}#content-attributes-tabs-pane-en`)
+                            .find(`${htmlElements.div}.ContentFormFieldCollapse`)
+                            .find(`${htmlElements.div}.SectionTitle`).click();
+                 cy.wait(500);
+                 this.parent.get()
+                            .find(`${htmlElements.div}#content-attributes-tabs`)
+                            .find(`${htmlElements.div}#content-attributes-tabs-pane-en`)
+                            .find(`${htmlElements.div}.ContentFormFieldCollapse`)
+                            .find(`${htmlElements.div}.SectionTitle`).click();
+                 cy.wait(500);
+
+                 return this.setValue(value)
+            }
+          });
       }
-      this.getDayPickArea().contains(new RegExp(`^${dateValue.getDate()}$`)).click();
-      this.getInputArea().find('input').blur();
     });
+
   }
 
   editValue(value) {

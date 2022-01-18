@@ -84,6 +84,7 @@ export class LinkDialog extends DialogContent {
   }
 
   setContentValue(contentId) {
+    cy.wait(1000); //wait for the content to finish loading
     this.getContentRowRadio(contentId).click();
   }
 

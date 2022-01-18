@@ -151,6 +151,14 @@ export default class AddPage extends Content {
 
   copyToAllLanguages() {
     this.getCopyToLangBtn().click();
+    this.closeAlert();
+  }
+
+  closeAlert() {
+    return this.parent.get()
+                      .parent()
+                      .children(`${htmlElements.div}.toast-notifications-list-pf`)
+                      .find(`${htmlElements.button}.close-default`).click();
   }
 
   submitForm() {
@@ -226,7 +234,8 @@ export default class AddPage extends Content {
     if (lang === 'it') {
       this.getItLanguageTab().click();
     } else {
-      this.getEnLanguageTab().click();
+      //prova
+      //this.getEnLanguageTab().click();
     }
     cy.wait(500);
     attributeValues.forEach(({ type, value, nestedType }, idx) => {

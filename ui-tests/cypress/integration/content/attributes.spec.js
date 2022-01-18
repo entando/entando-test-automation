@@ -218,6 +218,7 @@ describe('Content Type Attributes', () => {
     
     cy.contentTypesController()
       .then(controller => controller.addContentType(CONTENT_TYPE.code, CONTENT_TYPE.name));
+
     cy.kcLogout();
   });
   
@@ -228,6 +229,8 @@ describe('Content Type Attributes', () => {
     cy.wrap(null).as('recentAttachToDelete');
     cy.wrap(null).as('recentImageToDelete');
     cy.wrap(null).as('contentEditor');
+    cy.wrap(null).as('ToDeleteTCL');
+    cy.wrap(null).as('ToDeleteNWS');
     cy.kcLogin('admin').as('tokens');
     cy.visit('/');
     currentPage = new HomePage();
@@ -292,6 +295,18 @@ describe('Content Type Attributes', () => {
           .then(controller => controller.deleteAttribute(attributeToDelete));
       }
     });
+    cy.get('@ToDeleteNWS').then((response) => {
+      if (response !== null) {
+        cy.contentTypesController()
+        .then(controller => controller.deleteContentType('NWS'));
+      }
+    });
+    cy.get('@ToDeleteTCL').then((response) => {
+      if (response !== null) {
+        cy.contentTypesController()
+        .then(controller => controller.deleteContentType('TCL'));
+      }
+    });
     cy.get('@contentEditor').then((resetContentEditor) => {
       if (resetContentEditor !== null && resetContentEditor === true) {
         cy.contentSettingsController()
@@ -307,6 +322,7 @@ describe('Content Type Attributes', () => {
           .then(controller => controller.deleteGroup(testGroup));
     cy.contentTypesController()
       .then(controller => controller.deleteContentType(CONTENT_TYPE.code));
+
     cy.kcLogout();
   });
 
@@ -856,7 +872,66 @@ describe('Content Type Attributes', () => {
       currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
     });
     
-    it.only('try to add several internal link', () => {
+    it('try to add several internal link', () => {
+      //creazione NWS
+      const CONTENT_TYPE2 = {
+        code: 'NWS',
+        name: 'Prova',
+      };
+      cy.contentTypesController()
+      .then(controller => controller.addContentType(CONTENT_TYPE2.code, CONTENT_TYPE2.name));
+      cy.contentTypeAttributeController(CONTENT_TYPE2.code)
+        .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+      cy.wrap(attribute).as('ToDeleteNWS');
+
+      const CONTENT2 = {
+        description: 'basic content attribute test nws',
+        mainGroup: 'free',
+        typeCode: CONTENT_TYPE2.code,
+        attributes: [],
+      };
+      let contentId2;
+      cy.contentsController()
+        .then((controller) => {
+          controller.postContent({
+            ...CONTENT2,
+            attributes: [{ code: attribute, values: testValue }],
+          }).then((response) => {
+            const { body: { payload } } = response;
+            contentId2 = payload[0].id;
+            cy.wrap(contentId2).as('contentId2');
+           })});
+      cy.contentsController().then(controller => controller.updateStatus(contentId2, 'published'));
+      //creazione TCL
+      const CONTENT_TYPE3 = {
+        code: 'TCL',
+        name: 'Prova',
+      };
+      cy.contentTypesController()
+      .then(controller => controller.addContentType(CONTENT_TYPE3.code, CONTENT_TYPE3.name));
+      cy.contentTypeAttributeController(CONTENT_TYPE3.code)
+        .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
+      cy.wrap(attribute).as('ToDeleteTCL');
+
+      const CONTENT3 = {
+        description: 'basic content attribute test tcl',
+        mainGroup: 'free',
+        typeCode: CONTENT_TYPE3.code,
+        attributes: [],
+      };
+      let contentId3;
+      cy.contentsController()
+        .then((controller) => {
+          controller.postContent({
+            ...CONTENT3,
+            attributes: [{ code: attribute, values: testValue }],
+          }).then((response) => {
+            const { body: { payload } } = response;
+            contentId3 = payload[0].id;
+            cy.wrap(contentId3).as('contentId3');
+           })});
+      cy.contentsController().then(controller => controller.updateStatus(contentId3, 'published'));
+      //fine
       cy.contentSettingsController().then(controller => controller.putContentEditor('fckeditor'));
       cy.wrap(true).as('contentEditor');
       cy.contentTypeAttributeController(CONTENT_TYPE.code)
@@ -873,11 +948,13 @@ describe('Content Type Attributes', () => {
           value: 'hello{selectall}',
         }]);
       const editor = currentPage.getContent().getAttributeByTypeIndex(attribute, 0);
-      editor.setLinkInfo({
-        destType: 3,
-        contentDest: 'NWS4',
-        target: '_blank',
-      });
+      cy.get('@contentId2').then((response => {
+        editor.setLinkInfo({
+          destType: 3,
+          contentDest: response, //NWS4
+          target: '_blank',
+        });
+      }))
       editor.getInput()
         .type('{movetoend} there, world!');
       cy.realPress('ArrowLeft');
@@ -886,31 +963,39 @@ describe('Content Type Attributes', () => {
       cy.realPress(['Shift', 'ArrowLeft']);
       cy.realPress(['Shift', 'ArrowLeft']);
       cy.realPress(['Shift', 'ArrowLeft']);
-      editor.setLinkInfo({
+      cy.get('@contentId3').then((response => {
+        editor.setLinkInfo({
           destType: 3,
-          contentDest: 'TCL6',
+          contentDest: response, //TCL6
           target: '_blank',
         });
+      }))
       currentPage.getContent().copyToAllLanguages();
       cy.wait(500);
       currentPage = currentPage.getContent().submitApproveForm();
-      cy.wrap(1).as('recentContentsToUnpublish');
-      cy.wrap(1).as('recentContentsToDelete');
-      cy.contentsController()
-        .then(controller => controller.getContentList())
-        .then((response) => {
+      cy.wrap(3).as('recentContentsToUnpublish');
+      cy.wrap(3).as('recentContentsToDelete');
+      cy.get('@contentId2').then(response => {
+        contentId2 = response;
+        cy.get('@contentId3').then(response => {
+          contentId3 = response;
+          cy.contentsController()
+          .then(controller => controller.getContentList())
+          .then((response) => {
           const { body: { payload } } = response;
           const { attributes: [attr] } = payload[0];
           return formatCompareAttributeValues(attr, attribute);
         })
         .should('deep.equal', {
-          en: '<p><a href="#!C;NWS4!#" target="_blank">hello</a> there, <a href="#!C;TCL6!#" target="_blank">world</a>!</p>',
-          it: '<p><a href="#!C;NWS4!#" target="_blank">hello</a> there, <a href="#!C;TCL6!#" target="_blank">world</a>!</p>',
+          en: `<p><a href="#!C;${contentId2}!#" target="_blank">hello</a> there, <a href="#!C;${contentId3}!#" target="_blank">world</a>!</p>`,
+          it: `<p><a href="#!C;${contentId2}!#" target="_blank">hello</a> there, <a href="#!C;${contentId3}!#" target="_blank">world</a>!</p>`,
         });
+        });
+      });
     });
   });
   
-  describe('Image attribute', () => {
+  describe ('Image attribute', () => {
     const attribute = 'Image';
     const testValue = {
       en: {
@@ -932,11 +1017,24 @@ describe('Content Type Attributes', () => {
     };
     
     it ('Create', () => {
+      const fileInfo = { fixture: 'upload/entando_400x400.png', fileName: 'entando_at_plan.jpg', fileType: 'image/jpg' };
+      cy.assetsController()
+        .then(controller => controller.addAsset(fileInfo, { group: 'free', categories: [], type: 'image' }));
+      cy.wrap(1).as('recentImageToDelete');
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
     });
 
     it('Edit', () => {
+      const fileInfo = { fixture: 'upload/entando_400x400.png', fileName: 'entando_at_plan.jpg', fileType: 'image/jpg' };
+      cy.assetsController()
+        .then(controller => controller.addAsset(fileInfo, { group: 'free', categories: [], type: 'image' })
+        .then(response => {
+            cy.wrap(response.response.payload.id).as('imageId')
+        })
+      );
+      cy.wrap(1).as('recentImageToDelete');
+      
       const editedValues = {
         en: {
           upload: { file: 'upload/entando_400x400.png' },
@@ -959,8 +1057,10 @@ describe('Content Type Attributes', () => {
       cy.contentTypeAttributeController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
-
-      cy.contentsController()
+      
+      cy.get('@imageId').then(response => {
+        cy.log(response)
+        cy.contentsController()
         .then((controller) => {
           controller.postContent({
             ...CONTENT,
@@ -968,14 +1068,14 @@ describe('Content Type Attributes', () => {
               code: attribute,
               values: {
                 en: {
-                  id: 'entandoAtPlan',
+                  id: response,
                   name: 'entando_at_plan.jpg',
                   metadata: {
                     ...testValue.en.metadata,
                   }
                 },
                 it: {
-                  id: 'entandoAtPlan',
+                  id: response,
                   name: 'entando_at_plan.jpg',
                   metadata: {
                     ...testValue.it.metadata,
@@ -987,13 +1087,16 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
+      });
+
+      
       
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValues, true);
       currentPage = currentPage.getContent().submitApproveForm();
       cy.wrap(1).as('recentContentsToUnpublish');
       cy.wrap(1).as('recentContentsToDelete');
-      cy.wrap(1).as('recentImageToDelete');
+      cy.wrap(2).as('recentImageToDelete');
       cy.contentsController()
         .then(controller => controller.getContentList())
         .then((response) => {
@@ -1024,6 +1127,15 @@ describe('Content Type Attributes', () => {
     });
 
     it ('Nest in a complex (Composite) attribute', () => {
+      const fileInfo = { fixture: 'upload/entando_400x400.png', fileName: 'entando_at_plan.jpg', fileType: 'image/jpg' };
+      cy.assetsController()
+        .then(controller => controller.addAsset(fileInfo, { group: 'free', categories: [], type: 'image' })
+        .then(response => {
+            cy.wrap(response.response.payload.id).as('imageId')
+        })
+      );
+      cy.wrap(1).as('recentImageToDelete');
+
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
     });
@@ -1344,7 +1456,7 @@ describe('Content Type Attributes', () => {
     });
   });
 
-  describe('Link attribute', () => {
+  describe.skip('Link attribute', () => {
     const attribute = 'Link';
     const testValue = {
       link: {
