@@ -69,6 +69,10 @@ export default class DateAttribute extends AttributeFormField {
     return { direction, steps };
   }
 
+  /*
+  This version of "setValue" keeps opening and closing the collapse until the calendar opens up,
+  because the calendar wasn't working properly
+  
   setValue(value) {
     if (!value) {
       return;
@@ -77,51 +81,72 @@ export default class DateAttribute extends AttributeFormField {
     const dateValue = new Date(value);
     this.getInputArea().click();
 
-    //Keeps opening and closing the collapse until the calendar opens up
-    this.parent.get().find(`${htmlElements.div}.react-datepicker__header`).as('button');
+    this.parent.get().find(`${htmlElements.div}.react-datepicker__header`).as('calendar');
 
     cy.get("body").then($body => {
-      if ($body.find(`${htmlElements.div}.react-datepicker__header`).length > 0) {   
-      //evaluates as true if button exists at all
-          cy.get('@button').then($header => {
-            if ($header.is(':visible')){
-              //you get here only if button EXISTS and is VISIBLE
-              this.getMonthYearCaptionText().then((monthyear) => 
+      if ($body.find(`${htmlElements.div}.react-datepicker__header`).length > 0) {
+        //evaluates as true if the calendar exists at all
+        cy.get('@calendar').then($header => {
+          if ($header.is(':visible')) {
+            //you get here only if the calendar EXISTS and is VISIBLE
+            this.getMonthYearCaptionText().then((monthyear) =>
               this.calculateMonthDiff(dateValue, monthyear)
-              ).then(({ direction: dir, steps }) => {
-               if (dir !== '') {
-                 for (let i = 0; i < steps; i++) {
-               if (dir === 'previous') {
-               this.getPreviousMonthButton().click();
-              }else {
-               this.getNextMonthButton().click();
-              }
-                 }
+            ).then(({ direction: dir, steps }) => {
+              if (dir !== '') {
+                for (let i = 0; i < steps; i++) {
+                  if (dir === 'previous') {
+                    this.getPreviousMonthButton().click();
+                  } else {
+                    this.getNextMonthButton().click();
+                  }
+                }
               }
               this.getDayPickArea().contains(new RegExp(`^${dateValue.getDate()}$`)).click();
               this.getInputArea().find('input').blur();
-              });
-            } else {
-                 //you get here only if button EXISTS but is INVISIBLE
-                 this.parent.get()
-                            .find(`${htmlElements.div}#content-attributes-tabs`)
-                            .find(`${htmlElements.div}#content-attributes-tabs-pane-en`)
-                            .find(`${htmlElements.div}.ContentFormFieldCollapse`)
-                            .find(`${htmlElements.div}.SectionTitle`).click();
-                 cy.wait(500);
-                 this.parent.get()
-                            .find(`${htmlElements.div}#content-attributes-tabs`)
-                            .find(`${htmlElements.div}#content-attributes-tabs-pane-en`)
-                            .find(`${htmlElements.div}.ContentFormFieldCollapse`)
-                            .find(`${htmlElements.div}.SectionTitle`).click();
-                 cy.wait(500);
+            });
+          } else {
+            //you get here only if button EXISTS but is INVISIBLE
+            this.parent.get()
+              .find(`${htmlElements.div}#content-attributes-tabs`)
+              .find(`${htmlElements.div}#content-attributes-tabs-pane-en`)
+              .find(`${htmlElements.div}.ContentFormFieldCollapse`)
+              .find(`${htmlElements.div}.SectionTitle`).click();
+            cy.wait(500);
+            this.parent.get()
+              .find(`${htmlElements.div}#content-attributes-tabs`)
+              .find(`${htmlElements.div}#content-attributes-tabs-pane-en`)
+              .find(`${htmlElements.div}.ContentFormFieldCollapse`)
+              .find(`${htmlElements.div}.SectionTitle`).click();
+            cy.wait(500);
 
-                 return this.setValue(value)
-            }
-          });
+            return this.setValue(value)
+          }
+        });
       }
     });
+  }*/
 
+  setValue(value) {
+    if (!value) {
+      return;
+    }
+    const dateValue = new Date(value);
+    this.getInputArea().click();
+    this.getMonthYearCaptionText().then((monthyear) => 
+      this.calculateMonthDiff(dateValue, monthyear)
+    ).then(({ direction: dir, steps }) => {
+      if (dir !== '') {
+        for (let i = 0; i < steps; i++) {
+          if (dir === 'previous') {
+            this.getPreviousMonthButton().click();
+          } else {
+            this.getNextMonthButton().click();
+          }
+        }
+      }
+      this.getDayPickArea().contains(new RegExp(`^${dateValue.getDate()}$`)).click();
+      this.getInputArea().find('input').blur();
+    });
   }
 
   editValue(value) {

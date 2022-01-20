@@ -1456,7 +1456,7 @@ describe('Content Type Attributes', () => {
     });
   });
 
-  describe.skip('Link attribute', () => {
+  describe('Link attribute', () => {
     const attribute = 'Link';
     const testValue = {
       link: {
@@ -1522,6 +1522,7 @@ describe('Content Type Attributes', () => {
     });
 
     it ('Nest in a complex (Composite) attribute', () => {
+      cy.pause();
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
     });

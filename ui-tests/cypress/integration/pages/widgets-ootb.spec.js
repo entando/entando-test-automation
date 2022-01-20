@@ -169,7 +169,7 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
     });
 
-    it.only('Basic edit with widget', () => {
+    it('Basic edit with widget', () => {
       cy.widgetInstanceController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT.code, WIDGET_CONFIG));
       cy.pagesController()
