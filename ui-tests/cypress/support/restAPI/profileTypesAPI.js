@@ -1,5 +1,5 @@
 const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}profileTypes`;
+const controller = `${apiURL}/profileTypes`;
 
 Cypress.Commands.add('profileTypesController', () => {
   cy.get('@tokens').then(tokens => {
