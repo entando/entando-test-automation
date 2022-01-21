@@ -8,11 +8,11 @@ import RolesPage from './RolesPage.js';
 
 export default class AddPage extends Content {
 
-  nameInput    = `${htmlElements.input}[name="name"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  codeInput    = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  permissions  = `${htmlElements.fieldset}[${DATA_TESTID}=common_RoleForm_fieldset]`;
-  cancelButton = `${htmlElements.button}[${DATA_TESTID}=RoleForm__cancelButton]`;
-  saveButton   = `${htmlElements.button}[${DATA_TESTID}=RoleForm__saveButton]`;
+  nameInput    = `#name`;
+  codeInput    = `#code`;
+  permissions  = `${htmlElements.form}.RoleForm`;
+  cancelButton = `${htmlElements.button}.pull-right UserForm__action-button`;
+  saveButton   = `${htmlElements.button}.pull-right btn btn-primary`;
 
   getNameInput() {
     return this.getContents()
@@ -44,12 +44,20 @@ export default class AddPage extends Content {
 
   getCancelButton() {
     return this.getContents()
-               .find(this.cancelButton);
+               .find(this.permissions)
+               .children().eq(2)
+               .children()
+               .children(htmlElements.button).eq(1)
+               .find(htmlElements.span);
   }
 
   getSaveButton() {
     return this.getContents()
-               .find(this.saveButton);
+               .find(this.permissions)
+               .children().eq(2)
+               .children()
+               .children(htmlElements.button).eq(0)
+               .find(htmlElements.span);
   }
 
   typeName(input) {

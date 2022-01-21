@@ -7,7 +7,7 @@ Cypress.Commands.add('validateListTexts', (list, values) => {
 });
 
 Cypress.Commands.add('validateUrlPathname', pathname => {
-  cy.location('pathname').should('eq', pathname);
+  cy.location('pathname').should('eq', "/app-builder" + pathname);
 });
 
 Cypress.Commands.add('validateToast', (page, text = null, isOk = true) => {

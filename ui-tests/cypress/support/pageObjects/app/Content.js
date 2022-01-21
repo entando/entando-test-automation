@@ -2,9 +2,9 @@ import {DATA_TESTID, htmlElements, WebElement} from '../WebElement.js';
 
 export default class Content extends WebElement {
 
-  content = `[${DATA_TESTID}=internal-page_InternalPage_div]`;
+  content = `${htmlElements.div}.container-fluid`;
 
-  alertMessageDiv = `${htmlElements.div}[${DATA_TESTID}=form_ErrorsAlert_Alert]`;
+  alertMessageDiv = `${htmlElements.div}.form_ErrorsAlert_Alert`;
 
   get() {
     return this.parent.get()

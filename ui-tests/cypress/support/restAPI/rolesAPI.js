@@ -1,5 +1,5 @@
 const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}roles`;
+const controller = `${apiURL}/roles`;
 
 Cypress.Commands.add('rolesController', () => {
   cy.get('@tokens').then(tokens => {

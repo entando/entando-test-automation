@@ -9,13 +9,13 @@ export default class KebabMenu extends WebElement {
 
   get() {
     return this.parent.getTableRows()
-               .find(`[${DATA_TESTID}=${this.code}-actions]`)
-               .children(htmlElements.div);
+               .find(`${htmlElements.td}.RoleListRow__td`)
+               .children();
   }
 
   open() {
     this.get()
-        .children(htmlElements.button)
+        .children(`#${this.code}-actions`)
         .click();
     return this;
   }

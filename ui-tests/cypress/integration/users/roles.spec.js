@@ -6,13 +6,15 @@ import HomePage from '../../support/pageObjects/HomePage';
 
 describe('User Roles', () => {
 
-  const ROLE_NAME       = generateRandomId();
-  const ROLE_CODE       = generateRandomId();
+  let ROLE_NAME;
+  let ROLE_CODE;
   const ROLE_CODE_ADMIN = 'admin';
   const ROLE_NAME_ADMIN = 'Administrator';
   let currentPage;
 
   beforeEach(() => {
+     ROLE_NAME       = 'k' + generateRandomId().substr(0, 9);
+     ROLE_CODE       = 'k' + generateRandomId().substr(0, 9);
     cy.kcLogin('admin').as('tokens');
   });
 
@@ -70,8 +72,12 @@ describe('User Roles', () => {
                  .should('be.visible')
                  .and('be.empty');
 
-      currentPage.getContent().getPermissionsGrid().children(htmlElements.div)
-                 .should('have.length', 12)
+      currentPage.getContent().getPermissionsGrid().eq(1)
+                 
+                 .children(htmlElements.fieldset)
+                 .children('.PermissionGrid')
+                 .children('.col-xs-12')
+                 .children('.col-xs-4')
                  .then(elements => cy.validateListTexts(elements,
                      [
                        'Content EditingON OFF',
@@ -89,7 +95,8 @@ describe('User Roles', () => {
                      ]
                  ));
 
-      currentPage.getContent().getCancelButton()
+     currentPage.getContent()
+                 .getCancelButton()
                  .should('be.visible')
                  .and('have.text', 'Cancel');
       currentPage.getContent().getSaveButton()
@@ -100,7 +107,7 @@ describe('User Roles', () => {
     it('Edit role page', () => {
       currentPage = openRolesPage();
 
-      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openEdit();
+      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).openEdit();
 
       cy.validateUrlPathname(`/role/edit/${ROLE_CODE_ADMIN}`);
 
@@ -121,8 +128,11 @@ describe('User Roles', () => {
                  .and('be.disabled')
                  .and('have.value', ROLE_CODE_ADMIN);
 
-      currentPage.getContent().getPermissionsGrid().children(htmlElements.div)
-                 .should('have.length', 12)
+      currentPage.getContent().getPermissionsGrid().eq(1)
+                 .children(htmlElements.fieldset)
+                 .children('.PermissionGrid')
+                 .children('.col-xs-12')
+                 .children('.col-xs-4')
                  .then(elements => cy.validateListTexts(elements,
                      [
                        'Content EditingON OFF',
@@ -151,7 +161,7 @@ describe('User Roles', () => {
     it('View role details page', () => {
       currentPage = openRolesPage();
 
-      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openDetails();
+      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).openDetails();
 
       cy.validateUrlPathname(`/role/view/${ROLE_CODE_ADMIN}`);
 
@@ -196,13 +206,13 @@ describe('User Roles', () => {
 
       currentPage = openRolesPage();
 
-      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE).open().openEdit();
+      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE).openEdit();
       currentPage = currentPage.getContent().editRole(ROLE_NAME_EDIT);
 
       currentPage.getContent().getTableRow(ROLE_CODE).children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [ROLE_NAME_EDIT, ROLE_CODE]));
 
-      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE).open().openDetails();
+      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE).openDetails();
       currentPage.getContent().getCodeValue().should('contain', ROLE_CODE);
       currentPage.getContent().getNameValue().should('contain', ROLE_NAME_EDIT);
 
@@ -214,7 +224,7 @@ describe('User Roles', () => {
 
       currentPage = openRolesPage();
 
-      currentPage.getContent().getKebabMenu(ROLE_CODE).open().clickDelete();
+      currentPage.getContent().getKebabMenu(ROLE_CODE).clickDeleteRole();
       currentPage.getDialog().getBody().getStateInfo().should('contain', ROLE_CODE);
 
       currentPage.getDialog().confirm();
@@ -226,7 +236,7 @@ describe('User Roles', () => {
 
       currentPage.getContent().getTableRows().should('contain', ROLE_CODE_ADMIN);
 
-      currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().clickDelete();
+      currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).clickDeleteRole();
 
       currentPage.getDialog().getConfirmButton().should('not.exist');
     });
