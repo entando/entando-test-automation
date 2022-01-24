@@ -62,11 +62,11 @@ describe('Groups', () => {
 
     currentPage = openGroupsPage();
 
-    currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
+    currentPage.getContent().getKebabMenu(groupCode).clickDeleteGroup();
     currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
 
     currentPage.getDialog().confirm();
-    cy.reload(); //TODO the page does not automatically refresh the table
+    cy.reload().wait(1000);
     currentPage.getContent().getTableRows().should('not.contain', groupCode);
   });
 
@@ -134,7 +134,7 @@ describe('Groups', () => {
     it('Delete a group used by an unpublished page - not allowed', () => {
       currentPage = openGroupsPage();
 
-      currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
+      currentPage.getContent().getKebabMenu(groupCode).clickDeleteGroup();
       currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
       currentPage.getDialog().confirm();
 
@@ -146,7 +146,7 @@ describe('Groups', () => {
 
       currentPage = openGroupsPage();
 
-      currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
+      currentPage.getContent().getKebabMenu(groupCode).clickDeleteGroup();
       currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
       currentPage.getDialog().confirm();
 

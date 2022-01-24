@@ -1,5 +1,5 @@
 const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}pages`;
+const controller = `${apiURL}/pages`;
 const addUrl     = `${apiURL}plugins/seo/pages`;
 
 Cypress.Commands.add('pagesController', () => {
@@ -13,7 +13,6 @@ Cypress.Commands.add('widgetInstanceController', (pageCode) => {
     return new WidgetInstanceController(tokens.access_token, pageCode);
   });
 });
-
 class PagesController {
 
   constructor(access_token) {

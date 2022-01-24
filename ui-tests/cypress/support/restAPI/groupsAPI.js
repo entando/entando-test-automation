@@ -1,4 +1,4 @@
-const controller = `${Cypress.config('restAPI')}groups`;
+const controller = `${Cypress.config('restAPI')}/groups`;
 
 Cypress.Commands.add('groupsController', () => {
   cy.get('@tokens').then(tokens => {

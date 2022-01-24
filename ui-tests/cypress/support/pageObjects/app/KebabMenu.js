@@ -9,7 +9,7 @@ export default class KebabMenu extends WebElement {
 
   get() {
     return this.parent.getTableRows()
-               .find(`${htmlElements.td}.RoleListRow__td`)
+               .find(`${htmlElements.td}`)
                .children();
   }
 

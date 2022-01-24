@@ -8,10 +8,10 @@ import GroupsPage from './GroupsPage.js';
 
 export default class AddPage extends Content {
 
-  nameInput    = `${htmlElements.input}[name="name"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  codeInput    = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  cancelButton = `${htmlElements.button}[${DATA_TESTID}=group-form-cancel]`;
-  saveButton   = `${htmlElements.button}[${DATA_TESTID}=group-form-save]`;
+  nameInput    = `${htmlElements.input}[name="name"]`;
+  codeInput    = `${htmlElements.input}[name="code"]`;
+  cancelButton = `${htmlElements.button}.btn-default`;
+  saveButton   = `${htmlElements.button}.btn-primary`;
 
   getNameInput() {
     return this.getContents()

@@ -12,11 +12,11 @@ import DetailsPage from './DetailsPage';
 
 export default class GroupsPage extends Content {
 
-  tableDiv = `${htmlElements.div}[${DATA_TESTID}=list_GroupListTable_div]`;
-  tableCol = `${htmlElements.div}[${DATA_TESTID}=list_GroupListTable_Col]`;
-  table    = `${htmlElements.table}[${DATA_TESTID}=groups-table]`;
-  pageCol  = `${htmlElements.div}[${DATA_TESTID}=list_ListGroupPage_Col]`;
-  pageLink = `${htmlElements.a}[${DATA_TESTID}=list_ListGroupPage_Link]`;
+  tableDiv = `${htmlElements.div}.list_GroupListTable_div`;
+  tableCol = `${htmlElements.div}.list_GroupListTable_Col`;
+  table    = `${htmlElements.table}.GroupListTable__table`;
+  pageCol  = `${htmlElements.div}.col-md-12`;
+  pageLink = `${htmlElements.a}`;
 
   getGroupsTable() {
     return this.getContents()
@@ -55,6 +55,7 @@ export default class GroupsPage extends Content {
 
   getAddButton() {
     return this.getContents()
+               
                .children(htmlElements.div).eq(4)
                .children(this.pageCol)
                .children(this.pageLink)
@@ -73,17 +74,19 @@ class GroupsKebabMenu extends KebabMenu {
 
   getDetails() {
     return this.get()
-               .find(`[${DATA_ID}=detail-${this.code}]`);
+               .find(`[${DATA_ID}=detail-${this.code}]`)
   }
 
   getEdit() {
     return this.get()
-               .find(`[${DATA_ID}=edit-${this.code}]`);
+               .find(`[${DATA_ID}=edit-${this.code}]`)
+               .children(htmlElements.a);
   }
 
   getDelete() {
     return this.get()
-               .find(`[${DATA_TESTID}=group-delete-action]`);
+               .find(`${htmlElements.li}.GroupListMenuAction__menu-item-delete`);
+
   }
 
   openDetails() {
@@ -102,5 +105,14 @@ class GroupsKebabMenu extends KebabMenu {
     this.getDelete().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
   }
+  clickDeleteGroup() {
+    this.get()
+               .find(`${htmlElements.button}#${this.code}-actions`)
+               .click()
+               .parent(htmlElements.div)
+               .find(`${htmlElements.li}.GroupListMenuAction__menu-item-delete`)
+               .click()
+     this.parent.parent.getDialog().setBody(DeleteDialog);
+   }
 
 }
