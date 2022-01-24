@@ -47,7 +47,7 @@ export default class ProfileTypesPage extends Content {
 
 class ProfileTypesKebabMenu extends KebabMenu {
 
-  edit   = `${htmlElements.li}.ProfileTypeListMenuAction__menu-item-edit`;
+  edit   = `${htmlElements.li}.LinkMenuItem`;
   delete = `${htmlElements.li}.ProfileTypeListMenuAction__menu-item-delete`;
 
   get() {
@@ -58,7 +58,10 @@ class ProfileTypesKebabMenu extends KebabMenu {
 
   getEdit() {
     return this.get()
-               .find(this.edit);
+              .find(`${htmlElements.button}#${this.code}-actions`)
+              .click()
+              .parent(htmlElements.div)
+              .find(this.edit);
   }
 
   getDelete() {
@@ -76,5 +79,14 @@ class ProfileTypesKebabMenu extends KebabMenu {
     this.getDelete().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
   }
+  clickDeleteProfile() {
+    this.get()
+               .find(`${htmlElements.button}#${this.code}-actions`)
+               .click()
+               .parent(htmlElements.div)
+               .find(this.delete)
+               .click()
+     this.parent.parent.getDialog().setBody(DeleteDialog);
+   }
 
 }
