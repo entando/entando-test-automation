@@ -35,6 +35,7 @@ export default class ProfileTypesPage extends Content {
   }
 
   getKebabMenu(code) {
+    cy.wait(500); //without this wait, the kebab menu sometimes(?) doesn't open
     return new ProfileTypesKebabMenu(this, code);
   }
 

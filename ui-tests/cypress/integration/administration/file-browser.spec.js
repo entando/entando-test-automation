@@ -14,7 +14,6 @@ describe('File browser', () => {
     currentPage = openFileBrowserPage();
   });
 
-  //non ci sono i permessi per fare la delete con la richiesta
   afterEach(() => {
     cy.get('@fileToBeDeleted')
       .then(files => files.forEach(file => cy.fileBrowserController().then(controller => controller.deleteFile(file))));

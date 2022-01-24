@@ -49,7 +49,7 @@ describe('Profile Types', () => {
     currentPage = openProfileTypesPage();
 
     cy.log(`Edit profile type with code ${profileType.code}`);
-    currentPage              = currentPage.getContent().getKebabMenu(profileType.code).open().openEdit();
+    currentPage = currentPage.getContent().getKebabMenu(profileType.code).open().openEdit();
     const newProfileTypeName = generateRandomId();
     currentPage.getContent().clearName();
     currentPage.getContent().typeName(newProfileTypeName);
