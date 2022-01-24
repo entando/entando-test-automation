@@ -35,7 +35,6 @@ export default class ProfileTypesPage extends Content {
   }
 
   getKebabMenu(code) {
-    cy.wait(500); //without this wait, the kebab menu sometimes(?) doesn't open
     return new ProfileTypesKebabMenu(this, code);
   }
 
@@ -69,7 +68,7 @@ class ProfileTypesKebabMenu extends KebabMenu {
 
   openEdit() {
     this.getEdit().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
+    //cy.wait(1000); //TODO find a better way to identify when the page loaded (fixed with "checkPageIsLoaded")
     return new AppPage(EditPage);
   }
 

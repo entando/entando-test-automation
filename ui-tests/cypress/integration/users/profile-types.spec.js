@@ -51,6 +51,7 @@ describe('Profile Types', () => {
     cy.log(`Edit profile type with code ${profileType.code}`);
     currentPage = currentPage.getContent().getKebabMenu(profileType.code).open().openEdit();
     const newProfileTypeName = generateRandomId();
+    currentPage.getContent().checkPageIsLoaded(profileType.name); //to fix the need to wait for the edit page to load
     currentPage.getContent().clearName();
     currentPage.getContent().typeName(newProfileTypeName);
     currentPage = currentPage.getContent().save();
@@ -59,7 +60,7 @@ describe('Profile Types', () => {
     deleteProfileType(profileType.code);
   });
 
-  it('Delete profile type', () => {
+  it.only('Delete profile type', () => {
     addProfileType(profileType.code, profileType.name);
     currentPage = openProfileTypesPage();
 

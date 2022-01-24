@@ -22,7 +22,9 @@ export default class KebabMenu extends WebElement {
   open() {
     this.get()
         .find(htmlElements.button)
-        .click();
+        .then((button) => {
+          button.click();
+        })
     return this;
   }
 

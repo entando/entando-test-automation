@@ -41,4 +41,10 @@ export default class EditPage extends Content {
     return new AppPage(ProfileTypesPage);
   }
 
+  checkPageIsLoaded(value) {
+    this.getContents()
+        .find(this.nameInput)
+        .should('have.value', value);
+  }
+
 }
