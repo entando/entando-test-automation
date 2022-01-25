@@ -7,12 +7,6 @@ export default class KebabMenu extends WebElement {
     this.code = code;
   }
 
-  /*get() {
-    return this.parent.getTableRows()
-               .find(`[${DATA_TESTID}=${this.code}-actions]`)
-               .children(htmlElements.div);
-  }*/
-
   get() {
     return this.parent.getTableRows()
                .contains(this.code)

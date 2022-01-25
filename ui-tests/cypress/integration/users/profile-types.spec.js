@@ -51,7 +51,6 @@ describe('Profile Types', () => {
     cy.log(`Edit profile type with code ${profileType.code}`);
     currentPage = currentPage.getContent().getKebabMenu(profileType.code).open().openEdit();
     const newProfileTypeName = generateRandomId();
-    //currentPage.getContent().checkPageIsLoaded(profileType.name); //to fix the need to wait for the edit page to load
     currentPage.getContent().clearName();
     currentPage.getContent().typeName(newProfileTypeName);
     currentPage = currentPage.getContent().save();
