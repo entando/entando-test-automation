@@ -37,14 +37,15 @@ export default class EditPage extends Content {
 
   save() {
     this.getSaveButton().click();
-    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
+    //cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods (fixed with cy.location checking the URL)
+    cy.location('pathname').should('not.include', '/edit');
     return new AppPage(ProfileTypesPage);
   }
 
-  checkPageIsLoaded(value) {
+  /*checkPageIsLoaded(value) {
     this.getContents()
         .find(this.nameInput)
         .should('have.value', value);
-  }
+  }*/
 
 }

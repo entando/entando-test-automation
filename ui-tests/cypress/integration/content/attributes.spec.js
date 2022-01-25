@@ -1521,8 +1521,7 @@ describe('Content Type Attributes', () => {
         });
     });
 
-    it.only ('Nest in a complex (Composite) attribute', () => {
-      cy.pause();
+    it ('Nest in a complex (Composite) attribute', () => {
       createContentAttributeInComposite(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
     });

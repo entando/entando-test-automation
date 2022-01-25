@@ -68,7 +68,8 @@ class ProfileTypesKebabMenu extends KebabMenu {
 
   openEdit() {
     this.getEdit().click();
-    //cy.wait(1000); //TODO find a better way to identify when the page loaded (fixed with "checkPageIsLoaded")
+    //cy.wait(1000); //TODO find a better way to identify when the page loaded (fixed with cy.location checking the URL)
+    cy.location('pathname').should('include', '/edit');
     return new AppPage(EditPage);
   }
 
