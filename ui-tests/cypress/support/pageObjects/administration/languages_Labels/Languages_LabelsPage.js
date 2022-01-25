@@ -1,6 +1,8 @@
 import Content from '../../app/Content';
 import { DATA_TESTID, htmlElements } from '../../WebElement';
 import DeleteDialog from '../../app/DeleteDialog';
+import AddLabelPage from './AddLabelPage';
+import AppPage from '../../app/AppPage';
 
 export default class Languages_LabelsPage extends Content {
 
@@ -10,6 +12,7 @@ export default class Languages_LabelsPage extends Content {
   displayedLabelRow = `${htmlElements.tr}[${DATA_TESTID}=list_LabelsTable_tr]`;
   displayedLabelsTable = `${htmlElements.table}[${DATA_TESTID}=list_LabelsTable_table]`;
   displayedLabelsTab = `${htmlElements.div}[id=labels-tabs-pane-0]`;
+  labelsAddButton = `[${DATA_TESTID}=list_LabelsAndLanguagesPage_Button]`;
 
   getLanguagesTabLink() {
     return this.getContents().find(this.labelsTabLink).eq(0);
@@ -70,6 +73,15 @@ export default class Languages_LabelsPage extends Content {
 
   getSearchSubmitButton() {
     return this.getContents().find(this.searchFormSubmit)
+  }
+
+  getAddLabelButton() {
+    return this.getContents().find(this.labelsAddButton);
+  }
+
+  openAddLabel() {
+    this.getAddLabelButton().click();
+    return new AppPage(AddLabelPage);
   }
 
   getDisplayedLabelsTab() {
