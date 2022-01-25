@@ -1,28 +1,22 @@
-import Content from '../../app/Content.js';
-import { DATA_TESTID, htmlElements } from '../../WebElement.js';
-import DeleteDialog from '../../app/DeleteDialog.js';
+import Content from '../../app/Content';
+import { DATA_TESTID, htmlElements } from '../../WebElement';
+import DeleteDialog from '../../app/DeleteDialog';
+
 export default class Languages_LabelsPage extends Content {
-  getLanguageLabelTabArea() {
-    return this.get()
-      .find(`[${DATA_TESTID}=list_LabelsAndLanguagesPage_ul]`);
+
+  labelsTabLink = `${htmlElements.a}[${DATA_TESTID}=list_LabelsAndLanguagesPage_MenuItem]`;
+  labelSearchFormField = `${htmlElements.input}[${DATA_TESTID}=list_LabelSearchForm_Field]`;
+  searchFormSubmit = `${htmlElements.button}[${DATA_TESTID}=list_LabelSearchForm_Button]`;
+  displayedLabelRow = `${htmlElements.tr}[${DATA_TESTID}=list_LabelsTable_tr]`;
+  displayedLabelsTable = `${htmlElements.table}[${DATA_TESTID}=list_LabelsTable_table]`;
+  displayedLabelsTab = `${htmlElements.div}[id=labels-tabs-pane-0]`;
+
+  getLanguagesTabLink() {
+    return this.getContents().find(this.labelsTabLink).eq(0);
   }
 
-  getLanguagesTab() {
-    return this.getLanguageLabelTabArea()
-      .children('li').eq(0).children('a');
-  }
-
-  getLabelsTab() {
-    return this.getLanguageLabelTabArea()
-      .children('li').eq(1).children('a');
-  }
-
-  chooseLanguagesTab() {
-    return this.getLanguagesTab().click();
-  }
-
-  chooseLabelsTab() {
-    return this.getLabelsTab().click();
+  getLabelsTabLink() {
+    return this.getContents().find(this.labelsTabLink).eq(1);
   }
 
   getLanguageArea() {
@@ -68,5 +62,25 @@ export default class Languages_LabelsPage extends Content {
   getLanguageTableRow(code) {
     return this.getDeleteLanguageByCode(code)
       .closest(htmlElements.tr);
+  }
+
+  getLabelSearchForm() {
+    return this.getContents().find(this.labelSearchFormField)
+  }
+
+  getSearchSubmitButton() {
+    return this.getContents().find(this.searchFormSubmit)
+  }
+
+  getDisplayedLabelsTab() {
+    return this.getContents().find(this.displayedLabelsTab)
+  }
+
+  getDisplayedLabelsTable() {
+    return this.getDisplayedLabelsTab().find(this.displayedLabelsTable)
+  }
+
+  getDisplayedLabelsCount() {
+    return this.getDisplayedLabelsTable().find(this.displayedLabelRow)
   }
 }
