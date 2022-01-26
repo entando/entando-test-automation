@@ -13,10 +13,10 @@ import CreateTextFilePage from './CreateTextFilePage';
 export default class FilesListPage extends Content {
 
   breadCrumbs      = `${htmlElements.ol}[${DATA_TESTID}=common_FileBreadcrumb_Breadcrumb]`;
-  operationButtons = `${htmlElements.div}[${DATA_TESTID}=common_FileButtonsGroup_ButtonGroup]`;
+  operationButtons = `${htmlElements.div}.FileButtonsGroup`;
 
-  filesTable = `${htmlElements.table}[${DATA_TESTID}=list_FilesListTable_table]`;
-  folderLink = `${htmlElements.a}[${DATA_TESTID}=list_FilesListTable_a]`;
+  filesTable = `${htmlElements.table}.FilesListTable__table`;
+  folderLink = `${htmlElements.a}.FilesListTable__link-dir`;
 
   getFileBrowserBreadCrumbs() {
     return this.getContents()
@@ -27,7 +27,9 @@ export default class FilesListPage extends Content {
   getFileBrowserOperationButtons() {
     return this.getContents()
                .children(htmlElements.div).eq(2)
-               .find(this.operationButtons);
+               .find(this.operationButtons)
+               .children(htmlElements.div)
+               .children(htmlElements.div);
   }
 
   getUploadFilesOperationButton() {
