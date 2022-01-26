@@ -1,16 +1,17 @@
 import Content from '../../app/Content';
-import { DATA_TESTID, htmlElements } from '../../WebElement';
+import { htmlElements } from '../../WebElement';
 import DeleteDialog from '../../app/DeleteDialog';
 import AddLabelPage from './AddLabelPage';
 import AppPage from '../../app/AppPage';
 
 export default class Languages_LabelsPage extends Content {
 
-  labelsTabLink = `${htmlElements.a}[${DATA_TESTID}=list_LabelsAndLanguagesPage_MenuItem]`;
-  labelSearchFormField = `${htmlElements.input}[${DATA_TESTID}=list_LabelSearchForm_Field]`;
-  searchFormSubmit = `${htmlElements.button}[${DATA_TESTID}=list_LabelSearchForm_Button]`;
-  displayedLabelRow = `${htmlElements.tr}[${DATA_TESTID}=list_LabelsTable_tr]`;
-  displayedLabelsTable = `${htmlElements.table}[${DATA_TESTID}=list_LabelsTable_table]`;
+  labelsTabLink = `${htmlElements.a}[role=menuitem]`;
+  labelSearchFormField = `${htmlElements.input}[name=key]#text`;
+  labelSearchFormArea = `${htmlElements.form}.LabelSearchForm`;
+  searchFormSubmit = `${htmlElements.button}.btn-primary`;
+  displayedLabelRow = `${htmlElements.tr}.LabelsTable__label-row`;
+  displayedLabelsTable = `${htmlElements.table}.LabelsTable__table`;
   displayedLabelsTab = `${htmlElements.div}[id=labels-tabs-pane-0]`;
   labelsAddButton = `[${DATA_TESTID}=list_LabelsAndLanguagesPage_Button]`;
 
@@ -23,8 +24,10 @@ export default class Languages_LabelsPage extends Content {
   }
 
   getLanguageArea() {
+    cy.wait(1000); //Wait until the page loads
     return this.get()
-      .find(`[${DATA_TESTID}=list_LanguageForm_div]`);
+      .children(htmlElements.div)
+      .children(htmlElements.div).eq(2);
   }
 
   getAddLanguageForm() {
@@ -49,30 +52,30 @@ export default class Languages_LabelsPage extends Content {
 
   getLanguageTable() {
     return this.getLanguageArea()
-      .find(`[${DATA_TESTID}=list_ActiveLangTable_table]`);
+      .find(`${htmlElements.table}.ActiveLangTable__table`);
   }
 
-  getDeleteLanguageByCode(code) {
+  getDeleteLanguageByIndex(index) {
     return this.getLanguageTable()
-      .find(`#ActiveLangTable-delete-${code}`);
+      .find(`${htmlElements.tr}.ActiveLangTable__tr`).eq(index)
+      .find(`${htmlElements.button}.ActiveLangTable__delete-tag-btn`)
   }
 
-  clickDeleteLanguageByCode(code) {
-    this.getDeleteLanguageByCode(code).click();
+  clickDeleteLanguageByIndex(index) {
+    this.getDeleteLanguageByIndex(index).click();
     this.parent.getDialog().setBody(DeleteDialog);
   }
 
-  getLanguageTableRow(code) {
-    return this.getDeleteLanguageByCode(code)
-      .closest(htmlElements.tr);
+  getLabelSearchFormArea() {
+    return this.getContents().find(this.labelSearchFormArea)
   }
 
   getLabelSearchForm() {
-    return this.getContents().find(this.labelSearchFormField)
+    return this.getLabelSearchFormArea().find(this.labelSearchFormField)
   }
 
   getSearchSubmitButton() {
-    return this.getContents().find(this.searchFormSubmit)
+    return this.getLabelSearchFormArea().find(this.searchFormSubmit)
   }
 
   getAddLabelButton() {
