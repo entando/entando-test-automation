@@ -14,7 +14,7 @@ export default class Profile extends Content {
     // account tab
     usernameInput = `#my-profile-tabs-pane-account ${htmlElements.input}[type=text]`;
     passwordInput = `#my-profile-tabs-pane-account ${htmlElements.input}[type=password]`;
-    changePasswordButton = `${htmlElements.button}[${DATA_TESTID}=my-profile_AccountForm_Button]`;
+    changePasswordButton = `#my-profile-tabs-pane-account ${htmlElements.button}.btn-primary`;
 
     // account modal
     oldPassword = `${htmlElements.input}[name=oldPassword]`;
@@ -24,28 +24,28 @@ export default class Profile extends Content {
     accountModalCancelButton = `${htmlElements.button}.btn-cancel`;
 
     // profile tab
-    uploadImageButton = `${htmlElements.div}[${DATA_TESTID}=common_ProfileImageUploader_Dropdown] > ${htmlElements.button}`;
-    profileImage = `${htmlElements.div}[${DATA_TESTID}=common_ProfileImageUploader_Dropdown] ${htmlElements.img}`;
-    profileImageInput = `${htmlElements.div}[${DATA_TESTID}=common_ProfileImageUploader_Dropdown] ${htmlElements.input}[type=file]`;
-    dropdownMenu = `${htmlElements.div}[${DATA_TESTID}=common_ProfileImageUploader_Dropdown] ${htmlElements.ul}.dropdown-menu`
+    uploadImageButton = `${htmlElements.div}.ProfileImageUploader ${htmlElements.button}.dropdown-toggle`;
+    profileImage = `${htmlElements.div}.ProfileImageUploader ${htmlElements.img}`;
+    profileImageInput = `${htmlElements.div}.ProfileImageUploader ${htmlElements.input}[type=file]`;
+    dropdownMenu = `${htmlElements.div}.ProfileImageUploader ${htmlElements.ul}.dropdown-menu`
     fullNameInput = `${htmlElements.input}[name=fullname]`;
     emailInput = `${htmlElements.input}[name=email]`;
-    profileEditButton = `${htmlElements.button}[${DATA_TESTID}=profile_editBtn]`;
-    profileSaveButton = `${htmlElements.button}[${DATA_TESTID}=profile_saveBtn]`;
-    profileCancelButton = `${htmlElements.button}[${DATA_TESTID}=profile_cancelBtn]`;
+    profileEditButton = `#my-profile-tabs-pane-profile ${htmlElements.button}[type=button].btn-primary`;
+    profileSaveButton = `#my-profile-tabs-pane-profile ${htmlElements.button}[type=submit]`;
+    profileCancelButton = `#my-profile-tabs-pane-profile ${htmlElements.button}.btn-default`;
 
     // preferences tab
-    wizardSwitch = `${htmlElements.div}[${DATA_TESTID}=wizard-switchField] > div`;
-    missingTranslationSwitch = `${htmlElements.div}[${DATA_TESTID}=translationWarning-switchField] > div`;
-    loadOnPageSelectSwitch = `${htmlElements.div}[${DATA_TESTID}=loadOnPageSelect-switchField] > div`;
+    wizardSwitch = `${htmlElements.div}[aria-labelledby=switch-wizard] ${htmlElements.div}.bootstrap-switch`;
+    missingTranslationSwitch = `${htmlElements.div}[aria-labelledby=switch-translationWarning] ${htmlElements.div}.bootstrap-switch`;
+    loadOnPageSelectSwitch = `${htmlElements.div}[aria-labelledby=switch-loadOnPageSelect] ${htmlElements.div}.bootstrap-switch`;
     defaultPageOwnerSelect = `${htmlElements.select}[name=defaultPageOwnerGroup]`;
     defaultPageJoinGroupsSelect = `${htmlElements.select}[name=defaultPageJoinGroups]`;
-    defaultPageJoinGroupsButton = `${htmlElements.button}[${DATA_TESTID}=defaultPageJoinGroups_button]`;
+    defaultPageJoinGroupsButton = `${htmlElements.button}.MultiSelectRenderer__add-btn`;
     defaultContentOwnerGroupSelect = `${htmlElements.select}[name=defaultContentOwnerGroup]`;
     defaultContentJoinGroupSelect = `${htmlElements.select}[name=defaultContentJoinGroups]`;
-    defaultContentJoinGroupButton = `${htmlElements.button}[${DATA_TESTID}=defaultContentJoinGroups_button]`;
+    defaultContentJoinGroupButton = `${htmlElements.button}.MultiSelectRenderer__add-btn`;
     defaultWidgetOwnerGroupSelect = `${htmlElements.select}[name=defaultWidgetOwnerGroup]`;
-    settingsSaveBtn = `${htmlElements.button}[${DATA_TESTID}=settings_saveBtn]`;
+    settingsSaveBtn = `${htmlElements.button}[type=submit]`;
 
     selectTab(tab) {
         const tabs = {
@@ -146,7 +146,7 @@ export default class Profile extends Content {
 
     selectDefaultPageJoinGroups(value) {
         this.getTabContent().find(this.defaultPageJoinGroupsSelect).select(value);
-        this.getTabContent().find(this.defaultPageJoinGroupsButton).click();
+        this.getTabContent().find(this.defaultPageJoinGroupsSelect).parent().find(this.defaultPageJoinGroupsButton).click();
     }
 
     selectDefaultContentOwnerGroup(value) {
@@ -155,7 +155,7 @@ export default class Profile extends Content {
 
     selectDefaultContentJoinGroups(value) {
         this.getTabContent().find(this.defaultContentJoinGroupSelect).select(value);
-        this.getTabContent().find(this.defaultContentJoinGroupButton).click();
+        this.getTabContent().find(this.defaultContentJoinGroupSelect).parent().find(this.defaultContentJoinGroupButton).click();
     }
 
     selectWidgetOwnerGroup(value) {
