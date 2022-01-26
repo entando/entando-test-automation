@@ -13,8 +13,8 @@ export default class UploadFilesPage extends Content {
   breadCrumbs      = `${htmlElements.ol}[${DATA_TESTID}=common_FileBreadcrumb_Breadcrumb]`;
   operationButtons = `${htmlElements.div}[${DATA_TESTID}=common_FileButtonsGroup_ButtonGroup]`;
 
-  uploadFilesInput = `${htmlElements.input}[${DATA_TESTID}=form_RenderFileInput_input]`;
-  buttonsDiv       = `${htmlElements.div}[${DATA_TESTID}=upload_UploadFileBrowserForm_div]`;
+  uploadFilesInput = `${htmlElements.input}[name="file"]`;
+  buttonsDiv       = `${htmlElements.div}.UploadFileBrowserForm__btn`;
 
   getFileBrowserBreadCrumbs() {
     return this.getContents()
