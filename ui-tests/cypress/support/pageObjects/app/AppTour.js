@@ -1,14 +1,14 @@
-import {DATA_TESTID, htmlElements, WebElement} from '../WebElement.js';
+import {htmlElements, WebElement} from '../WebElement.js';
 
 export default class AppTour extends WebElement {
 
   tourFrame           = `${htmlElements.div}#___reactour`;
-  tourContainer       = `${htmlElements.div}.TourStart[${DATA_TESTID}=app-tour_AppTour_div]`;
-  #footer             = `${htmlElements.div}.TourStart__footer[${DATA_TESTID}=app-tour_AppTour_div]`;
-  closeButton         = `${htmlElements.button}.TourStart__cancel-button[${DATA_TESTID}=app-tour_AppTour_Button]`;
-  startButton         = `${htmlElements.button}.TourStart__start-button[${DATA_TESTID}=app-tour_AppTour_Button]`;
-  cancelCloseButton   = `${htmlElements.button}.TourStart__no-button[${DATA_TESTID}=app-tour_AppTour_Button]`;
-  cancelConfirmButton = `${htmlElements.button}.TourStart__yes-button[${DATA_TESTID}=app-tour_AppTour_Button]`;
+  tourContainer       = `${htmlElements.div}.TourStart`;
+  #footer             = `${htmlElements.div}.TourStart__footer`;
+  closeButton         = `${htmlElements.button}.TourStart__cancel-button`;
+  startButton         = `${htmlElements.button}.TourStart__start-button`;
+  cancelCloseButton   = `${htmlElements.button}.TourStart__no-button`;
+  cancelConfirmButton = `${htmlElements.button}.TourStart__yes-button`;
 
   get() {
     return this.parent.get()
