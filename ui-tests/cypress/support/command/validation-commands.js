@@ -10,6 +10,10 @@ Cypress.Commands.add('validateUrlPathname', pathname => {
   cy.location('pathname').should('eq', pathname);
 });
 
+Cypress.Commands.add('validateAppBuilderUrlPathname', pathname => {
+  cy.validateUrlPathname('/app-builder'+pathname)
+});
+
 Cypress.Commands.add('validateToast', (page, text = null, isOk = true) => {
   const toast = page.getToastList().children('div');
   if (text) {
