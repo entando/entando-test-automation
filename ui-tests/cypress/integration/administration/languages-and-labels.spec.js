@@ -26,14 +26,14 @@ describe('Languages and Labels', () => {
       currentPage.getContent().addLanguage(sampleLanguage.code);
       cy.wrap(sampleLanguage).as('languageToDelete');
       cy.validateToast(currentPage);
-      currentPage.getContent().getLanguageTableRow(sampleLanguage.code).children(htmlElements.td).eq(1).should('have.text', sampleLanguage.name);
+      getLanguageTableRowByCode(sampleLanguage.code).children(htmlElements.td).eq(1).should('have.text', sampleLanguage.name);
     });
 
     it('Delete / Deactivate a Language', () => {
       cy.languagesController()
           .then(controller => controller.putLanguage(sampleLanguage.code, sampleLanguage.name, true, false));
           currentPage = openLanguagesAndLabelsPage();
-      currentPage.getContent().clickDeleteLanguageByCode(sampleLanguage.code);
+          getLanguageTableRowByCode(sampleLanguage.code).then(row => currentPage.getContent().clickDeleteLanguageByIndex(row.index()));
       currentPage.getDialog().confirm();
 
       cy.validateToast(currentPage);
@@ -49,14 +49,14 @@ describe('Languages and Labels', () => {
       it('Verify the amount of searched labels when empty criteria', () => {
         currentPage.getContent().getLabelsTabLink().click();
         currentPage.getContent().getSearchSubmitButton().click();
-        currentPage.getContent().getDisplayedLabelsCount().should('have.length', 11)
+        currentPage.getContent().getDisplayedLabelsCount().should('have.length', 10) //The search function only shows 10 results
       });
 
       it('Verify the amount of searched labels when criteria is non-empty', () => {
         currentPage.getContent().getLabelsTabLink().click();
         currentPage.getContent().getLabelSearchForm().type("ALL");
         currentPage.getContent().getSearchSubmitButton().click();
-        currentPage.getContent().getDisplayedLabelsCount().should('have.length', 4)
+        currentPage.getContent().getDisplayedLabelsCount().should('have.length', 3)  //The corresponding labels are 3
       });
 
     });
@@ -68,5 +68,12 @@ describe('Languages and Labels', () => {
     currentPage = currentPage.getMenu().getAdministration().open();
     return currentPage.openLanguages_Labels();
   };
+
+  const getLanguageTableRowByCode = (code) => {
+    return currentPage.getContent()
+               .getLanguageTable()
+               .contains(code)
+               .closest(htmlElements.tr)
+  }
 
 });
