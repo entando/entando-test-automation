@@ -8,13 +8,13 @@ import ManagementPage from './ManagementPage.js';
 
 export default class AddPage extends Content {
 
-  usernameInput        = `${htmlElements.input}[name=username][${DATA_TESTID}=form_RenderTextInput_input]`;
-  passwordInput        = `${htmlElements.input}[name=password][${DATA_TESTID}=form_RenderTextInput_input]`;
-  passwordConfirmInput = `${htmlElements.input}[name=passwordConfirm][${DATA_TESTID}=form_RenderTextInput_input]`;
-  profileTypeSelect    = `${htmlElements.select}[name=profileType][${DATA_TESTID}=form_RenderSelectInput_select]`;
+  usernameInput        = `${htmlElements.input}[name=username]#username`;
+  passwordInput        = `${htmlElements.input}[name=password]#password`;
+  passwordConfirmInput = `${htmlElements.input}[name=passwordConfirm]#passwordConfirm`;
+  profileTypeSelect    = `${htmlElements.select}[name=profileType].RenderSelectInput`;
   status               = `${htmlElements.fieldset}[${DATA_TESTID}=common_UserForm_fieldset]`;
-  saveButton           = `${htmlElements.button}[${DATA_TESTID}=UserForm__saveButton]`;
-  otherButtons         = `${htmlElements.button}[${DATA_TESTID}=common_UserForm_Button]`;
+  saveButton           = `${htmlElements.button}[type=submit].btn-primary`;
+  otherButtons         = `${htmlElements.button}[type=button].UserForm__action-button`;
 
   getUsernameInput() {
     return this.getContents()

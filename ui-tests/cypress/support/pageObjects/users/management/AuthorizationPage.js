@@ -9,10 +9,10 @@ import AuthorizationDialog from './AuthorizationDialog';
 
 export default class AuthorizationPage extends Content {
 
-  addButton  = `${htmlElements.button}[${DATA_TESTID}=UserAuthorityTable__addButton]`;
-  table      = `${htmlElements.table}[${DATA_TESTID}=UserAuthorityTable__table]`;
+  addButton  = `${htmlElements.button}[type=button].UserAuthorityTable__addNew`;
+  table      = `${htmlElements.table}.table`;
   tableAlert = `${htmlElements.div}[${DATA_TESTID}=authority_UserAuthorityTable_Alert]`;
-  saveButton = `${htmlElements.button}[${DATA_TESTID}=UserAuthorityPageForm__saveButton]`;
+  saveButton = `${htmlElements.button}[type=submit].btn-primary`;
 
   getTitle() {
     return this.getContents()
