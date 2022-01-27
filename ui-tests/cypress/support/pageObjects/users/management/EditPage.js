@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content.js';
 
@@ -8,12 +8,12 @@ import ManagementPage from './ManagementPage.js';
 
 export default class EditPage extends Content {
 
-  usernameInput        = `${htmlElements.input}[name=username][${DATA_TESTID}=form_RenderTextInput_input]`;
-  passwordInput        = `${htmlElements.input}[name=password][${DATA_TESTID}=form_RenderTextInput_input]`;
-  passwordConfirmInput = `${htmlElements.input}[name=passwordConfirm][${DATA_TESTID}=form_RenderTextInput_input]`;
-  status               = `${htmlElements.div}[${DATA_TESTID}=status-switchField]`;
-  saveButton           = `${htmlElements.button}[${DATA_TESTID}=UserForm__saveButton]`;
-  cancelButton         = `${htmlElements.button}[${DATA_TESTID}=common_UserForm_Button]`;
+  usernameInput        = `${htmlElements.input}[name=username]#username`;
+  passwordInput        = `${htmlElements.input}[name=password]#password`;
+  passwordConfirmInput = `${htmlElements.input}[name=passwordConfirm]#passwordConfirm`;
+  status               = `${htmlElements.div}.bootstrap-switch`;
+  saveButton           = `${htmlElements.button}[type=submit].btn-primary`;
+  cancelButton         = `${htmlElements.button}[type=button].btn-default`;
 
   getUsernameInput() {
     return this.getContents()
@@ -32,6 +32,7 @@ export default class EditPage extends Content {
 
   getStatus() {
     return this.getContents()
+               .find(`${htmlElements.div}.form-group`).eq(7)
                .find(this.status);
   }
 

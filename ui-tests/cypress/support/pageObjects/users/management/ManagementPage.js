@@ -1,4 +1,4 @@
-import {DATA_ID, DATA_TESTID, htmlElements} from '../../WebElement.js';
+import {DATA_ID, htmlElements} from '../../WebElement.js';
 
 import Content   from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu';
@@ -14,13 +14,13 @@ import ViewProfilePage   from './ViewProfilePage';
 
 export default class ManagementPage extends Content {
 
-  tableDiv     = `${htmlElements.div}[${DATA_TESTID}=list_UserListTable_div]`;
-  tableCol     = `${htmlElements.div}[${DATA_TESTID}=list_UserListTable_Col]`;
-  searchForm   = `${htmlElements.form}[${DATA_TESTID}=UserSearchForm__Form]`;
-  searchInput  = `${htmlElements.input}[${DATA_TESTID}=username-field]`;
-  searchButton = `${htmlElements.button}[${DATA_TESTID}=search-button]`;
-  table        = `${htmlElements.table}[${DATA_TESTID}=UserList__table]`;
-  tableAlert   = `${htmlElements.div}[${DATA_TESTID}=list_UserListTable_Alert]`;
+  tableDiv     = `${htmlElements.div}.UserListTable`;
+  tableCol     = `${htmlElements.div}.col-xs-12`;
+  searchForm   = `${htmlElements.form}.UserSearchForm`;
+  searchInput  = `${htmlElements.input}[name=username]#username`;
+  searchButton = `${htmlElements.button}[type=submit].btn-primary`;
+  table        = `${htmlElements.table}.UserListTable__table`;
+  tableAlert   = `${htmlElements.div}.alert`;
 
   getSearchForm() {
     return this.getContents()
@@ -118,7 +118,7 @@ class UsersKebabMenu extends KebabMenu {
 
   getEdit() {
     return this.get()
-               .find(`[${DATA_TESTID}=UserListMenuAction__menu-item-edit]`);
+               .find(`${htmlElements.li}.UserListMenuAction__menu-item-edit`);
   }
 
   getManageAuth() {
@@ -133,12 +133,12 @@ class UsersKebabMenu extends KebabMenu {
 
   getViewProfile() {
     return this.get()
-               .find(`[${DATA_TESTID}=UserListMenuAction__menu-item-view-profile]`);
+               .find(`${htmlElements.li}.UserListMenuAction__menu-item-view-profile`);
   }
 
   getDelete() {
     return this.get()
-               .find(`[${DATA_TESTID}=UserListMenuAction__menu-item-delete]`);
+               .find(`${htmlElements.li}.UserListMenuAction__menu-item-delete`);
   }
 
   openEdit() {

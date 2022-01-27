@@ -1,11 +1,11 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import {DialogContent} from '../../app/Dialog';
 
 export default class AuthorizationDialog extends DialogContent {
 
-  group = `${htmlElements.select}[${DATA_TESTID}=UserAuthorityModal__groupsField]`;
-  role  = `${htmlElements.select}[${DATA_TESTID}=UserAuthorityModal__rolesField]`;
+  group = `${htmlElements.select}[name=group].form-control`;
+  role  = `${htmlElements.select}[name=roles].form-control`;
 
   getGroup() {
     return this.get()
