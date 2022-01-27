@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content.js';
 
@@ -8,11 +8,11 @@ import RolesPage from './RolesPage.js';
 
 export default class AddPage extends Content {
 
-  nameInput    = `${htmlElements.input}[name="name"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  codeInput    = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  permissions  = `${htmlElements.fieldset}[${DATA_TESTID}=common_RoleForm_fieldset]`;
-  cancelButton = `${htmlElements.button}[${DATA_TESTID}=RoleForm__cancelButton]`;
-  saveButton   = `${htmlElements.button}[${DATA_TESTID}=RoleForm__saveButton]`;
+  nameInput    = `${htmlElements.input}[name="name"]#name`;
+  codeInput    = `${htmlElements.input}[name="code"]#code`;
+  permissions  = `${htmlElements.div}.PermissionGrid`;
+  cancelButton = `${htmlElements.button}[type=button].btn-default`;
+  saveButton   = `${htmlElements.button}[type=submit].btn-primary`;
 
   getNameInput() {
     return this.getContents()
@@ -26,19 +26,20 @@ export default class AddPage extends Content {
 
   getPermissions() {
     return this.getContents()
-               .find(this.permissions);
+               .find(this.permissions)
+               .parent();
   }
 
   getPermissionsTitle() {
     return this.getContents()
                .find(this.permissions)
+               .parent()
                .children(htmlElements.legend);
   }
 
   getPermissionsGrid() {
     return this.getContents()
                .find(this.permissions)
-               .children(htmlElements.div)
                .children(htmlElements.div);
   }
 
