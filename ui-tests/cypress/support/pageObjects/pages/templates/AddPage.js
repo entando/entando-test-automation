@@ -4,15 +4,14 @@ import TemplatesPage from '../../pages/templates/TemplatesPage';
 import { DATA_TESTID, htmlElements } from '../../WebElement';
 
 export default class AddPage extends Content {
-  codeInput = `${htmlElements.input}[name="code"][${DATA_TESTID}=formik-field_RenderTextInput_input]`;
-  nameInput = `${htmlElements.input}[name="descr"][${DATA_TESTID}=formik-field_RenderTextInput_input]`;
-  jsonConfigDiv = `[${DATA_TESTID}=formik-field_JsonCodeEditorRenderer_div]`;
-  templateDiv = `[${DATA_TESTID}=formik-field_HtmlCodeEditorRenderer_div]`;
+  codeInput = `${htmlElements.input}[name="code"]#code`;
+  nameInput = `${htmlElements.input}[name="descr"]#descr`;
+  codeMirrorDiv = `${htmlElements.div}.form-group`
   codeMirror = '.CodeMirror-code';
-  formRowDiv = `[${DATA_TESTID}=common_PageTemplateForm_Row]`;
+  formRowDiv = `${htmlElements.div}.row`;
   cancelButton = `[${DATA_TESTID}=common_PageTemplateForm_Button]`;
   saveDropdownContainer = `${htmlElements.div}.dropdown`;
-  saveDropdownButton    = `${htmlElements.button}[${DATA_TESTID}=common_PageTemplateForm_DropdownButton]`;
+  saveDropdownButton    = `${htmlElements.button}#saveopts`;
   regularSaveButton     = `${htmlElements.a}#regularSaveButton`;
   continueSaveButton    = `${htmlElements.a}#continueSaveButton`;
 
@@ -38,7 +37,8 @@ export default class AddPage extends Content {
 
   getJsonConfigArea() {
     return this.getFormArea()
-               .find(this.jsonConfigDiv);
+               .children(htmlElements.div).eq(1)
+               .find(this.codeMirrorDiv);
   }
 
   getJsonConfigInput() {
@@ -48,7 +48,8 @@ export default class AddPage extends Content {
 
   getTemplateInput() {
     return this.getFormArea()
-               .find(this.templateDiv)
+               .children(htmlElements.div).eq(2)
+               .find(this.codeMirrorDiv)
                .find(this.codeMirror);
   }
 
