@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content       from '../../app/Content';
 import AppPage       from '../../app/AppPage';
@@ -11,8 +11,8 @@ export default class MFEWidgetsPage extends Content {
     DELETE: 'WidgetListRow__menu-item-delete'
   };
 
-  maincontent = `${htmlElements.div}[${DATA_TESTID}=list_ListWidgetPage_Grid]`;
-  rowlayout   = `${htmlElements.div}[${DATA_TESTID}=list_ListWidgetPage_Row]`;
+  maincontent = `${htmlElements.div}.container-fluid`;
+  rowlayout   = `${htmlElements.div}.row`;
 
   getContents() {
     return this.get()
@@ -26,7 +26,7 @@ export default class MFEWidgetsPage extends Content {
 
   getKebabMenuOfWidget(code) {
     return this.getListArea()
-               .find(`${htmlElements.div}[${DATA_TESTID}=${code}-actions]`);
+               .find(`${htmlElements.button}#WidgetListRow-dropown-${code}`).closest(htmlElements.div);
   }
 
   getVisibleMenuItemFromKebab(action) {
