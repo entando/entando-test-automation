@@ -111,7 +111,7 @@ describe('Page Templates', () => {
       currentPage = openPageTemplateMgmtPage();
       currentPage.getContent().getKebabMenuByCode(sampleData.code).open().clickDetails();
 
-      cy.validateUrlPathname(`/page-template/view/${sampleData.code}`);
+      cy.validateAppBuilderUrlPathname(`/page-template/view/${sampleData.code}`);
     });
 
     it('If the "descr" property of any object in the JSON configuration is an object, it should accept. Other mis-types under "descr" will display an error beneath (ENG-2711)', () => {
