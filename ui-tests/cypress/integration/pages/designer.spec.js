@@ -55,7 +55,7 @@ describe('Pages Designer', () => {
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
       addWidgetToPageFrame(currentPage, page.template, 0, 0, 1, 0);
-
+      cy.wait(1000) //wait for page to update
       currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                  .then(contents => {
@@ -71,7 +71,7 @@ describe('Pages Designer', () => {
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
       addWidgetToPageFrame(currentPage, page.template, 0, 0, 1, 0);
-
+      cy.wait(1000) //wait for page to update
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--draft')
                  .and('have.attr', 'title').should('eq', 'Published, with pending changes');
