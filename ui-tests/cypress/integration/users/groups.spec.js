@@ -66,7 +66,6 @@ describe('Groups', () => {
     currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
 
     currentPage.getDialog().confirm();
-    cy.reload(); //TODO the page does not automatically refresh the table
     currentPage.getContent().getTableRows().should('not.contain', groupCode);
   });
 
