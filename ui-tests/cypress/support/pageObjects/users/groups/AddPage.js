@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content.js';
 
@@ -8,10 +8,10 @@ import GroupsPage from './GroupsPage.js';
 
 export default class AddPage extends Content {
 
-  nameInput    = `${htmlElements.input}[name="name"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  codeInput    = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  cancelButton = `${htmlElements.button}[${DATA_TESTID}=group-form-cancel]`;
-  saveButton   = `${htmlElements.button}[${DATA_TESTID}=group-form-save]`;
+  nameInput    = `${htmlElements.input}[name="name"]#name`;
+  codeInput    = `${htmlElements.input}[name="code"]#code`;
+  cancelButton = `${htmlElements.button}[type=button].btn-default`;
+  saveButton   = `${htmlElements.button}[type=submit].btn-primary`;
 
   getNameInput() {
     return this.getContents()
