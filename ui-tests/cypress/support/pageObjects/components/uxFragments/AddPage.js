@@ -1,13 +1,13 @@
 import AppPage from '../../app/AppPage.js';
 import Content from '../../app/Content.js';
-import { DATA_TESTID, htmlElements } from '../../WebElement.js';
+import { htmlElements } from '../../WebElement.js';
 import UXFragmentsPage from './UXFragments.js';
 
 export default class AddPage extends Content {
 
   codeInput = `${htmlElements.input}[name="code"]`;
   guiCodeInput = `${htmlElements.textarea}[name="guiCode"]`;
-  saveBtn = `${htmlElements.button}[${DATA_TESTID}="common_FragmentForm_DropdownButton"]`;
+  saveBtn = `${htmlElements.button}[type=button]#saveopts`;
   saveOption = `${htmlElements.a}#regularSaveButton`;
 
   getCodeInput() {
