@@ -1,5 +1,5 @@
 import Content from '../../app/Content.js';
-import { DATA_ID, DATA_TESTID, htmlElements } from '../../WebElement.js';
+import { DATA_ID, htmlElements } from '../../WebElement.js';
 import Pagination from '../../app/Pagination.js';
 import AppPage from '../../app/AppPage.js';
 import AddPage from './AddPage';
@@ -8,9 +8,9 @@ import DeleteDialog from '../../app/DeleteDialog.js';
 
 export default class UXFragmentsPage extends Content {
 
-  searchForm       = `${htmlElements.form}.FragmentSearchForm[${DATA_TESTID}=list_FragmentSearchForm_form]`;
+  searchForm       = `${htmlElements.form}.FragmentSearchForm`;
   searchCodeInput  = `${htmlElements.input}#fragmentcode[name="code"]`;
-  addBtn           = `${htmlElements.button}[${DATA_TESTID}=list_FragmentListContent_Button]`;
+  addBtn           = `${htmlElements.button}[type=button].FragmentListContent__add`;
 
   getSearchForm() {
     return this.get()
