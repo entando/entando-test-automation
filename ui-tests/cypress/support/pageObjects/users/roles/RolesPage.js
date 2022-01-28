@@ -1,4 +1,4 @@
-import {DATA_TESTID, DATA_ID, htmlElements} from '../../WebElement.js';
+import {DATA_ID, htmlElements} from '../../WebElement.js';
 
 import Content   from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu';
@@ -12,11 +12,11 @@ import DetailsPage from './DetailsPage';
 
 export default class RolesPage extends Content {
 
-  tableDiv = `${htmlElements.div}[${DATA_TESTID}=list_RoleListTable_div]`;
-  tableCol = `${htmlElements.div}[${DATA_TESTID}=list_RoleListTable_Col]`;
-  table    = `${htmlElements.table}[${DATA_TESTID}=RoleListTable__table]`;
-  pageCol  = `${htmlElements.div}[${DATA_TESTID}=list_ListRolePage_Col]`;
-  pageLink = `${htmlElements.a}[${DATA_TESTID}=list_ListRolePage_Link]`;
+  tableDiv = `${htmlElements.div}.RoleListTable`;
+  tableCol = `${htmlElements.div}.col-xs-12`;
+  table    = `${htmlElements.table}.RoleListTable__table`;
+  pageCol  = `${htmlElements.div}.col-md-12`;
+  pageLink = `${htmlElements.a}`;
 
   getRolesTable() {
     return this.getContents()
@@ -86,7 +86,7 @@ class RolesKebabMenu extends KebabMenu {
 
   getDelete() {
     return this.get()
-               .find(`[${DATA_TESTID}=RoleListMenuAction__menu-item-delete]`);
+               .find(`${htmlElements.li}.RoleListMenuAction__menu-item-delete`);
   }
 
   openDetails() {

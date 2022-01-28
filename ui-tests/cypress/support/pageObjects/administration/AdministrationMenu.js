@@ -15,7 +15,7 @@ export default class AdministrationMenu extends SubMenu {
   get() {
     return this.parent.get()
                .children(htmlElements.ul)
-               .children(htmlElements.li).eq(5);
+               .children(htmlElements.li).eq(6);
   }
 
   getDatabase() {

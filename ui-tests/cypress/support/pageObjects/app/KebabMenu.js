@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from '../WebElement';
+import {htmlElements, WebElement} from '../WebElement';
 
 export default class KebabMenu extends WebElement {
 
@@ -9,11 +9,12 @@ export default class KebabMenu extends WebElement {
 
   get() {
     return this.parent.getTableRows()
-               .find(`[${DATA_TESTID}=${this.code}-actions]`)
-               .children(htmlElements.div);
+               .find(`${htmlElements.button}#${this.code}-actions`)
+               .closest(htmlElements.div);
   }
 
   open() {
+    cy.wait(1000); //wait for the kebab menu to load
     this.get()
         .children(htmlElements.button)
         .click();

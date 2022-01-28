@@ -17,7 +17,7 @@ describe('My Profile', () => {
     it('Account', () => {
       currentPage = openMyProfile();
   
-      cy.validateUrlPathname('/myProfile');
+      cy.validateAppBuilderUrlPathname('/myProfile');
   
       currentPage.getContent().getTitle()
       .should('be.visible')
@@ -32,7 +32,7 @@ describe('My Profile', () => {
     it('Profile', () => {
       currentPage = openMyProfile();
   
-      cy.validateUrlPathname('/myProfile');
+      cy.validateAppBuilderUrlPathname('/myProfile');
   
       currentPage.getContent().getTitle()
       .should('be.visible')
@@ -54,7 +54,7 @@ describe('My Profile', () => {
     it('Preferences', () => {
       currentPage = openMyProfile();
   
-      cy.validateUrlPathname('/myProfile');
+      cy.validateAppBuilderUrlPathname('/myProfile');
   
       currentPage.getContent().getTitle()
       .should('be.visible')

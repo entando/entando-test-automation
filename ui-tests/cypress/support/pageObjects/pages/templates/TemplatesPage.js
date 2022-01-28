@@ -2,7 +2,7 @@ import AppPage from '../../app/AppPage.js';
 import Content from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu.js';
 import Pagination from '../../app/Pagination.js';
-import { DATA_TESTID, htmlElements } from '../../WebElement.js';
+import { htmlElements } from '../../WebElement.js';
 import DeleteDialog from '../../app/DeleteDialog';
 import AddPage from './AddPage.js';
 
@@ -77,7 +77,7 @@ class TemplatesKebabMenu extends KebabMenu {
 }
 
 export default class TemplatesPage extends Content {
-  filterRow = `[${DATA_TESTID}=list_PageTemplateListPage_Row]`;
+  filterRow = `${htmlElements.div}.row`;
   
   getTable() {
     return this.get()
