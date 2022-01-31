@@ -1,4 +1,4 @@
-import {DATA_ID, htmlElements} from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import Content   from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu';
@@ -76,12 +76,12 @@ class RolesKebabMenu extends KebabMenu {
 
   getDetails() {
     return this.get()
-               .find(`[${DATA_ID}=detail-${this.code}]`);
+               .find(`${htmlElements.li}.RoleListMenuAction__menu-item-detail`);
   }
 
   getEdit() {
     return this.get()
-               .find(`[${DATA_ID}=edit-${this.code}]`);
+               .find(`${htmlElements.li}.RoleListMenuAction__menu-item-edit`);
   }
 
   getDelete() {
