@@ -1,4 +1,4 @@
-import {DATA_ID, htmlElements} from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import Content   from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu';
@@ -123,12 +123,12 @@ class UsersKebabMenu extends KebabMenu {
 
   getManageAuth() {
     return this.get()
-               .find(`[${DATA_ID}=manageAuth-${this.code}]`);
+               .find(`${htmlElements.li}.UserListMenuAction__menu-item-auth`);
   }
 
   getEditProfile() {
     return this.get()
-               .find(`[${DATA_ID}=editProfile-${this.code}]`);
+               .find(`${htmlElements.li}.UserListMenuAction__menu-item-edit-profile`);
   }
 
   getViewProfile() {
