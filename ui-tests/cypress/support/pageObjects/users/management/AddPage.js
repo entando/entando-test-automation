@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content.js';
 
@@ -12,7 +12,7 @@ export default class AddPage extends Content {
   passwordInput        = `${htmlElements.input}[name=password]#password`;
   passwordConfirmInput = `${htmlElements.input}[name=passwordConfirm]#passwordConfirm`;
   profileTypeSelect    = `${htmlElements.select}[name=profileType].RenderSelectInput`;
-  status               = `${htmlElements.fieldset}[${DATA_TESTID}=common_UserForm_fieldset]`;
+  status               = `${htmlElements.fieldset}.common_UserForm_fieldset`;
   saveButton           = `${htmlElements.button}[type=submit].btn-primary`;
   otherButtons         = `${htmlElements.button}[type=button].UserForm__action-button`;
 
