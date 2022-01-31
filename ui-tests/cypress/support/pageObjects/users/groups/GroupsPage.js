@@ -1,4 +1,4 @@
-import {DATA_TESTID, DATA_ID, htmlElements} from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import Content   from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu';
@@ -12,8 +12,8 @@ import DetailsPage from './DetailsPage';
 
 export default class GroupsPage extends Content {
 
-  tableDiv = `${htmlElements.div}[${DATA_TESTID}=list_GroupListTable_div]`;
-  tableCol = `${htmlElements.div}[${DATA_TESTID}=list_GroupListTable_Col]`;
+  tableDiv = `${htmlElements.div}.list_GroupListTable_div`;
+  tableCol = `${htmlElements.div}.list_GroupListTable_Col`;
   table    = `${htmlElements.table}.GroupListTable__table`;
   pageCol  = `${htmlElements.div}.col-md-12`;
   pageLink = `${htmlElements.a}`;
@@ -73,12 +73,12 @@ class GroupsKebabMenu extends KebabMenu {
 
   getDetails() {
     return this.get()
-               .find(`[${DATA_ID}=detail-${this.code}]`);
+               .find(`${htmlElements.li}.GroupListMenuAction__menu-item-detail`);
   }
 
   getEdit() {
     return this.get()
-               .find(`[${DATA_ID}=edit-${this.code}]`);
+               .find(`${htmlElements.li}.GroupListMenuAction__menu-item-edit`);
   }
 
   getDelete() {
