@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content';
 
@@ -11,7 +11,7 @@ export default class AuthorizationPage extends Content {
 
   addButton  = `${htmlElements.button}[type=button].UserAuthorityTable__addNew`;
   table      = `${htmlElements.table}.table`;
-  tableAlert = `${htmlElements.div}[${DATA_TESTID}=authority_UserAuthorityTable_Alert]`;
+  tableAlert = `${htmlElements.div}.authority_UserAuthorityTable_Alert`;
   saveButton = `${htmlElements.button}[type=submit].btn-primary`;
 
   getTitle() {
