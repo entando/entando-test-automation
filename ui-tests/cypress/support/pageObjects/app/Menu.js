@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from '../WebElement.js';
+import {htmlElements, WebElement} from '../WebElement.js';
 
 import DashboardMenu      from '../dashboard/DashboardMenu.js';
 import PagesMenu          from '../pages/PagesMenu';
@@ -10,7 +10,7 @@ import AdministrationMenu from '../administration/AdministrationMenu';
 
 export default class Menu extends WebElement {
 
-  collapseButton = `${htmlElements.button}[${DATA_TESTID}=internal-page_VerticalMenuContainer_Button]`;
+  collapseButton = `${htmlElements.button}.VerticalMenu__expand-collapse-btn`;
 
   get() {
     return this.parent.get()

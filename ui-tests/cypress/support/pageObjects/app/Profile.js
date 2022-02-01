@@ -1,9 +1,9 @@
 import Content from './Content.js';
 
-import {DATA_TESTID, htmlElements} from '../WebElement.js';
+import {htmlElements} from '../WebElement.js';
 
 export default class Profile extends Content {
-    tabs = `${htmlElements.ul}[${DATA_TESTID}=my-profile_MyProfilePage_Tabs]`;
+    tabs = `${htmlElements.ul}.nav-tabs`;
     accountTab = `${htmlElements.a}#my-profile-tabs-tab-account`;
     profileTab = `${htmlElements.a}#my-profile-tabs-tab-profile`;
     preferencesTab = `${htmlElements.a}#my-profile-tabs-tab-preferences`;
