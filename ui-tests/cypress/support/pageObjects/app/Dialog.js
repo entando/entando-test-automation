@@ -1,11 +1,11 @@
-import {DATA_TESTID, htmlElements, WebElement} from '../WebElement.js';
+import {htmlElements, WebElement} from '../WebElement.js';
 
 export class Dialog extends WebElement {
 
   dialog      = `${htmlElements.div}[role=dialog]`;
   header      = `${htmlElements.div}.modal-header`;
   title       = `${htmlElements.h4}.modal-title`;
-  closeButton = `${htmlElements.button}[${DATA_TESTID}=modal_GenericModal_button]`;
+  closeButton = `${htmlElements.button}[type=button].close`;
   footer      = `${htmlElements.div}.modal-footer`;
 
   get() {
