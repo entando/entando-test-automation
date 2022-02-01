@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content   from '../../app/Content';
 import KebabMenu from '../../app/KebabMenu';
@@ -12,7 +12,7 @@ import CreateTextFilePage from './CreateTextFilePage';
 
 export default class FilesListPage extends Content {
 
-  breadCrumbs      = `${htmlElements.ol}[${DATA_TESTID}=common_FileBreadcrumb_Breadcrumb]`;
+  breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
   operationButtons = `${htmlElements.div}.FileButtonsGroup`;
 
   filesTable = `${htmlElements.table}.FilesListTable__table`;

@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content';
 
@@ -9,8 +9,8 @@ import CreateTextFilePage from './CreateTextFilePage';
 
 export default class CreateFolderPage extends Content {
 
-  breadCrumbs      = `${htmlElements.ol}[${DATA_TESTID}=common_FileBreadcrumb_Breadcrumb]`;
-  operationButtons = `${htmlElements.div}[${DATA_TESTID}=common_FileButtonsGroup_ButtonGroup]`;
+  breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
+  operationButtons = `${htmlElements.div}.btn-group`;
 
   getFileBrowserBreadCrumbs() {
     return this.getContents()

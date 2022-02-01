@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content';
 
@@ -10,8 +10,8 @@ import CreateTextFilePage from './CreateTextFilePage';
 
 export default class UploadFilesPage extends Content {
 
-  breadCrumbs      = `${htmlElements.ol}[${DATA_TESTID}=common_FileBreadcrumb_Breadcrumb]`;
-  operationButtons = `${htmlElements.div}[${DATA_TESTID}=common_FileButtonsGroup_ButtonGroup]`;
+  breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
+  operationButtons = `${htmlElements.div}.btn-group`;
 
   uploadFilesInput = `${htmlElements.input}[name="file"]`;
   buttonsDiv       = `${htmlElements.div}.UploadFileBrowserForm__btn`;
