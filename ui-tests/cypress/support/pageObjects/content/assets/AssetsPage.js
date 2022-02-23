@@ -70,8 +70,8 @@ export default class AssetsPage extends Content {
     return new AssetsKebabMenu(this, code);
   }
 
-  attachFiles(...fileNames) {
-    this.getFileInput().attachFile(fileNames);
+  selectFiles(...fileName) {
+    this.getFileInput().selectFile(fileName, {force: true});
     this.parent.getDialog().setBody(AddAssetDialog);
   }
 }
@@ -83,7 +83,7 @@ class AssetsKebabMenu extends KebabMenu {
                .find(`#AssetsList__item-action-${this.code}`)
                .closest(htmlElements.div);
   }
-  
+
   getEdit() {
     return this.get()
                .find(htmlElements.li)

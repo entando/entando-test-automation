@@ -116,31 +116,31 @@ export default class AssetAttribute extends AttributeFormField {
     if (metadata === null) return;
     if (metadata.name) {
       if (editMode) {
-        this.getInfoNameInput().clear();  
+        this.getInfoNameInput().clear();
       }
       this.getInfoNameInput().type(metadata.name);
     }
     if (metadata.legend) {
       if (editMode) {
-        this.getInfoLegendInput().clear();  
+        this.getInfoLegendInput().clear();
       }
       this.getInfoLegendInput().type(metadata.legend);
     }
     if (metadata.alt) {
       if (editMode) {
-        this.getInfoAltInput().clear();  
+        this.getInfoAltInput().clear();
       }
       this.getInfoAltInput().type(metadata.alt);
     }
     if (metadata.description) {
       if (editMode) {
-        this.getInfoDescInput().clear();  
+        this.getInfoDescInput().clear();
       }
       this.getInfoDescInput().type(metadata.description);
     }
     if (metadata.title) {
       if (editMode) {
-        this.getInfoTitleInput().clear();  
+        this.getInfoTitleInput().clear();
       }
       this.getInfoTitleInput().type(metadata.title);
     }
@@ -155,7 +155,7 @@ export default class AssetAttribute extends AttributeFormField {
         this.setDialogBodyWithClass(AssetSelector);
         this.getDialogBodyOfAttribute().getUseButtonFromAssetTitle(upload).click();
       } else {
-        this.getUploadButton().attachFile(upload.file);
+        this.getUploadButton().selectFile(upload.file);
         cy.wait(500);
         this.setDialogBodyWithClass(AssetUploader);
         this.getDialogBodyOfAttribute().submit();

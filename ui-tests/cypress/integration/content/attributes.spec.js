@@ -147,7 +147,7 @@ describe('Content Type Attributes', () => {
       value = testValue;
     }
     cy.contentTypeAttributeController(CONTENT_TYPE.code)
-      .then(controller => controller.addAttribute({ 
+      .then(controller => controller.addAttribute({
         ...compositeFormat,
         compositeAttributes: [{
           compositeAttributeType: 'Composite',
@@ -212,15 +212,15 @@ describe('Content Type Attributes', () => {
 
   before(() => {
     cy.kcLogin('admin').as('tokens');
-    
+
     cy.groupsController()
       .then(controller => controller.addGroup(testGroup, testGroup));
-    
+
     cy.contentTypesController()
       .then(controller => controller.addContentType(CONTENT_TYPE.code, CONTENT_TYPE.name));
     cy.kcLogout();
   });
-  
+
   beforeEach(() => {
     cy.wrap(null).as('attributeToDelete');
     cy.wrap(null).as('recentContentsToUnpublish');
@@ -316,7 +316,7 @@ describe('Content Type Attributes', () => {
       en: 'Demo',
       it: 'Demo It',
     };
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
@@ -339,7 +339,7 @@ describe('Content Type Attributes', () => {
           })
           .then(response => controller.updateStatus(response.body.payload.id, 'published'));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValues, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -411,7 +411,7 @@ describe('Content Type Attributes', () => {
   describe('Monotext attribute', () => {
     const attribute = 'Monotext';
     const testValue = 'Le quick brown fox';
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
@@ -432,7 +432,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -493,7 +493,7 @@ describe('Content Type Attributes', () => {
   describe('Email attribute', () => {
     const attribute = 'Email';
     const testValue = 'jeff@jepoy.com';
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
@@ -514,7 +514,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -574,7 +574,7 @@ describe('Content Type Attributes', () => {
       en: 'Demo Long',
       it: 'Demo Long It',
     };
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
@@ -598,7 +598,7 @@ describe('Content Type Attributes', () => {
           controller.updateStatus(response.body.payload.id, 'published')
         ));
       });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValues, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -690,7 +690,7 @@ describe('Content Type Attributes', () => {
   describe('Number attribute', () => {
     const attribute = 'Number';
     const testValue = '14';
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
@@ -711,7 +711,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -748,7 +748,7 @@ describe('Content Type Attributes', () => {
     });
 
     it ('Try to set custom validation (e.g. range) and check it in content validation (in default language)', () => {
-      const range = { 
+      const range = {
         start: '3',
         end: '8',
       };
@@ -756,7 +756,7 @@ describe('Content Type Attributes', () => {
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
-          validationRules: { 
+          validationRules: {
             rangeStartNumber: range.start,
             rangeEndNumber: range.end,
           },
@@ -797,7 +797,7 @@ describe('Content Type Attributes', () => {
       en: 'Hypertext it is',
       it: 'Hypertext e',
     };
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
@@ -821,7 +821,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValues, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -930,7 +930,7 @@ describe('Content Type Attributes', () => {
         },
       },
     };
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
@@ -939,7 +939,7 @@ describe('Content Type Attributes', () => {
     it('Edit', () => {
       const editedValues = {
         en: {
-          upload: { file: 'upload/entando_400x400.png' },
+          upload: { file: 'cypress/fixtures/upload/entando_400x400.png' },
           metadata: {
             legend: 'legend',
             alt: '_popup',
@@ -947,7 +947,7 @@ describe('Content Type Attributes', () => {
           },
         },
         it: {
-          upload: { file: 'upload/entando_400x400.png' },
+          upload: { file: 'cypress/fixtures/upload/entando_400x400.png' },
           metadata: {
             legend: 'lengend it',
             alt: '_popup',
@@ -987,7 +987,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValues, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -1071,7 +1071,7 @@ describe('Content Type Attributes', () => {
       cy.assetsController()
         .then(controller => controller.addAsset(fileInfo, { group: testGroup, categories: [], type: 'image' }));
       cy.wrap(1).as('recentImageToDelete');
-      
+
       navigateContentForm();
       currentPage.getContent()
         .fillBeginContent('cypress basic attribute', testGroup);
@@ -1094,13 +1094,13 @@ describe('Content Type Attributes', () => {
     const attribute = 'Attach';
     const testValue = {
       en: {
-        upload: { file: 'upload/blank.pdf' },
+        upload: { file: 'cypress/Fixtures/upload/blank.pdf' },
       },
       it: {
-        upload: { file: 'upload/blank.pdf' },
+        upload: { file: 'cypress/Fixtures/upload/blank.pdf' },
       },
     };
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.wrap(1).as('recentAttachToDelete');
@@ -1108,7 +1108,7 @@ describe('Content Type Attributes', () => {
     });
 
     it('Edit', () => {
-      
+
       const editedValues = {
         en: {
           metadata: {
@@ -1209,7 +1209,7 @@ describe('Content Type Attributes', () => {
   describe('Boolean attribute', () => {
     const attribute = 'Boolean';
     const testValue = true;
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
@@ -1230,7 +1230,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -1255,7 +1255,7 @@ describe('Content Type Attributes', () => {
   describe('CheckBox attribute', () => {
     const attribute = 'CheckBox';
     const testValue = true;
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
@@ -1276,7 +1276,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -1301,7 +1301,7 @@ describe('Content Type Attributes', () => {
   describe('ThreeState attribute', () => {
     const attribute = 'ThreeState';
     const testValue = false;
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
@@ -1322,7 +1322,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -1358,7 +1358,7 @@ describe('Content Type Attributes', () => {
         it: 'Entando it',
       },
     };
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('deep.equal', testValue);
@@ -1388,9 +1388,9 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       cy.wait(500);
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValues, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -1433,7 +1433,7 @@ describe('Content Type Attributes', () => {
   describe('Date attribute', () => {
     const attribute = 'Date';
     const testValue = '2021-06-12 00:00:00';
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
@@ -1454,7 +1454,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -1476,7 +1476,7 @@ describe('Content Type Attributes', () => {
     });
 
     it ('Try to set custom validation for Date (e.g. range)', () => {
-      const validationRules = { 
+      const validationRules = {
         rangeStartDate: '2021-09-01 00:00:00',
         rangeEndDate: '2021-09-30 00:00:00',
       };
@@ -1516,7 +1516,7 @@ describe('Content Type Attributes', () => {
   describe('Enumerator attribute', () => {
     const attribute = 'Enumerator';
     const testValue = 'b';
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(
         attribute,
@@ -1549,7 +1549,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -1598,7 +1598,7 @@ describe('Content Type Attributes', () => {
   describe('EnumeratorMap attribute', () => {
     const attribute = 'EnumeratorMap';
     const testValue = 'y';
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(
         attribute,
@@ -1631,7 +1631,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -1646,7 +1646,7 @@ describe('Content Type Attributes', () => {
         })
         .should('eq', editedValue);
     });
-    
+
     it ('Nest in a complex (Composite) attribute', () => {
       createContentAttributeInComposite(
         attribute,
@@ -1680,7 +1680,7 @@ describe('Content Type Attributes', () => {
   describe('Timestamp attribute', () => {
     const attribute = 'Timestamp';
     const testValue = '2021-04-12 04:15:00';
-    
+
     it ('Create', () => {
       basicCreateContentAttribute(attribute, testValue).as('actualValue');
       cy.get('@actualValue').should('eq', testValue);
@@ -1701,7 +1701,7 @@ describe('Content Type Attributes', () => {
             controller.updateStatus(response.body.payload.id, 'published')
           ));
         });
-      
+
       navigateContentForm('edit');
       fillAttributeWithValue(attribute, editedValue, true);
       currentPage = currentPage.getContent().submitApproveForm();

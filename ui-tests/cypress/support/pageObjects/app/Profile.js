@@ -125,7 +125,7 @@ export default class Profile extends Content {
     }
 
     uploadProfileImage(...fileName) {
-        this.getTabContent().find(this.profileImageInput).attachFile(fileName);
+        this.getTabContent().find(this.profileImageInput).selectFile(fileName);
     }
 
     toggleWelcomeWizard() {
