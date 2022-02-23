@@ -16,13 +16,13 @@ describe('My Profile', () => {
   describe('UI', () => {
     it('Account', () => {
       currentPage = openMyProfile();
-  
+
       cy.validateUrlPathname('/myProfile');
-  
+
       currentPage.getContent().getTitle()
       .should('be.visible')
       .and('have.text', 'My profile');
-  
+
       currentPage.getContent().selectTab('account');
       cy.wait(1000);
       currentPage.getContent().getLegend().should('be.visible')
@@ -31,13 +31,13 @@ describe('My Profile', () => {
 
     it('Profile', () => {
       currentPage = openMyProfile();
-  
+
       cy.validateUrlPathname('/myProfile');
-  
+
       currentPage.getContent().getTitle()
       .should('be.visible')
       .and('have.text', 'My profile');
-  
+
       currentPage.getContent().selectTab('profile');
       cy.wait(1000);
       currentPage.getContent().getLegend()
@@ -53,13 +53,13 @@ describe('My Profile', () => {
 
     it('Preferences', () => {
       currentPage = openMyProfile();
-  
+
       cy.validateUrlPathname('/myProfile');
-  
+
       currentPage.getContent().getTitle()
       .should('be.visible')
       .and('have.text', 'My profile');
-  
+
       currentPage.getContent().selectTab('preferences');
       cy.wait(1000);
       currentPage.getContent().getLegend()
@@ -85,7 +85,7 @@ describe('My Profile', () => {
           currentPage.getContent().typeNewPassword(newPassword);
           currentPage.getContent().typeConfirmNewPassword(newPassword);
           currentPage.getContent().clickChangePasswordSaveButton();
-          
+
           cy.validateToast(currentPage);
 
           cy.usersController().then(controller => controller.changePassword(username, {
@@ -94,9 +94,9 @@ describe('My Profile', () => {
             newPasswordConfirm: userData.password,
             username
           }));
-        });  
+        });
     });
-    
+
     it('Profile - Edit profile with image', () => {
       currentPage = openMyProfile();
 
@@ -105,7 +105,7 @@ describe('My Profile', () => {
 
       currentPage.getContent().clickProfileEditButton();
 
-      currentPage.getContent().uploadProfileImage('upload/entando_400x400.png');
+      currentPage.getContent().uploadProfileImage('cypress/fixtures/upload/entando_400x400.png');
       cy.wait(2000);
       cy.validateToast(currentPage);
       currentPage.getContent().typeFullNameInput('Test name');
@@ -118,7 +118,7 @@ describe('My Profile', () => {
       .should('match', /entando_400x400/);
 
     });
-    
+
     it('Profile - Remove profile image', () => {
       currentPage = openMyProfile();
 

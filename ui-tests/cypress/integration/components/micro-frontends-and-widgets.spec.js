@@ -33,7 +33,7 @@ const DEMOPAGE = {
 };
 
 const iconChoose = 'fa-android';
-const iconUpload = 'icon/Entando.svg';
+const iconUpload = 'cypress/fixtures/icon/Entando.svg';
 
 describe('Microfrontends and Widgets', () => {
   let currentPage;
@@ -243,23 +243,23 @@ describe('Microfrontends and Widgets', () => {
               .then(controller => controller.addWidget(FRAMENUM, SAMPLE_BASIC_WIDGET_ID));
         cy.wrap(FRAMENUM).as('widgetToRemoveFromPage');
         cy.wait(500);
-    
-        cy.log('now attempt to delete the widget');  
+
+        cy.log('now attempt to delete the widget');
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
         currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.DELETE);
-    
+
         currentPage.getDialog().getConfirmButton().click();
         currentPage.getToastList().should('contain', `The Widget ${SAMPLE_BASIC_WIDGET_ID} cannot be deleted because it is used into pages`);
       });
 
       it('Delete a user widget', () => {
         cy.widgetsController()
-              .then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));  
+              .then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
         currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.DELETE);
-    
+
         currentPage.getDialog().getConfirmButton().click();
         currentPage.getContent().getListArea().should('not.contain', SAMPLE_BASIC_WIDGET_ID);
       });
@@ -332,7 +332,7 @@ describe('Microfrontends and Widgets', () => {
           accountNotExpired: true,
           credentialsNotExpired: true,
         }));
-      
+
       cy.usersController()
         .then(controller => controller.addAuthorities(user.username, 'administrators', role.code));
 

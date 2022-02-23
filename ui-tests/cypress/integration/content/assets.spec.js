@@ -31,7 +31,7 @@ describe('Assets', () => {
         .then(controller => controller.deleteAsset(assetId))
         .then(() => assetToBeDeleted = false);
     }
-    
+
     cy.kcLogout();
   });
 
@@ -45,11 +45,11 @@ describe('Assets', () => {
     it('Delete asset', () => {
       currentPage = openAssetsPage();
       cy.wait(2000);
-  
+
       currentPage.getContent().getKebabMenu(assetId).open().clickDelete();
       cy.wait(1000);
       currentPage.getDialog().confirm();
-  
+
       cy.validateToast(currentPage);
     });
 
@@ -75,11 +75,11 @@ describe('Assets', () => {
 
       currentPage = openAssetsPage();
       cy.wait(2000);
-  
+
       currentPage.getContent().getKebabMenu(assetId).open().clickDelete();
       cy.wait(1000);
       currentPage.getDialog().confirm();
-  
+
       cy.validateToast(currentPage, assetId, false);
 
       cy.contentsController().then(controller => {
@@ -104,7 +104,7 @@ describe('Assets', () => {
       currentPage = openAssetsPage();
       cy.wait(2000);
       currentPage.getContent().getKebabMenu(assetId).open().openEdit();
-  
+
       currentPage.getDialog().getBody().getDescriptionInput().type('test');
       currentPage.getDialog().confirm();
 
@@ -121,7 +121,7 @@ describe('Assets', () => {
 
       cy.validateToast(currentPage);
     });
-  
+
     it('Rotate image', () => {
       currentPage = openAssetsPage();
       cy.wait(2000);
@@ -141,18 +141,18 @@ describe('Assets', () => {
           assetId =  res.body.payload.id;
         });
       });
-  
+
       currentPage = openAssetsPage();
-      currentPage.getContent().attachFiles('upload/image1.JPG');
+      currentPage.getContent().selectFiles('cypress/fixtures/upload/image1.JPG');
       currentPage.getDialog().getBody().getGroupSelect().select('administrators');
       currentPage.getDialog().getBody().submit();
-  
+
       cy.wait(2000);
-  
+
       currentPage.getContent().getTableRows().then(rows =>
         cy.wrap(rows).eq(0).children(htmlElements.td).eq(2).should('contain.text', 'image1.JPG')
       );
-  
+
       assetToBeDeleted = true;
     });
   });

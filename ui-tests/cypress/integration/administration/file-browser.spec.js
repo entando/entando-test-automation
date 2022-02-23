@@ -26,7 +26,7 @@ describe('File browser', () => {
       currentPage.getContent().openSubFolder(0);
 
       currentPage = currentPage.getContent().openUploadFilesPage();
-      currentPage.getContent().attachUploadFilesInput('upload/data1.json');
+      currentPage.getContent().selectFiles('cypress/fixtures/upload/data1.json');
       currentPage = currentPage.getContent().confirmUpload();
       cy.wrap(['data1.json']).as('fileToBeDeleted');
 
@@ -40,7 +40,7 @@ describe('File browser', () => {
       currentPage.getContent().openSubFolder(0);
 
       currentPage = currentPage.getContent().openUploadFilesPage();
-      currentPage.getContent().attachUploadFilesInput('upload/data1.json', 'upload/data2.json');
+      currentPage.getContent().selectFiles('cypress/fixtures/upload/data1.json', 'cypress/fixtures/upload/data2.json');
       currentPage = currentPage.getContent().confirmUpload();
       cy.wrap(['data1.json', 'data2.json']).as('fileToBeDeleted');
 
@@ -56,7 +56,7 @@ describe('File browser', () => {
       currentPage.getContent().openSubFolder(0);
 
       currentPage = currentPage.getContent().openUploadFilesPage();
-      currentPage.getContent().attachUploadFilesInput(`upload/${filename}`);
+      currentPage.getContent().selectFiles(`cypress/fixtures/upload/${filename}`);
       currentPage = currentPage.getContent().confirmUpload();
       // deletion will be performed through screen
       cy.wrap([]).as('fileToBeDeleted');

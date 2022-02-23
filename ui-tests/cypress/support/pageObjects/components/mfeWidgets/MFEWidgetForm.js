@@ -1,5 +1,3 @@
-import 'cypress-file-upload';
-
 import {DATA_TESTID, htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content';
@@ -182,7 +180,7 @@ export default class MFEWidgetForm extends Content {
           this.getCustomUiInput().type(payload[field]);
           break;
         case 'iconUpload':
-          this.getIconUpload().attachFile(payload[field]);
+          this.getIconUpload().selectFile(payload[field]);
           cy.wait(500);
           break;
         case 'iconChoose':
@@ -202,7 +200,7 @@ export default class MFEWidgetForm extends Content {
       customUi = '<h1>Just a basic widget</h1>',
       group    = 'Administrators'
   ) {
-    this.editFormFields({iconUpload: 'icon/Entando.svg', name, code, group, customUi});
+    this.editFormFields({iconUpload: 'cypress/fixtures/icon/Entando.svg', name, code, group, customUi});
   }
 
   getParentTypeLabel() {
