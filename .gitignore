@@ -14,3 +14,7 @@ ui-tests/node_modules
 
 # Cypress files
 ui-tests/cypress/screenshots
+ui-tests/cypress/results
+# Mochawesome files
+ui-tests/mochawesome.json
+ui-tests/mochawesome-report
