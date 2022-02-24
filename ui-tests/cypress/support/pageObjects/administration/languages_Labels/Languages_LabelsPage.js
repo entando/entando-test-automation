@@ -142,6 +142,11 @@ export default class Languages_LabelsPage extends Content {
   getLabelNextButton() {
     return this.getLabelForwardButtons().children().eq(0);
   }
+
+  navigateToLabelListPage(page) {
+    this.getLabelPaginationTextArea().clear();
+    this.getLabelPaginationTextArea().type(`${page}{enter}`);
+  }
 }
 
 class LabelsKebabMenu extends KebabMenu {
