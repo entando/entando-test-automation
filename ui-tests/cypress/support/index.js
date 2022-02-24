@@ -38,5 +38,6 @@ import './restAPI/languagesAPI.js';
 import './restAPI/labelsAPI.js';
 import './restAPI/fragmentsAPI';
 import './restAPI/userPreferencesAPI';
+import './restApi/emailConfigAPI';
 
 import './exception-handler';
