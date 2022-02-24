@@ -290,6 +290,15 @@ describe('Labels', () => {
             cy.validateToast(currentPage, null, false);
         });
 
+        it([Tag.ERROR, 'ENG-3238'], 'Error should be present, and save button disabled, when clearing a field in the edit label page', () => {
+            addTestLabel();
+            currentPage = openLabelsPage();
+            currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
+            currentPage.getContent().getLanguageTextField('en').clear().blur();
+            currentPage.getContent().getLanguageTextField('en').parent().parent().children(htmlElements.span).should('exist').and('have.class', 'help-block');
+            currentPage.getContent().getSubmit().should('be.disabled');
+        });
+
     });
 
     const openLabelsPage = () => {
