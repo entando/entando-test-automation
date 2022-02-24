@@ -223,6 +223,17 @@ describe('Labels', () => {
             currentPage.getContent().getSubmit().should('be.disabled');
         });
 
+        it([Tag.FEATURE, 'ENG-3238'], 'Values should be filled in the edit form and the code should be not editable', () => {
+            addTestLabel();
+            currentPage = openLabelsPage();
+            currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
+            cy.validateAppBuilderUrlPathname(`/labels-languages/edit/${testLabel.key}`);
+            currentPage.getContent().getForm().should('exist').and('be.visible');
+            currentPage.getContent().getCodeTextField().should('exist').and('be.disabled').and('have.value', testLabel.key);
+            currentPage.getContent().getLanguageTextField('en').should('exist').and('have.text', testLabel.name.en);
+            currentPage.getContent().getLanguageTextField('it').should('exist').and('have.text', testLabel.name.it);
+        });
+
     });
 
 
