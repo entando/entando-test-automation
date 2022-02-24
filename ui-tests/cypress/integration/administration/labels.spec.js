@@ -134,6 +134,20 @@ describe('Labels', () => {
                 .should('contain', 'ALL');
         });
 
+        it([Tag.FEATURE, 'ENG-3238'], 'Verify the results of a search using the return key', () => {
+            currentPage.getContent().getLabelSearchForm().type("ALL{enter}");
+            currentPage.getContent().getDisplayedLabelsCount().should('have.length', 3);
+            currentPage.getContent().getDisplayedLabelsCount().eq(0)
+                .children().eq(0)
+                .should('contain', 'ALL');
+            currentPage.getContent().getDisplayedLabelsCount().eq(1)
+                .children().eq(0)
+                .should('contain', 'ALL');
+            currentPage.getContent().getDisplayedLabelsCount().eq(2)
+                .children().eq(0)
+                .should('contain', 'ALL');
+        });
+
     });
 
     describe('Update labels list functionalities', () => {
