@@ -69,6 +69,21 @@ describe('Labels', () => {
         currentPage.getContent().getLanguageTextField('it').should('exist').and('be.visible');
     });
 
+    describe('Labels list navigation', () => {
+
+        beforeEach(() => {
+            currentPage = openLabelsPage();
+        });
+
+        it([Tag.SANITY, 'ENG-3238'], 'Verify labels list', () => {
+            currentPage.getContent().getDisplayedLabelsTable().should('exist').and('be.visible');
+            currentPage.getContent().getLabelPaginationForm().find(htmlElements.button).should('contain', '10');
+            currentPage.getContent().getDisplayedLabelsCount().should('have.length', 10);
+            currentPage.getContent().getLabelPaginationTextArea().should('have.value', 1);
+        });
+
+    });
+
     const openLabelsPage = () => {
         cy.visit('/');
         currentPage = new HomePage();
