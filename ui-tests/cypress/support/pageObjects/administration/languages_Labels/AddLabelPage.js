@@ -13,7 +13,7 @@ export default class AddLabelPage extends Content {
   }
 
   getLanguageTextField(code) {
-    return this.getForm().find(`${htmlElements.textarea}[name="['titles.${code}']"]`);
+    return this.getForm().find(`${htmlElements.textarea}[name="titles.${code}"]`);
   }
 
   getSubmit() {
