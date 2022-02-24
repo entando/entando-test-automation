@@ -136,6 +136,28 @@ describe('Labels', () => {
 
     });
 
+    describe('Update labels list functionalities', () => {
+
+        it([Tag.SANITY, 'ENG-3238'], 'List should be updated when a new label is added', () => {
+            currentPage = openLabelsPage();
+            currentPage = currentPage.getContent().openAddLabel();
+            cy.validateAppBuilderUrlPathname('/labels-languages/add');
+            currentPage.getContent().typeCodeTextField(testLabel.key);
+            currentPage.getContent().typeLanguageTextField('en', testLabel.name.en);
+            currentPage.getContent().typeLanguageTextField('it', testLabel.name.it);
+            currentPage = currentPage.getContent().submitForm();
+            cy.wrap(testLabel).as('labelToDelete');
+            cy.validateAppBuilderUrlPathname('/labels-languages');
+            currentPage.getContent().getDisplayedLabelsTable().should('exist').and('be.visible');
+            currentPage.getContent().getLabelPaginationForm().children().eq(1)
+                .find(`${htmlElements.span}.pagination-pf-items-total`)
+                .should('have.text', 145);
+            currentPage.getContent().getLabelRowByCode(testLabel.key).should('exist');
+        });
+
+    });
+
+
     const openLabelsPage = () => {
         cy.visit('/');
         currentPage = new HomePage();
