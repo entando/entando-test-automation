@@ -152,6 +152,10 @@ export default class Languages_LabelsPage extends Content {
     return this.getLabelBackButtons().children().eq(1);
   }
 
+  getLabelFirstPageButton() {
+    return this.getLabelBackButtons().children().eq(0);
+  }
+
   navigateToLabelListPage(page) {
     this.getLabelPaginationTextArea().clear();
     this.getLabelPaginationTextArea().type(`${page}{enter}`);
