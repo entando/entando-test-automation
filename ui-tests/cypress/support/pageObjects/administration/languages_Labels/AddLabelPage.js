@@ -32,4 +32,9 @@ export default class AddLabelPage extends Content {
     this.getSubmit().click();
     return new AppPage(Languages_LabelsPage);
   }
+
+  navigateToLanguagesAndLabelsFromBreadcrumb() {
+    this.getBreadCrumb().children(htmlElements.li).eq(1).click();
+    return new AppPage(Languages_LabelsPage);
+  }
 }
