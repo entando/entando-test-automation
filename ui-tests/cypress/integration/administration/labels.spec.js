@@ -234,6 +234,17 @@ describe('Labels', () => {
             currentPage.getContent().getLanguageTextField('it').should('exist').and('have.text', testLabel.name.it);
         });
 
+        it([Tag.FEATURE, 'ENG-3238'], 'No label added when navigating out of the add form using breadcrumb', () => {
+            currentPage = openLabelsPage();
+            currentPage = currentPage.getContent().openAddLabel();
+            cy.validateAppBuilderUrlPathname('/labels-languages/add');
+            currentPage = currentPage.getContent().navigateToLanguagesAndLabelsFromBreadcrumb();
+            cy.validateAppBuilderUrlPathname('/labels-languages');
+            currentPage.getContent().getLabelPaginationForm().children().eq(1)
+                .find(`${htmlElements.span}.pagination-pf-items-total`)
+                .should('have.text', 144);
+        });
+
     });
 
 
