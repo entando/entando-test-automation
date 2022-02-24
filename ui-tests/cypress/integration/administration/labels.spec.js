@@ -155,6 +155,21 @@ describe('Labels', () => {
             currentPage.getContent().getLabelRowByCode(testLabel.key).should('exist');
         });
 
+        it([Tag.SANITY, 'ENG-3238'], 'Label should be updated in the list when it is edited', () => {
+            const editedName = "Edited";
+            addTestLabel();
+            currentPage = openLabelsPage();
+            currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
+            cy.validateAppBuilderUrlPathname(`/labels-languages/edit/${testLabel.key}`);
+            currentPage.getContent().typeLanguageTextField('en', editedName);
+            currentPage = currentPage.getContent().submitForm();
+            cy.validateAppBuilderUrlPathname('/labels-languages');
+            currentPage.getContent().getLabelRowByCode(testLabel.key)
+                .children(htmlElements.td).eq(1)
+                .should('not.have.text', testLabel.name.en)
+                .and('have.text', editedName);
+        });
+
     });
 
 
