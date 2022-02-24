@@ -32,6 +32,16 @@ describe('Labels', () => {
         currentPage.getContent().getLabelPaginationTextArea().should('have.value', 1);
     });
 
+    it([Tag.SMOKE, 'ENG-3238'], 'Add form', () => {
+        currentPage = openLabelsPage();
+        currentPage = currentPage.getContent().openAddLabel();
+        cy.validateAppBuilderUrlPathname('/labels-languages/add');
+        currentPage.getContent().getForm().should('exist').and('be.visible');
+        currentPage.getContent().getCodeTextField().should('exist').and('be.visible');
+        currentPage.getContent().getLanguageTextField('en').should('exist').and('be.visible');
+        currentPage.getContent().getLanguageTextField('it').should('exist').and('be.visible');
+    });
+
     const openLabelsPage = () => {
         cy.visit('/');
         currentPage = new HomePage();
