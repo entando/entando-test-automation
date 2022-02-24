@@ -187,6 +187,15 @@ describe('Labels', () => {
             cy.wrap(null).as('labelToDelete');
         });
 
+        it([Tag.SANITY, 'ENG-3238'], 'When deletion is canceled, modal should close and the label should still be present', () => {
+            addTestLabel();
+            currentPage = openLabelsPage();
+            currentPage.getContent().getKebabMenu(testLabel.key).open().clickDelete();
+            currentPage.getDialog().cancel();
+            currentPage.getContent().getLabelRowByCode(testLabel.key).should('exist');
+            currentPage.getDialog().get().should('not.exist');
+        });
+
     });
 
 
