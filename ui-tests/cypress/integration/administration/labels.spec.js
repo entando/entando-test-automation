@@ -263,6 +263,23 @@ describe('Labels', () => {
 
     });
 
+    describe('Error validation', () => {
+
+        it([Tag.ERROR, 'ENG-3238'], 'Error should be present when selecting but not filling a field in the add label page', () => {
+            currentPage = openLabelsPage();
+            currentPage = currentPage.getContent().openAddLabel();
+
+            currentPage.getContent().getCodeTextField().focus().blur();
+            currentPage.getContent().getCodeTextField().parent().parent().children(htmlElements.span).should('exist').and('have.class', 'help-block');
+
+            currentPage.getContent().getLanguageTextField('en').focus().blur();
+            currentPage.getContent().getLanguageTextField('en').parent().parent().children(htmlElements.span).should('exist').and('have.class', 'help-block');
+
+            currentPage.getContent().getLanguageTextField('it').focus().blur();
+            currentPage.getContent().getLanguageTextField('it').parent().parent().children(htmlElements.span).should('exist').and('have.class', 'help-block');
+        });
+
+    });
 
     const openLabelsPage = () => {
         cy.visit('/');
