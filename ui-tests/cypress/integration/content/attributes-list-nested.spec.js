@@ -18,7 +18,7 @@ const listFormat = {
   nestedAttribute: { code: 'List' },
 };
 
-describe('Nested a in List Attribute', () => {
+describe([Tag.GTS], 'Nested a in List Attribute', () => {
   let currentPage;
 
   const navigateToContentForm = (mode = 'create') => {
@@ -102,7 +102,7 @@ describe('Nested a in List Attribute', () => {
           ));
         });
       cy.wrap(1).as('recentContentsToDelete');
-      
+
       navigateToContentForm('edit');
       fillAttributeWithValue(attribute, editedValues, true);
       currentPage = currentPage.getContent().submitApproveForm();
@@ -119,7 +119,7 @@ describe('Nested a in List Attribute', () => {
 
   before(() => {
     cy.kcLogin('admin').as('tokens');
-    
+
     cy.contentTypesController()
       .then(controller => controller.addContentType(CONTENT_TYPE_WITH_LIST.code, CONTENT_TYPE_WITH_LIST.name));
     cy.kcLogout();
@@ -271,7 +271,7 @@ describe('Nested a in List Attribute', () => {
           nestedType: attribute,
           value: wrongValues.it,
         }], { lang: 'it' });
-      
+
       currentPage.getContent().getEnLanguageTab().click();
 
       let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
@@ -293,7 +293,7 @@ describe('Nested a in List Attribute', () => {
       listitem.field.getHelpBlock().should('be.visible');
 
       currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      
+
       currentPage.getContent()
         .fillAttributes([{
           type: 'List',
@@ -402,7 +402,7 @@ describe('Nested a in List Attribute', () => {
           nestedType: attribute,
           value: wrongValues.it,
         }], { lang: 'it' });
-      
+
       currentPage.getContent().getEnLanguageTab().click();
 
       let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
@@ -424,7 +424,7 @@ describe('Nested a in List Attribute', () => {
       listitem.field.getHelpBlock().should('be.visible');
 
       currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      
+
       currentPage.getContent()
         .fillAttributes([{
           type: 'List',
@@ -511,7 +511,7 @@ describe('Nested a in List Attribute', () => {
     });
 
     it('Try to set custom validation (range) and check it in content validation', () => {
-      const range = { 
+      const range = {
         start: '3',
         end: '8',
       };
@@ -540,7 +540,7 @@ describe('Nested a in List Attribute', () => {
           nestedType: attribute,
           value: wrongValues.it,
         }], { lang: 'it' });
-      
+
       currentPage.getContent().getEnLanguageTab().click();
 
       let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
@@ -562,7 +562,7 @@ describe('Nested a in List Attribute', () => {
       listitem.field.getHelpBlock().should('be.visible');
 
       currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      
+
       currentPage.getContent()
         .fillAttributes([{
           type: 'List',
@@ -616,7 +616,7 @@ describe('Nested a in List Attribute', () => {
     });
 
     it('Try to set custom validation (range) and check it in content validation', () => {
-      const validationRules = { 
+      const validationRules = {
         rangeStartDate: '2021-09-01 00:00:00',
         rangeEndDate: '2021-09-30 00:00:00',
       };
@@ -660,7 +660,7 @@ describe('Nested a in List Attribute', () => {
       listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
 
       currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      
+
       currentPage.getContent()
         .fillAttributes([{
           type: 'List',

@@ -1,7 +1,7 @@
 import HomePage from '../../support/pageObjects/HomePage';
 import { htmlElements } from '../../support/pageObjects/WebElement';
 
-describe('Languages and Labels', () => {
+describe([Tag.GTS], 'Languages and Labels', () => {
   let currentPage;
 
   beforeEach(() => {
@@ -28,7 +28,7 @@ describe('Languages and Labels', () => {
 
   describe('Languages', () => {
     const sampleLanguage = { code: 'cs', name: 'Czech' };
-    it('Add new Language', () => {  
+    it('Add new Language', () => {
       currentPage = openLanguagesAndLabelsPage();
       currentPage.getContent().addLanguage(sampleLanguage.code);
       cy.wrap(sampleLanguage).as('languageToDelete');

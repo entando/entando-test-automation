@@ -4,7 +4,7 @@ import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import HomePage from '../../support/pageObjects/HomePage';
 
-describe('Groups', () => {
+describe([Tag.GTS], 'Groups', () => {
 
   let currentPage;
 

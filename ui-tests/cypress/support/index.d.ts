@@ -1,3 +1,16 @@
+/// <reference types='cypress-tags' />
+
+export const enum Tag {
+    WIP,
+    GTS,
+    SMOKE,
+    SANITY,
+    FEATURE,
+    ERROR,
+    EDGE,
+    ACCEPTANCE
+}
+
 declare namespace Cypress {
 
     interface Chainable<Subject> {

@@ -1,5 +1,5 @@
 import HomePage       from '../../support/pageObjects/HomePage';
-import MFEWidgetsPage from '../../support/pageObjects/components/mfeWidgets/MFEWidgetsPage';
+import MFEWidgetsPage       from '../../support/pageObjects/components/mfeWidgets/MFEWidgetsPage';
 import { generateRandomId } from '../../support/utils';
 
 const {WIDGET_ACTIONS} = MFEWidgetsPage;
@@ -35,7 +35,7 @@ const DEMOPAGE = {
 const iconChoose = 'fa-android';
 const iconUpload = 'cypress/fixtures/icon/Entando.svg';
 
-describe('Microfrontends and Widgets', () => {
+describe([Tag.GTS], 'Microfrontends and Widgets', () => {
   let currentPage;
 
   describe('Main functionalities', () => {

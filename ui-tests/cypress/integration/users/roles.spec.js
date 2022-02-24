@@ -4,7 +4,7 @@ import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import HomePage from '../../support/pageObjects/HomePage';
 
-describe('User Roles', () => {
+describe([Tag.GTS], 'User Roles', () => {
 
   const ROLE_NAME       = generateRandomId();
   const ROLE_CODE       = generateRandomId();

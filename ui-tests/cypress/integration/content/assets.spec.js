@@ -11,7 +11,7 @@ const openAssetsPage = () => {
   return currentPage.openAssets();
 };
 
-describe('Assets', () => {
+describe([Tag.GTS], 'Assets', () => {
 
   let currentPage;
   let assetId;

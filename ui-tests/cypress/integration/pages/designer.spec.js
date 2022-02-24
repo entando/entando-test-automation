@@ -3,7 +3,7 @@ import {generateRandomId} from '../../support/utils';
 import {htmlElements} from '../../support/pageObjects/WebElement';
 import HomePage       from '../../support/pageObjects/HomePage';
 
-describe('Pages Designer', () => {
+describe([Tag.GTS], 'Pages Designer', () => {
 
   const page = {
     code: generateRandomId(),

@@ -14,7 +14,7 @@ const openProfileTypesPage = () => {
   return currentPage.openProfileTypes();
 };
 
-describe('Profile Types', () => {
+describe([Tag.GTS], 'Profile Types', () => {
 
   let currentPage;
   const profileType = {};

@@ -1,7 +1,7 @@
 import {generateRandomId} from '../../support/utils';
 import HomePage           from '../../support/pageObjects/HomePage';
 
-describe('Categories', () => {
+describe([Tag.GTS], 'Categories', () => {
   const titleIt      = generateRandomId();
   const titleEn      = generateRandomId();
   const categoryCode = generateRandomId();
