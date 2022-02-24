@@ -106,6 +106,11 @@ describe('Labels', () => {
             currentPage.getContent().getLabelPaginationTextArea().should('have.value', 1);
         });
 
+        it([Tag.SANITY, 'ENG-3238'], 'Last page button', () => {
+            currentPage.getContent().getLabelLastPageButton().click();
+            currentPage.getContent().getLabelPaginationTextArea().should('have.value', 15);
+        });
+
     });
 
     const openLabelsPage = () => {

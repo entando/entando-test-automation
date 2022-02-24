@@ -144,6 +144,10 @@ export default class Languages_LabelsPage extends Content {
     return this.getLabelForwardButtons().children().eq(0);
   }
 
+  getLabelLastPageButton() {
+    return this.getLabelForwardButtons().children().eq(1);
+  }
+
   getLabelBackButtons() {
     return this.getLabelPaginationForm().find(this.labelBackButtons)
   }
