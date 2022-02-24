@@ -18,6 +18,7 @@ export default class Languages_LabelsPage extends Content {
   languageNavigation = `${htmlElements.ul}[role=tablist].nav-tabs`;
   labelPaginationForm = `${htmlElements.form}.content-view-pf-pagination`;
   labelPaginationInput = `${htmlElements.input}[type=text].pagination-pf-page`;
+  labelForwardButtons = `${htmlElements.ul}.pagination-pf-forward`;
   
 
   //LANGUAGES
@@ -132,6 +133,14 @@ export default class Languages_LabelsPage extends Content {
 
   getKebabMenu(code) {
     return new LabelsKebabMenu(this, code);
+  }
+
+  getLabelForwardButtons() {
+    return this.getLabelPaginationForm().find(this.labelForwardButtons)
+  }
+
+  getLabelNextButton() {
+    return this.getLabelForwardButtons().children().eq(0);
   }
 }
 

@@ -82,6 +82,11 @@ describe('Labels', () => {
             currentPage.getContent().getLabelPaginationTextArea().should('have.value', 1);
         });
 
+        it([Tag.SANITY, 'ENG-3238'], 'Next page button', () => {
+            currentPage.getContent().getLabelNextButton().click();
+            currentPage.getContent().getLabelPaginationTextArea().should('have.value', 2);
+        });
+
     });
 
     const openLabelsPage = () => {
