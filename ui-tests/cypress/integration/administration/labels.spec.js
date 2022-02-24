@@ -148,6 +148,11 @@ describe('Labels', () => {
                 .should('contain', 'ALL');
         });
 
+        it([Tag.FEATURE, 'ENG-3238'], 'Search with no results', () => {
+            currentPage.getContent().getLabelSearchForm().type("ABC{enter}");
+            currentPage.getContent().getDisplayedLabelsCount().should('not.exist');
+        });
+
     });
 
     describe('Update labels list functionalities', () => {
