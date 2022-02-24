@@ -215,6 +215,14 @@ describe('Labels', () => {
             currentPage.getDialog().get().should('not.exist');
         });
 
+        it([Tag.FEATURE, 'ENG-3238'], 'Save button disabled when add form not filled', () => {
+            currentPage = openLabelsPage();
+            currentPage = currentPage.getContent().openAddLabel();
+            cy.validateAppBuilderUrlPathname('/labels-languages/add');
+            currentPage.getContent().getForm().should('exist').and('be.visible');
+            currentPage.getContent().getSubmit().should('be.disabled');
+        });
+
     });
 
 
