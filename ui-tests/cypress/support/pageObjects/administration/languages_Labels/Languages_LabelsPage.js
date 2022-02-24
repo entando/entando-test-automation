@@ -19,6 +19,7 @@ export default class Languages_LabelsPage extends Content {
   labelPaginationForm = `${htmlElements.form}.content-view-pf-pagination`;
   labelPaginationInput = `${htmlElements.input}[type=text].pagination-pf-page`;
   labelForwardButtons = `${htmlElements.ul}.pagination-pf-forward`;
+  labelBackButtons = `${htmlElements.ul}.pagination-pf-back`;
   
 
   //LANGUAGES
@@ -141,6 +142,14 @@ export default class Languages_LabelsPage extends Content {
 
   getLabelNextButton() {
     return this.getLabelForwardButtons().children().eq(0);
+  }
+
+  getLabelBackButtons() {
+    return this.getLabelPaginationForm().find(this.labelBackButtons)
+  }
+
+  getLabelPreviousButton() {
+    return this.getLabelBackButtons().children().eq(1);
   }
 
   navigateToLabelListPage(page) {

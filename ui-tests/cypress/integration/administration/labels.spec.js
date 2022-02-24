@@ -94,6 +94,12 @@ describe('Labels', () => {
                 .should('have.text', "61-70");
         });
 
+        it([Tag.SANITY, 'ENG-3238'], 'Previous page button', () => {
+            currentPage.getContent().navigateToLabelListPage(5);
+            currentPage.getContent().getLabelPreviousButton().click();
+            currentPage.getContent().getLabelPaginationTextArea().should('have.value', 4);
+        });
+
     });
 
     const openLabelsPage = () => {
