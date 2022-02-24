@@ -279,6 +279,17 @@ describe('Labels', () => {
             currentPage.getContent().getLanguageTextField('it').parent().parent().children(htmlElements.span).should('exist').and('have.class', 'help-block');
         });
 
+        it([Tag.ERROR, 'ENG-3238'], 'A toast notification should be displayed when trying to add a label with an existing code', () => {
+            addTestLabel();
+            currentPage = openLabelsPage();
+            currentPage = currentPage.getContent().openAddLabel();
+            currentPage.getContent().typeCodeTextField(testLabel.key);
+            currentPage.getContent().typeLanguageTextField('en', testLabel.name.en+"2");
+            currentPage.getContent().typeLanguageTextField('it', testLabel.name.it+"2");
+            currentPage.getContent().submitForm();
+            cy.validateToast(currentPage, null, false);
+        });
+
     });
 
     const openLabelsPage = () => {
