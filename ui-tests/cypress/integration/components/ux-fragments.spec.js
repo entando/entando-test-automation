@@ -1,4 +1,4 @@
-import HomePage from '../../support/pageObjects/HomePage';
+import HomePage             from '../../support/pageObjects/HomePage';
 import { generateRandomId } from '../../support/utils';
 
 const openFragmentsPage = () => {
@@ -8,7 +8,7 @@ const openFragmentsPage = () => {
   return currentPage.openUXFragments();
 };
 
-describe('UX Fragments', () => {
+describe([Tag.GTS], 'UX Fragments', () => {
   let currentPage;
 
   let fragment = {};
@@ -28,7 +28,7 @@ describe('UX Fragments', () => {
         .then(controller => controller.deleteFragment(fragment.code))
         .then(() => fragmentToBeDeleted = false);
     }
-    
+
     cy.kcLogout();
   });
 
@@ -49,7 +49,7 @@ describe('UX Fragments', () => {
     cy.fragmentsController()
       .then(controller => controller.addFragment(fragment.code, fragment.guiCode))
       .then(() => fragmentToBeDeleted = true);
-    
+
     currentPage = openFragmentsPage();
 
     currentPage = currentPage.getContent().getKebabMenu(fragment.code).open().openEdit();
@@ -88,7 +88,7 @@ describe('UX Fragments', () => {
       currentPage.getContent().getPagination()
                   .getItemsTotal().invoke('text').should('be.equal', '0');
     });
-    
+
   });
 
 });

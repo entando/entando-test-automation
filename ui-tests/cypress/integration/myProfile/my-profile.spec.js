@@ -1,6 +1,6 @@
 import HomePage from '../../support/pageObjects/HomePage';
 
-describe('My Profile', () => {
+describe([Tag.GTS], 'My Profile', () => {
 
   let currentPage;
   const username = "admin";

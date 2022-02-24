@@ -4,7 +4,7 @@ import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import HomePage from '../../support/pageObjects/HomePage';
 
-describe('Page Management', () => {
+describe([Tag.GTS], 'Page Management', () => {
 
   const OOTB_PAGE_TEMPLATES = [
     {value: '1-2-column', text: '1-2 Columns'},
@@ -377,7 +377,7 @@ describe('Page Management', () => {
 
         cy.languagesController()
           .then(controller => controller.putLanguage('cs', 'Czech', true, false));
-        
+
         currentPage = openManagementPage();
         currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
         currentPage.getContent().getTitleInput('en').invoke('val').should('eq', page.title.en);
@@ -397,7 +397,7 @@ describe('Page Management', () => {
         cy.pagesController()
           .then(controller => controller.addPage(page.code, page.title.en, page.ownerGroup.code, page.template, page.parentCode))
           .then(() => pageToBeDeleted = true);
-        
+
         currentPage = openManagementPage();
         currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
         currentPage.getContent().getTitleInput('en').clear();
@@ -596,7 +596,7 @@ describe('Page Management', () => {
         accountNotExpired: true,
         credentialsNotExpired: true,
       }
-      
+
       beforeEach(() => {
         // create group
         cy.groupsController().then(controller => {
@@ -614,12 +614,12 @@ describe('Page Management', () => {
       afterEach(() => {
         cy.kcLogout();
         cy.kcLogin('admin').as('tokens');
-        
+
         cy.usersController().then(controller => {
           controller.deleteAuthorities(newUser.username);
           controller.deleteUser(newUser.username);
         });
-        
+
         cy.groupsController().then(controller => {
           controller.deleteGroup(groupCode);
         })
@@ -630,13 +630,13 @@ describe('Page Management', () => {
         cy.pagesController().then(controller => {
           controller.setPageStatus(page.code, 'published');
         });
-        
+
         // login with unauthorized user
         cy.kcLogout();
         cy.kcLogin(newUser.username).as('tokens');
 
         currentPage = openManagementPage();
-        
+
         // user should not be able to see the new page
         currentPage.getContent().getTableRows().should('not.contain', page.title);
       });
@@ -692,14 +692,14 @@ describe('Page Management', () => {
     });
 
     describe('Form Validations', () => {
-      describe('Page form should be not possible to save NULL title in default language (ENG-2687)', () => {      
+      describe('Page form should be not possible to save NULL title in default language (ENG-2687)', () => {
         it('There must be a page title for default language, otherwise it will not allow to save', () => {
           postPage(page);
           pageToBeDeleted = true;
 
           currentPage = openManagementPage();
           currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
-          
+
           currentPage.getContent().getTitleInput('en').clear();
           currentPage.getContent().selectSeoLanguage(1);
 
@@ -817,7 +817,7 @@ describe('Page Management', () => {
           frameId: 4,
           code: 'NWS_Archive',
         };
-  
+
         cy.widgetInstanceController(page.code)
           .then(controller =>
             controller.addWidget(
@@ -826,17 +826,17 @@ describe('Page Management', () => {
               {}
             )
           );
-        
+
         currentPage = openManagementPage();
         currentPage = currentPage.getContent().getKebabMenu(page.code).open().clickClone();
-  
+
         currentPage.getContent().typeTitle(newPage.title, 'en');
         currentPage.getContent().typeTitle(newPage.title, 'it');
         currentPage.getContent().clearCode();
         currentPage.getContent().typeCode(newPage.code);
         currentPage.getContent().selectPagePlacement(newPage.placement);
         currentPage = currentPage.getContent().clickSave();
-  
+
         clonedPageToBeDeleted = true;
 
         currentPage = currentPage.getContent().getKebabMenu(newPage.code).open().openDesigner();

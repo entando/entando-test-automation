@@ -1,5 +1,5 @@
 import HomePage from '../../support/pageObjects/HomePage';
-import { htmlElements } from '../../support/pageObjects/WebElement';
+import { htmlElements }                              from '../../support/pageObjects/WebElement';
 import { generateRandomId, generateRandomNumericId } from '../../support/utils';
 
 const openContentTemplatesPage = () => {
@@ -12,7 +12,7 @@ const openContentTemplatesPage = () => {
 const addContentTemplate = template => cy.contentTemplatesController().then(controller => controller.addContentTemplate(template));
 const deleteContentTemplate = id => cy.contentTemplatesController().then(controller => controller.deleteContentTemplate(id));
 
-describe('Content Templates', () => {
+describe([Tag.GTS], 'Content Templates', () => {
 
   let currentPage;
 
@@ -48,7 +48,7 @@ describe('Content Templates', () => {
     currentPage.getContent().typeName(template.descr);
     currentPage.getContent().selectContentType(template.contentTypeText);
     currentPage.getContent().typeHTMLModel(template.contentShape);
-    
+
     currentPage = currentPage.getContent().submitForm();
     currentPage.getContent().getTableRow(template.id).find(htmlElements.td).then(($tds) => {
       cy.wrap($tds).eq(0).should('contain.text', template.id);
@@ -62,7 +62,7 @@ describe('Content Templates', () => {
   it('Edit content template', () => {
     addContentTemplate(template);
     templateToBeDeleted = true;
-  
+
     currentPage = openContentTemplatesPage();
 
     cy.log(`Edit content template with id ${template.id}`);

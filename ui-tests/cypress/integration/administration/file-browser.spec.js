@@ -2,7 +2,7 @@ import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import HomePage from '../../support/pageObjects/HomePage';
 
-describe('File browser', () => {
+describe([Tag.GTS], 'File browser', () => {
 
   let currentPage;
 

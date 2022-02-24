@@ -1,5 +1,5 @@
 import {generateRandomId} from '../../support/utils';
-import HomePage       from '../../support/pageObjects/HomePage';
+import HomePage           from '../../support/pageObjects/HomePage';
 import DesignerPage   from '../../support/pageObjects/pages/designer/DesignerPage';
 
 const {CMS_WIDGETS, SYSTEM_WIDGETS, PAGE_WIDGETS} = DesignerPage;
@@ -15,7 +15,7 @@ const THE_PAGE = {
   template: '1-column'
 };
 
-describe('Widgets Out-Of-The-Box Testing', () => {
+describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
   let currentPage;
 
   before(() => {
@@ -202,7 +202,7 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-      
+
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openDesigner();
       selectPageFromSidebar();
@@ -398,7 +398,7 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-      
+
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openDesigner();
       selectPageFromSidebar();
@@ -1209,7 +1209,7 @@ describe('Widgets Out-Of-The-Box Testing', () => {
     const CUSTOM_UI = '<#assign wp=JspTaglibs["/aps-core"]>{enter}{enter}\
 <@wp.info key="systemParam" paramName="applicationBaseURL" var="appUrl" />{enter}\
 <img src="${{}appUrl{}}resources/static/img/Entando_light.svg" aria-label="Entando" alt="Logo" role="logo" />';
-    
+
     const CURRENT_LOGO = 'Entando_light.svg';
     const CHANGE_LOGO = 'entando-logo_badge.png';
 
@@ -1288,7 +1288,7 @@ describe('Widgets Out-Of-The-Box Testing', () => {
       cy.pagesController()
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
       cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-      
+
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openDesigner();
       selectPageFromSidebar();

@@ -4,7 +4,7 @@ import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import HomePage from '../../support/pageObjects/HomePage.js';
 
-describe('Content Types', () => {
+describe([Tag.GTS], 'Content Types', () => {
 
   let currentPage;
   let contentType = {};

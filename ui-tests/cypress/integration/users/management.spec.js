@@ -4,7 +4,7 @@ import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import HomePage from '../../support/pageObjects/HomePage';
 
-describe('Users Management', () => {
+describe([Tag.GTS], 'Users Management', () => {
 
   let currentPage;
 
@@ -236,7 +236,7 @@ describe('Users Management', () => {
 
     it('Users management page - to not have "User without a profile" filter', () => {
       currentPage = openManagementPage();
-      
+
       cy.validateAppBuilderUrlPathname(`/user`);
 
       currentPage.getContent().getSearchForm().contains('User without a profile')

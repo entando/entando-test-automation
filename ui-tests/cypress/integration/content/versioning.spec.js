@@ -7,7 +7,7 @@ const openVersioningPage = () => {
   return currentPage.openVersioning();
 };
 
-describe('Content Versioning', () => {
+describe([Tag.GTS], 'Content Versioning', () => {
   let currentPage;
 
   beforeEach(() => cy.kcLogin('admin').as('tokens'));
@@ -26,7 +26,7 @@ describe('Content Versioning', () => {
       currentPage.getContent().getPagination()
                   .getItemsTotal().invoke('text').should('be.equal', '0');
     });
-    
+
   });
 
 });

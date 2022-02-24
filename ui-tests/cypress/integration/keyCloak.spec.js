@@ -1,7 +1,7 @@
 import LoginPage from '../support/pageObjects/keycloak/LoginPage.js';
 import HomePage  from '../support/pageObjects/HomePage';
 
-describe('Keycloack', () => {
+describe([Tag.SMOKE], 'Keycloack', () => {
 
   const authBaseUrl = Cypress.env('auth_base_url').split('/');
   const origin      = `${authBaseUrl[0]}//${authBaseUrl[2]}`;

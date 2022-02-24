@@ -1,6 +1,6 @@
-import HomePage                                   from '../../support/pageObjects/HomePage.js';
+import HomePage                                     from '../../support/pageObjects/HomePage.js';
 import { generateRandomTypeCode, generateRandomId } from '../../support/utils.js';
-import { controller as contentsAPIUrl } from '../../support/restAPI/contentsAPI';
+import { controller as contentsAPIUrl }             from '../../support/restAPI/contentsAPI';
 import { htmlElements } from '../../support/pageObjects/WebElement.js';
 
 const openContentMgmtPage = () => {
@@ -10,7 +10,7 @@ const openContentMgmtPage = () => {
   return currentPage.openManagement();
 };
 
-describe('Contents', () => {
+describe([Tag.GTS], 'Contents', () => {
 
   const testContent = {
     typeCode: 'BNR',
@@ -172,7 +172,7 @@ describe('Contents', () => {
           contentCode =  res.body.payload[0].id;
         });
       });
-  
+
       currentPage = openContentMgmtPage();
       currentPage = currentPage.getContent().openAddContentPage(contentType);
       currentPage.getContent().fillBeginContent(testContent.description);
@@ -180,7 +180,7 @@ describe('Contents', () => {
       currentPage.getContent().copyToAllLanguages();
       cy.wait(1000);
       currentPage = currentPage.getContent().submitForm();
-      
+
       cy.validateToast(currentPage, 'Saved');
 
       contentToBeDeleted = true;
@@ -191,7 +191,7 @@ describe('Contents', () => {
       currentPage = currentPage.getContent().openAddContentPage(contentType);
       currentPage.getContent().typeDescription(testContent.description);
       currentPage.getContent().clearOwnerGroup();
-  
+
       currentPage.getContent().getSaveAction().should('have.class', 'disabled');
     });
 
@@ -218,7 +218,7 @@ describe('Contents', () => {
       currentPage.getContent().getSaveApproveAction().click();
       currentPage.getDialog().getFooter().children(htmlElements.button).eq(2).click();
       currentPage.getContent().getItLanguageTab().invoke('attr', 'aria-selected').should('eq', 'true');
-      
+
       currentPage = currentPage.getContent().submitForm(true);
       cy.validateToast(currentPage, 'Saved');
       contentToBeDeleted = true;

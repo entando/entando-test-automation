@@ -15,7 +15,7 @@ const openPageTemplateMgmtPage = () => {
   return currentPage.openTemplates();
 };
 
-describe('Page Templates', () => {
+describe([Tag.GTS], 'Page Templates', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('templateToBeDeleted');
@@ -31,7 +31,7 @@ describe('Page Templates', () => {
     });
     cy.kcLogout();
   });
-  
+
   let currentPage;
 
   describe('Page Template Form', () => {
@@ -58,7 +58,7 @@ describe('Page Templates', () => {
       currentPage = currentPage.getContent().getKebabMenuByCode(sampleData.code).open().openEdit();
 
       currentPage.getContent().getNameInput().clear().type(newDescr);
-      
+
       currentPage.getContent().getJsonConfigInput().click();
       cy.realPress(['Meta', 'F']);
       cy.realType('"descr":{enter}{rightarrow}{rightarrow}');
@@ -77,7 +77,7 @@ describe('Page Templates', () => {
 
       currentPage.getContent().typeCode(cloneCode);
       currentPage.getContent().typeName(sampleData.descr);
-      
+
       currentPage = currentPage.getContent().submitForm();
       cy.wrap(cloneCode).as('templateToBeDeleted');
       cy.wait(100);

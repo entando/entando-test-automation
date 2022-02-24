@@ -25,7 +25,7 @@ const compositeFormat = {
 };
 
 
-describe('Content Type Attributes', () => {
+describe([Tag.GTS], 'Content Type Attributes', () => {
   let currentPage;
 
   const navigateContentForm = (mode = 'create') => {
