@@ -58,6 +58,17 @@ describe('Labels', () => {
         currentPage.getDelete().should('exist').and('be.visible');
     });
 
+    it([Tag.SMOKE, 'ENG-3238'], 'Edit form', () => {
+        addTestLabel();
+        currentPage = openLabelsPage();
+        currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
+        cy.validateAppBuilderUrlPathname(`/labels-languages/edit/${testLabel.key}`);
+        currentPage.getContent().getForm().should('exist').and('be.visible');
+        currentPage.getContent().getCodeTextField().should('exist').and('be.visible');
+        currentPage.getContent().getLanguageTextField('en').should('exist').and('be.visible');
+        currentPage.getContent().getLanguageTextField('it').should('exist').and('be.visible');
+    });
+
     const openLabelsPage = () => {
         cy.visit('/');
         currentPage = new HomePage();
