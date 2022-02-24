@@ -4,6 +4,13 @@ import { htmlElements } from '../../support/pageObjects/WebElement';
 describe('Labels', () => {
 
     let currentPage;
+    const testLabel = {
+        key: 'AAA',
+        name: {
+            en: 'Test',
+            it: 'Prova'
+        }
+    }
 
     beforeEach(() => {
         cy.wrap(null).as('labelToDelete');
@@ -42,6 +49,15 @@ describe('Labels', () => {
         currentPage.getContent().getLanguageTextField('it').should('exist').and('be.visible');
     });
 
+    it([Tag.SMOKE, 'ENG-3238'], 'Action context menu', () => {
+        addTestLabel();
+        currentPage = openLabelsPage();
+        currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open();
+        currentPage.getDropdown().should('exist').and('be.visible');
+        currentPage.getEdit().should('exist').and('be.visible');
+        currentPage.getDelete().should('exist').and('be.visible');
+    });
+
     const openLabelsPage = () => {
         cy.visit('/');
         currentPage = new HomePage();
@@ -50,5 +66,11 @@ describe('Labels', () => {
         currentPage.getContent().getLabelsTabLink().click();
         return currentPage;
     };
+
+    const addTestLabel = () => {
+        cy.labelsController()
+            .then(controller => controller.addLabel(testLabel.key, testLabel.name))
+            .then(res => cy.wrap(res.body.payload).as('labelToDelete'));
+    }
 
 });
