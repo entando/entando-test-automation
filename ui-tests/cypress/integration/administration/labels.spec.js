@@ -87,6 +87,13 @@ describe('Labels', () => {
             currentPage.getContent().getLabelPaginationTextArea().should('have.value', 2);
         });
 
+        it([Tag.SANITY, 'ENG-3238'], 'Navigate using page field', () => {
+            currentPage.getContent().navigateToLabelListPage(7);
+            currentPage.getContent().getLabelPaginationForm().children().eq(1)
+                .find(`${htmlElements.span}.pagination-pf-items-current`)
+                .should('have.text', "61-70");
+        });
+
     });
 
     const openLabelsPage = () => {
