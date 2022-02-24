@@ -113,6 +113,29 @@ describe('Labels', () => {
 
     });
 
+    describe('Search for labels', () => {
+
+        beforeEach(() => {
+            currentPage = openLabelsPage();
+        });
+
+        it([Tag.SANITY, 'ENG-3238'], 'Verify the results of a search using the search button', () => {
+            currentPage.getContent().getLabelSearchForm().type("ALL");
+            currentPage.getContent().getSearchSubmitButton().click();
+            currentPage.getContent().getDisplayedLabelsCount().should('have.length', 3);
+            currentPage.getContent().getDisplayedLabelsCount().eq(0)
+                .children().eq(0)
+                .should('contain', 'ALL');
+            currentPage.getContent().getDisplayedLabelsCount().eq(1)
+                .children().eq(0)
+                .should('contain', 'ALL');
+            currentPage.getContent().getDisplayedLabelsCount().eq(2)
+                .children().eq(0)
+                .should('contain', 'ALL');
+        });
+
+    });
+
     const openLabelsPage = () => {
         cy.visit('/');
         currentPage = new HomePage();
