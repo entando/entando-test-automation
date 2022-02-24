@@ -245,6 +245,22 @@ describe('Labels', () => {
                 .should('have.text', 144);
         });
 
+        it([Tag.FEATURE, 'ENG-3238'], 'Label unchanged when navigating out of the edit form using breadcrumb', () => {
+            const editedName = "Edited";
+            addTestLabel();
+            currentPage = openLabelsPage();
+            currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
+            cy.validateAppBuilderUrlPathname(`/labels-languages/edit/${testLabel.key}`);
+            currentPage.getContent().typeLanguageTextField('en', editedName);
+            currentPage = currentPage.getContent().navigateToLanguagesAndLabelsFromBreadcrumb();
+            cy.validateAppBuilderUrlPathname('/labels-languages');
+            currentPage.getContent().getLabelRowByCode(testLabel.key)
+                .closest(htmlElements.tr)
+                .children(htmlElements.td).eq(1)
+                .should('not.have.text', editedName)
+                .and('have.text', testLabel.name.en);
+        });
+
     });
 
 
