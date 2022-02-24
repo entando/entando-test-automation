@@ -13,7 +13,13 @@ export default class Languages_LabelsPage extends Content {
   displayedLabelRow = `${htmlElements.tr}.LabelsTable__label-row`;
   displayedLabelsTable = `${htmlElements.table}.LabelsTable__table`;
   displayedLabelsTab = `${htmlElements.div}[id=labels-tabs-pane-0]`;
-  labelsAddButton = `[${DATA_TESTID}=list_LabelsAndLanguagesPage_Button]`;
+  labelsAddButton = `${htmlElements.button}[type=button].LabelsAndLanguagesPage__add-label`;
+  languageNavigation = `${htmlElements.ul}[role=tablist].nav-tabs`;
+  labelPaginationForm = `${htmlElements.form}.content-view-pf-pagination`;
+  labelPaginationInput = `${htmlElements.input}[type=text].pagination-pf-page`;
+  
+
+  //LANGUAGES
 
   getLanguagesTabLink() {
     return this.getContents().find(this.labelsTabLink).eq(0);
@@ -66,6 +72,8 @@ export default class Languages_LabelsPage extends Content {
     this.parent.getDialog().setBody(DeleteDialog);
   }
 
+  //LABELS
+
   getLabelSearchFormArea() {
     return this.getContents().find(this.labelSearchFormArea)
   }
@@ -97,5 +105,17 @@ export default class Languages_LabelsPage extends Content {
 
   getDisplayedLabelsCount() {
     return this.getDisplayedLabelsTable().find(this.displayedLabelRow)
+  }
+
+  getActiveLanguageSelector() {
+    return this.getContents().find(this.languageNavigation)
+  }
+
+  getLabelPaginationForm() {
+    return this.getContents().find(this.labelPaginationForm)
+  }
+
+  getLabelPaginationTextArea() {
+    return this.getLabelPaginationForm().find(this.labelPaginationInput)
   }
 }
