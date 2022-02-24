@@ -170,6 +170,13 @@ describe('Labels', () => {
                 .and('have.text', editedName);
         });
 
+        it([Tag.SANITY, 'ENG-3238'], 'Modal should be displayed when trying to delete a label', () => {
+            addTestLabel();
+            currentPage = openLabelsPage();
+            currentPage.getContent().getKebabMenu(testLabel.key).open().clickDelete();
+            currentPage.getDialog().getBody().getStateInfo().should('exist').and('contain', testLabel.key);
+        });
+
     });
 
 
