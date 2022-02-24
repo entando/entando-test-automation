@@ -3,6 +3,7 @@ import { htmlElements } from '../../WebElement';
 import DeleteDialog from '../../app/DeleteDialog';
 import AddLabelPage from './AddLabelPage';
 import AppPage from '../../app/AppPage';
+import KebabMenu from '../../app/KebabMenu';
 
 export default class Languages_LabelsPage extends Content {
 
@@ -118,4 +119,52 @@ export default class Languages_LabelsPage extends Content {
   getLabelPaginationTextArea() {
     return this.getLabelPaginationForm().find(this.labelPaginationInput)
   }
+
+  getActionsButtonByCode(code) {
+    return this.getDisplayedLabelsCount()
+      .find(`${htmlElements.button}#${code}-actions`);
+  }
+
+  getLabelRowByCode(code) {
+    return this.getActionsButtonByCode(code)
+      .closest(htmlElements.tr);
+  }
+
+  getKebabMenu(code) {
+    return new LabelsKebabMenu(this, code);
+  }
+}
+
+class LabelsKebabMenu extends KebabMenu {
+
+  get() {
+    return this.parent.getLabelRowByCode(this.code)
+      .find(htmlElements.div);
+  }
+
+  getDropdown() {
+    return this.get()
+      .find(`${htmlElements.ul}.dropdown-menu`)
+  }
+
+  getEdit() {
+    return this.get()
+      .find(`${htmlElements.li}[data-id=edit-${this.code}]`);
+  }
+
+  getDelete() {
+    return this.get()
+      .find(`${htmlElements.li}.LabelListMenuAction__menu-item-delete`);
+  }
+
+  openEdit() {
+    this.getEdit().click();
+    return new AppPage(AddLabelPage)
+  }
+
+  clickDelete() {
+    this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
+  }
+
 }
