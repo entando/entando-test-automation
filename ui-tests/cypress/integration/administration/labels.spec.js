@@ -177,6 +177,16 @@ describe('Labels', () => {
             currentPage.getDialog().getBody().getStateInfo().should('exist').and('contain', testLabel.key);
         });
 
+        it([Tag.SANITY, 'ENG-3238'], 'When deletion is confirmed, modal should close and list should be updated', () => {
+            addTestLabel();
+            currentPage = openLabelsPage();
+            currentPage.getContent().getKebabMenu(testLabel.key).open().clickDelete();
+            currentPage.getDialog().confirm();
+            currentPage.getContent().getActionsButtonByCode(testLabel.key).should('not.exist');
+            currentPage.getDialog().get().should('not.exist');
+            cy.wrap(null).as('labelToDelete');
+        });
+
     });
 
 
