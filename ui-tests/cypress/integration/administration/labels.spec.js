@@ -100,6 +100,12 @@ describe('Labels', () => {
             currentPage.getContent().getLabelPaginationTextArea().should('have.value', 4);
         });
 
+        it([Tag.SANITY, 'ENG-3238'], 'First page button', () => {
+            currentPage.getContent().navigateToLabelListPage(8);
+            currentPage.getContent().getLabelFirstPageButton().click();
+            currentPage.getContent().getLabelPaginationTextArea().should('have.value', 1);
+        });
+
     });
 
     const openLabelsPage = () => {
