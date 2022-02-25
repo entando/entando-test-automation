@@ -78,8 +78,8 @@ export default class UploadFilesPage extends Content {
                .find(htmlElements.button).eq(0);
   }
 
-  selectFiles(...fileName) {
-    this.getUploadFilesInput().selectFile(fileName);
+  selectFiles(fileName, options) {
+    this.getUploadFilesInput().selectFile(fileName, options);
   }
 
   cancelUpload() {

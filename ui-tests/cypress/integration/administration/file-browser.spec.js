@@ -1,21 +1,18 @@
+import HomePage       from '../../support/pageObjects/HomePage';
 import {htmlElements} from '../../support/pageObjects/WebElement';
-
-import HomePage from '../../support/pageObjects/HomePage';
 
 describe([Tag.GTS], 'File browser', () => {
 
   let currentPage;
 
   beforeEach(() => {
-    cy.wrap(null).as('fileToBeDeleted');
-
+    cy.wrap(null).as('filesToBeDeleted');
     cy.kcLogin('admin').as('tokens');
-
     currentPage = openFileBrowserPage();
   });
 
   afterEach(() => {
-    cy.get('@fileToBeDeleted')
+    cy.get('@filesToBeDeleted')
       .then(files => files.forEach(file => cy.fileBrowserController().then(controller => controller.deleteFile(file))));
     cy.kcLogout();
   });
@@ -28,7 +25,21 @@ describe([Tag.GTS], 'File browser', () => {
       currentPage = currentPage.getContent().openUploadFilesPage();
       currentPage.getContent().selectFiles('cypress/fixtures/upload/data1.json');
       currentPage = currentPage.getContent().confirmUpload();
-      cy.wrap(['data1.json']).as('fileToBeDeleted');
+      cy.wrap(['data1.json']).as('filesToBeDeleted');
+
+      cy.validateToast(currentPage);
+      currentPage.getContent().getTableRows().then(rows =>
+          cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('contain.text', 'data1.json')
+      );
+    });
+
+    it('Upload a json file via drag n drop', () => {
+      currentPage.getContent().openSubFolder(0);
+
+      currentPage = currentPage.getContent().openUploadFilesPage();
+      currentPage.getContent().selectFiles('cypress/fixtures/upload/data1.json', {action: 'drag-drop'});
+      currentPage = currentPage.getContent().confirmUpload();
+      cy.wrap(['data1.json']).as('filesToBeDeleted');
 
       cy.validateToast(currentPage);
       currentPage.getContent().getTableRows().then(rows =>
@@ -42,7 +53,7 @@ describe([Tag.GTS], 'File browser', () => {
       currentPage = currentPage.getContent().openUploadFilesPage();
       currentPage.getContent().selectFiles('cypress/fixtures/upload/data1.json', 'cypress/fixtures/upload/data2.json');
       currentPage = currentPage.getContent().confirmUpload();
-      cy.wrap(['data1.json', 'data2.json']).as('fileToBeDeleted');
+      cy.wrap(['data1.json', 'data2.json']).as('filesToBeDeleted');
 
       cy.validateToast(currentPage);
       currentPage.getContent().getTableRows().then(rows => {
@@ -52,14 +63,13 @@ describe([Tag.GTS], 'File browser', () => {
     });
 
     it('Delete file with parenthesis in the filename', () => {
+      //TODO file upload should be performed via API call
       const filename = 'data(with-parenthesis).json';
       currentPage.getContent().openSubFolder(0);
 
       currentPage = currentPage.getContent().openUploadFilesPage();
       currentPage.getContent().selectFiles(`cypress/fixtures/upload/${filename}`);
       currentPage = currentPage.getContent().confirmUpload();
-      // deletion will be performed through screen
-      cy.wrap([]).as('fileToBeDeleted');
 
       cy.validateToast(currentPage);
       cy.closeAllToasts(currentPage);
@@ -73,10 +83,6 @@ describe([Tag.GTS], 'File browser', () => {
         cy.wait(1000); // wait toast to show up
         cy.validateToast(currentPage);
       });
-    });
-
-    xit('Upload a json file via drag n drop', () => {
-      //TODO find how to simulate file drag 'n' drop
     });
 
   });

@@ -1,6 +1,7 @@
 /// <reference types='cypress-tags' />
 
 import './restAPI/emailConfigAPI';
+import './restAPI/fileBrowserAPI';
 
 export const enum Tag {
     WIP,
@@ -58,6 +59,11 @@ declare namespace Cypress {
          * Returns a new instance of an email configuration controller
          */
         emailConfigController(): Chainable<EmailConfigController>
+
+        /**
+         * Returns a new instance of a file browser controller
+         */
+        fileBrowserController(): Chainable<FileBrowserController>
     }
 
 }
