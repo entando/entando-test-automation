@@ -263,6 +263,13 @@ describe('Languages', () => {
             getLanguageTableRowByCode(testLanguage.code).should('exist');
         });
 
+        it([Tag.ERROR, 'ENG-3237'], 'When trying to add a language without selecting one, an error toast should be displayed', () => {
+            currentPage = openLanguagesPage();
+            currentPage.getContent().getSelectedLanguageFromDropdown().should('have.text', 'Choose one option')
+            currentPage.getContent().getAddLanguageSubmit().click();
+            cy.validateToast(currentPage, null, false);
+        });
+
     });
 
     const openLanguagesPage = () => {
