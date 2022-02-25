@@ -49,6 +49,11 @@ export default class Languages_LabelsPage extends Content {
       .find(`${htmlElements.select}[name=language]`);
   }
 
+  getLanguageFromDropdownByCode(code) {
+    return this.getLanguageDropdown()
+      .children(`${htmlElements.option}[value=${code}]`)
+  }
+
   getAddLanguageSubmit() {
     return this.getAddLanguageForm()
       .find(`${htmlElements.button}[type=submit]`);
