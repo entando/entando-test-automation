@@ -221,6 +221,19 @@ describe('Languages', () => {
             cy.wrap(null).as('languageToDelete');
         });
 
+        it([Tag.SANITY, 'ENG-3237'], 'When trying to remove a default language, it is not removed and an error toast is displayed', () => {
+            currentPage = openLanguagesPage();
+            getLanguageTableRowByCode(languages.en.code)
+                .then(row => {
+                    currentPage.getContent().clickDeleteLanguageByIndex(row.index());
+                    currentPage.getDialog().confirm();
+                });
+            currentPage.getDialog().get().should('not.exist');
+            cy.validateToast(currentPage, null, false);
+            currentPage.getContent().getLanguageFromDropdownByCode(languages.en.code).should('not.exist');
+            getLanguageTableRowByCode(languages.en.code).should('exist');
+        });
+
     });
 
     const openLanguagesPage = () => {
