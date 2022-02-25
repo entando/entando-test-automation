@@ -179,6 +179,21 @@ describe('Languages', () => {
         getLanguageTableRowByCode(languages.en.code).should('exist').and('contain', '*');
     });
 
+    describe('Add and remove functionalities', () => {
+
+        const testLanguage = languages.cs;
+
+        it([Tag.SANITY, 'ENG-3237'], 'Add language updates lists and shows successful toast', () => {
+            currentPage = openLanguagesPage();
+            currentPage.getContent().addLanguage(testLanguage.code);
+            getLanguageTableRowByCode(testLanguage.code).should('exist');
+            cy.wrap(testLanguage).as('languageToDelete');
+            currentPage.getContent().getLanguageFromDropdownByCode(testLanguage.code).should('not.exist');
+            cy.validateToast(currentPage);
+        });
+
+    });
+
     const openLanguagesPage = () => {
         cy.visit('/');
         currentPage = new HomePage();
