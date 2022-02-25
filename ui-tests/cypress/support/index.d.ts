@@ -1,5 +1,7 @@
 /// <reference types='cypress-tags' />
 
+import './restAPI/emailConfigAPI';
+
 export const enum Tag {
     WIP,
     GTS,
@@ -49,6 +51,13 @@ declare namespace Cypress {
          */
         validateToast(page: object, text?: string, isOk?: boolean): void
 
+    }
+
+    interface Chainable<Subject> {
+        /**
+         * Returns a new instance of an email configuration controller
+         */
+        emailConfigController(): Chainable<EmailConfigController>
     }
 
 }
