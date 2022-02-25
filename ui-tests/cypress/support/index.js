@@ -15,7 +15,8 @@
 
 import '@4tw/cypress-drag-drop';
 import 'cypress-keycloak-commands';
-import "cypress-real-events/support"
+import "cypress-real-events/support";
+import 'cypress-mochawesome-reporter/register';
 
 import './command/command';
 import './command/validation-commands';

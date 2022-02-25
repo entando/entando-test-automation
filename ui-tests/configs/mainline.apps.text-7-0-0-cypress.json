@@ -16,11 +16,11 @@
     "runMode": 2,
     "openMode": 0
   },
-  "reporter": "mochawesome",
+  "reporter": "cypress-mochawesome-reporter",
   "reporterOptions": {
+    "reportTitle": "App-builder functional tests",
+    "reportPageTitle": "App-builder functional tests",
     "reportDir": "cypress/results",
-    "overwrite": false,
-    "html": false,
-    "json": true
+    "charts": true
   }
 }
