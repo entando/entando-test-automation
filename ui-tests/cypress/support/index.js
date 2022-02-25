@@ -15,30 +15,29 @@
 
 import '@4tw/cypress-drag-drop';
 import 'cypress-keycloak-commands';
-import "cypress-real-events/support";
+import 'cypress-real-events/support';
 import 'cypress-mochawesome-reporter/register';
 
 import './command/command';
 import './command/validation-commands';
+import './exception-handler';
 
-import './restAPI/categoriesAPI.js';
+import './restAPI/assetsAPI';
+import './restAPI/categoriesAPI';
 import './restAPI/contentsAPI';
+import './restAPI/contentSettingsAPI';
 import './restAPI/contentTypesAPI';
 import './restAPI/contentTemplatesAPI';
+import './restApi/emailConfigAPI';
 import './restAPI/fileBrowserAPI';
-import './restAPI/groupsAPI.js';
-import './restAPI/pagesAPI.js';
+import './restAPI/fragmentsAPI';
+import './restAPI/groupsAPI';
+import './restAPI/labelsAPI';
+import './restAPI/languagesAPI';
+import './restAPI/pagesAPI';
 import './restAPI/pageTemplatesAPI';
 import './restAPI/profileTypesAPI';
-import './restAPI/rolesAPI.js';
-import './restAPI/usersAPI.js';
-import './restAPI/widgetsAPI.js';
-import './restAPI/assetsAPI.js';
-import './restAPI/contentSettingsAPI.js';
-import './restAPI/languagesAPI.js';
-import './restAPI/labelsAPI.js';
-import './restAPI/fragmentsAPI';
+import './restAPI/rolesAPI';
+import './restAPI/usersAPI';
 import './restAPI/userPreferencesAPI';
-import './restApi/emailConfigAPI';
-
-import './exception-handler';
+import './restAPI/widgetsAPI';
