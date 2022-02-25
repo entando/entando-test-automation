@@ -17,7 +17,7 @@ class LanguagesController {
     cy.request({
       url: `${controller}/${code}`,
       method: 'PUT',
-      body: { code, description, isActive, isDefault },
+      body: {code, description, isActive, isDefault},
       auth: {
         bearer: this.access_token
       }
