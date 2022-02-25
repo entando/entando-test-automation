@@ -17,7 +17,7 @@ class LabelsController {
     cy.request({
       url: controller,
       method: 'POST',
-      body: { key, titles },
+      body: {key, titles},
       auth: {
         bearer: this.access_token
       }
@@ -33,4 +33,5 @@ class LabelsController {
       }
     });
   }
+
 }

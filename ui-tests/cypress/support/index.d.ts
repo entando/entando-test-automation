@@ -2,6 +2,7 @@
 
 import './restAPI/emailConfigAPI';
 import './restAPI/fileBrowserAPI';
+import './restAPI/labelsAPI';
 
 export const enum Tag {
     WIP,
@@ -24,7 +25,6 @@ declare namespace Cypress {
     }
 
     interface Chainable<Subject> {
-
         /**
          * Validate if the elements present in the list have the expected text
          * @param list - the list of html elements to be validated
@@ -51,7 +51,6 @@ declare namespace Cypress {
          * @param isOk - a boolean value if success or not
          */
         validateToast(page: object, text?: string, isOk?: boolean): void
-
     }
 
     interface Chainable<Subject> {
@@ -64,6 +63,11 @@ declare namespace Cypress {
          * Returns a new instance of a file browser controller
          */
         fileBrowserController(): Chainable<FileBrowserController>
+
+        /**
+         * Returns a new instance of a labels controller
+         */
+        labelsController(): Chainable<LabelsController>
     }
 
 }
