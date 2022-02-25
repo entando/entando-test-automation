@@ -234,6 +234,21 @@ describe('Languages', () => {
             getLanguageTableRowByCode(languages.en.code).should('exist');
         });
 
+        it([Tag.SANITY, 'ENG-3237'], 'When canceling the removal of a language, it is not removed and the modal is closed', () => {
+            cy.languagesController()
+                .then(controller => controller.putLanguage(testLanguage.code, testLanguage.name, true, false))
+                .then(res => cy.wrap(res.body.payload).as('languageToDelete'));
+            currentPage = openLanguagesPage();
+            getLanguageTableRowByCode(testLanguage.code)
+                .then(row => {
+                    currentPage.getContent().clickDeleteLanguageByIndex(row.index());
+                    currentPage.getDialog().cancel();
+                });
+            currentPage.getDialog().get().should('not.exist');
+            currentPage.getContent().getLanguageFromDropdownByCode(testLanguage.code).should('not.exist');
+            getLanguageTableRowByCode(testLanguage.code).should('exist');
+        });
+
     });
 
     const openLanguagesPage = () => {
