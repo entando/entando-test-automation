@@ -192,6 +192,18 @@ describe('Languages', () => {
             cy.validateToast(currentPage);
         });
 
+        it([Tag.SANITY, 'ENG-3237'], 'When trying to remove a not-default language, a confirmation modal is displayed', () => {
+            cy.languagesController()
+                .then(controller => controller.putLanguage(testLanguage.code, testLanguage.name, true, false))
+                .then(res => cy.wrap(res.body.payload).as('languageToDelete'));
+            currentPage = openLanguagesPage();
+            getLanguageTableRowByCode(testLanguage.code)
+                .then(row => {
+                    currentPage.getContent().clickDeleteLanguageByIndex(row.index());
+                    currentPage.getDialog().getBody().getState().should('exist');
+                });
+        });
+
     });
 
     const openLanguagesPage = () => {
