@@ -22,7 +22,6 @@ export default class Languages_LabelsPage extends Content {
   labelBackButtons = `${htmlElements.ul}.pagination-pf-back`;
   
 
-  //LANGUAGES
 
   getLanguagesTabLink() {
     return this.getContents().find(this.labelsTabLink).eq(0);
@@ -32,8 +31,9 @@ export default class Languages_LabelsPage extends Content {
     return this.getContents().find(this.labelsTabLink).eq(1);
   }
 
+  //LANGUAGES
+
   getLanguageArea() {
-    cy.wait(1000); //Wait until the page loads
     return this.get()
       .children(htmlElements.div)
       .children(htmlElements.div).eq(2);
@@ -64,9 +64,18 @@ export default class Languages_LabelsPage extends Content {
       .find(`${htmlElements.table}.ActiveLangTable__table`);
   }
 
-  getDeleteLanguageByIndex(index) {
+  getLanguageTableRows() {
     return this.getLanguageTable()
-      .find(`${htmlElements.tr}.ActiveLangTable__tr`).eq(index)
+      .find(`${htmlElements.tr}.ActiveLangTable__tr`);
+  }
+
+  getLanguageRowByIndex(index) {
+    return this.getLanguageTableRows()
+      .eq(index);
+  }
+
+  getDeleteLanguageByIndex(index) {
+    return this.getLanguageRowByIndex(index)
       .find(`${htmlElements.button}.ActiveLangTable__delete-tag-btn`)
   }
 
