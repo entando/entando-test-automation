@@ -3,6 +3,7 @@
 import './restAPI/emailConfigAPI';
 import './restAPI/fileBrowserAPI';
 import './restAPI/labelsAPI';
+import './restAPI/languagesAPI';
 
 export const enum Tag {
     WIP,
@@ -68,6 +69,11 @@ declare namespace Cypress {
          * Returns a new instance of a labels controller
          */
         labelsController(): Chainable<LabelsController>
+
+        /**
+         * Returns a new instance of a languages controller
+         */
+        languagesController(): Chainable<LanguagesController>
     }
 
 }
