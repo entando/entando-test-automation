@@ -179,6 +179,20 @@ describe('Languages', () => {
         getLanguageTableRowByCode(languages.en.code).should('exist').and('contain', '*');
     });
 
+    it([Tag.FEATURE, 'ENG-3237'], 'Verify the available languages in the language selector', () => {
+        let expectedLanguagesInDropdown = Object.keys(languages).length-1;
+        currentPage = openLanguagesPage();
+        currentPage.getContent().getLanguageDropdown().as('languageDropdown');
+        currentPage.getContent().getLanguageDropdown().children(htmlElements.option).should('have.length', expectedLanguagesInDropdown);
+        cy.get('@languageDropdown').then(res => {
+            for(const language in languages) {
+                if(language!=languages.en.code && language!=languages.it.code) {
+                    cy.wrap(res).children(`${htmlElements.option}[value=${language}]`).should('exist')
+                } else cy.wrap(res).children(`${htmlElements.option}[value=${language}]`).should('not.exist');
+            }
+        })
+    });
+
     describe('Add and remove functionalities', () => {
 
         const testLanguage = languages.cs;
