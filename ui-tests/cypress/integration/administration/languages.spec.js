@@ -204,6 +204,23 @@ describe('Languages', () => {
                 });
         });
 
+        it([Tag.SANITY, 'ENG-3237'], 'Remove not-default language updates lists and shows successful toast', () => {
+            cy.languagesController()
+                .then(controller => controller.putLanguage(testLanguage.code, testLanguage.name, true, false))
+                .then(res => cy.wrap(res.body.payload).as('languageToDelete'));
+            currentPage = openLanguagesPage();
+            getLanguageTableRowByCode(testLanguage.code)
+                .then(row => {
+                    currentPage.getContent().clickDeleteLanguageByIndex(row.index());
+                    currentPage.getDialog().confirm();
+                });
+            currentPage.getDialog().get().should('not.exist');
+            cy.validateToast(currentPage);
+            currentPage.getContent().getLanguageFromDropdownByCode(testLanguage.code).should('exist');
+            getLanguageTableRowByCode(testLanguage.code).should('not.exist');
+            cy.wrap(null).as('languageToDelete');
+        });
+
     });
 
     const openLanguagesPage = () => {
