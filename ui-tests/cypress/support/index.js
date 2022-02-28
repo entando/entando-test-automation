@@ -28,6 +28,7 @@ import './restAPI/contentsAPI';
 import './restAPI/contentSettingsAPI';
 import './restAPI/contentTypesAPI';
 import './restAPI/contentTemplatesAPI';
+import './restAPI/databaseAPI';
 import './restApi/emailConfigAPI';
 import './restAPI/fileBrowserAPI';
 import './restAPI/fragmentsAPI';
