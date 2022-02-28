@@ -4,6 +4,11 @@ import './restAPI/emailConfigAPI';
 import './restAPI/fileBrowserAPI';
 import './restAPI/labelsAPI';
 import './restAPI/languagesAPI';
+import './restAPI/pagesAPI';
+import './restAPI/pageWidgetsAPI';
+import './restAPI/rolesAPI';
+import './restAPI/usersAPI';
+import './restAPI/widgetsAPI';
 
 export const enum Tag {
     WIP,
@@ -74,6 +79,31 @@ declare namespace Cypress {
          * Returns a new instance of a languages controller
          */
         languagesController(): Chainable<LanguagesController>
+
+        /**
+         * Returns a new instance of a pages controller
+         */
+        pagesController(): Chainable<PagesController>
+
+        /**
+         * Returns a new instance of a page widgets controller
+         */
+        pageWidgetsController(): Chainable<PageWidgetsController>
+
+        /**
+         * Returns a new instance of a roles controller
+         */
+        rolesController(): Chainable<RolesController>
+
+        /**
+         * Returns a new instance of a users controller
+         */
+        usersController(): Chainable<UsersController>
+
+        /**
+         * Returns a new instance of a widgets controller
+         */
+        widgetsController(): Chainable<WidgetsController>
     }
 
 }

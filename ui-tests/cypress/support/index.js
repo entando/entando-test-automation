@@ -36,6 +36,7 @@ import './restAPI/labelsAPI';
 import './restAPI/languagesAPI';
 import './restAPI/pagesAPI';
 import './restAPI/pageTemplatesAPI';
+import './restAPI/pageWidgetsAPI';
 import './restAPI/profileTypesAPI';
 import './restAPI/rolesAPI';
 import './restAPI/usersAPI';

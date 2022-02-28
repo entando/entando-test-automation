@@ -270,7 +270,7 @@ describe([Tag.GTS], 'Users Management', () => {
     });
 
     it('Add a user with existing user name is forbidden', () => {
-      cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
+      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
 
       currentPage = openManagementPage();
 
@@ -285,7 +285,7 @@ describe([Tag.GTS], 'Users Management', () => {
     it('Update an existing user', () => {
       const PASSWORD_EDIT = generateRandomId();
 
-      cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
+      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
@@ -304,7 +304,7 @@ describe([Tag.GTS], 'Users Management', () => {
       const EMAIL             = `${generateRandomId()}@entando.com`;
       const PROFILE_TYPE_DESC = 'Default user profile';
 
-      cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
+      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
@@ -332,7 +332,7 @@ describe([Tag.GTS], 'Users Management', () => {
         DESCRIPTION: 'Administrator'
       };
 
-      cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
+      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
@@ -356,7 +356,7 @@ describe([Tag.GTS], 'Users Management', () => {
     });
 
     it('Search an existing user', () => {
-      cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
+      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
 
       currentPage = openManagementPage();
 
@@ -380,7 +380,7 @@ describe([Tag.GTS], 'Users Management', () => {
     });
 
     it('Delete a user', () => {
-      cy.usersController().then(controller => controller.addUser(username, password, password, PROFILE_TYPE_CODE));
+      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);

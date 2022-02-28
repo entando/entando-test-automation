@@ -605,7 +605,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
         // add new user with no permission
         cy.usersController().then(controller => {
-          controller.addUserObj(newUser);
+          controller.addUser(newUser);
           controller.updateUser(newUser);
           controller.addAuthorities(newUser.username, groupCode, 'approver');
         });
@@ -672,7 +672,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
       it('Delete a drafted page is forbidden', () => {
         cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
-        cy.widgetInstanceController(page.code).then(controller => controller.addWidget(0, 'search_form'));
+        cy.pageWidgetsController(page.code).then(controller => controller.addWidget(0, 'search_form'));
 
         currentPage = openManagementPage();
         currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
@@ -818,7 +818,7 @@ describe([Tag.GTS], 'Page Management', () => {
           code: 'NWS_Archive',
         };
 
-        cy.widgetInstanceController(page.code)
+        cy.pageWidgetsController(page.code)
           .then(controller =>
             controller.addWidget(
               pageWidget.frameId,

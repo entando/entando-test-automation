@@ -13,15 +13,11 @@ class RolesController {
     this.access_token = access_token;
   }
 
-  addRole(code, name, permissions) {
+  addRole(role) {
     cy.request({
       url: `${controller}`,
       method: 'POST',
-      body: {
-        code,
-        name,
-        permissions,
-      },
+      body: role,
       auth: {
         bearer: this.access_token
       }

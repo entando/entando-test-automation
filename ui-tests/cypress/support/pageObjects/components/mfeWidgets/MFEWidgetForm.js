@@ -180,7 +180,7 @@ export default class MFEWidgetForm extends Content {
           this.getCustomUiInput().type(payload[field]);
           break;
         case 'iconUpload':
-          this.getIconUpload().selectFile(payload[field]);
+          this.getIconUpload().selectFile(payload[field], {force: true});
           cy.wait(500);
           break;
         case 'iconChoose':

@@ -1,4 +1,5 @@
-const controller = `${Cypress.config('restAPI')}users`;
+const apiURL     = Cypress.config('restAPI');
+const controller = `${apiURL}users`;
 
 Cypress.Commands.add('usersController', () => {
   cy.get('@tokens').then(tokens => {
@@ -12,23 +13,7 @@ class UsersController {
     this.access_token = access_token;
   }
 
-  addUser(username, password, passwordConfirm, profileType) {
-    cy.request({
-      url: `${controller}`,
-      method: 'POST',
-      body: {
-        'username': username,
-        'password': password,
-        'passwordConfirm': passwordConfirm,
-        'profileType': profileType
-      },
-      auth: {
-        bearer: this.access_token
-      }
-    });
-  }
-  
-  addUserObj(user) {
+  addUser(user) {
     cy.request({
       url: `${controller}`,
       method: 'POST',
@@ -38,7 +23,7 @@ class UsersController {
       }
     });
   }
-  
+
   updateUser(user) {
     cy.request({
       url: `${controller}/${user.username}`,

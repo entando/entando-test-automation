@@ -1,44 +1,13 @@
-import HomePage       from '../../support/pageObjects/HomePage';
-import MFEWidgetsPage       from '../../support/pageObjects/components/mfeWidgets/MFEWidgetsPage';
-import { generateRandomId } from '../../support/utils';
-
-const {WIDGET_ACTIONS} = MFEWidgetsPage;
-
-const SAMPLE_BASIC_WIDGET_ID  = 'my_widget';
-
-const SAMPLE_WIDGET_NAMES = ['My Widget', 'Your Widget', 'Our Widget'];
-
-const SAMPLE_BASIC_WIDGET = {
-  code: SAMPLE_BASIC_WIDGET_ID,
-  titles: {
-    en: SAMPLE_WIDGET_NAMES[0],
-    it: SAMPLE_WIDGET_NAMES[0],
-  },
-  group: 'administrators',
-  configUi: null,
-  icon: 'font-awesome:fa-arrow-right',
-  customUi: '<h1>Just a basic widget</h1>',
-};
-
-const FRAMENUM = 5;
-
-const HOMEPAGE = {
-  title: 'My Homepage',
-  code: 'my_homepage'
-};
-
-const DEMOPAGE = {
-  title: 'Demo page',
-  code: 'demopage'
-};
-
-const iconChoose = 'fa-android';
-const iconUpload = 'cypress/fixtures/icon/Entando.svg';
+import HomePage           from '../../support/pageObjects/HomePage';
+import MFEWidgetsPage     from '../../support/pageObjects/components/mfeWidgets/MFEWidgetsPage';
+import {generateRandomId} from '../../support/utils';
 
 describe([Tag.GTS], 'Microfrontends and Widgets', () => {
+
   let currentPage;
 
   describe('Main functionalities', () => {
+
     before(() => {
       cy.kcLogin('admin').as('tokens');
       cy.pagesController()
@@ -50,35 +19,31 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
     });
 
     beforeEach(() => {
-      cy.wrap(null).as('widgetToRemoveFromPage');
-      cy.wrap(null).as('widgetToDelete');
+      cy.wrap(null).as('widgetsToBeRemovedFromPage');
+      cy.wrap(null).as('widgetToBeDelete');
       cy.kcLogin('admin').as('tokens');
       cy.visit('/');
       currentPage = new HomePage();
     });
 
     afterEach(() => {
-      cy.get('@widgetToRemoveFromPage').then(widgetToRemoveFromPage => {
-        if (widgetToRemoveFromPage !== null) {
+      cy.get('@widgetsToBeRemovedFromPage').then(widgets => {
+        if (widgets !== null) {
           const deleteWidgetFromPage = (widgetCode) => {
-            cy.widgetInstanceController(DEMOPAGE.code)
-              .then(controller => controller.deleteWidget(widgetCode));
+            cy.pageWidgetsController(DEMOPAGE.code).then(controller => controller.deleteWidget(widgetCode));
           };
-          if (Array.isArray(widgetToRemoveFromPage)) {
-            widgetToRemoveFromPage.forEach((widgetCode) => {
-              deleteWidgetFromPage(widgetCode);
-            });
+          if (Array.isArray(widgets)) {
+            widgets.forEach(widgetCode => deleteWidgetFromPage(widgetCode));
           } else {
-            deleteWidgetFromPage(widgetToRemoveFromPage);
+            deleteWidgetFromPage(widgets);
           }
           cy.pagesController()
             .then(controller => controller.setPageStatus(DEMOPAGE.code, 'published'));
         }
       });
-      cy.get('@widgetToDelete').then((widgetToDelete) => {
-        if (widgetToDelete !== null) {
-          cy.widgetsController()
-            .then(controller => controller.deleteWidget(widgetToDelete));
+      cy.get('@widgetToBeDelete').then(widget => {
+        if (widget !== null) {
+          cy.widgetsController().then(controller => controller.deleteWidget(widget));
         }
       });
       cy.kcLogout();
@@ -94,21 +59,15 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
       cy.kcLogout();
     });
 
-    const selectPageFromSidebar = (pageOpen = HOMEPAGE) => {
-      const currentPageContent = currentPage.getContent();
-      currentPageContent.clickSidebarTab(1);
-      cy.wait(3000);
-      currentPageContent.selectPageFromSidebarPageTreeTable(pageOpen.code);
-      currentPageContent.clickSidebarTab(0);
-    };
-
     describe('Create New Widget', () => {
+
       beforeEach(() => {
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
         currentPage = currentPage.getContent().openAddWidgetForm();
+        //TODO validate this wait
         cy.wait(500);
-      })
+      });
 
       it('Adding a basic widget with icon', () => {
         cy.validateAppBuilderUrlPathname('/widget/add');
@@ -116,7 +75,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().submitForm();
         cy.validateAppBuilderUrlPathname('/widget');
         currentPage.getContent().getListArea().should('contain', SAMPLE_BASIC_WIDGET_ID);
-        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToDelete');
+        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToBeDelete');
       });
 
       it('Add a widget with existing code widget', () => {
@@ -144,19 +103,21 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         currentPage.getContent().getSaveDropdownButton().click();
         currentPage.getContent().getRegularSaveButton().closest('li').invoke('attr', 'class').should('contain', 'disabled');
       });
+
     });
 
     describe('Edit widget', () => {
+
       beforeEach(() => {
-        cy.widgetsController()
-              .then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
-        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToDelete');
+        cy.widgetsController().then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
+        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToBeDelete');
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
-      })
+      });
 
       it('Editing widget by modifying all mandatory fields', () => {
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
+        //TODO validate this wait
         cy.wait(500);
         cy.validateAppBuilderUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
         currentPage.getContent().editFormFields({
@@ -175,6 +136,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
       it('Editing a used widget via widget list modifying all mandatory fields', () => {
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
+        //TODO validate this wait
         cy.wait(500);
         cy.validateAppBuilderUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
         currentPage.getContent().editFormFields({
@@ -186,23 +148,25 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         cy.validateAppBuilderUrlPathname('/widget');
         currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[2]);
       });
+
     });
 
     describe('Editing via different section', () => {
+
       it('Editing a used widget via page designer modifying all mandatory fields', () => {
-        cy.widgetsController()
-              .then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
-        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToDelete');
-        cy.widgetInstanceController(DEMOPAGE.code)
-              .then(controller => controller.addWidget(FRAMENUM, SAMPLE_BASIC_WIDGET_ID));
-        cy.wrap(FRAMENUM).as('widgetToRemoveFromPage');
+        cy.widgetsController().then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
+        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToBeDelete');
+        cy.pageWidgetsController(DEMOPAGE.code).then(controller => controller.addWidget(FRAMENUM, SAMPLE_BASIC_WIDGET_ID));
+        cy.wrap(FRAMENUM).as('widgetsToBeRemovedFromPage');
         currentPage = currentPage.getMenu().getPages().open();
         currentPage = currentPage.openDesigner();
         selectPageFromSidebar(DEMOPAGE);
+        //TODO validate this wait
         cy.wait(500);
         currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SAMPLE_BASIC_WIDGET_ID)
-                                  .open()
-                                  .openEdit();
+                                 .open()
+                                 .openEdit();
+        //TODO validate this wait
         cy.wait(500);
         cy.validateAppBuilderUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
         currentPage.getContent().editFormFields({
@@ -211,22 +175,22 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
           iconChoose
         });
         currentPage = currentPage.getContent().submitForm();
+        //TODO validate this wait
         cy.wait(3000);
         cy.validateAppBuilderUrlPathname('/widget');
         currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[1]);
       });
+
     });
 
     describe('Delete widget with reference', () => {
+
       it('Attempt to delete the widget with reference to a published page', () => {
-        cy.widgetsController()
-              .then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
-        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToDelete');
-        cy.widgetInstanceController(DEMOPAGE.code)
-              .then(controller => controller.addWidget(FRAMENUM, SAMPLE_BASIC_WIDGET_ID));
-        cy.pagesController()
-              .then(controller => controller.setPageStatus(DEMOPAGE.code, 'published'));
-        cy.wrap(FRAMENUM).as('widgetToRemoveFromPage');
+        cy.widgetsController().then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
+        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToBeDelete');
+        cy.pageWidgetsController(DEMOPAGE.code).then(controller => controller.addWidget(FRAMENUM, SAMPLE_BASIC_WIDGET_ID));
+        cy.pagesController().then(controller => controller.setPageStatus(DEMOPAGE.code, 'published'));
+        cy.wrap(FRAMENUM).as('widgetsToBeRemovedFromPage');
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
         currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.DELETE);
@@ -236,12 +200,11 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
       it('Attempt to delete the widget with reference to an unpublished page', () => {
         cy.log('set the page to unpublished first');
-        cy.widgetsController()
-              .then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
-        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToDelete');
-        cy.widgetInstanceController(DEMOPAGE.code)
-              .then(controller => controller.addWidget(FRAMENUM, SAMPLE_BASIC_WIDGET_ID));
-        cy.wrap(FRAMENUM).as('widgetToRemoveFromPage');
+        cy.widgetsController().then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
+        cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToBeDelete');
+        cy.pageWidgetsController(DEMOPAGE.code).then(controller => controller.addWidget(FRAMENUM, SAMPLE_BASIC_WIDGET_ID));
+        cy.wrap(FRAMENUM).as('widgetsToBeRemovedFromPage');
+        //TODO validate this wait
         cy.wait(500);
 
         cy.log('now attempt to delete the widget');
@@ -254,8 +217,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
       });
 
       it('Delete a user widget', () => {
-        cy.widgetsController()
-              .then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
+        cy.widgetsController().then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
         currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.DELETE);
@@ -263,74 +225,62 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         currentPage.getDialog().getConfirmButton().click();
         currentPage.getContent().getListArea().should('not.contain', SAMPLE_BASIC_WIDGET_ID);
       });
+
     });
+
+    const selectPageFromSidebar = (pageOpen = HOMEPAGE) => {
+      const currentPageContent = currentPage.getContent();
+      currentPageContent.clickSidebarTab(1);
+      //TODO validate this wait
+      cy.wait(3000);
+      currentPageContent.selectPageFromSidebarPageTreeTable(pageOpen.code);
+      currentPageContent.clickSidebarTab(0);
+    };
+
   });
 
   describe('Role access', () => {
-    let user = {
-      username: 'user1',
-      password: '12345678',
-      passwordConfirm: '12345678',
-      profileType: 'PFL',
-      status: 'active',
-    };
-
-    let role = {};
-
-    let roleToBeDeleted = false;
-    let userToBeDeleted = false;
 
     beforeEach(() => {
-      cy.kcLogin('admin').as('tokens');
+      cy.wrap(null).as('userToBeDeleted');
+      cy.wrap(null).as('roleToBeDeleted');
 
-      role = {
-        code: generateRandomId(),
-        name: generateRandomId(),
-      }
+      role.code = generateRandomId();
+      role.name = generateRandomId();
+
+      cy.kcLogin('admin').as('tokens');
     });
 
     afterEach(() => {
-      if (userToBeDeleted) {
-        cy.usersController()
-          .then(controller => controller.deleteUser(user.username))
-          .then(() => {
-            userToBeDeleted = false;
-          });
-      }
+      cy.get('@userToBeDeleted').then(userToBeDeleted => {
+        if (userToBeDeleted !== null) {
+          cy.usersController().then(controller => controller.deleteUser(userToBeDeleted.username));
+        }
+      });
 
-      if (roleToBeDeleted) {
-        cy.rolesController()
-          .then(controller => controller.deleteRole(role.code))
-          .then(() => {
-            roleToBeDeleted = false;
-          });
-      }
+      cy.get('@roleToBeDeleted').then(roleToBeDeleted => {
+        if (roleToBeDeleted !== null) {
+          cy.rolesController().then(controller => controller.deleteRole(roleToBeDeleted.code));
+        }
+      });
 
       cy.kcLogout();
     });
 
     it('Widgets page should not be accessible without superuser role', () => {
       cy.rolesController()
-        .then(controller => controller.addRole(role.code, role.name, {
-          managePages: true,
-          enterBackend: true,
-          superuser: false,
-        }))
-        .then(() => {
-          roleToBeDeleted = true;
-        });
+        .then(controller => controller.addRole(role))
+        .then(() => cy.wrap(role).as('roleToBeDeleted'));
 
       cy.usersController()
-        .then(controller => controller.addUserObj(user))
-        .then(() => {
-          userToBeDeleted = true;
-        });
+        .then(controller => controller.addUser(user))
+        .then(() => cy.wrap(user).as('userToBeDeleted'));
 
       cy.usersController()
         .then(controller => controller.updateUser({
           ...user,
           accountNotExpired: true,
-          credentialsNotExpired: true,
+          credentialsNotExpired: true
         }));
 
       cy.usersController()
@@ -350,5 +300,56 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
       cy.kcLogout();
       cy.kcLogin('admin').as('tokens');
     });
+
+    const user = {
+      username: 'user1',
+      password: '12345678',
+      passwordConfirm: '12345678',
+      profileType: 'PFL',
+      status: 'active'
+    };
+
+    const role = {
+      permissions: {
+        managePages: true,
+        enterBackend: true,
+        superuser: false
+      }
+    };
+
   });
+
+  const {WIDGET_ACTIONS} = MFEWidgetsPage;
+
+  const SAMPLE_BASIC_WIDGET_ID = 'my_widget';
+
+  const SAMPLE_WIDGET_NAMES = ['My Widget', 'Your Widget', 'Our Widget'];
+
+  const SAMPLE_BASIC_WIDGET = {
+    code: SAMPLE_BASIC_WIDGET_ID,
+    titles: {
+      en: SAMPLE_WIDGET_NAMES[0],
+      it: SAMPLE_WIDGET_NAMES[0]
+    },
+    group: 'administrators',
+    configUi: null,
+    icon: 'font-awesome:fa-arrow-right',
+    customUi: '<h1>Just a basic widget</h1>'
+  };
+
+  const FRAMENUM = 5;
+
+  const HOMEPAGE = {
+    title: 'My Homepage',
+    code: 'my_homepage'
+  };
+
+  const DEMOPAGE = {
+    title: 'Demo page',
+    code: 'demopage'
+  };
+
+  const iconChoose = 'fa-android';
+  const iconUpload = 'cypress/fixtures/icon/Entando.svg';
+
 });

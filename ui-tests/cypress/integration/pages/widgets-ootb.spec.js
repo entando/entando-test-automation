@@ -43,7 +43,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     cy.get('@widgetToRemoveFromPage').then(widgetToRemoveFromPage => {
       if (widgetToRemoveFromPage !== null) {
         const deleteWidgetFromPage = (widgetCode) => {
-          cy.widgetInstanceController(THE_PAGE.code)
+          cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.deleteWidget(widgetCode));
         };
         if (Array.isArray(widgetToRemoveFromPage)) {
@@ -170,7 +170,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -197,7 +197,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Editing widget in Settings (widget config)', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -234,7 +234,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the widget dropped', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -251,7 +251,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Save As Widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -335,7 +335,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -362,7 +362,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Editing widget in Settings (widget config)', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -393,7 +393,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the widget dropped', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -411,7 +411,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Save As Widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -704,7 +704,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -731,7 +731,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Editing widget in Settings (widget config)', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -764,7 +764,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the widget dropped', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -782,7 +782,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Save As Widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -856,7 +856,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with CMS Search Form widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.SEARCH_FORM.code));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -883,7 +883,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with CMS Search Result widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.SEARCH_RESULT.code));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -910,7 +910,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the dropped CMS Search Form widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.SEARCH_FORM.code));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -928,7 +928,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the dropped CMS Search Results widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.SEARCH_RESULT.code));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -982,7 +982,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with News Archive widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.NEWS_ARCHIVE.code));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1009,7 +1009,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with News Latest widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.NEWS_LATEST.code));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1036,7 +1036,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the dropped CMS News Archive widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.NEWS_ARCHIVE.code));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1054,7 +1054,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the dropped CMS News Latest widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
             .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.NEWS_LATEST.code));
       cy.pagesController()
             .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1111,7 +1111,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with Language widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
         .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, PAGE_WIDGETS.LANGUAGE.code));
       cy.pagesController()
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1138,7 +1138,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with Logo widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
         .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, PAGE_WIDGETS.LOGO.code));
       cy.pagesController()
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1165,7 +1165,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the dropped Language widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
         .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, PAGE_WIDGETS.LANGUAGE.code));
       cy.pagesController()
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1183,7 +1183,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the dropped Logo widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
         .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, PAGE_WIDGETS.LOGO.code));
       cy.pagesController()
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1283,7 +1283,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with APIs widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
         .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, SYSTEM_WIDGETS.APIS.code));
       cy.pagesController()
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1310,7 +1310,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Basic edit with News Latest widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
         .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, SYSTEM_WIDGETS.SYS_MSGS.code));
       cy.pagesController()
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1337,7 +1337,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the dropped APIs widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
         .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, SYSTEM_WIDGETS.APIS.code));
       cy.pagesController()
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
@@ -1355,7 +1355,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     });
 
     it('Open Widget Details from the dropped System Messages widget', () => {
-      cy.widgetInstanceController(THE_PAGE.code)
+      cy.pageWidgetsController(THE_PAGE.code)
         .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, SYSTEM_WIDGETS.SYS_MSGS.code));
       cy.pagesController()
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));

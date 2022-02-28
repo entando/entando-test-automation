@@ -8,11 +8,10 @@ Cypress.Commands.add('widgetsController', (widgetCode) => {
 });
 
 class WidgetsController {
+
   constructor(access_token, widgetCode) {
     this.access_token = access_token;
-    if (widgetCode) {
-      this.widgetCode = widgetCode;
-    }
+    this.widgetCode   = widgetCode;
   }
 
   addWidget(widget) {
@@ -37,15 +36,15 @@ class WidgetsController {
       }
     }).then((response) => {
       const {
-        code,
-        titles,
-        group,
-        configUi,
-        parentType,
-        widgetCategory,
-        icon,
-        guiFragments,
-      } = response.body.payload;
+              code,
+              titles,
+              group,
+              configUi,
+              parentType,
+              widgetCategory,
+              icon,
+              guiFragments
+            }        = response.body.payload;
       const formData = {
         code,
         titles,
@@ -54,9 +53,9 @@ class WidgetsController {
         parentType,
         widgetCategory,
         icon,
-        customUi: guiFragments[0].customUi,
-      }
-      return { controller: this, response, formData };
+        customUi: guiFragments[0].customUi
+      };
+      return {controller: this, response, formData};
     });
   }
 
@@ -82,4 +81,5 @@ class WidgetsController {
       }
     });
   }
+
 }
