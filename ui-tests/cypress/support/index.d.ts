@@ -2,6 +2,7 @@
 
 import './restAPI/emailConfigAPI';
 import './restAPI/fileBrowserAPI';
+import './restAPI/fragmentsAPI';
 import './restAPI/labelsAPI';
 import './restAPI/languagesAPI';
 import './restAPI/pagesAPI';
@@ -69,6 +70,11 @@ declare namespace Cypress {
          * Returns a new instance of a file browser controller
          */
         fileBrowserController(): Chainable<FileBrowserController>
+
+        /**
+         * Returns a new instance of a fragments controller
+         */
+        fragmentsController(): Chainable<FragmentsController>
 
         /**
          * Returns a new instance of a labels controller
