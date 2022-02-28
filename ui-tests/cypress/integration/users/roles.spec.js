@@ -192,7 +192,7 @@ describe([Tag.GTS], 'User Roles', () => {
     it('Update an existing role', () => {
       const ROLE_NAME_EDIT = generateRandomId();
 
-      cy.rolesController().then(controller => controller.addRole(ROLE_CODE, ROLE_NAME));
+      cy.rolesController().then(controller => controller.addRole({code: ROLE_CODE, name: ROLE_NAME}));
 
       currentPage = openRolesPage();
 
@@ -210,7 +210,7 @@ describe([Tag.GTS], 'User Roles', () => {
     });
 
     it('Delete an unreferenced role', () => {
-      cy.rolesController().then(controller => controller.addRole(ROLE_CODE, ROLE_NAME));
+      cy.rolesController().then(controller => controller.addRole({code: ROLE_CODE, name: ROLE_NAME}));
 
       currentPage = openRolesPage();
 

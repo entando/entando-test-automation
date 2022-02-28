@@ -131,7 +131,7 @@ describe([Tag.GTS], 'Contents', () => {
         contentId               = payload[0].id;
       });
     cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
-    cy.widgetInstanceController(page.code)
+    cy.pageWidgetsController(page.code)
       .then(controller => controller
           .addWidget(0,
               'search_form',
