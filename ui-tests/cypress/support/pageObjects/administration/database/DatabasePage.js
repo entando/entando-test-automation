@@ -60,4 +60,9 @@ export default class DatabasePage extends Content {
     return this.getContents().find(this.addPageButtonsDiv).find(this.goBackButton);
   }
 
+  createBackup() {
+    this.getCreateBackupButton().click();
+    this.getBackupNowButton().click();
+  }
+
 }

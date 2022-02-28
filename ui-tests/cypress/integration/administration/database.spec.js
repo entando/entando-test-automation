@@ -50,6 +50,22 @@ describe('Database', () => {
     currentPage.getContent().getGoBackButton().should('exist').and('be.visible');
   });
 
+  describe('Create and delete backups', () => {
+
+    it([Tag.SANITY, 'ENG-3239'], 'Create a backup', () => {
+      currentPage = openDatabasePage();
+      currentPage.getContent().createBackup();
+      cy.validateAppBuilderUrlPathname('/database');
+      currentPage.getContent().getDatabaseListTable().should('exist').and('be.visible');
+      saveBackupCode();
+      cy.get('@backupToBeDeleted').then(backup => {
+        currentPage.getContent().getTableRowByIndex(0)
+          .children(htmlElements.td).eq(0).should('have.text', backup);
+      })
+    });
+
+  });
+
   const createBackup = () => {
     return cy.databaseController().then(controller => {
       controller.addBackup();
