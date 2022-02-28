@@ -13,28 +13,11 @@ class FragmentsController {
     this.access_token = access_token;
   }
 
-  addFragment(code, guiCode) {
+  addFragment(fragment) {
     cy.request({
       url: `${controller}`,
       method: 'POST',
-      body: {
-        code,
-        guiCode,
-      },
-      auth: {
-        bearer: this.access_token
-      }
-    });
-  }
-
-  updateFragment(code, guiCode) {
-    cy.request({
-      url: `${controller}/${code}`,
-      method: 'PUT',
-      body: {
-        code,
-        guiCode,
-      },
+      body: fragment,
       auth: {
         bearer: this.access_token
       }
