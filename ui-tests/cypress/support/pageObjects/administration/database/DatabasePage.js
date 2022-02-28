@@ -1,5 +1,7 @@
+import AppPage from '../../app/AppPage.js';
 import Content from '../../app/Content.js';
 import {htmlElements} from '../../WebElement.js';
+import ReportPage from './ReportPage.js';
 
 export default class DatabasePage extends Content {
 
@@ -29,6 +31,16 @@ export default class DatabasePage extends Content {
   getDeleteButtonByIndex(index) {
     return this.getTableRowByIndex(index)
       .find(this.deleteButton);
+  }
+
+  getDetailsByIndex(index) {
+    return this.getTableRowByIndex(index)
+      .find(htmlElements.a);
+  }
+
+  openDetailsByIndex(index) {
+    this.getDetailsByIndex(index).click();
+    return new AppPage(ReportPage);
   }
 
 }
