@@ -29,6 +29,17 @@ describe('Database', () => {
     currentPage.getContent().getCreateBackupButton().should('exist').and('be.visible');
   });
 
+  it([Tag.SMOKE, 'ENG-3239'], 'Backup details page', () => {
+    createBackup().then(() => saveBackupCode());
+    currentPage = openDatabasePage();
+    currentPage = currentPage.getContent().openDetailsByIndex(0);
+    cy.get('@backupToBeDeleted').then(code => {
+      cy.validateAppBuilderUrlPathname(`/database/report/${code}`);
+    });
+    currentPage.getContent().getDescriptionData().should('have.length', 4);
+    currentPage.getContent().getComponentTable().should('exist').and('be.visible');
+  });
+
   const createBackup = () => {
     return cy.databaseController().then(controller => {
       controller.addBackup();
