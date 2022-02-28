@@ -1,5 +1,6 @@
 /// <reference types='cypress-tags' />
 
+import './restAPI/databaseAPI';
 import './restAPI/emailConfigAPI';
 import './restAPI/fileBrowserAPI';
 import './restAPI/fragmentsAPI';
@@ -61,6 +62,11 @@ declare namespace Cypress {
     }
 
     interface Chainable<Subject> {
+        /**
+         * Returns a new instance of a database controller
+         */
+        databaseController(): Chainable<DatabaseController>
+
         /**
          * Returns a new instance of an email configuration controller
          */
