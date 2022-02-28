@@ -9,6 +9,11 @@ export default class DatabasePage extends Content {
   createBackupButton = `${htmlElements.button}.DatabaseListPage__add`;
   deleteButton = `${htmlElements.button}.UserAuthorityTable__delete-tag-btn`;
 
+  tablesList = `${htmlElements.ul}.list-unstyled`;
+  addPageButtonsDiv = `${htmlElements.div}.AddDatabaseListTable__btn-add`;
+  backupNowButton = `${htmlElements.button}.AddDatabaseListTable__backup`;
+  goBackButton = `${htmlElements.button}.AddDatabaseListTable__goto-list`;
+
 
   getDatabaseListTable() {
     return this.getContents().find(this.databaseListTable);
@@ -41,6 +46,18 @@ export default class DatabasePage extends Content {
   openDetailsByIndex(index) {
     this.getDetailsByIndex(index).click();
     return new AppPage(ReportPage);
+  }
+
+  getTablesList() {
+    return this.getContents().find(this.tablesList);
+  }
+
+  getBackupNowButton() {
+    return this.getContents().find(this.addPageButtonsDiv).find(this.backupNowButton);
+  }
+
+  getGoBackButton() {
+    return this.getContents().find(this.addPageButtonsDiv).find(this.goBackButton);
   }
 
 }
