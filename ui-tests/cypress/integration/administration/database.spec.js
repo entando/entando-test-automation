@@ -40,6 +40,16 @@ describe('Database', () => {
     currentPage.getContent().getComponentTable().should('exist').and('be.visible');
   });
 
+  it([Tag.SMOKE, 'ENG-3239'], 'Create backup page', () => {
+    currentPage = openDatabasePage();
+    currentPage.getContent().getCreateBackupButton().click();
+    cy.validateAppBuilderUrlPathname('/database/add');
+    currentPage.getContent().getTablesList().should('exist').and('be.visible');
+    currentPage.getContent().getTablesList().children(htmlElements.li).should('have.length', 9);
+    currentPage.getContent().getBackupNowButton().should('exist').and('be.visible');
+    currentPage.getContent().getGoBackButton().should('exist').and('be.visible');
+  });
+
   const createBackup = () => {
     return cy.databaseController().then(controller => {
       controller.addBackup();
