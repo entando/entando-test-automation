@@ -71,6 +71,24 @@ describe('Database', () => {
 
   });
 
+  describe('Database report page', () => {
+
+    it([Tag.FEATURE, 'ENG-3239'], 'Datasource details', () => {
+      createBackup().then(() => saveBackupCode());
+      currentPage = openDatabasePage();
+      currentPage = currentPage.getContent().openDetailsByIndex(0);
+      cy.get('@backupToBeDeleted').then(code => {
+        cy.validateAppBuilderUrlPathname(`/database/report/${code}`);
+      });
+      currentPage.getContent().getDataSourceTables().should('not.be.visible');
+      currentPage.getContent().openDataSource();
+      currentPage.getContent().getDataSourceTables().should('be.visible');
+      currentPage.getContent().getDataSourcePortTableRowByIndex(0).should('have.length', 3);
+      currentPage.getContent().getDataSourceServTableRowByIndex(0).should('have.length', 3);
+    });
+
+  });
+
   const createBackup = () => {
     return cy.databaseController().then(controller => {
       controller.addBackup();
