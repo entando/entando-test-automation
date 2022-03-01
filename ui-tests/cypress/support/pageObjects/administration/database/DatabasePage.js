@@ -8,6 +8,7 @@ export default class DatabasePage extends Content {
   databaseListTable = `${htmlElements.table}.DatabaseListTable__table`;
   createBackupButton = `${htmlElements.button}.DatabaseListPage__add`;
   deleteButton = `${htmlElements.button}.UserAuthorityTable__delete-tag-btn`;
+  noBackupsAlert = `${htmlElements.div}.DatabaseListPage__alert`;
 
   tablesList = `${htmlElements.ul}.list-unstyled`;
   addPageButtonsDiv = `${htmlElements.div}.AddDatabaseListTable__btn-add`;
@@ -63,6 +64,10 @@ export default class DatabasePage extends Content {
   createBackup() {
     this.getCreateBackupButton().click();
     this.getBackupNowButton().click();
+  }
+
+  getAlert() {
+    return this.getContents().find(this.noBackupsAlert);
   }
 
 }
