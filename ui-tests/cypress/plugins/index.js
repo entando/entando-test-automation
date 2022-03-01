@@ -27,4 +27,5 @@ module.exports = (on, config) => {
   });
   config.env.CYPRESS_EXCLUDE_TAGS = 'WIP';
   on('file:preprocessor', tagify(config));
+  return require('@bahmutov/cypress-extends')(config.configFile);
 };
