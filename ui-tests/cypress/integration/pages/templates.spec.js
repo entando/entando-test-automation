@@ -19,7 +19,7 @@ describe([Tag.GTS], 'Page Templates', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('templateToBeDeleted');
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {

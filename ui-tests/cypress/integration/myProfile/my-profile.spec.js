@@ -6,7 +6,7 @@ describe([Tag.GTS], 'My Profile', () => {
   const username = "admin";
 
   beforeEach(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {
@@ -79,7 +79,7 @@ describe([Tag.GTS], 'My Profile', () => {
       currentPage.getContent().clickChangePasswordButton();
       cy.wait(1000);
 
-      cy.fixture(`users/admin`)
+      cy.fixture(`users/login/admin`)
         .then((userData) => {
           currentPage.getContent().typeCurrentPassword(userData.password);
           currentPage.getContent().typeNewPassword(newPassword);

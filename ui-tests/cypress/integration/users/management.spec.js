@@ -9,7 +9,7 @@ describe([Tag.GTS], 'Users Management', () => {
   let currentPage;
 
   beforeEach(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {

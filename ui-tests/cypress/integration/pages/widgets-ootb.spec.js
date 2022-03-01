@@ -19,7 +19,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
   let currentPage;
 
   before(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     cy.pagesController()
       .then((controller) => {
         controller.addPage(THE_PAGE.code, THE_PAGE.title, THE_PAGE.ownerGroup, THE_PAGE.template, THE_PAGE.parentCode);
@@ -34,7 +34,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     cy.wrap(null).as('widgetToRevert');
     cy.wrap(null).as('recentContentsToUnpublish');
     cy.wrap(null).as('recentContentsToDelete');
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     cy.visit('/');
     currentPage = new HomePage();
   });
@@ -105,7 +105,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
   });
 
   after(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     cy.pagesController()
       .then(controller => {
         controller.setPageStatus(THE_PAGE.code, 'draft');

@@ -10,7 +10,7 @@ const openVersioningPage = () => {
 describe([Tag.GTS], 'Content Versioning', () => {
   let currentPage;
 
-  beforeEach(() => cy.kcLogin('admin').as('tokens'));
+  beforeEach(() => cy.kcLogin('login/admin').as('tokens'));
 
   afterEach(() => cy.kcLogout());
 

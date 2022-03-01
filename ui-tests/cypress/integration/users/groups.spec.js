@@ -12,7 +12,7 @@ describe([Tag.GTS], 'Groups', () => {
   let groupCode;
 
   beforeEach(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
 
     groupName = generateRandomId();
     groupCode = groupName.toLowerCase();

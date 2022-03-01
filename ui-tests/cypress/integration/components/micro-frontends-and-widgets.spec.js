@@ -9,7 +9,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
   describe('Main functionalities', () => {
 
     before(() => {
-      cy.kcLogin('admin').as('tokens');
+      cy.kcLogin('login/admin').as('tokens');
       cy.pagesController()
         .then(controller => {
           controller.addPage(DEMOPAGE.code, DEMOPAGE.title, 'administrators', '1-column', 'homepage');
@@ -21,7 +21,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
     beforeEach(() => {
       cy.wrap(null).as('widgetsToBeRemovedFromPage');
       cy.wrap(null).as('widgetToBeDelete');
-      cy.kcLogin('admin').as('tokens');
+      cy.kcLogin('login/admin').as('tokens');
       cy.visit('/');
       currentPage = new HomePage();
     });
@@ -50,7 +50,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
     });
 
     after(() => {
-      cy.kcLogin('admin').as('tokens');
+      cy.kcLogin('login/admin').as('tokens');
       cy.pagesController()
         .then(controller => {
           controller.setPageStatus(DEMOPAGE.code, 'draft');
@@ -248,7 +248,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
       role.code = generateRandomId();
       role.name = generateRandomId();
 
-      cy.kcLogin('admin').as('tokens');
+      cy.kcLogin('login/admin').as('tokens');
     });
 
     afterEach(() => {
@@ -272,22 +272,18 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         .then(controller => controller.addRole(role))
         .then(() => cy.wrap(role).as('roleToBeDeleted'));
 
-      cy.usersController()
-        .then(controller => controller.addUser(user))
-        .then(() => cy.wrap(user).as('userToBeDeleted'));
-
-      cy.usersController()
-        .then(controller => controller.updateUser({
-          ...user,
-          accountNotExpired: true,
-          credentialsNotExpired: true
-        }));
-
-      cy.usersController()
-        .then(controller => controller.addAuthorities(user.username, 'administrators', role.code));
+      cy.fixture(`users/details/user`).then(userJSON => {
+        cy.usersController()
+          .then(controller => controller.addUser(userJSON))
+          .then(() => cy.wrap(userJSON).as('userToBeDeleted'));
+        cy.usersController().then(controller => {
+          controller.updateUser(userJSON);
+          controller.addAuthorities(userJSON.username, 'administrators', role.code);
+        });
+      });
 
       cy.kcLogout();
-      cy.kcLogin('user1').as('tokens');
+      cy.kcLogin('login/user').as('tokens');
 
       cy.visit('/');
       currentPage = new HomePage();
@@ -298,16 +294,8 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
       // Log in as admin again to be able to delete created resources
       cy.kcLogout();
-      cy.kcLogin('admin').as('tokens');
+      cy.kcLogin('login/admin').as('tokens');
     });
-
-    const user = {
-      username: 'user1',
-      password: '12345678',
-      passwordConfirm: '12345678',
-      profileType: 'PFL',
-      status: 'active'
-    };
 
     const role = {
       permissions: {

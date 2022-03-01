@@ -16,7 +16,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
   let currentPage;
 
   before(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     cy.pagesController()
       .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, page.parentCode));
     cy.kcLogout();
@@ -24,7 +24,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('widgetToBeDeleted');
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {
@@ -40,7 +40,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
   });
 
   after(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     cy.pagesController()
       .then(controller => {
         controller.setPageStatus(page.code, 'draft');

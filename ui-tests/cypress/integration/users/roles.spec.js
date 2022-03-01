@@ -13,7 +13,7 @@ describe([Tag.GTS], 'User Roles', () => {
   let currentPage;
 
   beforeEach(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {

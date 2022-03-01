@@ -1,0 +1,9 @@
+{
+  "username": "user",
+  "password": "12345678",
+  "passwordConfirm": "12345678",
+  "profileType": "PFL",
+  "status": "active",
+  "accountNotExpired": true,
+  "credentialsNotExpired": true
+}

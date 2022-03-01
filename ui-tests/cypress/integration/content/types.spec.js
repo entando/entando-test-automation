@@ -9,7 +9,7 @@ describe([Tag.GTS], 'Content Types', () => {
   let currentPage;
   let contentType = {};
 
-  beforeEach(() => cy.kcLogin('admin').as('tokens'));
+  beforeEach(() => cy.kcLogin('login/admin').as('tokens'));
 
   afterEach(() => cy.kcLogout());
 
@@ -150,7 +150,7 @@ describe([Tag.GTS], 'Content Types', () => {
       contentType.code = generateRandomTypeCode();
       contentType.name = generateRandomId();
 
-      cy.kcLogin('admin').as('tokens');
+      cy.kcLogin('login/admin').as('tokens');
       cy.contentTypesController().then(controller => controller.addContentType(contentType.code, contentType.name));
       cy.kcLogout();
     });
@@ -171,7 +171,7 @@ describe([Tag.GTS], 'Content Types', () => {
     });
 
     after(() => {
-      cy.kcLogin('admin').as('tokens');
+      cy.kcLogin('login/admin').as('tokens');
       cy.contentTypesController().then(controller => controller.deleteContentType(contentType.code));
       cy.kcLogout();
     });

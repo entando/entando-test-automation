@@ -118,7 +118,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
   };
 
   before(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
 
     cy.contentTypesController()
       .then(controller => controller.addContentType(CONTENT_TYPE_WITH_LIST.code, CONTENT_TYPE_WITH_LIST.name));
@@ -130,7 +130,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
     cy.wrap(null).as('recentContentsToUnpublish');
     cy.wrap(null).as('recentContentsToDelete');
 
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     cy.visit('/');
     currentPage = new HomePage();
   });
@@ -173,7 +173,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
   });
 
   after(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     cy.contentTypesController()
       .then(controller => controller.deleteContentType(CONTENT_TYPE_WITH_LIST.code));
     cy.kcLogout();
