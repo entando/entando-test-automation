@@ -50,6 +50,11 @@ describe('Database', () => {
     currentPage.getContent().getGoBackButton().should('exist').and('be.visible');
   });
 
+  it([Tag.FEATURE, 'ENG-3239'], 'A message should be displayed when no backups are present', () => {
+    currentPage = openDatabasePage();
+    currentPage.getContent().getAlert().should('exist').and('be.visible');
+  });
+
   describe('Create and delete backups', () => {
 
     it([Tag.SANITY, 'ENG-3239'], 'Create a backup', () => {
