@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}pages`;
+import {pagesAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('pageWidgetsController', (pageCode) => {
   cy.get('@tokens').then(tokens => {

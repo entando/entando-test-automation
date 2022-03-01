@@ -1,4 +1,4 @@
-const controller = `${Cypress.config('restAPI')}groups`;
+import {groupsAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('groupsController', () => {
   cy.get('@tokens').then(tokens => {
@@ -14,7 +14,7 @@ class GroupsController {
 
   addGroup(code, name) {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       body: {
         'code': code,

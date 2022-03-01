@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}plugins/cms/contentTypes`;
+import {contentTypesAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('contentTypesController', () => {
   cy.get('@tokens').then(tokens => {
@@ -21,7 +20,7 @@ class ContentTypesController {
 
   addContentType(code, name) {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       auth: {
         bearer: this.access_token

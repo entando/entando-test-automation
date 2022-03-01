@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}labels`;
+import {labelsAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('labelsController', () => {
   cy.get('@tokens').then(tokens => {

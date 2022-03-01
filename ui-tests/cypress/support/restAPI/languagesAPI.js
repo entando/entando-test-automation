@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}languages`;
+import {languagesAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('languagesController', () => {
   cy.get('@tokens').then(tokens => {

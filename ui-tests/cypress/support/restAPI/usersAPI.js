@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}users`;
+import {usersAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('usersController', () => {
   cy.get('@tokens').then(tokens => {
@@ -15,7 +14,7 @@ class UsersController {
 
   addUser(user) {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       body: user,
       auth: {

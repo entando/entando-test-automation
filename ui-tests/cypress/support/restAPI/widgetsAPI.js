@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}widgets`;
+import {widgetsAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('widgetsController', (widgetCode) => {
   cy.get('@tokens').then(tokens => {
@@ -16,7 +15,7 @@ class WidgetsController {
 
   addWidget(widget) {
     return cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       auth: {
         bearer: this.access_token

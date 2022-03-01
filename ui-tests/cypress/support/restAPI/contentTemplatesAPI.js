@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}plugins/cms/contentmodels`;
+import {contentModelsAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('contentTemplatesController', () => {
   cy.get('@tokens').then(tokens => {
@@ -15,7 +14,7 @@ class ContentTemplatesController {
 
   addContentTemplate(template) {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       auth: {
         bearer: this.access_token

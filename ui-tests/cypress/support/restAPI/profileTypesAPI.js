@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}profileTypes`;
+import {profileTypesAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('profileTypesController', () => {
   cy.get('@tokens').then(tokens => {
@@ -15,7 +14,7 @@ class ProfileTypesController {
 
   addProfileType(code, name) {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       auth: {
         bearer: this.access_token
