@@ -69,6 +69,18 @@ describe('Database', () => {
       })
     });
 
+    it([Tag.FEATURE, 'ENG-3239'], 'Backup should not be created when canceling creation', () => {
+      createBackup().then(() => saveBackupCode());
+      currentPage = openDatabasePage();
+      currentPage.getContent().getTableRows().should('exist').and('have.length', 1);
+      currentPage.getContent().getCreateBackupButton().click();
+      cy.validateAppBuilderUrlPathname('/database/add');
+      currentPage.getContent().getTablesList().should('exist').and('be.visible');
+      currentPage.getContent().getGoBackButton().click();
+      cy.validateAppBuilderUrlPathname('/database');
+      currentPage.getContent().getTableRows().should('exist').and('have.length', 1);
+    });
+
   });
 
   describe('Database report page', () => {
