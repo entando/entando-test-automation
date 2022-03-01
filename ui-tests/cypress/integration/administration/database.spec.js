@@ -87,6 +87,19 @@ describe('Database', () => {
       currentPage.getContent().getDataSourceServTableRowByIndex(0).should('have.length', 3);
     });
 
+    it([Tag.FEATURE, 'ENG-3239'], 'Selecting a table should show the SQL query to create it', () => {
+      createBackup().then(() => saveBackupCode());
+      currentPage = openDatabasePage();
+      currentPage = currentPage.getContent().openDetailsByIndex(0);
+      currentPage.getDialog().get().should('not.exist');
+      cy.get('@backupToBeDeleted').then(code => {
+        cy.validateAppBuilderUrlPathname(`/database/report/${code}`);
+      });
+      currentPage.getContent().openDataSource();
+      currentPage.getContent().openSQLQueryFromDataSourcePortByIndex(0);
+      currentPage.getDialog().getBody().get().find(`${htmlElements.div}#dump_content`).should('exist').and('contain', 'INSERT');
+    });
+
   });
 
   const createBackup = () => {
