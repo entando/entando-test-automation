@@ -1,0 +1,18 @@
+{
+  "testFiles": "**/*.spec.js",
+  "video": false,
+  "chromeWebSecurity": false,
+  "viewportWidth": 1200,
+  "viewportHeight": 720,
+  "retries": {
+    "runMode": 2,
+    "openMode": 0
+  },
+  "reporter": "cypress-mochawesome-reporter",
+  "reporterOptions": {
+    "reportTitle": "App-builder functional tests",
+    "reportPageTitle": "App-builder functional tests",
+    "reportDir": "cypress/results",
+    "charts": true
+  }
+}
