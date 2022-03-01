@@ -81,6 +81,13 @@ describe('Database', () => {
       currentPage.getContent().getTableRows().should('exist').and('have.length', 1);
     });
 
+    it([Tag.FEATURE, 'ENG-3239'], 'A confirmation modal should displayed when clicking the remove button', () => {
+      createBackup().then(() => saveBackupCode());
+      currentPage = openDatabasePage();
+      currentPage.getContent().clickDeleteButtonByIndex(0);
+      currentPage.getDialog().getBody().get().should('exist').and('be.visible');
+    });
+
   });
 
   describe('Database report page', () => {

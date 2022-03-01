@@ -1,5 +1,6 @@
 import AppPage from '../../app/AppPage.js';
 import Content from '../../app/Content.js';
+import {DialogContent} from '../../app/Dialog.js';
 import {htmlElements} from '../../WebElement.js';
 import ReportPage from './ReportPage.js';
 
@@ -37,6 +38,11 @@ export default class DatabasePage extends Content {
   getDeleteButtonByIndex(index) {
     return this.getTableRowByIndex(index)
       .find(this.deleteButton);
+  }
+
+  clickDeleteButtonByIndex(index) {
+    this.getDeleteButtonByIndex(index).click();
+    this.parent.getDialog().setBody(DialogContent);
   }
 
   getDetailsByIndex(index) {
