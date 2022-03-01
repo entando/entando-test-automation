@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-export const controller = `${apiURL}plugins/cms/contents`;
+import {contentsAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('contentsController', () => {
   cy.get('@tokens').then(tokens => {
@@ -25,14 +24,14 @@ class ContentsController {
         direction: 'DESC',
         mode: 'full',
         page: 1,
-        pageSize: 5,
+        pageSize: 5
       }
     });
   }
 
   postContent(content) {
     return cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       auth: {
         bearer: this.access_token

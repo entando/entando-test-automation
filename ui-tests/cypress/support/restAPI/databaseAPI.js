@@ -1,5 +1,4 @@
-const apiURL = Cypress.config('restAPI');
-const controller = `${apiURL}database`;
+import {databaseAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('databaseController', () => {
   cy.get('@tokens').then(tokens => {
@@ -44,4 +43,5 @@ class DatabaseController {
       }
     });
   }
+
 }

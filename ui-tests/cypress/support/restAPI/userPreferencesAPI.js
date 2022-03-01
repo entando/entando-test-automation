@@ -1,4 +1,4 @@
-const controller = `${Cypress.config('restAPI')}userPreferences`;
+import {userPreferencesAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('userPreferencesController', () => {
   cy.get('@tokens').then(tokens => {
@@ -14,15 +14,15 @@ class UserPreferencesController {
 
   defaultOptions = {
     defaultContentJoinGroups: [],
-    defaultContentOwnerGroup: "",
+    defaultContentOwnerGroup: '',
     defaultPageJoinGroups: [],
-    defaultPageOwnerGroup: "",
+    defaultPageOwnerGroup: '',
     defaultWidgetJoinGroups: null,
-    defaultWidgetOwnerGroup: "",
+    defaultWidgetOwnerGroup: '',
     loadOnPageSelect: true,
     translationWarning: true,
     wizard: true
-  }
+  };
 
   updateUserPreferences(username, options) {
     cy.request({

@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}pageModels`;
+import {pageModelsAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('pageTemplatesController', () => {
   cy.get('@tokens').then(tokens => {
@@ -15,7 +14,7 @@ class PageTemplatesController {
 
   addPageTemplate(template) {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       auth: {
         bearer: this.access_token

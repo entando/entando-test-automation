@@ -1,6 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}pages`;
-const addUrl     = `${apiURL}plugins/seo/pages`;
+import {pagesAPIURL as controller, addPagesAPIURL as addUrl} from './controllersEndPoints';
 
 Cypress.Commands.add('pagesController', () => {
   cy.get('@tokens').then(tokens => {
@@ -16,7 +14,7 @@ class PagesController {
 
   addNewPage(page) {
     return cy.request({
-      url: `${addUrl}`,
+      url: addUrl,
       method: 'POST',
       auth: {
         bearer: this.access_token
@@ -29,7 +27,7 @@ class PagesController {
 
   addPage(code, title, ownerGroup, pageModel, parentCode) {
     cy.request({
-      url: `${addUrl}`,
+      url: addUrl,
       method: 'POST',
       auth: {
         bearer: this.access_token

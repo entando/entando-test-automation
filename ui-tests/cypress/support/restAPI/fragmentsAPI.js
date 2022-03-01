@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}fragments`;
+import {fragmentsAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('fragmentsController', () => {
   cy.get('@tokens').then(tokens => {
@@ -15,7 +14,7 @@ class FragmentsController {
 
   addFragment(fragment) {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       body: fragment,
       auth: {

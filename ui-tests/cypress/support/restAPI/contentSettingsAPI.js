@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}plugins/cms/contentSettings`;
+import {contentSettingsAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('contentSettingsController', () => {
   cy.get('@tokens').then(tokens => {
@@ -20,7 +19,7 @@ class ContentSettingsController {
       auth: {
         bearer: this.access_token
       },
-      body: { key },
+      body: {key}
     });
   }
 }

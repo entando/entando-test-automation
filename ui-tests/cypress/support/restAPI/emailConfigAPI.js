@@ -1,5 +1,4 @@
-const apiURL = Cypress.config('restAPI');
-const controller = `${apiURL}plugins/emailSettings/SMTPServer`;
+import {SMTPServerAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('emailConfigController', () => {
   cy.get('@tokens').then(tokens => {
@@ -27,7 +26,7 @@ class EmailConfigController {
 
   defaultSettings() {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'PUT',
       body: {
         ...smtpDefaultSettings

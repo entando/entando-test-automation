@@ -1,13 +1,12 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}categories`;
+import {categoriesAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('categoriesController', () => {
   cy.get('@tokens').then(tokens => {
-    return new categoriesController(tokens.access_token);
+    return new CategoriesController(tokens.access_token);
   });
 });
 
-class categoriesController {
+class CategoriesController {
 
   constructor(access_token) {
     this.access_token = access_token;
@@ -15,7 +14,7 @@ class categoriesController {
 
   postCategory(titleEn, titleIt, code, parentCode) {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       auth: {
         bearer: this.access_token

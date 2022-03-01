@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}fileBrowser/file`;
+import {fileBrowserAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('fileBrowserController', () => {
   cy.get('@tokens').then(tokens => {
@@ -15,7 +14,7 @@ class FileBrowserController {
 
   deleteFile(currentPath) {
     cy.request({
-      url: `${controller}/`,
+      url: controller,
       method: 'DELETE',
       auth: {
         bearer: this.access_token

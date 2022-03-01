@@ -1,12 +1,12 @@
-import HomePage                                     from '../../support/pageObjects/HomePage.js';
-import { generateRandomTypeCode, generateRandomId } from '../../support/utils.js';
-import { controller as contentsAPIUrl }             from '../../support/restAPI/contentsAPI';
-import { htmlElements } from '../../support/pageObjects/WebElement.js';
+import HomePage                                   from '../../support/pageObjects/HomePage.js';
+import {htmlElements}                             from '../../support/pageObjects/WebElement.js';
+import {contentsAPIURL}                           from '../../support/restAPI/controllersEndPoints';
+import {generateRandomTypeCode, generateRandomId} from '../../support/utils.js';
 
 const openContentMgmtPage = () => {
   cy.visit('/');
   let currentPage = new HomePage();
-  currentPage = currentPage.getMenu().getContent().open();
+  currentPage     = currentPage.getMenu().getContent().open();
   return currentPage.openManagement();
 };
 
@@ -17,7 +17,7 @@ describe([Tag.GTS], 'Contents', () => {
     description: 'test content',
     mainGroup: 'administrators',
     attributes: [
-      { code: 'title', values: { en: 'test', it: 'test' } }
+      {code: 'title', values: {en: 'test', it: 'test'}}
     ]
   };
   const contentType = 'Banner';
@@ -44,8 +44,8 @@ describe([Tag.GTS], 'Contents', () => {
     beforeEach(() => {
       cy.contentsController().then(controller => controller.postContent(testContent))
         .then((response) => {
-          const { body: { payload } } = response;
-          contentCode = payload[0].id;
+          const {body: {payload}} = response;
+          contentCode             = payload[0].id;
         });
     });
 
@@ -73,9 +73,9 @@ describe([Tag.GTS], 'Contents', () => {
     beforeEach(() => {
       cy.contentsController().then(controller => controller.postContent(testContent))
         .then((response) => {
-          const { body: { payload } } = response;
-          contentCode = payload[0].id;
-          contentToBeDeleted = true;
+          const {body: {payload}} = response;
+          contentCode             = payload[0].id;
+          contentToBeDeleted      = true;
         });
     });
 
@@ -167,16 +167,16 @@ describe([Tag.GTS], 'Contents', () => {
 
   describe('Add content', () => {
     it('Add content', () => {
-      cy.intercept('POST', contentsAPIUrl, (req) => {
+      cy.intercept('POST', contentsAPIURL, (req) => {
         req.continue((res) => {
-          contentCode =  res.body.payload[0].id;
+          contentCode = res.body.payload[0].id;
         });
       });
 
       currentPage = openContentMgmtPage();
       currentPage = currentPage.getContent().openAddContentPage(contentType);
       currentPage.getContent().fillBeginContent(testContent.description);
-      currentPage.getContent().fillAttributes([{ type: 'Text', value: 'test text' }]);
+      currentPage.getContent().fillAttributes([{type: 'Text', value: 'test text'}]);
       currentPage.getContent().copyToAllLanguages();
       cy.wait(1000);
       currentPage = currentPage.getContent().submitForm();
@@ -196,16 +196,16 @@ describe([Tag.GTS], 'Contents', () => {
     });
 
     it('Add new content and does not fill values for any language but the default one, a modal must present to inform for other languages (ENG-2714)', () => {
-      cy.intercept('POST', contentsAPIUrl, (req) => {
+      cy.intercept('POST', contentsAPIURL, (req) => {
         req.continue((res) => {
-          contentCode =  res.body.payload[0].id;
+          contentCode = res.body.payload[0].id;
         });
       });
 
       currentPage = openContentMgmtPage();
       currentPage = currentPage.getContent().openAddContentPage(contentType);
       currentPage.getContent().fillBeginContent(testContent.description);
-      currentPage.getContent().fillAttributes([{ type: 'Text', value: 'test text' }]);
+      currentPage.getContent().fillAttributes([{type: 'Text', value: 'test text'}]);
       cy.wait(1000);
       currentPage.getContent().getSaveAction().invoke('hasClass', 'disabled').should('be.false');
       currentPage.getContent().getSaveContinueAction().invoke('hasClass', 'disabled').should('be.false');
@@ -226,7 +226,7 @@ describe([Tag.GTS], 'Contents', () => {
   });
 
   describe('Browse Contents', () => {
-    it ('Filter contents with zero results and checking pagination info if the information is correct', () => {
+    it('Filter contents with zero results and checking pagination info if the information is correct', () => {
       currentPage = openContentMgmtPage();
       currentPage.getContent().doSearch('z');
       cy.wait(1000);
@@ -234,6 +234,6 @@ describe([Tag.GTS], 'Contents', () => {
                  .getItemsCurrent().invoke('text').should('be.equal', '0-0');
       currentPage.getContent().getPagination()
                  .getItemsTotal().invoke('text').should('be.equal', '0');
-    })
+    });
   });
 });

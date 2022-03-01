@@ -1,5 +1,4 @@
-const apiURL     = Cypress.config('restAPI');
-const controller = `${apiURL}roles`;
+import {rolesAPIURL as controller} from './controllersEndPoints';
 
 Cypress.Commands.add('rolesController', () => {
   cy.get('@tokens').then(tokens => {
@@ -15,7 +14,7 @@ class RolesController {
 
   addRole(role) {
     cy.request({
-      url: `${controller}`,
+      url: controller,
       method: 'POST',
       body: role,
       auth: {
