@@ -1,4 +1,5 @@
 import Content from '../../app/Content.js';
+import {DialogContent} from '../../app/Dialog.js';
 import {htmlElements} from '../../WebElement.js';
 
 export default class ReportPage extends Content {
@@ -40,6 +41,16 @@ export default class ReportPage extends Content {
       .children(htmlElements.tbody)
       .children(htmlElements.tr).eq(index)
       .children(htmlElements.td);
+  }
+
+  openSQLQueryFromDataSourcePortByIndex(index) {
+    this.getDataSourcePortTableRowByIndex(index).eq(0).children(htmlElements.a).click();
+    this.parent.getDialog().setBody(DialogContent);
+  }
+
+  openSQLQueryFromDataSourceServByIndex(index) {
+    this.getDataSourceServTableRowByIndex(index).eq(0).children(htmlElements.a).click();
+    this.parent.getDialog().setBody(DialogContent);
   }
 
 }
