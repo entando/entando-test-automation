@@ -99,6 +99,16 @@ describe('Database', () => {
       cy.wrap(null).as('backupToBeDeleted');
     });
 
+    it([Tag.FEATURE, 'ENG-3239'], 'When canceling deletion, the modal is closed and the backup is not deleted', () => {
+      createBackup().then(() => saveBackupCode());
+      currentPage = openDatabasePage();
+      currentPage.getContent().getTableRows().should('exist').and('have.length', 1);
+      currentPage.getContent().clickDeleteButtonByIndex(0);
+      currentPage.getDialog().cancel();
+      currentPage.getDialog().get().should('not.exist');
+      currentPage.getContent().getTableRows().should('exist').and('have.length', 1);
+    });
+
   });
 
   describe('Database report page', () => {
