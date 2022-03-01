@@ -150,7 +150,7 @@ describe('Languages', () => {
 
     beforeEach(() => {
         cy.wrap(null).as('languageToDelete');
-        cy.kcLogin('admin').as('tokens');
+        cy.kcLogin('login/admin').as('tokens');
     });
 
     afterEach(() => {

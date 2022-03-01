@@ -7,7 +7,7 @@ describe([Tag.GTS], 'File browser', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('filesToBeDeleted');
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     currentPage = openFileBrowserPage();
   });
 

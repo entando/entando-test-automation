@@ -7,7 +7,7 @@ describe([Tag.GTS], 'Languages and Labels', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('languageToBeDeleted');
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {

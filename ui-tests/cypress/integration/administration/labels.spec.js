@@ -7,7 +7,7 @@ describe('Labels', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('labelToBeDeleted');
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {

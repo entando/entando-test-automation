@@ -6,7 +6,7 @@ describe('STMP Server Functionalities', () => {
   let currentPage;
 
   beforeEach(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     currentPage = openEmailConfigurationPage();
   });
 

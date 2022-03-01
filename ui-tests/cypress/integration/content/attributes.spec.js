@@ -211,7 +211,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
   };
 
   before(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
 
     cy.groupsController()
       .then(controller => controller.addGroup(testGroup, testGroup));
@@ -228,7 +228,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     cy.wrap(null).as('recentAttachToDelete');
     cy.wrap(null).as('recentImageToDelete');
     cy.wrap(null).as('contentEditor');
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     cy.visit('/');
     currentPage = new HomePage();
   });
@@ -302,7 +302,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
   });
 
   after(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
     cy.groupsController()
           .then(controller => controller.deleteGroup(testGroup));
     cy.contentTypesController()

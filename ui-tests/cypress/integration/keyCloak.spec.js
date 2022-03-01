@@ -18,7 +18,7 @@ describe([Tag.SMOKE], 'Keycloack', () => {
       expect(location.pathname).to.eq(pathName);
     });
 
-    cy.fixture(`users/admin`)
+    cy.fixture(`users/login/admin`)
       .then((userData) => {
         currentPage = new LoginPage();
         currentPage.login(userData);
@@ -39,7 +39,7 @@ describe([Tag.SMOKE], 'Keycloack', () => {
   });
 
   it('Login/Logout via API', () => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
 
     cy.visit('/');
     cy.location().should((location) => {

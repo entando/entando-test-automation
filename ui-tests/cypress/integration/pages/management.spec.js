@@ -44,7 +44,7 @@ describe([Tag.GTS], 'Page Management', () => {
   let pageToBeDeleted    = false;
   let subPageToBeDeleted = false;
 
-  beforeEach(() => cy.kcLogin('admin').as('tokens'));
+  beforeEach(() => cy.kcLogin('login/admin').as('tokens'));
 
   afterEach(() => {
     if (subPageToBeDeleted) {
@@ -349,8 +349,8 @@ describe([Tag.GTS], 'Page Management', () => {
       });
 
       it('Change a page\'s owner group - not allowed', () => {
-        page.code = generateRandomId();
-        page.title    = {
+        page.code  = generateRandomId();
+        page.title = {
           en: generateRandomId(),
           it: generateRandomId()
         };
@@ -361,13 +361,13 @@ describe([Tag.GTS], 'Page Management', () => {
         currentPage = openManagementPage();
         currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
 
-        currentPage.getContent().getOwnerGroupButton().click({ force: true });
+        currentPage.getContent().getOwnerGroupButton().click({force: true});
         currentPage.getContent().getOwnerGroupDropdown().should('not.exist');
       });
 
       it('when adding secondary language, editing a page automatically adds default page code from default language (ENG-2695)', () => {
-        page.code = generateRandomId();
-        page.title    = {
+        page.code  = generateRandomId();
+        page.title = {
           en: generateRandomId(),
           it: generateRandomId()
         };
@@ -389,8 +389,8 @@ describe([Tag.GTS], 'Page Management', () => {
       });
 
       it('Avoid accept blank page titles in an inactive language tab (ENG-2642)', () => {
-        page.code = generateRandomId();
-        page.title    = {
+        page.code  = generateRandomId();
+        page.title = {
           en: generateRandomId(),
           it: generateRandomId()
         };
@@ -415,7 +415,7 @@ describe([Tag.GTS], 'Page Management', () => {
         page.code  = generateRandomId();
         page.title = generateRandomId();
 
-        cy.kcLogin('admin').as('tokens');
+        cy.kcLogin('login/admin').as('tokens');
         cy.pagesController().then(controller =>
             controller.addPage(page.code, page.title, page.ownerGroup.code, page.template, page.parentCode)
         );
@@ -428,7 +428,7 @@ describe([Tag.GTS], 'Page Management', () => {
       });
 
       after(() => {
-        cy.kcLogin('admin').as('tokens');
+        cy.kcLogin('login/admin').as('tokens');
         cy.pagesController().then(controller => {
           controller.setPageStatus(page.code, 'draft');
           controller.deletePage(page.code);
@@ -587,43 +587,38 @@ describe([Tag.GTS], 'Page Management', () => {
     describe('Non admin user', () => {
       const groupCode = 'group1';
       const groupName = 'Group1';
-      const newUser = {
-        username: 'user1',
-        password: '12345678',
-        passwordConfirm: '12345678',
-        profileType: 'PFL',
-        status: 'active',
-        accountNotExpired: true,
-        credentialsNotExpired: true,
-      }
 
       beforeEach(() => {
         // create group
         cy.groupsController().then(controller => {
           controller.addGroup(groupCode, groupName);
-        })
+        });
 
         // add new user with no permission
-        cy.usersController().then(controller => {
-          controller.addUser(newUser);
-          controller.updateUser(newUser);
-          controller.addAuthorities(newUser.username, groupCode, 'approver');
-        });
+        cy.fixture(`users/details/user`).then(userJSON =>
+            cy.usersController().then(controller => {
+              controller.addUser(userJSON);
+              controller.updateUser(userJSON);
+              controller.addAuthorities(userJSON.username, groupCode, 'approver');
+            })
+        );
       });
 
       afterEach(() => {
         cy.kcLogout();
-        cy.kcLogin('admin').as('tokens');
+        cy.kcLogin('login/admin').as('tokens');
 
-        cy.usersController().then(controller => {
-          controller.deleteAuthorities(newUser.username);
-          controller.deleteUser(newUser.username);
-        });
+        cy.fixture(`users/details/user`).then(userJSON =>
+            cy.usersController().then(controller => {
+              controller.deleteAuthorities(userJSON.username);
+              controller.deleteUser(userJSON.username);
+            })
+        );
 
         cy.groupsController().then(controller => {
           controller.deleteGroup(groupCode);
-        })
-      })
+        });
+      });
 
       it('Unpublish a page without permission', () => {
         postPage(page);
@@ -633,14 +628,14 @@ describe([Tag.GTS], 'Page Management', () => {
 
         // login with unauthorized user
         cy.kcLogout();
-        cy.kcLogin(newUser.username).as('tokens');
+        cy.kcLogin('login/user').as('tokens');
 
         currentPage = openManagementPage();
 
         // user should not be able to see the new page
         currentPage.getContent().getTableRows().should('not.contain', page.title);
       });
-    })
+    });
 
     describe('Delete a page', () => {
 
@@ -708,7 +703,7 @@ describe([Tag.GTS], 'Page Management', () => {
         });
 
         it('Adding a title from default language without other languages will be allowed to save', () => {
-          page.code = generateRandomId();
+          page.code  = generateRandomId();
           page.title = generateRandomId();
 
           currentPage = openManagementPage();
@@ -738,14 +733,14 @@ describe([Tag.GTS], 'Page Management', () => {
       let clonedPageToBeDeleted = false;
 
       beforeEach(() => {
-        page.code = generateRandomId();
-        page.titles = {
+        page.code       = generateRandomId();
+        page.titles     = {
           en: generateRandomId(),
-          it: generateRandomId(),
+          it: generateRandomId()
         };
-        page.pageModel = '1-2-column';
+        page.pageModel  = '1-2-column';
         page.ownerGroup = 'administrators';
-        page.seoData  = {
+        page.seoData    = {
           seoDataByLang: {
             en: {
               description: generateRandomId(),
@@ -773,7 +768,7 @@ describe([Tag.GTS], 'Page Management', () => {
         newPage = {
           title: generateRandomId(),
           code: generateRandomId(),
-          placement: 0,
+          placement: 0
         };
 
         cy.pagesController()
@@ -815,16 +810,16 @@ describe([Tag.GTS], 'Page Management', () => {
       it('Cloning a page should copy all attached widgets to the new page', () => {
         const pageWidget = {
           frameId: 4,
-          code: 'NWS_Archive',
+          code: 'NWS_Archive'
         };
 
         cy.pageWidgetsController(page.code)
           .then(controller =>
-            controller.addWidget(
-              pageWidget.frameId,
-              pageWidget.code,
-              {}
-            )
+              controller.addWidget(
+                  pageWidget.frameId,
+                  pageWidget.code,
+                  {}
+              )
           );
 
         currentPage = openManagementPage();

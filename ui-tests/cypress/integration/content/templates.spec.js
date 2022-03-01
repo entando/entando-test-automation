@@ -28,7 +28,7 @@ describe([Tag.GTS], 'Content Templates', () => {
     template.id = generateRandomNumericId();
     template.descr = generateRandomId();
 
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {

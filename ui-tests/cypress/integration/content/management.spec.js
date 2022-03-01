@@ -27,7 +27,7 @@ describe([Tag.GTS], 'Contents', () => {
   let contentCode;
 
   beforeEach(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {

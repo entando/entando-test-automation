@@ -20,7 +20,7 @@ describe([Tag.GTS], 'Profile Types', () => {
   const profileType = {};
 
   beforeEach(() => {
-    cy.kcLogin('admin').as('tokens');
+    cy.kcLogin('login/admin').as('tokens');
 
     profileType.code = generateRandomTypeCode();
     profileType.name = generateRandomId();
