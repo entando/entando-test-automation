@@ -88,6 +88,17 @@ describe('Database', () => {
       currentPage.getDialog().getBody().get().should('exist').and('be.visible');
     });
 
+    it([Tag.FEATURE, 'ENG-3239'], 'When confirming deletion, the modal is closed and the backup deleted', () => {
+      createBackup().then(() => saveBackupCode());
+      currentPage = openDatabasePage();
+      currentPage.getContent().getTableRows().should('exist').and('have.length', 1);
+      currentPage.getContent().clickDeleteButtonByIndex(0);
+      currentPage.getDialog().confirm();
+      currentPage.getDialog().get().should('not.exist');
+      currentPage.getContent().getTableRows().should('not.exist');
+      cy.wrap(null).as('backupToBeDeleted');
+    });
+
   });
 
   describe('Database report page', () => {
