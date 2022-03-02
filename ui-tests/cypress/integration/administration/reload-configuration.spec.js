@@ -28,6 +28,14 @@ describe('Reload configuration', () => {
     currentPage.getContent().getReloadConfirmation().find(`${htmlElements.span}.pficon`).should('have.class', 'pficon-ok');
   });
 
+  it([Tag.FEATURE, 'ENG-3296'], 'Clicking on breadcrumb after reload should take back to the reload configuration page', () => {
+    cy.intercept('POST', '**/reloadConfiguration').as('reloadConfiguration')
+    currentPage.getContent().clickReloadButton();
+    cy.wait('@reloadConfiguration').its('response.statusCode').should('eq', 200);
+    currentPage.getContent().getBreadCrumb().children(htmlElements.li).eq(1).click();
+    cy.validateAppBuilderUrlPathname('/reloadConfiguration');
+  });
+
   const openReloadConfigurationPage = () => {
     cy.visit('/');
     currentPage = new HomePage();
