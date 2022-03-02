@@ -1,4 +1,5 @@
-import HomePage from '../../support/pageObjects/HomePage';
+import HomePage       from '../../support/pageObjects/HomePage';
+import {htmlElements} from '../../support/pageObjects/WebElement';
 
 describe('Reload configuration', () => {
 
@@ -16,6 +17,15 @@ describe('Reload configuration', () => {
   it([Tag.SMOKE, 'ENG-3296'], 'Reload configuration page structure', () => {
     cy.validateAppBuilderUrlPathname('/reloadConfiguration');
     currentPage.getContent().getReloadButton().should('exist').and('be.visible');
+  });
+
+  it([Tag.SANITY, 'ENG-3296'], 'A successful message should be displayed when clicking the reload button', () => {
+    cy.intercept('POST', '**/reloadConfiguration').as('reloadConfiguration')
+    currentPage.getContent().clickReloadButton();
+    cy.wait('@reloadConfiguration').its('response.statusCode').should('eq', 200);
+    cy.validateAppBuilderUrlPathname('/reloadConfiguration/confirm');
+    currentPage.getContent().getReloadConfirmation().should('exist').and('be.visible');
+    currentPage.getContent().getReloadConfirmation().find(`${htmlElements.span}.pficon`).should('have.class', 'pficon-ok');
   });
 
   const openReloadConfigurationPage = () => {
