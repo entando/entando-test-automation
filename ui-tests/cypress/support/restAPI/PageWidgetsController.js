@@ -6,7 +6,7 @@ Cypress.Commands.add('pageWidgetsController', (pageCode) => {
   });
 });
 
-class PageWidgetsController {
+export default class PageWidgetsController {
 
   constructor(access_token, pageCode) {
     this.access_token = access_token;

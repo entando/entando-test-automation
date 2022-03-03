@@ -18,7 +18,7 @@ const smtpDefaultSettings = {
   username: ''
 };
 
-class EmailConfigController {
+export default class EmailConfigController {
 
   constructor(access_token) {
     this.access_token = access_token;

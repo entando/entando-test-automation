@@ -6,7 +6,7 @@ Cypress.Commands.add('userPreferencesController', () => {
   });
 });
 
-class UserPreferencesController {
+export default class UserPreferencesController {
 
   constructor(access_token) {
     this.access_token = access_token;

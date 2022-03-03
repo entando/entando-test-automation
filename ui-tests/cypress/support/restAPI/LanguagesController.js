@@ -6,7 +6,7 @@ Cypress.Commands.add('languagesController', () => {
   });
 });
 
-class LanguagesController {
+export default class LanguagesController {
 
   constructor(access_token) {
     this.access_token = access_token;

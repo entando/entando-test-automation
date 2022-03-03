@@ -6,7 +6,7 @@ Cypress.Commands.add('categoriesController', () => {
   });
 });
 
-class CategoriesController {
+export default class CategoriesController {
 
   constructor(access_token) {
     this.access_token = access_token;

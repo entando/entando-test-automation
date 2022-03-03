@@ -1,29 +1,29 @@
-import {fragmentsAPIURL as controller} from './controllersEndPoints';
+import {labelsAPIURL as controller} from './controllersEndPoints';
 
-Cypress.Commands.add('fragmentsController', () => {
+Cypress.Commands.add('labelsController', () => {
   cy.get('@tokens').then(tokens => {
-    return new FragmentsController(tokens.access_token);
+    return new LabelsController(tokens.access_token);
   });
 });
 
-class FragmentsController {
+export default class LabelsController {
 
   constructor(access_token) {
     this.access_token = access_token;
   }
 
-  addFragment(fragment) {
+  addLabel(key, titles) {
     cy.request({
       url: controller,
       method: 'POST',
-      body: fragment,
+      body: {key, titles},
       auth: {
         bearer: this.access_token
       }
     });
   }
 
-  deleteFragment(code) {
+  removeLabel(code) {
     cy.request({
       url: `${controller}/${code}`,
       method: 'DELETE',

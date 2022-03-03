@@ -1,16 +1,27 @@
 /// <reference types='cypress-tags' />
 
-import './restAPI/databaseAPI';
-import './restAPI/emailConfigAPI';
-import './restAPI/fileBrowserAPI';
-import './restAPI/fragmentsAPI';
-import './restAPI/labelsAPI';
-import './restAPI/languagesAPI';
-import './restAPI/pagesAPI';
-import './restAPI/pageWidgetsAPI';
-import './restAPI/rolesAPI';
-import './restAPI/usersAPI';
-import './restAPI/widgetsAPI';
+import AssetsController from './restAPI/AssetsController';
+import CategoriesController from './restAPI/CategoriesController';
+import ContentsController from './restAPI/ContentsController';
+import ContentSettingsController from './restAPI/ContentSettingsController';
+import ContentTemplatesController from './restAPI/ContentTemplatesController';
+import ContentTypesController from './restAPI/ContentTypesController';
+import ContentTypeAttributesController from './restAPI/ContentTypeAttributesController';
+import DatabaseController from './restAPI/DatabaseController';
+import EmailConfigController from './restAPI/EmailConfigController';
+import FileBrowserController from './restAPI/FileBrowserController';
+import FragmentsController from './restAPI/FragmentsController';
+import GroupsController from './restAPI/GroupsController';
+import LabelsController from './restAPI/LabelsController';
+import LanguagesController from './restAPI/LanguagesController';
+import PagesController from './restAPI/PagesController';
+import PageTemplatesController from './restAPI/PageTemplatesController';
+import PageWidgetsController from './restAPI/PageWidgetsController';
+import ProfileTypesController from './restAPI/ProfileTypesController';
+import RolesController from './restAPI/RolesController';
+import UsersController from './restAPI/UsersController';
+import UserPreferencesController from './restAPI/UserPreferencesController';
+import WidgetsController from './restAPI/WidgetsController';
 
 export const enum Tag {
     WIP,
@@ -63,6 +74,41 @@ declare namespace Cypress {
 
     interface Chainable<Subject> {
         /**
+         * Returns a new instance of an assets controller
+         */
+        assetsController(): Chainable<AssetsController>
+
+        /**
+         * Returns a new instance of a categories controller
+         */
+        categoriesController(): Chainable<CategoriesController>
+
+        /**
+         * Returns a new instance of a contents controller
+         */
+        contentsController(): Chainable<ContentsController>
+
+        /**
+         * Returns a new instance of a content settings controller
+         */
+        contentSettingsController(): Chainable<ContentSettingsController>
+
+        /**
+         * Returns a new instance of a content types controller
+         */
+        contentTypesController(): Chainable<ContentTypesController>
+
+        /**
+         * Returns a new instance of a content type attributes controller
+         */
+        contentTypeAttributesController(): Chainable<ContentTypeAttributesController>
+
+        /**
+         * Returns a new instance of a content templates controller
+         */
+        contentTemplatesController(): Chainable<ContentTemplatesController>
+
+        /**
          * Returns a new instance of a database controller
          */
         databaseController(): Chainable<DatabaseController>
@@ -83,6 +129,11 @@ declare namespace Cypress {
         fragmentsController(): Chainable<FragmentsController>
 
         /**
+         * Returns a new instance of a groups controller
+         */
+        groupsController(): Chainable<GroupsController>
+
+        /**
          * Returns a new instance of a labels controller
          */
         labelsController(): Chainable<LabelsController>
@@ -98,9 +149,19 @@ declare namespace Cypress {
         pagesController(): Chainable<PagesController>
 
         /**
+         * Returns a new instance of a page templates controller
+         */
+        pageTemplatesController(): Chainable<PageTemplatesController>
+
+        /**
          * Returns a new instance of a page widgets controller
          */
         pageWidgetsController(): Chainable<PageWidgetsController>
+
+        /**
+         * Returns a new instance of a profile types controller
+         */
+        profileTypesController(): Chainable<ProfileTypesController>
 
         /**
          * Returns a new instance of a roles controller
@@ -111,6 +172,11 @@ declare namespace Cypress {
          * Returns a new instance of a users controller
          */
         usersController(): Chainable<UsersController>
+
+        /**
+         * Returns a new instance of a user preferences controller
+         */
+        userPreferencesController(): Chainable<UserPreferencesController>
 
         /**
          * Returns a new instance of a widgets controller

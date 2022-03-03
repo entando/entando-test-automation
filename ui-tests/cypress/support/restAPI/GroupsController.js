@@ -1,31 +1,34 @@
-import {labelsAPIURL as controller} from './controllersEndPoints';
+import {groupsAPIURL as controller} from './controllersEndPoints';
 
-Cypress.Commands.add('labelsController', () => {
+Cypress.Commands.add('groupsController', () => {
   cy.get('@tokens').then(tokens => {
-    return new LabelsController(tokens.access_token);
+    return new GroupsController(tokens.access_token);
   });
 });
 
-class LabelsController {
+export default class GroupsController {
 
   constructor(access_token) {
     this.access_token = access_token;
   }
 
-  addLabel(key, titles) {
+  addGroup(code, name) {
     cy.request({
       url: controller,
       method: 'POST',
-      body: {key, titles},
+      body: {
+        'code': code,
+        'name': name
+      },
       auth: {
         bearer: this.access_token
       }
     });
   }
 
-  removeLabel(code) {
+  deleteGroup(groupId) {
     cy.request({
-      url: `${controller}/${code}`,
+      url: `${controller}/${groupId}`,
       method: 'DELETE',
       auth: {
         bearer: this.access_token

@@ -6,7 +6,7 @@ Cypress.Commands.add('widgetsController', (widgetCode) => {
   });
 });
 
-class WidgetsController {
+export default class WidgetsController {
 
   constructor(access_token, widgetCode) {
     this.access_token = access_token;

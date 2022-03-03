@@ -1,29 +1,29 @@
-import {contentModelsAPIURL as controller} from './controllersEndPoints';
+import {fragmentsAPIURL as controller} from './controllersEndPoints';
 
-Cypress.Commands.add('contentTemplatesController', () => {
+Cypress.Commands.add('fragmentsController', () => {
   cy.get('@tokens').then(tokens => {
-    return new ContentTemplatesController(tokens.access_token);
+    return new FragmentsController(tokens.access_token);
   });
 });
 
-class ContentTemplatesController {
+export default class FragmentsController {
 
   constructor(access_token) {
     this.access_token = access_token;
   }
 
-  addContentTemplate(template) {
+  addFragment(fragment) {
     cy.request({
       url: controller,
       method: 'POST',
+      body: fragment,
       auth: {
         bearer: this.access_token
-      },
-      body: template
+      }
     });
   }
 
-  deleteContentTemplate(code) {
+  deleteFragment(code) {
     cy.request({
       url: `${controller}/${code}`,
       method: 'DELETE',
