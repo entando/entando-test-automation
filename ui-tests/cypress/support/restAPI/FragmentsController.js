@@ -1,35 +1,26 @@
-import {fragmentsAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {fragmentsAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('fragmentsController', () => {
   cy.get('@tokens').then(tokens => {
-    return new FragmentsController(tokens.access_token);
+    return new FragmentsController(fragmentsAPIURL, tokens.access_token);
   });
 });
 
-export default class FragmentsController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class FragmentsController extends AbstractController {
 
   addFragment(fragment) {
-    cy.request({
-      url: controller,
+    return this.request({
       method: 'POST',
-      body: fragment,
-      auth: {
-        bearer: this.access_token
-      }
+      body: fragment
     });
   }
 
   deleteFragment(code) {
-    cy.request({
-      url: `${controller}/${code}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${code}`,
+      method: 'DELETE'
     });
   }
 

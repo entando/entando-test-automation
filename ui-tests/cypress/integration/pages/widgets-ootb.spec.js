@@ -8,11 +8,18 @@ const SAMPLE_DUPE_WIDGET_CODE = 'mio_widget';
 
 const PAGE_NAME = generateRandomId();
 const THE_PAGE = {
+  charset: 'utf-8',
+  contentType: 'text/html',
+  displayedInMenu: true,
+  joinGroups: null,
+  seo: false,
+  titles: {
+    en: PAGE_NAME
+  },
   code: PAGE_NAME,
-  title: PAGE_NAME,
-  parentCode: 'homepage',
   ownerGroup: 'administrators',
-  template: '1-column'
+  pageModel: '1-column',
+  parentCode: 'homepage',
 };
 
 describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
@@ -20,11 +27,10 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
   before(() => {
     cy.kcLogin('login/admin').as('tokens');
+    cy.seoPagesController()
+      .then((controller) => controller.addNewPage(THE_PAGE));
     cy.pagesController()
-      .then((controller) => {
-        controller.addPage(THE_PAGE.code, THE_PAGE.title, THE_PAGE.ownerGroup, THE_PAGE.template, THE_PAGE.parentCode);
-        controller.setPageStatus(THE_PAGE.code, 'published');
-      });
+      .then((controller) => controller.setPageStatus(THE_PAGE.code, 'published'));
     cy.kcLogout();
   });
 
@@ -114,11 +120,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     cy.kcLogout();
   });
 
-  const selectPageFromSidebar = (pageOpen = THE_PAGE) => {
+  const selectPageFromSidebar = (pageCode = THE_PAGE.code) => {
     const currentPageContent = currentPage.getContent();
     currentPageContent.clickSidebarTab(1);
     cy.wait(3000);
-    currentPageContent.selectPageFromSidebarPageTreeTable(pageOpen.code);
+    currentPageContent.selectPageFromSidebarPageTreeTable(pageCode);
     currentPageContent.clickSidebarTab(0);
   };
 

@@ -30,4 +30,4 @@ const emailSettingsURL        = `${pluginsURL}/emailSettings`;
 export const SMTPServerAPIURL = `${emailSettingsURL}/SMTPServer`;
 
 const seoURL                = `${pluginsURL}/seo`;
-export const addPagesAPIURL = `${seoURL}/pages`;
+export const seoPagesAPIURL = `${seoURL}/pages`;

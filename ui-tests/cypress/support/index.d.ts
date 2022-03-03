@@ -19,6 +19,7 @@ import PageTemplatesController from './restAPI/PageTemplatesController';
 import PageWidgetsController from './restAPI/PageWidgetsController';
 import ProfileTypesController from './restAPI/ProfileTypesController';
 import RolesController from './restAPI/RolesController';
+import SeoPagesController from './restAPI/SeoPagesController';
 import UsersController from './restAPI/UsersController';
 import UserPreferencesController from './restAPI/UserPreferencesController';
 import WidgetsController from './restAPI/WidgetsController';
@@ -167,6 +168,11 @@ declare namespace Cypress {
          * Returns a new instance of a roles controller
          */
         rolesController(): Chainable<RolesController>
+
+        /**
+         * Returns a new instance of a seo pages controller controller
+         */
+        seoPagesController(): Chainable<SeoPagesController>
 
         /**
          * Returns a new instance of a users controller

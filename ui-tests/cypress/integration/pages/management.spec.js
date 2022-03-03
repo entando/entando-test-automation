@@ -41,6 +41,16 @@ describe([Tag.GTS], 'Page Management', () => {
     template: '1-2-column'
   };
 
+  let newPage = {
+    charset: 'utf-8',
+    contentType: 'text/html',
+    displayedInMenu: true,
+    joinGroups: null,
+    seo: false,
+    ownerGroup: 'administrators',
+    pageModel: '1-2-column'
+  };
+
   let pageToBeDeleted    = false;
   let subPageToBeDeleted = false;
 
@@ -119,6 +129,13 @@ describe([Tag.GTS], 'Page Management', () => {
           en: generateRandomId(),
           it: generateRandomId()
         };
+
+        newPage.code       = page.code;
+        newPage.titles     = {
+          en: page.title.en
+        };
+        newPage.parentCode = homePage.code;
+
         page.seoData  = {
           en: {
             description: generateRandomId(),
@@ -188,8 +205,8 @@ describe([Tag.GTS], 'Page Management', () => {
           it: generateRandomId()
         };
         subPage.parentCode = page.code;
-        cy.pagesController()
-          .then(controller => controller.addPage(page.code, page.title.en, page.ownerGroup.code, page.template, page.parentCode))
+        cy.seoPagesController()
+          .then(controller => controller.addNewPage(newPage))
           .then(() => pageToBeDeleted = true);
 
         currentPage = openManagementPage();
@@ -354,8 +371,15 @@ describe([Tag.GTS], 'Page Management', () => {
           en: generateRandomId(),
           it: generateRandomId()
         };
-        cy.pagesController()
-          .then(controller => controller.addPage(page.code, page.title.en, page.ownerGroup.code, page.template, page.parentCode))
+
+        newPage.code       = page.code;
+        newPage.titles     = {
+          en: page.title.en
+        };
+        newPage.parentCode = homePage.code;
+
+        cy.seoPagesController()
+          .then(controller => controller.addNewPage(newPage))
           .then(() => pageToBeDeleted = true);
 
         currentPage = openManagementPage();
@@ -371,8 +395,15 @@ describe([Tag.GTS], 'Page Management', () => {
           en: generateRandomId(),
           it: generateRandomId()
         };
-        cy.pagesController()
-          .then(controller => controller.addPage(page.code, page.title.en, page.ownerGroup.code, page.template, page.parentCode))
+
+        newPage.code       = page.code;
+        newPage.titles     = {
+          en: page.title.en
+        };
+        newPage.parentCode = homePage.code;
+
+        cy.seoPagesController()
+          .then(controller => controller.addNewPage(newPage))
           .then(() => pageToBeDeleted = true);
 
         cy.languagesController()
@@ -394,8 +425,13 @@ describe([Tag.GTS], 'Page Management', () => {
           en: generateRandomId(),
           it: generateRandomId()
         };
-        cy.pagesController()
-          .then(controller => controller.addPage(page.code, page.title.en, page.ownerGroup.code, page.template, page.parentCode))
+        newPage.code       = page.code;
+        newPage.titles     = {
+          en: page.title.en
+        };
+        newPage.parentCode = homePage.code;
+        cy.seoPagesController()
+          .then(controller => controller.addNewPage(newPage))
           .then(() => pageToBeDeleted = true);
 
         currentPage = openManagementPage();
@@ -415,9 +451,15 @@ describe([Tag.GTS], 'Page Management', () => {
         page.code  = generateRandomId();
         page.title = generateRandomId();
 
+        newPage.code       = page.code;
+        newPage.titles     = {
+          en: page.title
+        };
+        newPage.parentCode = homePage.code;
+
         cy.kcLogin('login/admin').as('tokens');
-        cy.pagesController().then(controller =>
-            controller.addPage(page.code, page.title, page.ownerGroup.code, page.template, page.parentCode)
+        cy.seoPagesController().then(controller =>
+            controller.addNewPage(newPage)
         );
         cy.kcLogout();
       });
@@ -771,7 +813,7 @@ describe([Tag.GTS], 'Page Management', () => {
           placement: 0
         };
 
-        cy.pagesController()
+        cy.seoPagesController()
           .then(controller => controller.addNewPage(page))
           .then(() => pageToBeDeleted = true);
       });
@@ -850,11 +892,20 @@ describe([Tag.GTS], 'Page Management', () => {
   const postPage = (page, parent = null) => {
     page.code  = generateRandomId();
     page.title = generateRandomId();
+
+    newPage.code       = page.code;
+    newPage.titles     = {
+      en: page.title.en
+    };
+
     if (parent) {
       page.parentCode = parent;
+      newPage.parentCode = parent;
+    } else {
+      newPage.parentCode = homePage.code;
     }
-    cy.pagesController()
-      .then(controller => controller.addPage(page.code, page.title, page.ownerGroup.code, page.template, page.parentCode))
+    cy.seoPagesController()
+      .then(controller => controller.addNewPage(newPage))
       .then(() => {
         if (parent) {
           subPageToBeDeleted = true;

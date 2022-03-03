@@ -1,35 +1,26 @@
-import {labelsAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {labelsAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('labelsController', () => {
   cy.get('@tokens').then(tokens => {
-    return new LabelsController(tokens.access_token);
+    return new LabelsController(labelsAPIURL, tokens.access_token);
   });
 });
 
-export default class LabelsController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class LabelsController extends AbstractController {
 
   addLabel(key, titles) {
-    cy.request({
-      url: controller,
+    return this.request({
       method: 'POST',
-      body: {key, titles},
-      auth: {
-        bearer: this.access_token
-      }
+      body: {key, titles}
     });
   }
 
   removeLabel(code) {
-    cy.request({
-      url: `${controller}/${code}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${code}`,
+      method: 'DELETE'
     });
   }
 

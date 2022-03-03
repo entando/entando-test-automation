@@ -1,46 +1,36 @@
-import {databaseAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {databaseAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('databaseController', () => {
   cy.get('@tokens').then(tokens => {
-    return new DatabaseController(tokens.access_token);
+    return new DatabaseController(databaseAPIURL, tokens.access_token);
   });
 });
 
-export default class DatabaseController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class DatabaseController extends AbstractController {
 
   addBackup() {
-    cy.request({
-      url: `${controller}/startBackup`,
-      method: 'POST',
-      body: {},
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/startBackup`,
+      method: 'POST'
     });
   }
 
   getBackupList() {
-    cy.request({
-      url: `${controller}?page=1&pageSize=0`,
+    return this.request({
       method: 'GET',
-      body: {},
-      auth: {
-        bearer: this.access_token
+      qs: {
+        page: 1,
+        pageSize: 0
       }
     });
   }
 
   deleteBackup(code) {
-    cy.request({
-      url: `${controller}/report/${code}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/report/${code}`,
+      method: 'DELETE'
     });
   }
 

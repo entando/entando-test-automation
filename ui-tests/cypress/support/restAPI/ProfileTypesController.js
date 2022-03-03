@@ -1,24 +1,18 @@
-import {profileTypesAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {profileTypesAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('profileTypesController', () => {
   cy.get('@tokens').then(tokens => {
-    return new ProfileTypesController(tokens.access_token);
+    return new ProfileTypesController(profileTypesAPIURL, tokens.access_token);
   });
 });
 
-export default class ProfileTypesController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class ProfileTypesController extends AbstractController {
 
   addProfileType(code, name) {
-    cy.request({
-      url: controller,
+    return this.request({
       method: 'POST',
-      auth: {
-        bearer: this.access_token
-      },
       body: {
         code,
         name
@@ -27,12 +21,9 @@ export default class ProfileTypesController {
   }
 
   deleteProfileType(code) {
-    cy.request({
-      url: `${controller}/${code}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${code}`,
+      method: 'DELETE'
     });
   }
 

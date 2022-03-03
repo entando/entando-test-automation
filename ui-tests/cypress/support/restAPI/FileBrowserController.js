@@ -1,24 +1,18 @@
-import {fileBrowserAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {fileBrowserAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('fileBrowserController', () => {
   cy.get('@tokens').then(tokens => {
-    return new FileBrowserController(tokens.access_token);
+    return new FileBrowserController(fileBrowserAPIURL, tokens.access_token);
   });
 });
 
-export default class FileBrowserController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class FileBrowserController extends AbstractController {
 
   deleteFile(currentPath) {
-    cy.request({
-      url: controller,
+    return this.request({
       method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      },
       qs: {
         protectedFolder: false,
         currentPath: currentPath

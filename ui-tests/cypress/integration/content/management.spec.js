@@ -123,7 +123,7 @@ describe([Tag.GTS], 'Contents', () => {
       }
     };
 
-    cy.pagesController().then(controller => controller.addNewPage(page));
+    cy.seoPagesController().then(controller => controller.addNewPage(page));
     cy.contentTypesController().then(controller => controller.addContentType(contentTypeCode, contentTypeName));
     cy.contentsController().then(controller => controller.postContent({...content, typeCode: contentTypeCode}))
       .then((response) => {

@@ -1,0 +1,62 @@
+export default class AbstractController {
+
+  constructor(apiURL, accessToken) {
+    this.apiURL      = apiURL;
+    this.accessToken = accessToken;
+  }
+
+  intercept(routeMatcher, alias) {
+    routeMatcher.url = this.apiURL;
+    return cy.intercept(routeMatcher).as(alias);
+  }
+
+  request(options) {
+    options.url  = options.url || this.apiURL;
+    options.auth = {bearer: this.accessToken};
+    return cy.request(options);
+  }
+
+  uploadRequest(options) {
+    options.url = options.url || this.apiURL;
+
+    return new Promise(resolve => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.open(options.method, options.url);
+
+      if (options.headers) {
+        Object.keys(options.headers).forEach((header) => {
+          xhr.setRequestHeader(header, options.headers[header]);
+        });
+      }
+
+      xhr.setRequestHeader('Authorization', `Bearer ${this.accessToken}`);
+
+      xhr.onload  = function () {
+        resolve(xhr.response);
+      };
+      xhr.onerror = function () {
+        resolve(xhr.response);
+      };
+
+      xhr.send(options.body);
+    })
+        .then(response => JSON.parse(response));
+  }
+
+  uploadFixture(fileInfo, metadata) {
+    return cy.fixture(fileInfo.path, 'base64')
+             .then(file => Cypress.Blob.base64StringToBlob(file, fileInfo.type))
+             .then((blob) => {
+               const file     = new File([blob], fileInfo.name, {type: fileInfo.type});
+               const formData = new FormData();
+
+               formData.append('file', file);
+               formData.append('metadata', JSON.stringify(metadata));
+
+               return formData;
+             })
+             .then(body => this.uploadRequest({method: 'POST', body}));
+  }
+
+}

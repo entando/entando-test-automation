@@ -1,24 +1,18 @@
-import {categoriesAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {categoriesAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('categoriesController', () => {
   cy.get('@tokens').then(tokens => {
-    return new CategoriesController(tokens.access_token);
+    return new CategoriesController(categoriesAPIURL, tokens.access_token);
   });
 });
 
-export default class CategoriesController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class CategoriesController extends AbstractController {
 
   postCategory(titleEn, titleIt, code, parentCode) {
-    cy.request({
-      url: controller,
+    return this.request({
       method: 'POST',
-      auth: {
-        bearer: this.access_token
-      },
       body: {
         'code': code,
         'titles': {
@@ -31,12 +25,10 @@ export default class CategoriesController {
   }
 
   deleteCategory(code) {
-    cy.request({
-      url: `${controller}/${code}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${code}`,
+      method: 'DELETE'
     });
   }
+
 }

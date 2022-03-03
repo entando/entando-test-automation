@@ -1,25 +1,24 @@
-import {pagesAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {pagesAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('pageWidgetsController', (pageCode) => {
   cy.get('@tokens').then(tokens => {
-    return new PageWidgetsController(tokens.access_token, pageCode);
+    return new PageWidgetsController(pagesAPIURL, tokens.access_token, pageCode);
   });
 });
 
-export default class PageWidgetsController {
+export default class PageWidgetsController extends AbstractController {
 
-  constructor(access_token, pageCode) {
-    this.access_token = access_token;
-    this.pageCode     = pageCode;
+  constructor(apiURL, accessToken, pageCode) {
+    super(apiURL, accessToken);
+    this.pageCode = pageCode;
   }
 
   addWidget(frameCode, widgetCode, config) {
-    cy.request({
-      url: `${controller}/${this.pageCode}/widgets/${frameCode}`,
+    return this.request({
+      url: `${this.apiURL}/${this.pageCode}/widgets/${frameCode}`,
       method: 'PUT',
-      auth: {
-        bearer: this.access_token
-      },
       body: {
         code: widgetCode,
         config
@@ -28,12 +27,9 @@ export default class PageWidgetsController {
   }
 
   deleteWidget(frameCode) {
-    cy.request({
-      url: `${controller}/${this.pageCode}/widgets/${frameCode}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${this.pageCode}/widgets/${frameCode}`,
+      method: 'DELETE'
     });
   }
 

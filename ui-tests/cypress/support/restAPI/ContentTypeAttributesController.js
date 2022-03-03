@@ -1,36 +1,32 @@
-import {contentTypesAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {contentTypesAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('contentTypeAttributesController', (contentTypeCode) => {
   cy.get('@tokens').then(tokens => {
-    return new ContentTypeAttributesController(tokens.access_token, contentTypeCode);
+    return new ContentTypeAttributesController(contentTypesAPIURL, tokens.access_token, contentTypeCode);
   });
 });
 
-export default class ContentTypeAttributesController {
+export default class ContentTypeAttributesController extends AbstractController {
 
-  constructor(access_token, contentTypeCode) {
-    this.access_token = access_token;
-    this.contentType  = contentTypeCode;
+  constructor(apiURL, accessToken, contentTypeCode) {
+    super(apiURL, accessToken);
+    this.contentType = contentTypeCode;
   }
 
   addAttribute(requestBody) {
-    cy.request({
-      url: `${controller}/${this.contentType}/attributes`,
+    return this.request({
+      url: `${this.apiURL}/${this.contentType}/attributes`,
       method: 'POST',
-      auth: {
-        bearer: this.access_token
-      },
       body: requestBody
     });
   }
 
   deleteAttribute(code) {
-    cy.request({
-      url: `${controller}/${this.contentType}/attributes/${code}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${this.contentType}/attributes/${code}`,
+      method: 'DELETE'
     });
   }
 

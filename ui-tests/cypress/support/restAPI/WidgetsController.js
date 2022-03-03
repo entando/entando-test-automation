@@ -1,38 +1,31 @@
-import {widgetsAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {widgetsAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('widgetsController', (widgetCode) => {
   cy.get('@tokens').then(tokens => {
-    return new WidgetsController(tokens.access_token, widgetCode);
+    return new WidgetsController(widgetsAPIURL, tokens.access_token, widgetCode);
   });
 });
 
-export default class WidgetsController {
+export default class WidgetsController extends AbstractController {
 
-  constructor(access_token, widgetCode) {
-    this.access_token = access_token;
-    this.widgetCode   = widgetCode;
+  constructor(apiURL, accessToken, widgetCode) {
+    super(apiURL, accessToken);
+    this.widgetCode = widgetCode;
   }
 
   addWidget(widget) {
-    return cy.request({
-      url: controller,
+    return this.request({
       method: 'POST',
-      auth: {
-        bearer: this.access_token
-      },
-      body: {
-        ...widget
-      }
+      body: widget
     });
   }
 
   getWidget(widget = this.widgetCode) {
-    return cy.request({
-      url: `${controller}/${widget}`,
-      method: 'GET',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${widget}`,
+      method: 'GET'
     }).then((response) => {
       const {
               code,
@@ -59,25 +52,17 @@ export default class WidgetsController {
   }
 
   putWidget(widget) {
-    return cy.request({
-      url: `${controller}/${widget.code}`,
+    return this.request({
+      url: `${this.apiURL}/${widget.code}`,
       method: 'PUT',
-      auth: {
-        bearer: this.access_token
-      },
-      body: {
-        ...widget
-      }
+      body: widget
     });
   }
 
   deleteWidget(widgetCode) {
-    cy.request({
-      url: `${controller}/${widgetCode}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${widgetCode}`,
+      method: 'DELETE'
     });
   }
 
