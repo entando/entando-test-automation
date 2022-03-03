@@ -134,15 +134,17 @@ export default class EmailConfigurationPage extends Content {
                     .find(`${htmlElements.input}[name="email"]`);                  
     }
 
-    getActionButton(){
+    getActionButton(code){
+        this.code = code;
         return this.getSenderTable()
                    .children(htmlElements.tbody)
-                   .find(`${htmlElements.ul}.dropdown-menu`);
+                   .find(`${htmlElements.button}#sender-actions-${code}`)
+                   .parent(`${htmlElements.div}.dropdown-kebab-pf`);
          
     }
 
     getContextMenu(){
-        return this.getActionButton()
+        return this.getActionButton(this.code)
                    .find(`${htmlElements.ul}[role="menu"]`);
     }
     getEditButton(){

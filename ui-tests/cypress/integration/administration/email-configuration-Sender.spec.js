@@ -57,12 +57,13 @@ describe('Sender Management Functionalities', () =>{
                    .should('be.visible');
 
       });
-      it.only([Tag.SMOKE, 'ENG-3299'], 'Action Buttons are diplayed', () => {
+      it([Tag.SMOKE, 'ENG-3299'], 'Action Buttons are diplayed', () => {
          
 
-        currentPage.getContent().getActionButton().should('be.visible');
+        currentPage.getContent().getActionButton(defaultCode1).should('be.visible');
 
-        currentPage.getContent().getContextMenu().click();
+        currentPage.getContent().getActionButton(defaultCode1).click();
+        currentPage.getContent().getContextMenu().should('be.visible');
         currentPage.getContent().getContextMenu()
                     .contains('Edit')
                     .should('be.visible')
@@ -77,7 +78,7 @@ describe('Sender Management Functionalities', () =>{
       it([Tag.SMOKE, 'ENG-3299'], 'Edit Sender is displayed', () => {
 
 
-        currentPage.getContent().getActionButton().click();
+        currentPage.getContent().getActionButton(defaultCode1).click();
         currentPage.getContent().getEditButton().click().wait(1000);
         cy.validateAppBuilderUrlPathname('/email-config/senders/edit/CODE1');
         currentPage.getContent().getSenderForm()
@@ -130,7 +131,7 @@ describe('Sender Management Functionalities', () =>{
 
       it([Tag.SANITY, 'ENG-3299'], 'Update an existing sender', () => {
 
-        currentPage.getContent().getActionButton().click();
+        currentPage.getContent().getActionButton(defaultCode1).click();
         currentPage.getContent().getEditButton().click().wait(1000);
         cy.validateAppBuilderUrlPathname('/email-config/senders/edit/CODE1');
         currentPage.getContent()
@@ -152,7 +153,7 @@ describe('Sender Management Functionalities', () =>{
       it([Tag.SANITY, 'ENG-3299'], 'Delete Modal is displayed', () => {
 
 
-        currentPage.getContent().getActionButton().click();
+        currentPage.getContent().getActionButton(defaultCode1).click();
         currentPage.getContent().getDeleteButton().click().wait(1000);
         currentPage.getDialog()
                    .get().children(`${htmlElements.div}#DeleteSenderModal`)
@@ -163,7 +164,7 @@ describe('Sender Management Functionalities', () =>{
       it([Tag.SANITY, 'ENG-3299'], 'Delete a sender', () => {
 
 
-        currentPage.getContent().getActionButton().click();
+        currentPage.getContent().getActionButton(defaultCode1).click();
         currentPage.getContent().getDeleteButton().click().wait(1000);
         currentPage.getDialog().confirm();
         cy.validateToast(currentPage);
@@ -177,7 +178,7 @@ describe('Sender Management Functionalities', () =>{
   });
       it([Tag.SANITY, 'ENG-3299'], 'Click on Cancel Modal Button ', () => {
 
-        currentPage.getContent().getActionButton().click();
+        currentPage.getContent().getActionButton(defaultCode1).click();
         currentPage.getContent().getDeleteButton().click().wait(1000);
         currentPage.getDialog().getCancelButton().click();
         currentPage.getContent().getSenderTable().should('contain', 'CODE1');
@@ -232,7 +233,7 @@ describe('Sender Management Functionalities', () =>{
 
       });
      
-      it([Tag.FEATURE, 'ENG-3299'], 'Save Button is disabled ', () => {
+      it.only([Tag.FEATURE, 'ENG-3299'], 'Save Button is disabled ', () => {
          
         currentPage.getContent().getAddButton().click().wait(1000);
         cy.validateAppBuilderUrlPathname('/email-config/senders/add');
@@ -244,10 +245,10 @@ describe('Sender Management Functionalities', () =>{
       });
 
 
-      it([Tag.FEATURE, 'ENG-3299'], 'Code Input is disabled ', () => {
+      it.only([Tag.FEATURE, 'ENG-3299'], 'Code Input is disabled ', () => {
       
         
-        currentPage.getContent().getActionButton().click();
+        currentPage.getContent().getActionButton(defaultCode1).click();
         currentPage.getContent().getEditButton().click().wait(1000);
         cy.validateAppBuilderUrlPathname('/email-config/senders/edit/CODE1');
         currentPage.getContent().getSenderForm()
@@ -267,7 +268,7 @@ describe('Sender Management Functionalities', () =>{
     describe([Tag.ERROR, 'ENG-3299'], 'Error Validation', () => {
 
 
-      it([Tag.ERROR, 'ENG-3299'], 'Save Button is disabled when input is empty ', () => {
+      it.only([Tag.ERROR, 'ENG-3299'], 'Save Button is disabled when input is empty ', () => {
         currentPage.getContent().getAddButton().click().wait(1000);
         currentPage.getContent()
                     .getCodeInput()
@@ -281,7 +282,7 @@ describe('Sender Management Functionalities', () =>{
 
         });
    
-      it([Tag.ERROR, 'ENG-3299'], 'Invalid value ', () => {
+      it.only([Tag.ERROR, 'ENG-3299'], 'Invalid value ', () => {
 
         currentPage.getContent().getAddButton().click().wait(1000);
         currentPage.getContent()
