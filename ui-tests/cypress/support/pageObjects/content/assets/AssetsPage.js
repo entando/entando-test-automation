@@ -1,19 +1,19 @@
-import Content from '../../app/Content.js';
-import DeleteDialog from '../../app/DeleteDialog.js';
-import { DialogContent } from '../../app/Dialog.js';
-import KebabMenu from '../../app/KebabMenu.js';
-import { htmlElements, DATA_TESTID } from '../../WebElement.js';
+import Content         from '../../app/Content.js';
+import DeleteDialog    from '../../app/DeleteDialog.js';
+import {DialogContent} from '../../app/Dialog.js';
+import KebabMenu       from '../../app/KebabMenu.js';
+import {htmlElements}  from '../../WebElement.js';
 
 export default class AssetsPage extends Content {
 
-  fileInput = `${htmlElements.input}[type=file]`;
-  assetsFilter = `${htmlElements.div}.AssetsAdvancedFilter[${DATA_TESTID}="assets_AssetsAdvancedSearch_div"]`;
-  assetsSearchText = `${htmlElements.input}[${DATA_TESTID}="form_RenderSearchFormInput_input"]`;
-  assetsFilterSearchButton = `${htmlElements.button}[${DATA_TESTID}="assets_AssetsAdvancedSearch_Button"]`;
-  assetsView = `${htmlElements.div}[${DATA_TESTID}="assets_AssetsList_CardGrid"]`;
-  assetsBody = `${htmlElements.div}.AssetsList__body`;
-  resultInfo = `${htmlElements.div}.AssetsList__filter-info`;
-  resultInfoItemCount = `${htmlElements.span}.AssetsList__items-count`;
+  fileInput                = `${htmlElements.input}[type=file]`;
+  assetsFilter             = `${htmlElements.div}.AssetsAdvancedFilter`;
+  assetsSearchText         = `${htmlElements.input}#keyword`;
+  assetsFilterSearchButton = `${htmlElements.button}[type=submit]`;
+  assetsView               = `${htmlElements.div}.AssetsList__files-grid`;
+  assetsBody               = `${htmlElements.div}.AssetsList__body`;
+  resultInfo               = `${htmlElements.div}.AssetsList__filter-info`;
+  resultInfoItemCount      = `${htmlElements.span}.AssetsList__items-count`;
 
   getFileInput() {
     return this.get()
@@ -32,6 +32,7 @@ export default class AssetsPage extends Content {
 
   getSearchButton() {
     return this.getAssetsFilter()
+               .children(htmlElements.div).eq(3)
                .find(this.assetsFilterSearchButton);
   }
 
@@ -47,7 +48,7 @@ export default class AssetsPage extends Content {
 
   getFilterResultInfo() {
     return this.getAssetsBody()
-              .find(this.resultInfo);
+               .find(this.resultInfo);
   }
 
   getFilterResultItemCount() {
@@ -130,7 +131,6 @@ class AddAssetDialog extends DialogContent {
 class EditAssetDialog extends DialogContent {
 
 
-
   getDescriptionInput() {
     return this.get()
                .find(`${htmlElements.input}[name=description]`);
@@ -138,11 +138,11 @@ class EditAssetDialog extends DialogContent {
 
   crop(xOffset, yOffset) {
     this.get().find('.cropper-point.point-se').then(($cropperPoint) => {
-      const { x, y } = $cropperPoint[0].getBoundingClientRect();
+      const {x, y} = $cropperPoint[0].getBoundingClientRect();
       cy.wrap($cropperPoint)
-        .trigger('mousedown', { which: 1 })
-        .trigger('mousemove', { clientX: x + xOffset, clientY: y + yOffset })
-        .trigger('mouseup', { force: true });
+        .trigger('mousedown', {which: 1})
+        .trigger('mousemove', {clientX: x + xOffset, clientY: y + yOffset})
+        .trigger('mouseup', {force: true});
       this.apply();
     });
   }
