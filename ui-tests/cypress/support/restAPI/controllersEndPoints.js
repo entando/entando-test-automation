@@ -27,6 +27,7 @@ export const contentSettingsAPIURL = `${cmsURL}/contentSettings`;
 export const contentTypesAPIURL    = `${cmsURL}/contentTypes`;
 
 const emailSettingsURL        = `${pluginsURL}/emailSettings`;
+export const sendersAPIURL    = `${emailSettingsURL}/senders`;
 export const SMTPServerAPIURL = `${emailSettingsURL}/SMTPServer`;
 
 const seoURL                = `${pluginsURL}/seo`;

@@ -11,12 +11,7 @@ export default class EmailConfigurationPage extends Content {
     switch = `${htmlElements.div}.SwitchRenderer`;
     switchContainer = `${htmlElements.div}[class="bootstrap-switch-container"]`;
 
-    getSenderManagementTab(){
-        return this.getContents()
-                    .find(this.emailConfigurationTabList)
-                    .children()
-                    .eq(0);
-    }
+   
     getSmtpServerTab(){
         return this.getContents()
                     .find(this.emailConfigurationTabList)
@@ -88,6 +83,79 @@ export default class EmailConfigurationPage extends Content {
     submit(){
         return this.getToolButton()
                     .find(`${htmlElements.button}[type=submit]`);
+    }
+     //Sender Functions
+    getSenderManagementTab(){
+        return this.getContents()
+                    .find(this.emailConfigurationTabList)
+                    .children()
+                    .eq(0);
+    }
+    
+    openSender(){
+        return this.getSenderManagementTab().click();
+    }
+
+    getSenderMngt(){
+        return this.getContents()
+                   .find(`${htmlElements.div}.EmailConfigSenderMgmt`);
+    }
+
+    getSenderTable(){
+        return this.getSenderMngt()
+                   .find(`${htmlElements.table}.table`);
+    }
+
+    getTabHeaders(){
+        return this.getSenderTable()
+                    .children(htmlElements.thead)
+                    .children(htmlElements.tr);
+    }
+
+    getAddButton(){
+        return this.getSenderMngt()
+                   .children(htmlElements.a);
+    }
+
+    getSenderForm(){
+        return this.getContents()
+                    .find(`${htmlElements.form}.form-horizontal`);
+    }
+
+    getCodeInput(){
+        return this.getSenderForm()
+                    .find(`${htmlElements.div}.form-group`).eq(0)
+                    .find(`${htmlElements.input}[name="code"]`);
+    }
+
+    getEmailInput(){
+        return this.getSenderForm()
+                    .find(`${htmlElements.div}.form-group`).eq(1)
+                    .find(`${htmlElements.input}[name="email"]`);                  
+    }
+
+    getActionButton(){
+        return this.getSenderTable()
+                   .children(htmlElements.tbody)
+                   .find(`${htmlElements.ul}.dropdown-menu`);
+         
+    }
+
+    getContextMenu(){
+        return this.getActionButton()
+                   .find(`${htmlElements.ul}[role="menu"]`);
+    }
+    getEditButton(){
+        return this.getContextMenu()
+                   .find(`${htmlElements.li}.LinkMenuItem`);
+    }
+    getDeleteButton(){
+        return this.getContextMenu()
+                   .find(`${htmlElements.li}[role="presentation"]`);
+    }
+    senderSubmit(){
+        return this.getSenderForm()
+                   .children(`${htmlElements.button}[type="submit"]`);
     }
 
 
