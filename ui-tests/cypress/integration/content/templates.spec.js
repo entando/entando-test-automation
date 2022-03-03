@@ -152,7 +152,7 @@ describe([Tag.GTS], 'Content Templates', () => {
         contentId = payload[0].id;
       });
     cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
-    cy.pagesController().then(controller => controller.addNewPage(page))
+    cy.seoPagesController().then(controller => controller.addNewPage(page))
     cy.widgetsController(page.code)
       .then(controller =>
         controller.addWidget(

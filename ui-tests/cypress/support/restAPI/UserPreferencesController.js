@@ -1,16 +1,14 @@
-import {userPreferencesAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {userPreferencesAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('userPreferencesController', () => {
   cy.get('@tokens').then(tokens => {
-    return new UserPreferencesController(tokens.access_token);
+    return new UserPreferencesController(userPreferencesAPIURL, tokens.access_token);
   });
 });
 
-export default class UserPreferencesController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class UserPreferencesController extends AbstractController {
 
   defaultOptions = {
     defaultContentJoinGroups: [],
@@ -25,28 +23,19 @@ export default class UserPreferencesController {
   };
 
   updateUserPreferences(username, options) {
-    cy.request({
-      url: `${controller}/${username}`,
+    return this.request({
+      url: `${this.apiURL}/${username}`,
       method: 'PUT',
-      body: {
-        ...options
-      },
-      auth: {
-        bearer: this.access_token
-      }
+      body: options
     });
   }
 
   resetUserPreferences(username) {
-    cy.request({
-      url: `${controller}/${username}`,
+    return this.request({
+      url: `${this.apiURL}/${username}`,
       method: 'PUT',
-      body: {
-        ...this.defaultOptions
-      },
-      auth: {
-        bearer: this.access_token
-      }
+      body: this.defaultOptions
     });
   }
+
 }

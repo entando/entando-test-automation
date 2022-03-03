@@ -1,82 +1,61 @@
-import {usersAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {usersAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('usersController', () => {
   cy.get('@tokens').then(tokens => {
-    return new UsersController(tokens.access_token);
+    return new UsersController(usersAPIURL, tokens.access_token);
   });
 });
 
-export default class UsersController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class UsersController extends AbstractController {
 
   addUser(user) {
-    cy.request({
-      url: controller,
+    return this.request({
       method: 'POST',
-      body: user,
-      auth: {
-        bearer: this.access_token
-      }
+      body: user
     });
   }
 
   updateUser(user) {
-    cy.request({
-      url: `${controller}/${user.username}`,
+    return this.request({
+      url: `${this.apiURL}/${user.username}`,
       method: 'PUT',
-      body: user,
-      auth: {
-        bearer: this.access_token
-      }
+      body: user
     });
   }
 
   addAuthorities(username, group, role) {
-    cy.request({
-      url: `${controller}/${username}/authorities`,
+    return this.request({
+      url: `${this.apiURL}/${username}/authorities`,
       method: 'POST',
       body: [{
         group,
         role
-      }],
-      auth: {
-        bearer: this.access_token
-      }
+      }]
     });
   }
 
   deleteAuthorities(username) {
-    cy.request({
-      url: `${controller}/${username}/authorities`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${username}/authorities`,
+      method: 'DELETE'
     });
   }
 
   deleteUser(username) {
-    cy.request({
-      url: `${controller}/${username}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${username}`,
+      method: 'DELETE'
     });
   }
 
   changePassword(username, passwords) {
-    cy.request({
-      url: `${controller}/${username}/password`,
+    return this.request({
+      url: `${this.apiURL}/${username}/password`,
       method: 'POST',
       body: {
         ...passwords
-      },
-      auth: {
-        bearer: this.access_token
       }
     });
   }

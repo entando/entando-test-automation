@@ -1,74 +1,27 @@
-import {pagesAPIURL as controller, addPagesAPIURL as addUrl} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {pagesAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('pagesController', () => {
   cy.get('@tokens').then(tokens => {
-    return new PagesController(tokens.access_token);
+    return new PagesController(pagesAPIURL, tokens.access_token);
   });
 });
 
-export default class PagesController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
-
-  addNewPage(page) {
-    return cy.request({
-      url: addUrl,
-      method: 'POST',
-      auth: {
-        bearer: this.access_token
-      },
-      body: {
-        ...page
-      }
-    });
-  }
-
-  addPage(code, title, ownerGroup, pageModel, parentCode) {
-    cy.request({
-      url: addUrl,
-      method: 'POST',
-      auth: {
-        bearer: this.access_token
-      },
-      body: {
-        charset: 'utf-8',
-        contentType: 'text/html',
-        displayedInMenu: true,
-        joinGroups: null,
-        seo: false,
-        titles: {
-          en: title
-        },
-        code,
-        ownerGroup,
-        pageModel,
-        parentCode
-      }
-    });
-  }
+export default class PagesController extends AbstractController {
 
   setPageStatus(id, status) {
-    cy.request({
-      url: `${controller}/${id}/status`,
+    return this.request({
+      url: `${this.apiURL}/${id}/status`,
       method: 'PUT',
-      auth: {
-        bearer: this.access_token
-      },
-      body: {
-        status
-      }
+      body: {status}
     });
   }
 
   deletePage(id) {
-    cy.request({
-      url: `${controller}/${id}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${id}`,
+      method: 'DELETE'
     });
   }
 

@@ -1,35 +1,26 @@
-import {rolesAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {rolesAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('rolesController', () => {
   cy.get('@tokens').then(tokens => {
-    return new RolesController(tokens.access_token);
+    return new RolesController(rolesAPIURL, tokens.access_token);
   });
 });
 
-export default class RolesController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class RolesController extends AbstractController {
 
   addRole(role) {
-    cy.request({
-      url: controller,
+    return this.request({
       method: 'POST',
-      body: role,
-      auth: {
-        bearer: this.access_token
-      }
+      body: role
     });
   }
 
   deleteRole(roleId) {
-    cy.request({
-      url: `${controller}/${roleId}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${roleId}`,
+      method: 'DELETE'
     });
   }
 

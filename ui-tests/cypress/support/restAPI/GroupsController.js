@@ -1,38 +1,29 @@
-import {groupsAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {groupsAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('groupsController', () => {
   cy.get('@tokens').then(tokens => {
-    return new GroupsController(tokens.access_token);
+    return new GroupsController(groupsAPIURL, tokens.access_token);
   });
 });
 
-export default class GroupsController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class GroupsController extends AbstractController {
 
   addGroup(code, name) {
-    cy.request({
-      url: controller,
+    return this.request({
       method: 'POST',
       body: {
         'code': code,
         'name': name
-      },
-      auth: {
-        bearer: this.access_token
       }
     });
   }
 
   deleteGroup(groupId) {
-    cy.request({
-      url: `${controller}/${groupId}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${groupId}`,
+      method: 'DELETE'
     });
   }
 

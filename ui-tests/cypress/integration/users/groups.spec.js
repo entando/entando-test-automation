@@ -81,7 +81,7 @@ describe([Tag.GTS], 'Groups', () => {
 
     beforeEach(() => {
       cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
-      cy.pagesController().then(controller => controller.addNewPage({...page, ownerGroup: groupCode}));
+      cy.seoPagesController().then(controller => controller.addNewPage({...page, ownerGroup: groupCode}));
     });
 
     afterEach(() => {

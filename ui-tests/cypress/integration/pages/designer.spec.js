@@ -6,19 +6,26 @@ import HomePage       from '../../support/pageObjects/HomePage';
 describe([Tag.GTS], 'Pages Designer', () => {
 
   const page = {
+    charset: 'utf-8',
+    contentType: 'text/html',
+    displayedInMenu: true,
+    joinGroups: null,
+    seo: false,
+    titles: {
+      en: generateRandomId()
+    },
     code: generateRandomId(),
-    title: generateRandomId(),
-    parentCode: 'homepage',
     ownerGroup: 'administrators',
-    template: '1-2-column'
+    pageModel: '1-2-column',
+    parentCode: 'homepage'
   };
 
   let currentPage;
 
   before(() => {
     cy.kcLogin('login/admin').as('tokens');
-    cy.pagesController()
-      .then(controller => controller.addPage(page.code, page.title, page.ownerGroup, page.template, page.parentCode));
+    cy.seoPagesController()
+      .then(controller => controller.addNewPage(page));
     cy.kcLogout();
   });
 
@@ -54,7 +61,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
     it('Add widget to empty frame', () => {
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
-      addWidgetToPageFrame(currentPage, page.template, 0, 0, 1, 0);
+      addWidgetToPageFrame(currentPage, page.pageModel, 0, 0, 1, 0);
       cy.wait(1000) //wait for page to update
       currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
@@ -70,7 +77,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
-      addWidgetToPageFrame(currentPage, page.template, 0, 0, 1, 0);
+      addWidgetToPageFrame(currentPage, page.pageModel, 0, 0, 1, 0);
       cy.wait(1000) //wait for page to update
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--draft')
@@ -85,7 +92,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
       currentPage.getContent().dragGridWidgetToFrame(1, 0, 1, 1);
-      cy.wrap(getGridFrame(page.template, 1, 1)).as('widgetToBeDeleted');
+      cy.wrap(getGridFrame(page.pageModel, 1, 1)).as('widgetToBeDeleted');
 
       currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('SPAN'));

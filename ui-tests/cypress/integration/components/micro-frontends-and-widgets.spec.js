@@ -10,11 +10,10 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
     before(() => {
       cy.kcLogin('login/admin').as('tokens');
+      cy.seoPagesController()
+        .then(controller => controller.addNewPage(DEMOPAGE));
       cy.pagesController()
-        .then(controller => {
-          controller.addPage(DEMOPAGE.code, DEMOPAGE.title, 'administrators', '1-column', 'homepage');
-          controller.setPageStatus(DEMOPAGE.code, 'published');
-        });
+        .then(controller => controller.setPageStatus(DEMOPAGE.code, 'published'));
       cy.kcLogout();
     });
 
@@ -160,7 +159,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         cy.wrap(FRAMENUM).as('widgetsToBeRemovedFromPage');
         currentPage = currentPage.getMenu().getPages().open();
         currentPage = currentPage.openDesigner();
-        selectPageFromSidebar(DEMOPAGE);
+        selectPageFromSidebar(DEMOPAGE.code);
         //TODO validate this wait
         cy.wait(500);
         currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SAMPLE_BASIC_WIDGET_ID)
@@ -228,12 +227,12 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
     });
 
-    const selectPageFromSidebar = (pageOpen = HOMEPAGE) => {
+    const selectPageFromSidebar = (pageCode) => {
       const currentPageContent = currentPage.getContent();
       currentPageContent.clickSidebarTab(1);
       //TODO validate this wait
       cy.wait(3000);
-      currentPageContent.selectPageFromSidebarPageTreeTable(pageOpen.code);
+      currentPageContent.selectPageFromSidebarPageTreeTable(pageCode);
       currentPageContent.clickSidebarTab(0);
     };
 
@@ -327,14 +326,19 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
   const FRAMENUM = 5;
 
-  const HOMEPAGE = {
-    title: 'My Homepage',
-    code: 'my_homepage'
-  };
-
   const DEMOPAGE = {
-    title: 'Demo page',
-    code: 'demopage'
+    code: 'demopage',
+    charset: 'utf-8',
+    contentType: 'text/html',
+    displayedInMenu: true,
+    joinGroups: null,
+    seo: false,
+    titles: {
+      en: 'Demo page'
+    },
+    ownerGroup: 'administrators',
+    pageModel: '1-column',
+    parentCode: 'homepage'
   };
 
   const iconChoose = 'fa-android';

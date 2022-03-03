@@ -1,24 +1,18 @@
-import {contentsAPIURL as controller} from './controllersEndPoints';
+import AbstractController from './abstractController';
+
+import {contentsAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('contentsController', () => {
   cy.get('@tokens').then(tokens => {
-    return new ContentsController(tokens.access_token);
+    return new ContentsController(contentsAPIURL, tokens.access_token);
   });
 });
 
-export default class ContentsController {
-
-  constructor(access_token) {
-    this.access_token = access_token;
-  }
+export default class ContentsController extends AbstractController {
 
   getContentList() {
-    return cy.request({
-      url: controller,
+    return this.request({
       method: 'GET',
-      auth: {
-        bearer: this.access_token
-      },
       qs: {
         sort: 'lastModified',
         direction: 'DESC',
@@ -30,12 +24,8 @@ export default class ContentsController {
   }
 
   postContent(content) {
-    return cy.request({
-      url: controller,
+    return this.request({
       method: 'POST',
-      auth: {
-        bearer: this.access_token
-      },
       body: [{
         ...content
       }]
@@ -43,26 +33,21 @@ export default class ContentsController {
   }
 
   deleteContent(id) {
-    cy.request({
-      url: `${controller}/${id}`,
-      method: 'DELETE',
-      auth: {
-        bearer: this.access_token
-      }
+    return this.request({
+      url: `${this.apiURL}/${id}`,
+      method: 'DELETE'
     });
   }
 
   updateStatus(id, status) {
-    return cy.request({
-      url: `${controller}/status`,
+    return this.request({
+      url: `${this.apiURL}/status`,
       method: 'PUT',
-      auth: {
-        bearer: this.access_token
-      },
       body: {
         codes: [id],
         status
       }
     });
   }
+
 }
