@@ -175,6 +175,11 @@ declare namespace Cypress {
         seoPagesController(): Chainable<SeoPagesController>
 
         /**
+         * Returns a new instance of an email sender configuration controller
+         */
+        senderController(): Chainable<SenderController>
+
+        /**
          * Returns a new instance of a users controller
          */
         usersController(): Chainable<UsersController>
