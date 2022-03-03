@@ -6,7 +6,7 @@ Cypress.Commands.add('pagesController', () => {
   });
 });
 
-class PagesController {
+export default class PagesController {
 
   constructor(access_token) {
     this.access_token = access_token;

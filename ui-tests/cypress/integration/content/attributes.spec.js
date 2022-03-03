@@ -119,7 +119,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
   };
 
   const basicCreateContentAttribute = (attribute, testValue, addAttributeProps = {}) => {
-    cy.contentTypeAttributeController(CONTENT_TYPE.code)
+    cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute, ...addAttributeProps }));
       cy.wrap(attribute).as('attributeToDelete');
       navigateContentForm();
@@ -146,7 +146,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     } else {
       value = testValue;
     }
-    cy.contentTypeAttributeController(CONTENT_TYPE.code)
+    cy.contentTypeAttributesController(CONTENT_TYPE.code)
       .then(controller => controller.addAttribute({
         ...compositeFormat,
         compositeAttributes: [{
@@ -288,7 +288,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
     cy.get('@attributeToDelete').then((attributeToDelete) => {
       if (attributeToDelete !== null) {
-        cy.contentTypeAttributeController(CONTENT_TYPE.code)
+        cy.contentTypeAttributesController(CONTENT_TYPE.code)
           .then(controller => controller.deleteAttribute(attributeToDelete));
       }
     });
@@ -327,7 +327,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         en: 'Demo en',
         it: 'Demo edited It',
       };
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -361,7 +361,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -379,7 +379,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         en: 'xxYy',
         it: 'defg',
       };
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -419,7 +419,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = 'the edited slow fox';
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -454,7 +454,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -470,7 +470,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it ('Try to set custom validation (regex) and check it in content validation (in every language)', () => {
       const editedValue = 'xxYy';
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -501,7 +501,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = 'mojo@jojo.com';
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -536,7 +536,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -552,7 +552,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it ('Check email address validation', () => {
       const editedValue = 'xxYy';
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
       navigateContentForm();
@@ -585,7 +585,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         en: 'Demo long edited en',
         it: 'Demo long edited It',
       };
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -620,7 +620,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -642,7 +642,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         en: 'http://booya.com',
         it: 'https://osaji.kyoka.jp',
       };
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -698,7 +698,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = '68';
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -733,7 +733,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -752,7 +752,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         start: '3',
         end: '8',
       };
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -808,7 +808,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         en: 'Hypertext edited it is',
         it: 'Hypertext edited it e',
       };
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -843,7 +843,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -859,7 +859,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     it('try to add several internal link', () => {
       cy.contentSettingsController().then(controller => controller.putContentEditor('fckeditor'));
       cy.wrap(true).as('contentEditor');
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -956,7 +956,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         },
       };
 
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -1029,7 +1029,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -1063,11 +1063,11 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         },
       };
 
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
-      const fileInfo = { fixture: 'upload/entando_400x400.png', fileName: 'entando_400x400.png', fileType: 'image/png' };
+      const fileInfo = { path: 'upload/entando_400x400.png', name: 'entando_400x400.png', type: 'image/png' };
       cy.assetsController()
         .then(controller => controller.addAsset(fileInfo, { group: testGroup, categories: [], type: 'image' }));
       cy.wrap(1).as('recentImageToDelete');
@@ -1121,9 +1121,9 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
           },
         },
       };
-      const fileInfo = { fixture: 'upload/lorem.doc', fileName: 'blank.pdf', fileType: 'application/doc' };
+      const fileInfo = { path: 'upload/lorem.doc', name: 'blank.pdf', type: 'application/doc' };
 
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
       cy.assetsController()
@@ -1191,7 +1191,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -1217,7 +1217,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = false;
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -1263,7 +1263,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = false;
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -1309,7 +1309,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = null;
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -1371,7 +1371,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
           it: 'Entando ITA',
         },
       };
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -1415,7 +1415,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -1441,7 +1441,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = '2021-07-20 00:00:00';
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 
@@ -1480,7 +1480,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         rangeStartDate: '2021-09-01 00:00:00',
         rangeEndDate: '2021-09-30 00:00:00',
       };
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -1531,7 +1531,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = 'c';
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
       .then(controller => controller.addAttribute({
         type: attribute,
         code: attribute,
@@ -1578,7 +1578,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -1613,7 +1613,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = 'z';
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
       .then(controller => controller.addAttribute({
         type: attribute,
         code: attribute,
@@ -1660,7 +1660,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
     });
 
     it ('Try to set standard validation (required) and check it in content validation', () => {
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({
           type: attribute,
           code: attribute,
@@ -1688,7 +1688,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     it('Edit', () => {
       const editedValue = '2021-07-20 03:30:00';
-      cy.contentTypeAttributeController(CONTENT_TYPE.code)
+      cy.contentTypeAttributesController(CONTENT_TYPE.code)
         .then(controller => controller.addAttribute({ type: attribute, code: attribute }));
       cy.wrap(attribute).as('attributeToDelete');
 

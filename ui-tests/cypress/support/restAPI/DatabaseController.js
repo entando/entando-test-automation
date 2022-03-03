@@ -6,7 +6,7 @@ Cypress.Commands.add('databaseController', () => {
   });
 });
 
-class DatabaseController {
+export default class DatabaseController {
 
   constructor(access_token) {
     this.access_token = access_token;

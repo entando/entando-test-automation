@@ -6,7 +6,7 @@ Cypress.Commands.add('assetsController', () => {
   });
 });
 
-class AssetsController {
+export default class AssetsController {
 
   constructor(access_token) {
     this.access_token = access_token;
@@ -59,4 +59,5 @@ class AssetsController {
       }
     });
   }
+
 }

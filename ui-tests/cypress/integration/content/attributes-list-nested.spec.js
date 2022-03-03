@@ -57,7 +57,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
   };
 
   const addAttributeToContentType = (attribute, extraProps = {}, extraListProps = {}) => {
-    cy.contentTypeAttributeController(CONTENT_TYPE_WITH_LIST.code)
+    cy.contentTypeAttributesController(CONTENT_TYPE_WITH_LIST.code)
         .then(controller => controller.addAttribute({
           ...listFormat,
           nestedAttribute: { type: attribute, code: attribute, ...extraProps },
@@ -164,7 +164,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
     });
     cy.get('@attributeToDelete').then((attributeToDelete) => {
       if (attributeToDelete !== null) {
-        cy.contentTypeAttributeController(CONTENT_TYPE_WITH_LIST.code)
+        cy.contentTypeAttributesController(CONTENT_TYPE_WITH_LIST.code)
           .then(controller => controller.deleteAttribute(attributeToDelete));
       }
     });

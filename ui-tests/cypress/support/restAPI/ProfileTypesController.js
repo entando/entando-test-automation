@@ -1,29 +1,32 @@
-import {pageModelsAPIURL as controller} from './controllersEndPoints';
+import {profileTypesAPIURL as controller} from './controllersEndPoints';
 
-Cypress.Commands.add('pageTemplatesController', () => {
+Cypress.Commands.add('profileTypesController', () => {
   cy.get('@tokens').then(tokens => {
-    return new PageTemplatesController(tokens.access_token);
+    return new ProfileTypesController(tokens.access_token);
   });
 });
 
-class PageTemplatesController {
+export default class ProfileTypesController {
 
   constructor(access_token) {
     this.access_token = access_token;
   }
 
-  addPageTemplate(template) {
+  addProfileType(code, name) {
     cy.request({
       url: controller,
       method: 'POST',
       auth: {
         bearer: this.access_token
       },
-      body: template
+      body: {
+        code,
+        name
+      }
     });
   }
 
-  deletePageTemplate(code) {
+  deleteProfileType(code) {
     cy.request({
       url: `${controller}/${code}`,
       method: 'DELETE',

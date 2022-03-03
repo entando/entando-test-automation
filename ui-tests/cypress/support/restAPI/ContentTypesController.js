@@ -1,18 +1,18 @@
-import {profileTypesAPIURL as controller} from './controllersEndPoints';
+import {contentTypesAPIURL as controller} from './controllersEndPoints';
 
-Cypress.Commands.add('profileTypesController', () => {
+Cypress.Commands.add('contentTypesController', () => {
   cy.get('@tokens').then(tokens => {
-    return new ProfileTypesController(tokens.access_token);
+    return new ContentTypesController(tokens.access_token);
   });
 });
 
-class ProfileTypesController {
+export default class ContentTypesController {
 
   constructor(access_token) {
     this.access_token = access_token;
   }
 
-  addProfileType(code, name) {
+  addContentType(code, name) {
     cy.request({
       url: controller,
       method: 'POST',
@@ -26,7 +26,7 @@ class ProfileTypesController {
     });
   }
 
-  deleteProfileType(code) {
+  deleteContentType(code) {
     cy.request({
       url: `${controller}/${code}`,
       method: 'DELETE',

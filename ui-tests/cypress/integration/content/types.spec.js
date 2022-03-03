@@ -115,7 +115,7 @@ describe([Tag.GTS], 'Content Types', () => {
     it('should allow updating an attribute', () => {
       currentPage         = openContentTypesPage();
       const testAttribute = {type: 'Text', code: 'Text'};
-      cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(testAttribute));
+      cy.contentTypeAttributesController(contentType.code).then(controller => controller.addAttribute(testAttribute));
 
       currentPage = currentPage.getContent().getKebabMenu(contentType.code).open().openEdit();
       currentPage = currentPage.getContent().getKebabMenu(testAttribute.code).open().openEdit();
@@ -159,12 +159,12 @@ describe([Tag.GTS], 'Content Types', () => {
 
     afterEach(() => {
       if (attributeToBeDeleted) {
-        cy.contentTypeAttributeController(contentType.code)
+        cy.contentTypeAttributesController(contentType.code)
           .then(controller => controller.deleteAttribute(attribute.code))
           .then(() => attributeToBeDeleted = false);
       }
       if (additionalTextAttribute) {
-        cy.contentTypeAttributeController(contentType.code)
+        cy.contentTypeAttributesController(contentType.code)
           .then(controller => controller.deleteAttribute(additionalTextAttribute))
           .then(() => additionalTextAttribute = null);
       }
@@ -218,7 +218,7 @@ describe([Tag.GTS], 'Content Types', () => {
 
       const postBasicAttribute = (type) => {
         attribute.type = type;
-        cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(attribute));
+        cy.contentTypeAttributesController(contentType.code).then(controller => controller.addAttribute(attribute));
         attributeToBeDeleted = true;
       };
 
@@ -344,7 +344,7 @@ describe([Tag.GTS], 'Content Types', () => {
             code: attribute.code,
             compositeAttributes: COMPOSITE_SUB_ATTRIBUTES.slice(0, 3)
           };
-          cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(attribute));
+          cy.contentTypeAttributesController(contentType.code).then(controller => controller.addAttribute(attribute));
           attributeToBeDeleted = true;
         };
 
@@ -417,7 +417,7 @@ describe([Tag.GTS], 'Content Types', () => {
       const postCompositeAttribute = () => {
         attribute.type                = ATTRIBUTE_TYPES.COMPOSITE;
         attribute.compositeAttributes = COMPOSITE_SUB_ATTRIBUTES.slice(0, 3);
-        cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(attribute));
+        cy.contentTypeAttributesController(contentType.code).then(controller => controller.addAttribute(attribute));
         attributeToBeDeleted = true;
       };
 
@@ -426,7 +426,7 @@ describe([Tag.GTS], 'Content Types', () => {
     const postTextAttribute = () => {
       additionalTextAttribute = generateRandomId();
       const textAttribute     = {type: 'Text', code: additionalTextAttribute};
-      cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(textAttribute));
+      cy.contentTypeAttributesController(contentType.code).then(controller => controller.addAttribute(textAttribute));
     };
 
     const openEditContentTypePage = (contentTypeCode) => {
@@ -472,7 +472,7 @@ describe([Tag.GTS], 'Content Types', () => {
         type: nestedAttributeType,
         code: attribute.code
       };
-      cy.contentTypeAttributeController(contentType.code).then(controller => controller.addAttribute(attribute));
+      cy.contentTypeAttributesController(contentType.code).then(controller => controller.addAttribute(attribute));
       attributeToBeDeleted = true;
 
       currentPage = editAttributeName(attributeType, updatedAttributeName);

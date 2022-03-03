@@ -6,7 +6,7 @@ Cypress.Commands.add('contentSettingsController', () => {
   });
 });
 
-class ContentSettingsController {
+export default class ContentSettingsController {
 
   constructor(access_token) {
     this.access_token = access_token;

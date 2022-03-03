@@ -6,7 +6,7 @@ Cypress.Commands.add('fileBrowserController', () => {
   });
 });
 
-class FileBrowserController {
+export default class FileBrowserController {
 
   constructor(access_token) {
     this.access_token = access_token;
