@@ -11,14 +11,16 @@ export default class AppTour extends WebElement {
   cancelConfirmButton = `${htmlElements.button}.TourStart__yes-button`;
 
   get() {
-    return this.parent.get()
-               .children(htmlElements.body)
-               .children(this.tourFrame)
+    return cy.get(this.tourFrame);
+  }
+
+  getTourContainer() {
+    return this.get()
                .find(this.tourContainer);
   }
 
   getFooter() {
-    return this.get()
+    return this.getTourContainer()
                .children(this.#footer);
   }
 
@@ -43,7 +45,6 @@ export default class AppTour extends WebElement {
   }
 
   close() {
-    cy.wait(1000); // Wait until the page loads
     this.getCloseButton().click();
   }
 
