@@ -12,6 +12,11 @@ export default class CreateFolderPage extends Content {
   breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
   operationButtons = `${htmlElements.div}.btn-group`;
 
+  createFolderForm = `${htmlElements.form}.FileBrowserCreateFolder`;
+  folderNameInput  = `${htmlElements.input}[name='path']#path`;
+  cancelButton     = `${htmlElements.a}.FileBrowserCreateFolderForm__btn-cancel`;
+  saveButton       = `${htmlElements.button}.FileBrowserCreateFolderForm__btn-submit`;
+
   getFileBrowserBreadCrumbs() {
     return this.getContents()
                .children(htmlElements.div).eq(2)
@@ -42,14 +47,29 @@ export default class CreateFolderPage extends Content {
                .eq(0);
   }
 
+  getCreateFolderForm() {
+    return this.getContents()
+               .find(this.createFolderForm);
+  }
+
+  getNameInput() {
+    return this.getCreateFolderForm()
+               .find(this.folderNameInput);
+  }
+
+  getCancelButton() {
+    return this.getCreateFolderForm()
+               .find(this.cancelButton);
+  }
+
+  getSaveButton() {
+    return this.getCreateFolderForm()
+               .find(this.saveButton);
+  }
+
   openUploadFilesPage() {
     this.getUploadFilesOperationButton().click();
     return new AppPage(UploadFilesPage);
-  }
-
-  openCreateFolderPage() {
-    this.getCreateFolderOperationButton().click();
-    return new AppPage(CreateFolderPage);
   }
 
   openCreateTextFilePage() {
