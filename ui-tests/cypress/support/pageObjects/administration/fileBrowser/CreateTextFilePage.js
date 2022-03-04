@@ -9,8 +9,15 @@ import CreateFolderPage from './CreateFolderPage';
 
 export default class CreateTextFilePage extends Content {
 
-  breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
-  operationButtons = `${htmlElements.div}.btn-group`;
+  breadCrumbs        = `${htmlElements.ol}.breadcrumb`;
+  operationButtons   = `${htmlElements.div}.btn-group`;
+
+  createTextFileForm = `${htmlElements.form}.CreateTextFileForm`;
+  textFileNameInput  = `${htmlElements.input}[name='name']#name`;
+  extensionSelector  = `${htmlElements.select}[name='extension'].CreateTextFileForm__select-extension`;
+  textArea           = `${htmlElements.textarea}[name='content'].RenderTextAreaInput-textarea`;
+  cancelButton       = `${htmlElements.a}.CreateTextFileForm__btn-cancel`;
+  saveButton         = `${htmlElements.button}.CreateTextFileForm__btn-submit`;
 
   getFileBrowserBreadCrumbs() {
     return this.getContents()
@@ -42,6 +49,36 @@ export default class CreateTextFilePage extends Content {
                .eq(0);
   }
 
+  getCreateTextFileForm() {
+    return this.getContents()
+               .find(this.createTextFileForm);
+  }
+
+  getNameInput() {
+    return this.getCreateTextFileForm()
+               .find(this.textFileNameInput);
+  }
+
+  getExtensionSelector() {
+    return this.getCreateTextFileForm()
+               .find(this.extensionSelector);
+  }
+
+  getTextArea() {
+    return this.getCreateTextFileForm()
+               .find(this.textArea);
+  }
+
+  getCancelButton() {
+    return this.getCreateTextFileForm()
+               .find(this.cancelButton);
+  }
+
+  getSaveButton() {
+    return this.getCreateTextFileForm()
+               .find(this.saveButton);
+  }
+
   openUploadFilesPage() {
     this.getUploadFilesOperationButton().click();
     return new AppPage(UploadFilesPage);
@@ -50,11 +87,6 @@ export default class CreateTextFilePage extends Content {
   openCreateFolderPage() {
     this.getCreateFolderOperationButton().click();
     return new AppPage(CreateFolderPage);
-  }
-
-  openCreateTextFilePage() {
-    this.getCreateTextFileOperationButton().click();
-    return new AppPage(CreateTextFilePage);
   }
 
 }

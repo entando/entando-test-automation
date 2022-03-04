@@ -83,6 +83,21 @@ describe('File browser', () => {
       currentPage.getContent().getSaveButton().should('exist').and('be.visible');
     });
 
+    it([Tag.SMOKE, 'ENG-3297'], 'Create text file page', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateTextFilePage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      currentPage.getContent().getCreateTextFileForm().should('exist').and('be.visible');
+      currentPage.getContent().getNameInput().should('exist').and('be.visible');
+      currentPage.getContent().getExtensionSelector().should('exist').and('be.visible');
+      currentPage.getContent().getTextArea().should('exist').and('be.visible');
+      currentPage.getContent().getExtensionSelector().children(htmlElements.option).should('have.length', 2);
+      currentPage.getContent().getExtensionSelector().children(htmlElements.option).eq(0).should('have.value', '.txt');
+      currentPage.getContent().getExtensionSelector().children(htmlElements.option).eq(1).should('have.value', '.css');
+      currentPage.getContent().getCancelButton().should('exist').and('be.visible');
+      currentPage.getContent().getSaveButton().should('exist').and('be.visible');
+    });
+
   });
 
   const testFileInfo = {path: '', name: 'data1.json', base64: '', type: 'application/json'}
