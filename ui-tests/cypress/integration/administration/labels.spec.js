@@ -290,6 +290,7 @@ describe('Labels', () => {
       addTestLabel();
       currentPage = openLabelsPage();
       currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
+      currentPage.getContent().getLanguageTextField('en').should('have.text', testLabel.name.en);
       currentPage.getContent().getLanguageTextField('en').clear().blur();
       currentPage.getContent().getLanguageTextField('en').parent().parent().children(htmlElements.span).should('exist').and('have.class', 'help-block');
       currentPage.getContent().getSubmit().should('be.disabled');
