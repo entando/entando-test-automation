@@ -13,6 +13,7 @@ export default class UploadFilesPage extends Content {
   breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
   operationButtons = `${htmlElements.div}.btn-group`;
 
+  uploadFilesForm  = `${htmlElements.form}.UploadFileBrowserForm`;
   uploadFilesInput = `${htmlElements.input}[name="file"]`;
   buttonsDiv       = `${htmlElements.div}.UploadFileBrowserForm__btn`;
 
@@ -46,11 +47,6 @@ export default class UploadFilesPage extends Content {
                .eq(0);
   }
 
-  openUploadFilesPage() {
-    this.getUploadFilesOperationButton().click();
-    return new AppPage(UploadFilesPage);
-  }
-
   openCreateFolderPage() {
     this.getCreateFolderOperationButton().click();
     return new AppPage(CreateFolderPage);
@@ -61,19 +57,24 @@ export default class UploadFilesPage extends Content {
     return new AppPage(CreateTextFilePage);
   }
 
-  getUploadFilesInput() {
+  getUploadFilesForm() {
     return this.get()
+               .find(this.uploadFilesForm);
+  }
+
+  getUploadFilesInput() {
+    return this.getUploadFilesForm()
                .find(this.uploadFilesInput);
   }
 
   getCancelButton() {
-    return this.get()
+    return this.getUploadFilesForm()
                .find(this.buttonsDiv)
                .find(htmlElements.button).eq(1);
   }
 
   getUploadButton() {
-    return this.get()
+    return this.getUploadFilesForm()
                .find(this.buttonsDiv)
                .find(htmlElements.button).eq(0);
   }
@@ -84,13 +85,11 @@ export default class UploadFilesPage extends Content {
 
   cancelUpload() {
     this.getCancelButton().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(FilesListPage);
   }
 
   confirmUpload() {
     this.getUploadButton().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(FilesListPage);
   }
 

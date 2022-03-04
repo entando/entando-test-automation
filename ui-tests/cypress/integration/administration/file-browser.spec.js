@@ -63,6 +63,16 @@ describe('File browser', () => {
       currentPage.getDelete().should('exist').and('be.visible');
     });
 
+    it([Tag.SMOKE, 'ENG-3297'], 'Upload files page', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openUploadFilesPage();
+      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      currentPage.getContent().getUploadFilesForm().should('exist').and('be.visible');
+      currentPage.getContent().getUploadFilesInput().should('exist').and('be.visible');
+      currentPage.getContent().getCancelButton().should('exist').and('be.visible');
+      currentPage.getContent().getUploadButton().should('exist').and('be.visible');
+    });
+
   });
 
   const testFileInfo = {path: '', name: 'data1.json', base64: '', type: 'application/json'}
