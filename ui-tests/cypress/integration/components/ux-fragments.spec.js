@@ -1,5 +1,5 @@
-import HomePage           from '../../support/pageObjects/HomePage';
 import {generateRandomId} from '../../support/utils';
+import HomePage           from '../../support/pageObjects/HomePage';
 
 describe('UX Fragments', () => {
 
@@ -28,6 +28,7 @@ describe('UX Fragments', () => {
       currentPage = openFragmentsPage();
 
       currentPage = currentPage.getContent().openAddFragmentPage();
+      cy.validateAppBuilderUrlPathname('/fragment/add');
       currentPage.getContent().typeCode(fragment.code);
       currentPage.getContent().typeGuiCode(fragment.guiCode);
       currentPage = currentPage.getContent().save();
@@ -44,6 +45,7 @@ describe('UX Fragments', () => {
       currentPage = openFragmentsPage();
 
       currentPage = currentPage.getContent().getKebabMenu(fragment.code).open().openEdit();
+      cy.validateAppBuilderUrlPathname(`/fragment/edit/${fragment.code}`);
       currentPage.getContent().getCodeInput().should('be.disabled');
       currentPage.getContent().typeGuiCode('_updated');
 
@@ -79,8 +81,7 @@ describe('UX Fragments', () => {
       currentPage = openFragmentsPage();
       currentPage.getContent().getSearchCodeInput().type('z');
       currentPage.getContent().getSearchSubmitButton().click();
-      cy.wait(1000);
-
+      currentPage.getContent().getSpinner().should('exist');
       currentPage.getContent().getPagination()
                  .getItemsCurrent().invoke('text').should('be.equal', '0-0');
       currentPage.getContent().getPagination()

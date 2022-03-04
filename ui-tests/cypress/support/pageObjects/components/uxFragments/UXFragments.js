@@ -11,6 +11,7 @@ export default class UXFragmentsPage extends Content {
   searchForm       = `${htmlElements.form}.FragmentSearchForm`;
   searchCodeInput  = `${htmlElements.input}#fragmentcode[name="code"]`;
   addBtn           = `${htmlElements.button}[type=button].FragmentListContent__add`;
+  spinner          = `${htmlElements.div}.spinner.spinner-md`;
 
   getSearchForm() {
     return this.get()
@@ -47,13 +48,17 @@ export default class UXFragmentsPage extends Content {
                .find(this.addBtn);
   }
 
+  getSpinner() {
+    return this.get()
+               .find(this.spinner);
+  }
+
   getKebabMenu(code) {
     return new FragmentsKebabMenu(this, code);
   }
 
   openAddFragmentPage() {
     this.getAddButton().click();
-    cy.wait(1000); // TODO find a better way to identify when the page loaded
     return new AppPage(AddPage);
   }
 }
@@ -79,7 +84,6 @@ class FragmentsKebabMenu extends KebabMenu {
 
   openEdit() {
     this.getEdit().click();
-    cy.wait(1000); // TODO find a better way to identify when the page loaded
     return new AppPage(AddPage);
   }
 
