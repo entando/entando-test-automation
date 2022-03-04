@@ -84,6 +84,16 @@ export default class FilesListPage extends Content {
     return new FilesKebabMenu(this, rowPos);
   }
 
+  getKebabMenuButton(rowPos) {
+    return this.getTableRow(rowPos)
+               .find(htmlElements.button);
+  }
+
+  openKebabMenu(rowPos) {
+    this.getKebabMenuButton(rowPos).click();
+    return new FolderKebabMenu(this, rowPos);
+  }
+
   openUploadFilesPage() {
     this.getUploadFilesOperationButton().click();
     return new AppPage(UploadFilesPage);
@@ -105,7 +115,7 @@ export default class FilesListPage extends Content {
 
 }
 
-class FilesKebabMenu extends KebabMenu {
+class FolderKebabMenu extends KebabMenu {
 
   delete = `${htmlElements.li}.FilesListMenuAction__delete`;
 
@@ -115,8 +125,8 @@ class FilesKebabMenu extends KebabMenu {
   }
 
   get() {
-    return this.parent.getTableRow(this.row)
-               .children(htmlElements.div);
+    return this.parent.getKebabMenuButton(this.row)
+               .siblings(htmlElements.ul);
   }
 
   getDelete() {
@@ -130,3 +140,5 @@ class FilesKebabMenu extends KebabMenu {
   }
 
 }
+
+class FilesKebabMenu extends KebabMenu {}
