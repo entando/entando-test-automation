@@ -73,6 +73,16 @@ describe('File browser', () => {
       currentPage.getContent().getUploadButton().should('exist').and('be.visible');
     });
 
+    it([Tag.SMOKE, 'ENG-3297'], 'Create folder page', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateFolderPage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      currentPage.getContent().getCreateFolderForm().should('exist').and('be.visible');
+      currentPage.getContent().getNameInput().should('exist').and('be.visible');
+      currentPage.getContent().getCancelButton().should('exist').and('be.visible');
+      currentPage.getContent().getSaveButton().should('exist').and('be.visible');
+    });
+
   });
 
   const testFileInfo = {path: '', name: 'data1.json', base64: '', type: 'application/json'}
