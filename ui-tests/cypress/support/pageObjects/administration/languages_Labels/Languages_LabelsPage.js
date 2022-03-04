@@ -1,11 +1,15 @@
-import Content from '../../app/Content';
-import { htmlElements } from '../../WebElement';
-import DeleteDialog from '../../app/DeleteDialog';
-import AddLabelPage from './AddLabelPage';
-import AppPage from '../../app/AppPage';
-import KebabMenu from '../../app/KebabMenu';
+import AddLabelPage   from './AddLabelPage';
+import AppPage        from '../../app/AppPage';
+import Content        from '../../app/Content';
+import DeleteDialog   from '../../app/DeleteDialog';
+import {htmlElements} from '../../WebElement';
+import KebabMenu      from '../../app/KebabMenu';
 
 export default class Languages_LabelsPage extends Content {
+
+  languageNavigation = `${htmlElements.ul}[role=tablist].nav-tabs`;
+  languageForm = `${htmlElements.form}.LanguageForm`;
+  languageTable = `${htmlElements.table}.ActiveLangTable__table`;
 
   labelsTabLink = `${htmlElements.a}[role=menuitem]`;
   labelSearchFormField = `${htmlElements.input}[name=key]#text`;
@@ -15,14 +19,11 @@ export default class Languages_LabelsPage extends Content {
   displayedLabelsTable = `${htmlElements.table}.LabelsTable__table`;
   displayedLabelsTab = `${htmlElements.div}[id=labels-tabs-pane-0]`;
   labelsAddButton = `${htmlElements.button}[type=button].LabelsAndLanguagesPage__add-label`;
-  languageNavigation = `${htmlElements.ul}[role=tablist].nav-tabs`;
   labelPaginationForm = `${htmlElements.form}.content-view-pf-pagination`;
   labelPaginationInput = `${htmlElements.input}[type=text].pagination-pf-page`;
   labelForwardButtons = `${htmlElements.ul}.pagination-pf-forward`;
   labelBackButtons = `${htmlElements.ul}.pagination-pf-back`;
   
-
-
   getLanguagesTabLink() {
     return this.getContents().find(this.labelsTabLink).eq(0);
   }
@@ -33,15 +34,8 @@ export default class Languages_LabelsPage extends Content {
 
   //LANGUAGES
 
-  getLanguageArea() {
-    return this.get()
-      .children(htmlElements.div)
-      .children(htmlElements.div).eq(2);
-  }
-
   getAddLanguageForm() {
-    return this.getLanguageArea()
-      .find(htmlElements.form);
+    return this.get().find(this.languageForm);
   }
 
   getLanguageDropdown() {
@@ -56,7 +50,7 @@ export default class Languages_LabelsPage extends Content {
 
   getLanguageFromDropdownByCode(code) {
     return this.getLanguageDropdown()
-      .children(`${htmlElements.option}[value=${code}]`)
+      .children(`${htmlElements.option}[value=${code}]`);
   }
 
   getAddLanguageSubmit() {
@@ -70,8 +64,7 @@ export default class Languages_LabelsPage extends Content {
   }
 
   getLanguageTable() {
-    return this.getLanguageArea()
-      .find(`${htmlElements.table}.ActiveLangTable__table`);
+    return this.get().find(this.languageTable);
   }
 
   getLanguageTableRows() {
@@ -86,7 +79,7 @@ export default class Languages_LabelsPage extends Content {
 
   getDeleteLanguageByIndex(index) {
     return this.getLanguageRowByIndex(index)
-      .find(`${htmlElements.button}.ActiveLangTable__delete-tag-btn`)
+      .find(`${htmlElements.button}.ActiveLangTable__delete-tag-btn`);
   }
 
   clickDeleteLanguageByIndex(index) {
@@ -97,15 +90,15 @@ export default class Languages_LabelsPage extends Content {
   //LABELS
 
   getLabelSearchFormArea() {
-    return this.getContents().find(this.labelSearchFormArea)
+    return this.getContents().find(this.labelSearchFormArea);
   }
 
   getLabelSearchForm() {
-    return this.getLabelSearchFormArea().find(this.labelSearchFormField)
+    return this.getLabelSearchFormArea().find(this.labelSearchFormField);
   }
 
   getSearchSubmitButton() {
-    return this.getLabelSearchFormArea().find(this.searchFormSubmit)
+    return this.getLabelSearchFormArea().find(this.searchFormSubmit);
   }
 
   getAddLabelButton() {
@@ -118,27 +111,27 @@ export default class Languages_LabelsPage extends Content {
   }
 
   getDisplayedLabelsTab() {
-    return this.getContents().find(this.displayedLabelsTab)
+    return this.getContents().find(this.displayedLabelsTab);
   }
 
   getDisplayedLabelsTable() {
-    return this.getDisplayedLabelsTab().find(this.displayedLabelsTable)
+    return this.getDisplayedLabelsTab().find(this.displayedLabelsTable);
   }
 
   getDisplayedLabelsCount() {
-    return this.getDisplayedLabelsTable().find(this.displayedLabelRow)
+    return this.getDisplayedLabelsTable().find(this.displayedLabelRow);
   }
 
   getActiveLanguageSelector() {
-    return this.getContents().find(this.languageNavigation)
+    return this.getContents().find(this.languageNavigation);
   }
 
   getLabelPaginationForm() {
-    return this.getContents().find(this.labelPaginationForm)
+    return this.getContents().find(this.labelPaginationForm);
   }
 
   getLabelPaginationTextArea() {
-    return this.getLabelPaginationForm().find(this.labelPaginationInput)
+    return this.getLabelPaginationForm().find(this.labelPaginationInput);
   }
 
   getActionsButtonByCode(code) {
@@ -156,7 +149,7 @@ export default class Languages_LabelsPage extends Content {
   }
 
   getLabelForwardButtons() {
-    return this.getLabelPaginationForm().find(this.labelForwardButtons)
+    return this.getLabelPaginationForm().find(this.labelForwardButtons);
   }
 
   getLabelNextButton() {
@@ -168,7 +161,7 @@ export default class Languages_LabelsPage extends Content {
   }
 
   getLabelBackButtons() {
-    return this.getLabelPaginationForm().find(this.labelBackButtons)
+    return this.getLabelPaginationForm().find(this.labelBackButtons);
   }
 
   getLabelPreviousButton() {
@@ -194,7 +187,7 @@ class LabelsKebabMenu extends KebabMenu {
 
   getDropdown() {
     return this.get()
-      .find(`${htmlElements.ul}.dropdown-menu`)
+      .find(`${htmlElements.ul}.dropdown-menu`);
   }
 
   getEdit() {
@@ -209,7 +202,7 @@ class LabelsKebabMenu extends KebabMenu {
 
   openEdit() {
     this.getEdit().click();
-    return new AppPage(AddLabelPage)
+    return new AppPage(AddLabelPage);
   }
 
   clickDelete() {

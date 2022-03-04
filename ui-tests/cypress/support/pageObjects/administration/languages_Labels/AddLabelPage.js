@@ -1,9 +1,10 @@
-import AppPage from '../../app/AppPage';
-import Content from '../../app/Content';
-import { htmlElements } from '../../WebElement';
+import AppPage              from '../../app/AppPage';
+import Content              from '../../app/Content';
+import {htmlElements}       from '../../WebElement';
 import Languages_LabelsPage from './Languages_LabelsPage';
 
 export default class AddLabelPage extends Content {
+  
   getForm() {
     return this.get().find(htmlElements.form);
   }

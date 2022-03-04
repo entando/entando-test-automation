@@ -1,5 +1,5 @@
-import HomePage from '../../support/pageObjects/HomePage';
-import { htmlElements } from '../../support/pageObjects/WebElement';
+import HomePage       from '../../support/pageObjects/HomePage';
+import {htmlElements} from '../../support/pageObjects/WebElement';
 
 describe('Languages', () => {
 
@@ -154,43 +154,47 @@ describe('Languages', () => {
     });
 
     afterEach(() => {
-        cy.get('@languageToDelete').then((languageToDelete) => {
-            if (languageToDelete) {
+        cy.get('@languageToDelete').then((language) => {
+            if (language) {
                 cy.languagesController()
-                    .then(controller => controller.putLanguage(languageToDelete.code, languageToDelete.name, false, false));
+                    .then(controller => controller.putLanguage(language.code, language.name, false, false));
             }
         });
         cy.kcLogout();
     });
 
-    it([Tag.SMOKE, 'ENG-3237'], 'Languages section', () => {
-        currentPage = openLanguagesPage();
-        currentPage.getContent().getLanguageTable().should('exist').and('be.visible');
-        currentPage.getContent().getLanguageRowByIndex(0).children(htmlElements.td).should('have.length', 3);
-        currentPage.getContent().getDeleteLanguageByIndex(0).should('exist').and('be.visible');
-        currentPage.getContent().getLanguageDropdown().should('exist').and('be.visible');
-        currentPage.getContent().getAddLanguageSubmit().should('exist').and('be.visible');
-    });
+    describe('Languages page structure', () => {
 
-    it([Tag.SANITY, 'ENG-3237'], 'English and Italian should be active by default, and English should be the default language', () => {
-        currentPage = openLanguagesPage();
-        currentPage.getContent().getLanguageTableRows().should('have.length', 2);
-        getLanguageTableRowByCode(languages.it.code).should('exist');
-        getLanguageTableRowByCode(languages.en.code).should('exist').and('contain', '*');
-    });
+        it([Tag.SMOKE, 'ENG-3237'], 'Languages section', () => {
+            currentPage = openLanguagesPage();
+            currentPage.getContent().getLanguageTable().should('exist').and('be.visible');
+            currentPage.getContent().getLanguageRowByIndex(0).children(htmlElements.td).should('have.length', 3);
+            currentPage.getContent().getDeleteLanguageByIndex(0).should('exist').and('be.visible');
+            currentPage.getContent().getLanguageDropdown().should('exist').and('be.visible');
+            currentPage.getContent().getAddLanguageSubmit().should('exist').and('be.visible');
+        });
 
-    it([Tag.FEATURE, 'ENG-3237'], 'Verify the available languages in the language selector', () => {
-        let expectedLanguagesInDropdown = Object.keys(languages).length-1;
-        currentPage = openLanguagesPage();
-        currentPage.getContent().getLanguageDropdown().as('languageDropdown');
-        currentPage.getContent().getLanguageDropdown().children(htmlElements.option).should('have.length', expectedLanguagesInDropdown);
-        cy.get('@languageDropdown').then(res => {
-            for(const language in languages) {
-                if(language!=languages.en.code && language!=languages.it.code) {
-                    cy.wrap(res).children(`${htmlElements.option}[value=${language}]`).should('exist')
-                } else cy.wrap(res).children(`${htmlElements.option}[value=${language}]`).should('not.exist');
-            }
-        })
+        it([Tag.SANITY, 'ENG-3237'], 'English and Italian should be active by default, and English should be the default language', () => {
+            currentPage = openLanguagesPage();
+            currentPage.getContent().getLanguageTableRows().should('have.length', 2);
+            getLanguageTableRowByCode(languages.it.code).should('exist');
+            getLanguageTableRowByCode(languages.en.code).should('exist').and('contain', '*');
+        });
+
+        it([Tag.FEATURE, 'ENG-3237'], 'Verify the available languages in the language selector', () => {
+            let expectedLanguagesInDropdown = Object.keys(languages).length - 1;
+            currentPage = openLanguagesPage();
+            currentPage.getContent().getLanguageDropdown().as('languageDropdown');
+            currentPage.getContent().getLanguageDropdown().children(htmlElements.option).should('have.length', expectedLanguagesInDropdown);
+            cy.get('@languageDropdown').then(res => {
+                for (const language in languages) {
+                    if (language != languages.en.code && language != languages.it.code) {
+                        cy.wrap(res).children(`${htmlElements.option}[value=${language}]`).should('exist');
+                    } else cy.wrap(res).children(`${htmlElements.option}[value=${language}]`).should('not.exist');
+                }
+            })
+        });
+
     });
 
     describe('Add and remove functionalities', () => {
@@ -265,7 +269,7 @@ describe('Languages', () => {
 
         it([Tag.ERROR, 'ENG-3237'], 'When trying to add a language without selecting one, an error toast should be displayed', () => {
             currentPage = openLanguagesPage();
-            currentPage.getContent().getSelectedLanguageFromDropdown().should('have.text', 'Choose one option')
+            currentPage.getContent().getSelectedLanguageFromDropdown().should('have.text', 'Choose one option');
             currentPage.getContent().getAddLanguageSubmit().click();
             cy.validateToast(currentPage, null, false);
         });
@@ -278,7 +282,7 @@ describe('Languages', () => {
         currentPage = currentPage.getMenu().getAdministration().open();
         currentPage = currentPage.openLanguages_Labels();
         currentPage.getContent().getLanguagesTabLink().click();
-        cy.wait(1000); //wait for page to load
+        currentPage.getContent().getAddLanguageForm().should('exist').and('be.visible');
         return currentPage;
     };
 
