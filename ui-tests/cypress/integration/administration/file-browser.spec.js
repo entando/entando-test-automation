@@ -98,16 +98,30 @@ describe('File browser', () => {
       currentPage.getContent().getSaveButton().should('exist').and('be.visible');
     });
 
+    it([Tag.SANITY, 'ENG-3297'], 'Subfolder content', () => {
+      createTestFolder(testFolderInfo);
+      createTestFolder(subfolderTestFolderInfo);
+      createTestFile(subfolderTestFileInfo);
+      currentPage = openPublicFolder();
+      openSubFolder(-1);
+      currentPage.getContent().getFilesTable().should('exist').and('be.visible');
+      currentPage.getContent().getTableRows().should('have.length', 2);
+      currentPage.getContent().getFileKebabMenu(testFileInfo.name).should('exist');
+      currentPage.getContent().getFolderLink(0).should('exist');
+    });
+
   });
 
-  const testFileInfo = {path: '', name: 'data1.json', base64: '', type: 'application/json'}
+  const testFileInfo          = {path: '',      name: 'data1.json', base64: '', type: 'application/json'}
+  const subfolderTestFileInfo = {path: 'test/', name: 'data1.json', base64: '', type: 'application/json'}
 
   const createTestFile = (fileInfo) => {
     cy.fileBrowserController().then(controller => controller.createFile(fileInfo, false))
                               .then(() => cy.wrap([fileInfo.path + fileInfo.name]).as('filesToBeDeleted'));
   }
 
-  const testFolderInfo = {name: 'test', path: ''}
+  const testFolderInfo          = {name: 'test',    path: ''}
+  const subfolderTestFolderInfo = {name: 'subTest', path: 'test/'}
 
   const createTestFolder = (folderInfo) => {
     cy.fileBrowserController().then(controller => controller.createFolder(folderInfo.path + folderInfo.name))
