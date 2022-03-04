@@ -2,6 +2,7 @@ const apiURL = Cypress.config('restAPI');
 
 export const categoriesAPIURL      = `${apiURL}/categories`;
 export const databaseAPIURL        = `${apiURL}/database`;
+export const fileBrowserAPIURL     = `${apiURL}/fileBrowser`;
 export const fragmentsAPIURL       = `${apiURL}/fragments`;
 export const groupsAPIURL          = `${apiURL}/groups`;
 export const labelsAPIURL          = `${apiURL}/labels`;
@@ -13,9 +14,6 @@ export const rolesAPIURL           = `${apiURL}/roles`;
 export const usersAPIURL           = `${apiURL}/users`;
 export const userPreferencesAPIURL = `${apiURL}/userPreferences`;
 export const widgetsAPIURL         = `${apiURL}/widgets`;
-
-const fileBrowserURL           = `${apiURL}/fileBrowser`;
-export const fileBrowserAPIURL = `${fileBrowserURL}/file`;
 
 const pluginsURL = `${apiURL}/plugins`;
 

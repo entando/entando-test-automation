@@ -62,9 +62,7 @@ export default class FilesListPage extends Content {
   }
 
   getTableRows() {
-    return this.getFilesTable()
-               .children(htmlElements.tbody)
-               .children(htmlElements.tr);
+    return cy.get(`${htmlElements.tbody} ${htmlElements.tr}`);
   }
 
   getTableRow(rowPos) {
