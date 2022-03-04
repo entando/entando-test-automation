@@ -1,5 +1,9 @@
 import Content from '../../app/Content.js';
 import { htmlElements } from '../../WebElement';
+import DeleteDialog from '../../app/DeleteDialog';
+import AppPage from '../../app/AppPage';
+import AddSenderPage from './AddSenderPage';
+import KebabMenu from '../../app/KebabMenu';
 
 
 export default class EmailConfigurationPage extends Content {
@@ -116,9 +120,12 @@ export default class EmailConfigurationPage extends Content {
         return this.getSenderMngt()
                    .children(htmlElements.a);
     }
-
+    openAddSender(){
+        return this.getAddButton().click();
+        
+    }
     getSenderForm(){
-        return this.getContents()
+        return this.get()
                     .find(`${htmlElements.form}.form-horizontal`);
     }
 
@@ -133,32 +140,53 @@ export default class EmailConfigurationPage extends Content {
                     .find(`${htmlElements.div}.form-group`).eq(1)
                     .find(`${htmlElements.input}[name="email"]`);                  
     }
-
-    getActionButton(code){
-        this.code = code;
-        return this.getSenderTable()
-                   .children(htmlElements.tbody)
-                   .find(`${htmlElements.button}#sender-actions-${code}`)
-                   .parent(`${htmlElements.div}.dropdown-kebab-pf`);
-         
-    }
-
-    getContextMenu(){
-        return this.getActionButton(this.code)
-                   .find(`${htmlElements.ul}[role="menu"]`);
-    }
-    getEditButton(){
-        return this.getContextMenu()
-                   .find(`${htmlElements.li}.LinkMenuItem`);
-    }
-    getDeleteButton(){
-        return this.getContextMenu()
-                   .find(`${htmlElements.li}[role="presentation"]`);
-    }
     senderSubmit(){
         return this.getSenderForm()
                    .children(`${htmlElements.button}[type="submit"]`);
     }
 
+   
+    getKebabMenu(code) {
+        return new SenderKebabMenu(this, code);
+      }
+
 
 }
+
+class SenderKebabMenu extends KebabMenu {
+
+    get() {
+      return this.parent.getSenderTable(this.code)
+        .find(htmlElements.div)
+        .find(`${htmlElements.button}#sender-actions-${this.code}`)
+        .parent(`${htmlElements.div}.dropdown-kebab-pf`);
+    }
+  
+    getDropdown() {
+      return this.get()
+                .find(`${htmlElements.ul}[role="menu"]`);
+    }
+  
+    getEdit() {
+      return this.get()
+                .find(`${htmlElements.li}.LinkMenuItem`);
+    }
+  
+    getDelete() {
+      return this.get()
+                .find(`${htmlElements.li}[role="presentation"]`);
+
+    }
+  
+    openEdit() {
+      this.getEdit().click();
+      return new AppPage(AddSenderPage);
+    }
+  
+    clickDelete() {
+      this.getDelete().click();
+      this.parent.parent.getDialog().setBody(DeleteDialog);
+    }
+  
+  }
+

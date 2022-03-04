@@ -45,7 +45,7 @@ describe('Sender Management Functionalities', () =>{
       it([Tag.SMOKE, 'ENG-3299'], 'New Sender is displayed', () => {
       
         currentPage = openSenderPage();
-        currentPage.getContent().getAddButton().click().wait(1000);
+        currentPage.getContent().openAddSender();
         cy.validateAppBuilderUrlPathname('/email-config/senders/add');
         currentPage.getContent().getSenderForm()
                    .should('be.visible')
@@ -65,26 +65,23 @@ describe('Sender Management Functionalities', () =>{
 
         addTestSender();
         currentPage = openSenderPage();
-        currentPage.getContent().getActionButton(senderTest.code).should('be.visible');
-        currentPage.getContent().getActionButton(senderTest.code).click();
-        currentPage.getContent().getContextMenu().should('be.visible');
-        currentPage.getContent().getContextMenu()
+        currentPage = currentPage.getContent().getKebabMenu(senderTest.code).open();
+        currentPage.getDropdown().should('be.visible');
+        currentPage.getDropdown()
                     .contains('Edit')
                     .should('be.visible')
                     .should('have.text','Edit');
-        currentPage.getContent().getContextMenu()
+        currentPage.getDropdown()
                     .contains('Delete')
                     .should('be.visible')
                     .should('have.text','Delete');
-
 
       });
       it([Tag.SMOKE, 'ENG-3299'], 'Edit Sender is displayed', () => {
 
         addTestSender();
         currentPage = openSenderPage();
-        currentPage.getContent().getActionButton(senderTest.code).click();
-        currentPage.getContent().getEditButton().click().wait(1000);
+        currentPage = currentPage.getContent().getKebabMenu(senderTest.code).open().openEdit();
         cy.validateAppBuilderUrlPathname('/email-config/senders/edit/TestCode');
         currentPage.getContent().getSenderForm()
                    .should('be.visible')
@@ -109,7 +106,7 @@ describe('Sender Management Functionalities', () =>{
 
 
         currentPage = openSenderPage();
-        currentPage.getContent().getAddButton().click().wait(1000);
+        currentPage.getContent().openAddSender();
         currentPage.getContent()
                    .getCodeInput()
                    .type(senderTest.code);
@@ -134,20 +131,20 @@ describe('Sender Management Functionalities', () =>{
 
         addTestSender();
         currentPage = openSenderPage();
-        currentPage.getContent().getActionButton(senderTest.code).click();
-        currentPage.getContent().getEditButton().click().wait(1000);
+        currentPage = currentPage.getContent().getKebabMenu(senderTest.code).open().openEdit();
         cy.validateAppBuilderUrlPathname('/email-config/senders/edit/TestCode');
         currentPage.getContent()
                    .getEmailInput()
                    .clear()
                    .type('changes@testmail.com');
         currentPage.getContent().senderSubmit()
-                   .click().wait(500);
+                   .click();
+        cy.validateToast(currentPage);
+        currentPage = openSenderPage();          
         currentPage.getContent()
                    .getSenderTable()
                    .contains('changes@testmail.com')
                    .should('be.visible');
-        cy.validateToast(currentPage);
 
       });
 
@@ -155,11 +152,8 @@ describe('Sender Management Functionalities', () =>{
 
         addTestSender();
         currentPage = openSenderPage();
-        currentPage.getContent().getActionButton(senderTest.code).click();
-        currentPage.getContent().getDeleteButton().click().wait(1000);
-        currentPage.getDialog()
-                   .get().children(`${htmlElements.div}#DeleteSenderModal`)
-                   .should('be.visible');
+        currentPage.getContent().getKebabMenu(senderTest.code).open().clickDelete();
+        currentPage.getDialog().getBody().getStateInfo().should('exist').and('contain', senderTest.code);
 
       });
 
@@ -167,10 +161,10 @@ describe('Sender Management Functionalities', () =>{
 
         addTestSender();
         currentPage = openSenderPage();
-        currentPage.getContent().getActionButton(senderTest.code).click();
-        currentPage.getContent().getDeleteButton().click().wait(1000);
-        currentPage.getDialog().getCancelButton().click();
-        currentPage.getContent().getSenderTable().should('contain', 'TestCode');
+        currentPage.getContent().getKebabMenu(senderTest.code).open().clickDelete();
+        currentPage.getDialog().cancel();
+        currentPage.getContent().getSenderTable().should('contain', 'TestCode').and('exist');
+        currentPage.getDialog().get().should('not.exist');
 
       });
       
@@ -179,8 +173,7 @@ describe('Sender Management Functionalities', () =>{
 
         addTestSender();
         currentPage = openSenderPage();
-        currentPage.getContent().getActionButton(senderTest.code).click();
-        currentPage.getContent().getDeleteButton().click().wait(1000);
+        currentPage.getContent().getKebabMenu(senderTest.code).open().clickDelete();
         currentPage.getDialog().confirm();
         cy.validateToast(currentPage);
         currentPage.getContent()
@@ -225,7 +218,7 @@ describe('Sender Management Functionalities', () =>{
       it([Tag.FEATURE, 'ENG-3299'], 'Save Button is disabled ', () => {
          
         currentPage = openSenderPage();
-        currentPage.getContent().getAddButton().click().wait(1000);
+        currentPage.getContent().openAddSender();
         cy.validateAppBuilderUrlPathname('/email-config/senders/add');
         currentPage.getContent().getSenderForm()
                    .should('be.visible');
@@ -237,8 +230,8 @@ describe('Sender Management Functionalities', () =>{
       it([Tag.FEATURE, 'ENG-3299'], 'Code Input is disabled ', () => {
       
         currentPage = openSenderPage();
-        currentPage.getContent().getActionButton(sender1.code).click();
-        currentPage.getContent().getEditButton().click().wait(1000);
+        currentPage = currentPage.getContent().getKebabMenu(sender1.code).open().openEdit();
+
         cy.validateAppBuilderUrlPathname('/email-config/senders/edit/CODE1');
         currentPage.getContent().getSenderForm()
                    .should('be.visible');
@@ -263,7 +256,7 @@ describe('Sender Management Functionalities', () =>{
       
       it([Tag.ERROR, 'ENG-3299'], 'Save Button is disabled when input is empty ', () => {
         
-        currentPage.getContent().getAddButton().click().wait(1000);
+        currentPage.getContent().openAddSender();
         currentPage.getContent()
                     .getCodeInput()
                     .clear()
@@ -278,7 +271,7 @@ describe('Sender Management Functionalities', () =>{
    
       it([Tag.ERROR, 'ENG-3299'], 'Invalid value ', () => {
 
-        currentPage.getContent().getAddButton().click().wait(1000);
+        currentPage.getContent().openAddSender();
         currentPage.getContent()
                    .getCodeInput()
                    .type(senderTest.code);
