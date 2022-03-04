@@ -23,30 +23,13 @@ class SenderController{
           }
         });
       }
-
-      defaultEditSender(code){
-
-        cy.request({
-          url: `${controller}/${code}`,
-          method: 'PUT',
-          body: {
-            code: "CODE1",
-            email: "EMAIL1@EMAIL.COM"            
-          },
-          auth: {
-            bearer: this.access_token
-          }
-        });
-
-      }
-      addDefaultSender(code, email) {
+      addSender(code, email) {
         cy.request({
           url: `${controller}`,
           method: 'POST',
           body: {
             
-            code: `${code}`,
-            email:`${email}`           
+            code, email         
             
           },
           auth: {
