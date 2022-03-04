@@ -1,6 +1,6 @@
-import HomePage from '../../support/pageObjects/HomePage';
-import { htmlElements } from '../../support/pageObjects/WebElement';
-import { controller as assetsAPIUrl  } from '../../support/restAPI/assetsAPI';
+import HomePage       from '../../support/pageObjects/HomePage';
+import {htmlElements} from '../../support/pageObjects/WebElement';
+import {assetsAPIUrl} from '../../support/restAPI/controllersEndPoints';
 
 const addAsset = (fileInfo, metadata) => cy.assetsController().then(controller => controller.addAsset(fileInfo, metadata));
 
@@ -18,8 +18,8 @@ describe([Tag.GTS], 'Assets', () => {
 
   let assetToBeDeleted = false;
 
-  const testFileInfo = { fixture: 'upload/image1.JPG', fileName: 'image1.JPG', fileType: 'image/jpeg' };
-  const testMetadata = { group: 'administrators', categories: [], type: 'image' };
+  const testFileInfo = {fixture: 'upload/image1.JPG', fileName: 'image1.JPG', fileType: 'image/jpeg'};
+  const testMetadata = {group: 'administrators', categories: [], type: 'image'};
 
   beforeEach(() => {
     cy.kcLogin('login/admin').as('tokens');
@@ -37,10 +37,10 @@ describe([Tag.GTS], 'Assets', () => {
 
   describe('Delete asset', () => {
     beforeEach(() => {
-      addAsset(testFileInfo, testMetadata).then(({ response }) => {
+      addAsset(testFileInfo, testMetadata).then(({response}) => {
         assetId = response.payload.id;
       });
-    })
+    });
 
     it('Delete asset', () => {
       currentPage = openAssetsPage();
@@ -59,17 +59,17 @@ describe([Tag.GTS], 'Assets', () => {
         mainGroup: 'administrators',
         typeCode: 'BNR',
         attributes: [
-          { code: 'title', values: { en: 'test', it: 'test' } },
-          { code: 'image', values: { en: { id: assetId, correlationCode: assetId } }}
-        ],
+          {code: 'title', values: {en: 'test', it: 'test'}},
+          {code: 'image', values: {en: {id: assetId, correlationCode: assetId}}}
+        ]
       };
       let contentId;
 
       cy.contentsController()
         .then(controller => controller.postContent(content))
         .then((response) => {
-          const { body: { payload } } = response;
-          contentId = payload[0].id;
+          const {body: {payload}} = response;
+          contentId               = payload[0].id;
         });
       cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
 
@@ -93,7 +93,7 @@ describe([Tag.GTS], 'Assets', () => {
 
   describe('Edit asset', () => {
     beforeEach(() => {
-      addAsset(testFileInfo, testMetadata).then(({ response }) => {
+      addAsset(testFileInfo, testMetadata).then(({response}) => {
         assetId = response.payload.id;
 
         assetToBeDeleted = true;
@@ -138,7 +138,7 @@ describe([Tag.GTS], 'Assets', () => {
     it('Add asset', () => {
       cy.intercept('POST', assetsAPIUrl, (req) => {
         req.continue((res) => {
-          assetId =  res.body.payload.id;
+          assetId = res.body.payload.id;
         });
       });
 
@@ -150,7 +150,7 @@ describe([Tag.GTS], 'Assets', () => {
       cy.wait(2000);
 
       currentPage.getContent().getTableRows().then(rows =>
-        cy.wrap(rows).eq(0).children(htmlElements.td).eq(2).should('contain.text', 'image1.JPG')
+          cy.wrap(rows).eq(0).children(htmlElements.td).eq(2).should('contain.text', 'image1.JPG')
       );
 
       assetToBeDeleted = true;
