@@ -17,6 +17,7 @@ export default class FilesListPage extends Content {
 
   filesTable = `${htmlElements.table}.FilesListTable__table`;
   folderLink = `${htmlElements.a}.FilesListTable__link-dir`;
+  upButton   = `${htmlElements.a}.FilesListTable__up-link`;
 
   getFileBrowserBreadCrumbs() {
     return this.getContents()
@@ -61,6 +62,10 @@ export default class FilesListPage extends Content {
                .children(htmlElements.tr);
   }
 
+  getUpButton() {
+    return this.getTableHeaders().find(this.upButton);
+  }
+
   getTableRows() {
     return cy.get(`${htmlElements.tbody} ${htmlElements.tr}`);
   }
@@ -68,6 +73,11 @@ export default class FilesListPage extends Content {
   getTableRow(rowPos) {
     return this.getTableRows()
                .eq(rowPos);
+  }
+
+  getFolderLink(rowPos) {
+    return this.getTableRow(rowPos)
+               .find(this.folderLink);
   }
 
   getKebabMenu(rowPos) {
@@ -90,10 +100,7 @@ export default class FilesListPage extends Content {
   }
 
   openSubFolder(rowPos) {
-    this.getTableRow(rowPos)
-        .find(this.folderLink)
-        .click();
-    cy.wait(1000); //TODO find a better way to identify when the list loaded
+    this.getFolderLink(rowPos).click();
   }
 
 }
