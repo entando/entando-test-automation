@@ -89,9 +89,18 @@ export default class FilesListPage extends Content {
                .find(htmlElements.button);
   }
 
+  getFileKebabMenu(name) {
+    return cy.get(`${htmlElements.button}[id='${name}-actions']`);
+  }
+
   openKebabMenu(rowPos) {
     this.getKebabMenuButton(rowPos).click();
     return new FolderKebabMenu(this, rowPos);
+  }
+
+  openFileKebabMenu(name) {
+    this.getFileKebabMenu(name).click();
+    return new FilesKebabMenu(this, name)
   }
 
   openUploadFilesPage() {
@@ -141,4 +150,39 @@ class FolderKebabMenu extends KebabMenu {
 
 }
 
-class FilesKebabMenu extends KebabMenu {}
+class FilesKebabMenu extends KebabMenu {
+
+  download = `${htmlElements.li}.FilesListMenuAction__download`;
+  delete   = `${htmlElements.li}.FilesListMenuAction__delete`;
+
+  constructor(parent, name) {
+    super(parent);
+    this.name = name;
+  }
+
+  get() {
+    return this.parent.getFileKebabMenu(this.name)
+               .siblings(htmlElements.ul);
+  }
+
+  getDelete() {
+    return this.get()
+               .find(this.delete);
+  }
+
+  getDownload() {
+    return this.get()
+               .find(this.download);
+  }
+
+  clickDelete() {
+    this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
+  }
+
+  clickDownload() {
+    this.getDownload().click();
+    return new AppPage(FilesListPage);
+  }
+
+}

@@ -29,6 +29,10 @@ export default class FileBrowserController extends AbstractController {
     });
   }
 
+  createFile(fileInfo, protectedFolder) {
+    return this.uploadTextFile(fileInfo, `${this.apiURL}/file`, protectedFolder);
+  }
+
   deleteFile(currentPath) {
     return this.request({
       url: `${this.apiURL}/file`,

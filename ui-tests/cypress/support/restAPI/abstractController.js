@@ -59,4 +59,24 @@ export default class AbstractController {
              .then(body => this.uploadRequest({method: 'POST', body}));
   }
 
+  uploadTextFile(fileInfo, url, protectedFolder) {
+    return cy.fixture(`upload/${fileInfo.name}`)
+      .then(file => {
+        if(fileInfo.type == 'application/json') fileInfo.base64 = btoa(JSON.stringify(file, null, 2) + "\n");
+        else fileInfo.base64 = btoa(file);
+      })
+      .then(() => this.request(
+        {
+          method: 'POST',
+          url: url,
+          body: {
+            protectedFolder: protectedFolder,
+            path:            `/${fileInfo.path}${fileInfo.name}`,
+            filename:        fileInfo.name,
+            base64:          fileInfo.base64
+          }
+        })
+      )
+  }
+
 }
