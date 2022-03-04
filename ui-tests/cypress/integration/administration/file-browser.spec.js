@@ -54,7 +54,23 @@ describe('File browser', () => {
       currentPage.getDelete().should('exist').and('be.visible');
     })
 
+    it([Tag.SMOKE, 'ENG-3297'], 'File context menu', () => {
+      createTestFile(testFileInfo);
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openFileKebabMenu(testFileInfo.name);
+      currentPage.get().should('exist').and('be.visible');
+      currentPage.getDownload().should('exist').and('be.visible');
+      currentPage.getDelete().should('exist').and('be.visible');
+    });
+
   });
+
+  const testFileInfo = {path: '', name: 'data1.json', base64: '', type: 'application/json'}
+
+  const createTestFile = (fileInfo) => {
+    cy.fileBrowserController().then(controller => controller.createFile(fileInfo, false))
+                              .then(() => cy.wrap([fileInfo.path + fileInfo.name]).as('filesToBeDeleted'));
+  }
 
   const testFolderInfo = {name: 'test', path: ''}
 
