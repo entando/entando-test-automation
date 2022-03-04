@@ -12,6 +12,7 @@ export default class FileBrowserController extends AbstractController {
 
   deleteFile(currentPath) {
     return this.request({
+      url: `${this.apiURL}/file`,
       method: 'DELETE',
       qs: {
         protectedFolder: false,
