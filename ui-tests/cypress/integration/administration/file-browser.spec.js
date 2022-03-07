@@ -1,5 +1,6 @@
-import HomePage       from '../../support/pageObjects/HomePage';
-import {htmlElements} from '../../support/pageObjects/WebElement';
+import {deleteDownloadsFolder} from '../../support/utils';
+import HomePage                from '../../support/pageObjects/HomePage';
+import {htmlElements}          from '../../support/pageObjects/WebElement';
 
 describe('File browser', () => {
 
@@ -108,6 +109,27 @@ describe('File browser', () => {
       currentPage.getContent().getTableRows().should('have.length', 2);
       currentPage.getContent().getFileKebabMenu(testFileInfo.name).should('exist');
       currentPage.getContent().getFolderLink(0).should('exist');
+    });
+
+  });
+
+  describe('File browser interactions', () => {
+
+    beforeEach(() => {
+      cy.wrap(null).as('deleteDownloadsFolder');
+    });
+
+    afterEach(() => {
+      cy.get('@deleteDownloadsFolder').then(deleteFolder => {
+        if(deleteFolder) deleteDownloadsFolder();
+      })
+    });
+
+    it([Tag.SANITY, 'ENG-3297'], 'Downloading a file by clicking on it', () => {
+      createTestFile(testFileInfo);
+      currentPage = openPublicFolder();
+      currentPage.getContent().getFileDownloadLink(testFileInfo.name).click();
+      cy.verifyDownload(testFileInfo.name).as('deleteDownloadsFolder');
     });
 
   });

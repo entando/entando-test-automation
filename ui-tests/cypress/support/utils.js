@@ -11,3 +11,8 @@ export const generateRandomTypeCode = () => {
 };
 
 export const generateRandomNumericId = () => Math.floor(Math.random() * 1000000000);
+
+export const deleteDownloadsFolder = () => {
+  const downloadsFolder = Cypress.config('downloadsFolder')
+  cy.task('deleteFolder', downloadsFolder)
+};

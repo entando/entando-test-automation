@@ -15,9 +15,10 @@ export default class FilesListPage extends Content {
   breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
   operationButtons = `${htmlElements.div}.FileButtonsGroup`;
 
-  filesTable = `${htmlElements.table}.FilesListTable__table`;
-  folderLink = `${htmlElements.a}.FilesListTable__link-dir`;
-  upButton   = `${htmlElements.a}.FilesListTable__up-link`;
+  filesTable     = `${htmlElements.table}.FilesListTable__table`;
+  folderLink     = `${htmlElements.a}.FilesListTable__link-dir`;
+  upButton       = `${htmlElements.a}.FilesListTable__up-link`;
+  downloadLink   = `${htmlElements.a}.FilesListTable__link-download`;
 
   getFileBrowserBreadCrumbs() {
     return this.getContents()
@@ -82,6 +83,12 @@ export default class FilesListPage extends Content {
 
   getKebabMenu(rowPos) {
     return new FilesKebabMenu(this, rowPos);
+  }
+
+  getFileDownloadLink(name) {
+    return this.getFileKebabMenu(name)
+               .closest(htmlElements.tr)
+               .find(this.downloadLink);
   }
 
   getKebabMenuButton(rowPos) {

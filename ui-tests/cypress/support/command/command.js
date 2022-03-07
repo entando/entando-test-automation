@@ -1,3 +1,5 @@
+require('cy-verify-downloads').addCustomCommand();
+
 Cypress.Commands.overwrite('visit', (originalFn, url, options) => {
   return originalFn(Cypress.config('basePath') + url, options);
 });
