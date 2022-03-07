@@ -201,4 +201,9 @@ class FilesKebabMenu extends KebabMenu {
     return new AppPage(FilesListPage);
   }
 
+  clickDialogCancel() {
+    this.parent.parent.getDialog().cancel();
+    return new AppPage(FilesListPage);
+  }
+
 }

@@ -199,6 +199,18 @@ describe('File browser', () => {
       cy.wrap(null).as('filesToBeDeleted');
     });
 
+    it([Tag.SANITY, 'ENG-3297'], 'When canceling the deletion, the modal should close and the file not be deleted', () => {
+      createTestFile(testFileInfo);
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openFileKebabMenu(testFileInfo.name);
+      currentPage.clickDelete();
+      currentPage = currentPage.clickDialogCancel();
+      currentPage.getDialog().get().should('not.exist');
+      currentPage.getContent().getFilesTable().should('exist').and('be.visible');
+      currentPage.getContent().getFileKebabMenu(testFileInfo.name).should('exist');
+      currentPage.getContent().getFileDownloadLink(testFileInfo.name).should('exist');
+    });
+
   });
 
   const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
