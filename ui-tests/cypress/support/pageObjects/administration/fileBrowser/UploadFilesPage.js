@@ -23,6 +23,20 @@ export default class UploadFilesPage extends Content {
                .find(this.breadCrumbs);
   }
 
+  getBreadCrumbsElement(element) {
+    return this.getFileBrowserBreadCrumbs().children(htmlElements.li).eq(element);
+  }
+
+  clickBreadCrumbsRoot() {
+    this.getBreadCrumbsElement(0).click();
+    return new AppPage(FilesListPage);
+  }
+
+  clickFileBrowserBreadCrumbs(element) {
+    this.getBreadCrumbsElement(element).click();
+    return new AppPage(FilesListPage);
+  }
+
   getFileBrowserOperationButtons() {
     return this.getContents()
                .children(htmlElements.div).eq(2)

@@ -15,10 +15,11 @@ export default class FilesListPage extends Content {
   breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
   operationButtons = `${htmlElements.div}.FileButtonsGroup`;
 
-  filesTable     = `${htmlElements.table}.FilesListTable__table`;
-  folderLink     = `${htmlElements.a}.FilesListTable__link-dir`;
-  upButton       = `${htmlElements.a}.FilesListTable__up-link`;
-  downloadLink   = `${htmlElements.a}.FilesListTable__link-download`;
+  filesTable       = `${htmlElements.table}.FilesListTable__table`;
+  emptyFolderAlert = `${htmlElements.div}.alert-warning`;
+  folderLink       = `${htmlElements.a}.FilesListTable__link-dir`;
+  upButton         = `${htmlElements.a}.FilesListTable__up-link`;
+  downloadLink     = `${htmlElements.a}.FilesListTable__link-download`;
 
   getFileBrowserBreadCrumbs() {
     return this.getContents()
@@ -55,6 +56,11 @@ export default class FilesListPage extends Content {
   getFilesTable() {
     return this.getContents()
                .find(this.filesTable);
+  }
+
+  getEmptyFolderAlert() {
+    return this.getContents()
+               .find(this.emptyFolderAlert);
   }
 
   getTableHeaders() {
