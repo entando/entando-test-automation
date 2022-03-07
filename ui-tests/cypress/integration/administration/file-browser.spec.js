@@ -297,6 +297,19 @@ describe('File browser', () => {
       currentPage.getContent().getEmptyFolderAlert().should('exist');
     });
 
+    it([Tag.FEATURE, 'ENG-3297'], 'No file is uploaded when canceling out of upload page', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openUploadFilesPage();
+      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      currentPage.getContent().selectFiles(`cypress/fixtures/upload/${testFileInfo.name}`);
+      currentPage = currentPage.getContent().cancelUpload();
+      cy.wait('@openedFolder');
+      cy.validateAppBuilderUrlPathname('/file-browser');
+      currentPage.getContent().getFilesTable().should('exist');
+      currentPage.getContent().getTableRows().should('have.length', 6);
+      currentPage.getContent().getFileKebabMenu(testFileInfo.name).should('not.exist');
+    });
+
   });
 
   const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
