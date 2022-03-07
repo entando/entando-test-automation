@@ -67,6 +67,10 @@ export default class FilesListPage extends Content {
     return this.getTableHeaders().find(this.upButton);
   }
 
+  clickUpButton() {
+    this.getUpButton().click();
+  }
+
   getTableRows() {
     return cy.get(`${htmlElements.tbody} ${htmlElements.tr}`);
   }

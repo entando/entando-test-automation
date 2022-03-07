@@ -211,6 +211,18 @@ describe('File browser', () => {
       currentPage.getContent().getFileDownloadLink(testFileInfo.name).should('exist');
     });
 
+    it([Tag.FEATURE, 'ENG-3297'], 'The up button should take to the parent folder', () => {
+      createTestFolder(testFolderInfo);
+      createTestFile(subfolderTestFileInfo);
+      currentPage = openPublicFolder();
+      openSubFolder(-1);
+      currentPage.getContent().clickUpButton();
+      cy.wait('@openedFolder');
+      currentPage.getContent().getFilesTable().should('exist').and('be.visible');
+      currentPage.getContent().getTableRows().should('have.length', 7);
+      currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
+    });
+
   });
 
   const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
