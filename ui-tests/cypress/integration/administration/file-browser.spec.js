@@ -119,6 +119,14 @@ describe('File browser', () => {
       currentPage.getContent().getUploadButton().should('be.disabled');
     });
 
+    it([Tag.FEATURE, 'ENG-3297'], 'The save button should be disabled when fields are not filled when creating a folder', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateFolderPage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      currentPage.getContent().getCreateFolderForm().should('exist').and('be.visible');
+      currentPage.getContent().getSaveButton().should('be.disabled');
+    });
+
   });
 
   describe('File browser interactions', () => {
