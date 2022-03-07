@@ -162,7 +162,25 @@ describe('File browser', () => {
       currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
     });
 
+    it([Tag.SANITY, 'ENG-3297'], 'Creating a text file', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateTextFilePage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      currentPage.getContent().getNameInput().type(textTestFile.name);
+      currentPage.getContent().getTextArea().type(textTestFile.content);
+      currentPage = currentPage.getContent().clickSaveButton();
+      cy.wait('@openedFolder');
+      cy.wrap([`${textTestFile.name}.${textTestFile.extension}`]).as('filesToBeDeleted');
+      cy.validateToast(currentPage);
+      cy.validateAppBuilderUrlPathname('/file-browser');
+      currentPage.getContent().getFilesTable().should('exist').and('be.visible');
+      currentPage.getContent().getFileKebabMenu(`${textTestFile.name}.${textTestFile.extension}`).should('exist');
+      currentPage.getContent().getFileDownloadLink(`${textTestFile.name}.${textTestFile.extension}`).should('exist');
+    });
+
   });
+
+  const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
 
   const testFileInfo          = {path: '',      name: 'data1.json', base64: '', type: 'application/json'}
   const subfolderTestFileInfo = {path: 'test/', name: 'data1.json', base64: '', type: 'application/json'}
