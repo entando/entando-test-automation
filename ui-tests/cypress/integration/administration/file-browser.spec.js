@@ -127,6 +127,14 @@ describe('File browser', () => {
       currentPage.getContent().getSaveButton().should('be.disabled');
     });
 
+    it([Tag.FEATURE, 'ENG-3297'], 'The save button should be disabled when fields are not filled when creating a text file', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateTextFilePage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      currentPage.getContent().getCreateTextFileForm().should('exist').and('be.visible');
+      currentPage.getContent().getSaveButton().should('be.disabled');
+    });
+
   });
 
   describe('File browser interactions', () => {
