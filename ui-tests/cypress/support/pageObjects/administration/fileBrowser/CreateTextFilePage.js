@@ -89,6 +89,11 @@ export default class CreateTextFilePage extends Content {
                .find(this.cancelButton);
   }
 
+  clickCancelButton() {
+    this.getCancelButton().click();
+    return new AppPage(FilesListPage);
+  }
+  
   getSaveButton() {
     return this.getCreateTextFileForm()
                .find(this.saveButton);

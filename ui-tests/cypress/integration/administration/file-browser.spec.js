@@ -409,6 +409,20 @@ describe('File browser', () => {
       currentPage.getContent().getEmptyFolderAlert().should('exist');
     });
 
+    it([Tag.FEATURE, 'ENG-3297'], 'No file is created when canceling out of create text file page', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateTextFilePage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      currentPage.getContent().getNameInput().type(textTestFile.name);
+      currentPage.getContent().getTextArea().type(textTestFile.content);
+      currentPage = currentPage.getContent().clickCancelButton();
+      cy.wait('@openedFolder');
+      cy.validateAppBuilderUrlPathname('/file-browser');
+      currentPage.getContent().getFilesTable().should('exist');
+      currentPage.getContent().getTableRows().should('have.length', 6);
+      currentPage.getContent().getFileKebabMenu(`${textTestFile.name}.${textTestFile.extension}`).should('not.exist');
+    });
+
   });
 
   const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
