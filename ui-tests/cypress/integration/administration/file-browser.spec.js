@@ -186,6 +186,19 @@ describe('File browser', () => {
       currentPage.getDeleteDialog().should('exist').and('be.visible').and('contain', testFileInfo.name);
     });
 
+    it([Tag.SANITY, 'ENG-3297'], 'Deleting a file/folder', () => {
+      createTestFile(testFileInfo);
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openFileKebabMenu(testFileInfo.name);
+      currentPage.clickDelete();
+      currentPage = currentPage.clickDialogConfirm();
+      cy.wait('@openedFolder');
+      currentPage.getDialog().get().should('not.exist');
+      currentPage.getContent().getFilesTable().should('exist').and('be.visible');
+      currentPage.getContent().getFileKebabMenu(testFileInfo.name).should('not.exist');
+      cy.wrap(null).as('filesToBeDeleted');
+    });
+
   });
 
   const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}

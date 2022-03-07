@@ -196,4 +196,9 @@ class FilesKebabMenu extends KebabMenu {
     return this.parent.parent.getDialog().getBody().get();
   }
 
+  clickDialogConfirm() {
+    this.parent.parent.getDialog().confirm();
+    return new AppPage(FilesListPage);
+  }
+
 }
