@@ -77,6 +77,11 @@ export default class CreateFolderPage extends Content {
                .find(this.cancelButton);
   }
 
+  clickCancelButton() {
+    this.getCancelButton().click();
+    return new AppPage(FilesListPage);
+  }
+
   getSaveButton() {
     return this.getCreateFolderForm()
                .find(this.saveButton);
