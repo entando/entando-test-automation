@@ -223,6 +223,14 @@ describe('File browser', () => {
       currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
     });
 
+    it([Tag.FEATURE, 'ENG-3297'], 'Downloading a file using the context menu', () => {
+      createTestFile(testFileInfo);
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openFileKebabMenu(testFileInfo.name);
+      currentPage = currentPage.clickDownload();
+      cy.verifyDownload(testFileInfo.name).as('deleteDownloadsFolder');
+    });
+
   });
 
   const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
