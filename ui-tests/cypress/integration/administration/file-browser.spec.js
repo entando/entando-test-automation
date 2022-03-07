@@ -365,6 +365,50 @@ describe('File browser', () => {
       currentPage.getContent().getFolderLink(-1).should('not.contain', testFolderInfo.name);
     });
 
+    it([Tag.FEATURE, 'ENG-3297'], 'Navigating out of create text file page to root using breadcrumb', () => {
+      createTestFolder(testFolderInfo);
+      currentPage = openPublicFolder();
+      openSubFolder(-1);
+      currentPage.getContent().getFilesTable().should('not.exist');
+      currentPage.getContent().getEmptyFolderAlert().should('exist');
+      currentPage = currentPage.getContent().openCreateTextFilePage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      currentPage.getContent().getNameInput().type(textTestFile.name);
+      currentPage.getContent().getTextArea().type(textTestFile.content);
+      currentPage = currentPage.getContent().clickBreadCrumbsRoot();
+      cy.wait('@openedRootFolder');
+      cy.validateAppBuilderUrlPathname('/file-browser');
+      currentPage.getContent().getFilesTable().should('exist').and('be.visible');
+      currentPage.getContent().getTableRows().should('have.length', 2);
+      currentPage.getContent().getTableRow(0).should('contain', 'public');
+      currentPage.getContent().getTableRow(1).should('contain', 'protected');
+      openSubFolder(0);
+      openSubFolder(-1);
+      currentPage.getContent().getFilesTable().should('not.exist');
+      currentPage.getContent().getEmptyFolderAlert().should('exist');
+    });
+
+    it([Tag.FEATURE, 'ENG-3297'], 'Navigating out of create text file page NOT to root using breadcrumb', () => {
+      createTestFolder(testFolderInfo);
+      currentPage = openPublicFolder();
+      openSubFolder(-1);
+      currentPage.getContent().getFilesTable().should('not.exist');
+      currentPage.getContent().getEmptyFolderAlert().should('exist');
+      currentPage = currentPage.getContent().openCreateTextFilePage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      currentPage.getContent().getNameInput().type(textTestFile.name);
+      currentPage.getContent().getTextArea().type(textTestFile.content);
+      currentPage = currentPage.getContent().clickFileBrowserBreadCrumbs(1);
+      cy.wait('@openedFolder');
+      cy.validateAppBuilderUrlPathname('/file-browser');
+      currentPage.getContent().getFilesTable().should('exist').and('be.visible');
+      currentPage.getContent().getTableRows().should('have.length', 7);
+      currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
+      openSubFolder(-1);
+      currentPage.getContent().getFilesTable().should('not.exist');
+      currentPage.getContent().getEmptyFolderAlert().should('exist');
+    });
+
   });
 
   const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
