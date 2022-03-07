@@ -147,6 +147,21 @@ describe('File browser', () => {
       currentPage.getContent().getFileDownloadLink(testFileInfo.name).should('exist');
     });
 
+    it([Tag.SANITY, 'ENG-3297'], 'Creating a folder', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateFolderPage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      currentPage.getContent().getNameInput().type(testFolderInfo.name);
+      currentPage= currentPage.getContent().clickSaveButton();
+      cy.wait('@openedFolder');
+      cy.wrap(testFolderInfo.name).as('folderToBeDeleted');
+      cy.validateToast(currentPage);
+      cy.validateAppBuilderUrlPathname('/file-browser');
+      currentPage.getContent().getTableRows().should('have.length', 7);
+      currentPage.getContent().getFilesTable().should('exist').and('be.visible');
+      currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
+    });
+
   });
 
   const testFileInfo          = {path: '',      name: 'data1.json', base64: '', type: 'application/json'}
