@@ -10,7 +10,10 @@
 
 // This function is called when a project is opened or re-opened (e.g. due to
 // the project's config changing)
-const tagify = require('cypress-tags');
+
+const {isFileExist} = require('cy-verify-downloads');
+const {rmdir}       = require('fs');
+const tagify        = require('cypress-tags');
 
 /**
  * @type {Cypress.PluginConfig}
@@ -25,7 +28,26 @@ module.exports = (on, config) => {
     }
     return launchOptions;
   });
+
+  on('task', {
+    deleteFolder(folderName) {
+      console.log('deleting folder %s', folderName)
+
+      return new Promise((resolve, reject) => {
+        rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
+          if (err) {
+            console.error(err)
+            return reject(err)
+          }
+          resolve(null)
+        })
+      })
+    },
+    isFileExist
+  })
+    
   config.env.CYPRESS_EXCLUDE_TAGS = 'WIP';
   on('file:preprocessor', tagify(config));
   return require('@bahmutov/cypress-extends')(config.configFile);
+  
 };
