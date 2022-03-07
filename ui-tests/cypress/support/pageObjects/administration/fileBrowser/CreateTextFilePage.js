@@ -6,6 +6,7 @@ import AppPage from '../../app/AppPage';
 
 import UploadFilesPage  from './UploadFilesPage';
 import CreateFolderPage from './CreateFolderPage';
+import FilesListPage from './FilesListPage';
 
 export default class CreateTextFilePage extends Content {
 
@@ -77,6 +78,11 @@ export default class CreateTextFilePage extends Content {
   getSaveButton() {
     return this.getCreateTextFileForm()
                .find(this.saveButton);
+  }
+
+  clickSaveButton() {
+    this.getSaveButton().click();
+    return new AppPage(FilesListPage);
   }
 
   openUploadFilesPage() {
