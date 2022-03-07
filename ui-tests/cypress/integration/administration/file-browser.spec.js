@@ -144,6 +144,18 @@ describe('File browser', () => {
       currentPage.getContent().getNameInputHelpBlock().should('exist').and('be.visible');
     });
 
+    it([Tag.ERROR, 'ENG-3297'], 'When creating a text file, an error should be displayed when deselecting a field without filling it', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateTextFilePage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      currentPage.getContent().getNameInputHelpBlock().should('not.exist');
+      currentPage.getContent().getNameInput().focus().blur();
+      currentPage.getContent().getNameInputHelpBlock().should('exist').and('be.visible');
+      currentPage.getContent().getTextAreaHelpBlock().should('not.exist');
+      currentPage.getContent().getTextArea().focus().blur();
+      currentPage.getContent().getTextAreaHelpBlock().should('exist').and('be.visible');
+    });
+
   });
 
   describe('File browser interactions', () => {

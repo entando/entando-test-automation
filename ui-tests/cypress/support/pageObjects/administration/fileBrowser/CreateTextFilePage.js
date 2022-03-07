@@ -17,6 +17,7 @@ export default class CreateTextFilePage extends Content {
   textFileNameInput  = `${htmlElements.input}[name='name']#name`;
   extensionSelector  = `${htmlElements.select}[name='extension'].CreateTextFileForm__select-extension`;
   textArea           = `${htmlElements.textarea}[name='content'].RenderTextAreaInput-textarea`;
+  helpBlock          = `${htmlElements.span}.help-block`;
   cancelButton       = `${htmlElements.a}.CreateTextFileForm__btn-cancel`;
   saveButton         = `${htmlElements.button}.CreateTextFileForm__btn-submit`;
 
@@ -74,6 +75,11 @@ export default class CreateTextFilePage extends Content {
                .find(this.textFileNameInput);
   }
 
+  getNameInputHelpBlock() {
+    return this.getNameInput()
+               .siblings(this.helpBlock);
+  }
+
   getExtensionSelector() {
     return this.getCreateTextFileForm()
                .find(this.extensionSelector);
@@ -82,6 +88,12 @@ export default class CreateTextFilePage extends Content {
   getTextArea() {
     return this.getCreateTextFileForm()
                .find(this.textArea);
+  }
+
+  getTextAreaHelpBlock() {
+    return this.getTextArea()
+               .parent()
+               .siblings(this.helpBlock);
   }
 
   getCancelButton() {
