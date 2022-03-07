@@ -19,6 +19,10 @@ export default class AddSenderPage extends Content {
                     .find(`${htmlElements.div}.form-group`).eq(1)
                     .find(`${htmlElements.input}[name="email"]`);                  
     }
+    searchFieldError(){
+        return this.getSenderForm()
+                    .find(`${htmlElements.span}.help-block`);
+    }
     senderSubmit(){
         return this.getSenderForm()
                    .children(`${htmlElements.button}[type="submit"]`);

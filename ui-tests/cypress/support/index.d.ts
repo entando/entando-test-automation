@@ -9,6 +9,7 @@ import ContentTypesController from './restAPI/ContentTypesController';
 import ContentTypeAttributesController from './restAPI/ContentTypeAttributesController';
 import DatabaseController from './restAPI/DatabaseController';
 import EmailConfigController from './restAPI/EmailConfigController';
+import SenderController from './restAPI/EmailConfigSenderController';
 import FileBrowserController from './restAPI/FileBrowserController';
 import FragmentsController from './restAPI/FragmentsController';
 import GroupsController from './restAPI/GroupsController';
@@ -119,6 +120,8 @@ declare namespace Cypress {
          */
         emailConfigController(): Chainable<EmailConfigController>
 
+        
+
         /**
          * Returns a new instance of a file browser controller
          */
@@ -170,14 +173,15 @@ declare namespace Cypress {
         rolesController(): Chainable<RolesController>
 
         /**
+         * Returns a new instance of an email sender configuration controller
+         */
+        senderController(): Chainable<SenderController>
+
+        /**
          * Returns a new instance of a seo pages controller controller
          */
         seoPagesController(): Chainable<SeoPagesController>
 
-        /**
-         * Returns a new instance of an email sender configuration controller
-         */
-        senderController(): Chainable<SenderController>
 
         /**
          * Returns a new instance of a users controller

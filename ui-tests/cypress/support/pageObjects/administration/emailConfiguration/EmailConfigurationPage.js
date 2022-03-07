@@ -14,6 +14,7 @@ export default class EmailConfigurationPage extends Content {
     toolButton = `${htmlElements.div}.btn-toolbar.pull-right`;
     switch = `${htmlElements.div}.SwitchRenderer`;
     switchContainer = `${htmlElements.div}[class="bootstrap-switch-container"]`;
+    senderAddButton = `${htmlElements.a}[type=button]`;
 
    
     getSmtpServerTab(){
@@ -74,10 +75,6 @@ export default class EmailConfigurationPage extends Content {
         return this.getForm()
                     .find(`${htmlElements.input}[name="password"]`);
     }
-    searchFieldError(){
-        return this.getForm()
-                    .find(`${htmlElements.span}.help-block`);
-    }
 
     getToolButton(){
         return this.getContents()
@@ -118,38 +115,17 @@ export default class EmailConfigurationPage extends Content {
 
     getAddButton(){
         return this.getSenderMngt()
-                   .children(htmlElements.a);
+                    .find(this.senderAddButton);
     }
     openAddSender(){
-        return this.getAddButton().click();
+         this.getAddButton().click();
+         return new AppPage(AddSenderPage);
+
         
     }
-    getSenderForm(){
-        return this.get()
-                    .find(`${htmlElements.form}.form-horizontal`);
-    }
-
-    getCodeInput(){
-        return this.getSenderForm()
-                    .find(`${htmlElements.div}.form-group`).eq(0)
-                    .find(`${htmlElements.input}[name="code"]`);
-    }
-
-    getEmailInput(){
-        return this.getSenderForm()
-                    .find(`${htmlElements.div}.form-group`).eq(1)
-                    .find(`${htmlElements.input}[name="email"]`);                  
-    }
-    senderSubmit(){
-        return this.getSenderForm()
-                   .children(`${htmlElements.button}[type="submit"]`);
-    }
-
-   
     getKebabMenu(code) {
         return new SenderKebabMenu(this, code);
       }
-
 
 }
 
