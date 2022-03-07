@@ -18,7 +18,7 @@ describe([Tag.GTS], 'Assets', () => {
 
   let assetToBeDeleted = false;
 
-  const testFileInfo = {fixture: 'upload/image1.JPG', fileName: 'image1.JPG', fileType: 'image/jpeg'};
+  const testFileInfo = {path: 'upload/image1.JPG', name: 'image1.JPG', type: 'image/jpeg'};
   const testMetadata = {group: 'administrators', categories: [], type: 'image'};
 
   beforeEach(() => {
