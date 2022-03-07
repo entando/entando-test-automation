@@ -135,6 +135,15 @@ describe('File browser', () => {
       currentPage.getContent().getSaveButton().should('be.disabled');
     });
 
+    it([Tag.ERROR, 'ENG-3297'], 'When creating a folder, an error should be displayed when deselecting the folder name field without filling it', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateFolderPage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      currentPage.getContent().getNameInputHelpBlock().should('not.exist');
+      currentPage.getContent().getNameInput().focus().blur();
+      currentPage.getContent().getNameInputHelpBlock().should('exist').and('be.visible');
+    });
+
   });
 
   describe('File browser interactions', () => {

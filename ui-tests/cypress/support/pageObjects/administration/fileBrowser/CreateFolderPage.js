@@ -10,13 +10,14 @@ import FilesListPage from './FilesListPage';
 
 export default class CreateFolderPage extends Content {
 
-  breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
-  operationButtons = `${htmlElements.div}.btn-group`;
+  breadCrumbs        = `${htmlElements.ol}.breadcrumb`;
+  operationButtons   = `${htmlElements.div}.btn-group`;
 
-  createFolderForm = `${htmlElements.form}.FileBrowserCreateFolder`;
-  folderNameInput  = `${htmlElements.input}[name='path']#path`;
-  cancelButton     = `${htmlElements.a}.FileBrowserCreateFolderForm__btn-cancel`;
-  saveButton       = `${htmlElements.button}.FileBrowserCreateFolderForm__btn-submit`;
+  createFolderForm   = `${htmlElements.form}.FileBrowserCreateFolder`;
+  folderNameInput    = `${htmlElements.input}[name='path']#path`;
+  nameInputHelpBlock = `${htmlElements.span}.help-block`;
+  cancelButton       = `${htmlElements.a}.FileBrowserCreateFolderForm__btn-cancel`;
+  saveButton         = `${htmlElements.button}.FileBrowserCreateFolderForm__btn-submit`;
 
   getFileBrowserBreadCrumbs() {
     return this.getContents()
@@ -71,6 +72,13 @@ export default class CreateFolderPage extends Content {
     return this.getCreateFolderForm()
                .find(this.folderNameInput);
   }
+
+  getNameInputHelpBlock() {
+    return this.getNameInput()
+               .parent()
+               .siblings(this.nameInputHelpBlock);
+  }
+
 
   getCancelButton() {
     return this.getCreateFolderForm()
