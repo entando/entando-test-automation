@@ -111,6 +111,14 @@ describe('File browser', () => {
       currentPage.getContent().getFolderLink(0).should('exist');
     });
 
+    it([Tag.FEATURE, 'ENG-3297'], 'The upload button should be disabled when no file selected', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openUploadFilesPage();
+      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      currentPage.getContent().getUploadFilesForm().should('exist').and('be.visible');
+      currentPage.getContent().getUploadButton().should('be.disabled');
+    });
+
   });
 
   describe('File browser interactions', () => {
