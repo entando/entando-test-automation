@@ -192,4 +192,8 @@ class FilesKebabMenu extends KebabMenu {
     return new AppPage(FilesListPage);
   }
 
+  getDeleteDialog() {
+    return this.parent.parent.getDialog().getBody().get();
+  }
+
 }

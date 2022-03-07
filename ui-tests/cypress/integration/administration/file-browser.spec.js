@@ -178,6 +178,14 @@ describe('File browser', () => {
       currentPage.getContent().getFileDownloadLink(`${textTestFile.name}.${textTestFile.extension}`).should('exist');
     });
 
+    it([Tag.SANITY, 'ENG-3297'], 'A confirmation modal should be displayed when trying to delete a file/folder', () => {
+      createTestFile(testFileInfo);
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openFileKebabMenu(testFileInfo.name);
+      currentPage.clickDelete();
+      currentPage.getDeleteDialog().should('exist').and('be.visible').and('contain', testFileInfo.name);
+    });
+
   });
 
   const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
