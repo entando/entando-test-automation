@@ -352,6 +352,19 @@ describe('File browser', () => {
       currentPage.getContent().getEmptyFolderAlert().should('exist');
     });
 
+    it([Tag.FEATURE, 'ENG-3297'], 'No folder is created when canceling out of create folder page', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openCreateFolderPage();
+      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      currentPage.getContent().getNameInput().type(testFolderInfo.name);
+      currentPage = currentPage.getContent().clickCancelButton();
+      cy.wait('@openedFolder');
+      cy.validateAppBuilderUrlPathname('/file-browser');
+      currentPage.getContent().getFilesTable().should('exist');
+      currentPage.getContent().getTableRows().should('have.length', 6);
+      currentPage.getContent().getFolderLink(-1).should('not.contain', testFolderInfo.name);
+    });
+
   });
 
   const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
