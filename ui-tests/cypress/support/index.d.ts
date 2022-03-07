@@ -21,8 +21,8 @@ import PageWidgetsController from './restAPI/PageWidgetsController';
 import ProfileTypesController from './restAPI/ProfileTypesController';
 import RolesController from './restAPI/RolesController';
 import SeoPagesController from './restAPI/SeoPagesController';
-import UsersController from './restAPI/UsersController';
 import UserPreferencesController from './restAPI/UserPreferencesController';
+import UsersController from './restAPI/UsersController';
 import WidgetsController from './restAPI/WidgetsController';
 
 export const enum Tag {
@@ -103,7 +103,7 @@ declare namespace Cypress {
         /**
          * Returns a new instance of a content type attributes controller
          */
-        contentTypeAttributesController(): Chainable<ContentTypeAttributesController>
+        contentTypeAttributesController(contentTypeCode): Chainable<ContentTypeAttributesController>
 
         /**
          * Returns a new instance of a content templates controller
@@ -120,7 +120,7 @@ declare namespace Cypress {
          */
         emailConfigController(): Chainable<EmailConfigController>
 
-        
+
 
         /**
          * Returns a new instance of a file browser controller
@@ -160,7 +160,7 @@ declare namespace Cypress {
         /**
          * Returns a new instance of a page widgets controller
          */
-        pageWidgetsController(): Chainable<PageWidgetsController>
+        pageWidgetsController(pageCode): Chainable<PageWidgetsController>
 
         /**
          * Returns a new instance of a profile types controller
@@ -196,7 +196,7 @@ declare namespace Cypress {
         /**
          * Returns a new instance of a widgets controller
          */
-        widgetsController(): Chainable<WidgetsController>
+        widgetsController(widgetCode): Chainable<WidgetsController>
     }
 
 }
