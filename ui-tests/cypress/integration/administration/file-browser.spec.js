@@ -132,6 +132,21 @@ describe('File browser', () => {
       cy.verifyDownload(testFileInfo.name).as('deleteDownloadsFolder');
     });
 
+    it([Tag.SANITY, 'ENG-3297'], 'Uploading a file', () => {
+      currentPage = openPublicFolder();
+      currentPage = currentPage.getContent().openUploadFilesPage();
+      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      currentPage.getContent().selectFiles(`cypress/fixtures/upload/${testFileInfo.name}`);
+      currentPage = currentPage.getContent().confirmUpload();
+      cy.wait('@openedFolder');
+      cy.wrap([testFileInfo.name]).as('filesToBeDeleted');
+      cy.validateToast(currentPage);
+      cy.validateAppBuilderUrlPathname('/file-browser');
+      currentPage.getContent().getFilesTable().should('exist').and('be.visible');
+      currentPage.getContent().getFileKebabMenu(testFileInfo.name).should('exist');
+      currentPage.getContent().getFileDownloadLink(testFileInfo.name).should('exist');
+    });
+
   });
 
   const testFileInfo          = {path: '',      name: 'data1.json', base64: '', type: 'application/json'}
