@@ -152,7 +152,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
 
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      cy.validateAppBuilderUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       currentPage.getContent().clickAddContentButton();
       cy.wait(4500);
 
@@ -191,7 +191,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -199,7 +199,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: CMS_WIDGETS.CONTENT.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Editing widget in Settings (widget config)', () => {
@@ -253,7 +253,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT.code}`);
     });
 
     it('Save As Widget', () => {
@@ -271,7 +271,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openSaveAs();
 
-      cy.validateUrlPathname(`/page/${THE_PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
+      cy.validateAppBuilderUrlPathname(`/page/${THE_PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
       currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
       currentPage.getContent().getConfigTabConfiguration().should('exist');
       currentPage.getContent().getConfigTabConfiguration().click();
@@ -281,7 +281,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToDelete');
 
       cy.wait(4500);
-      cy.validateUrlPathname(`/page/configuration/${THE_PAGE.code}`);
+      cy.validateAppBuilderUrlPathname(`/page/configuration/${THE_PAGE.code}`);
 
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--draft')
@@ -320,7 +320,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wait(500);
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 4, 0, CMS_WIDGETS.CONTENT_LIST.code);
 
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      cy.validateAppBuilderUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       cy.wait(5000);
       currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
       currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Banner').click();
@@ -356,7 +356,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -364,7 +364,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: CMS_WIDGETS.CONTENT_LIST.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Editing widget in Settings (widget config)', () => {
@@ -413,7 +413,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
     });
 
     it('Save As Widget', () => {
@@ -431,7 +431,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openSaveAs();
 
-      cy.validateUrlPathname(`/page/${THE_PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
+      cy.validateAppBuilderUrlPathname(`/page/${THE_PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
       currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
       currentPage.getContent().getConfigTabConfiguration().should('exist');
       currentPage.getContent().getConfigTabConfiguration().click();
@@ -441,7 +441,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToDelete');
 
       cy.wait(4500);
-      cy.validateUrlPathname(`/page/configuration/${THE_PAGE.code}`);
+      cy.validateAppBuilderUrlPathname(`/page/configuration/${THE_PAGE.code}`);
 
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--draft')
@@ -526,12 +526,12 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wait(500);
 
       currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
-      cy.validateUrlPathname(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
+      cy.validateAppBuilderUrlPathname(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
 
       currentPage = currentPage.getContent().addContentFromContentWidgetConfig('Unpublish En Title', 'Unpublish It Title', 'Unpublish Sample Description');
       cy.wrap(1).as('recentContentsToDelete');
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      cy.validateAppBuilderUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       cy.wait(4500);
 
       currentPage = currentPage.getContent().confirmConfig();
@@ -548,13 +548,13 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wait(500);
 
       currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
-      cy.validateUrlPathname(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
+      cy.validateAppBuilderUrlPathname(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
 
       currentPage = currentPage.getContent().addContentFromContentWidgetConfig('En Title', 'It Title', 'Sample Description', true);
       cy.wrap(1).as('recentContentsToUnpublish');
       cy.wrap(1).as('recentContentsToDelete');
 
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      cy.validateAppBuilderUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
 
       currentPage.getContent().getModelIdSelect().select('Banner - Text, Image, CTA');
       currentPage = currentPage.getContent().confirmConfig();
@@ -592,7 +592,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 3, 0, CMS_WIDGETS.CONTENT_LIST.code);
 
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      cy.validateAppBuilderUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       cy.wait(5000);
       currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
       cy.wait(500);
@@ -646,7 +646,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 4, 0, CMS_WIDGETS.CONTENT_LIST.code);
 
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME_2.frameNum}`);
+      cy.validateAppBuilderUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME_2.frameNum}`);
       cy.wait(5000);
       currentPage.getContent().getAddButtonFromTableRowWithTitle('Another Content so its more than 1').click();
       cy.wait(500);
@@ -690,7 +690,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 3, 3, 0, CMS_WIDGETS.CONTENT_QUERY.code);
 
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      cy.validateAppBuilderUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       currentPage.getContent().getContentTypeField().select('Banner');
       cy.wait(2500);
       currentPage.getContent().getPublishSettingsAccordButton().click();
@@ -725,7 +725,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -733,7 +733,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: CMS_WIDGETS.CONTENT_QUERY.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Editing widget in Settings (widget config)', () => {
@@ -752,7 +752,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openSettings();
 
       cy.wait(2500);
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      cy.validateAppBuilderUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
       currentPage.getContent().getPublishSettingsAccordButton().click();
       cy.wait(500);
       currentPage.getContent().getMaxElemForItemDropdown().select('6');
@@ -784,7 +784,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_QUERY.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_QUERY.code}`);
     });
 
     it('Save As Widget', () => {
@@ -802,7 +802,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openSaveAs();
 
-      cy.validateUrlPathname(`/page/${THE_PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_QUERY.code}/listViewerConfig`);
+      cy.validateAppBuilderUrlPathname(`/page/${THE_PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_QUERY.code}/listViewerConfig`);
       currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
       currentPage.getContent().getConfigTabConfiguration().should('exist');
       currentPage.getContent().getConfigTabConfiguration().click();
@@ -812,7 +812,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToDelete');
 
       cy.wait(4500);
-      cy.validateUrlPathname(`/page/configuration/${THE_PAGE.code}`);
+      cy.validateAppBuilderUrlPathname(`/page/configuration/${THE_PAGE.code}`);
 
       currentPage.getContent().getPageStatusIcon()
                   .should('have.class', 'PageStatusIcon--draft')
@@ -877,7 +877,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -885,7 +885,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: CMS_WIDGETS.SEARCH_FORM.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Basic edit with CMS Search Result widget', () => {
@@ -904,7 +904,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -912,7 +912,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: CMS_WIDGETS.SEARCH_RESULT.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Open Widget Details from the dropped CMS Search Form widget', () => {
@@ -930,7 +930,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_FORM.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_FORM.code}`);
     });
 
     it('Open Widget Details from the dropped CMS Search Results widget', () => {
@@ -948,7 +948,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_RESULT.code}`);
     });
   });
 
@@ -1003,7 +1003,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -1011,7 +1011,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: CMS_WIDGETS.NEWS_ARCHIVE.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Basic edit with News Latest widget', () => {
@@ -1030,7 +1030,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -1038,7 +1038,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: CMS_WIDGETS.NEWS_LATEST.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Open Widget Details from the dropped CMS News Archive widget', () => {
@@ -1056,7 +1056,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
     });
 
     it('Open Widget Details from the dropped CMS News Latest widget', () => {
@@ -1074,7 +1074,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_LATEST.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_LATEST.code}`);
     });
   });
 
@@ -1132,7 +1132,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -1140,7 +1140,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: PAGE_WIDGETS.LANGUAGE.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Basic edit with Logo widget', () => {
@@ -1159,7 +1159,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -1167,7 +1167,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: PAGE_WIDGETS.LOGO.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Open Widget Details from the dropped Language widget', () => {
@@ -1185,7 +1185,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${PAGE_WIDGETS.LANGUAGE.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${PAGE_WIDGETS.LANGUAGE.code}`);
     });
 
     it('Open Widget Details from the dropped Logo widget', () => {
@@ -1203,7 +1203,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${PAGE_WIDGETS.LOGO.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${PAGE_WIDGETS.LOGO.code}`);
     });
   });
 
@@ -1304,7 +1304,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -1312,7 +1312,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: SYSTEM_WIDGETS.APIS.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Basic edit with News Latest widget', () => {
@@ -1331,7 +1331,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .openEdit();
       cy.wait(500);
 
-      cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
       currentPage.getContent().editFormFields({
         group: 'Administrator'
       });
@@ -1339,7 +1339,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap({ code: SYSTEM_WIDGETS.SYS_MSGS.code, group: 'free' }).as('widgetToRevert');
 
       cy.wait(4500);
-      cy.validateUrlPathname('/widget');
+      cy.validateAppBuilderUrlPathname('/widget');
     });
 
     it('Open Widget Details from the dropped APIs widget', () => {
@@ -1357,7 +1357,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.APIS.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.APIS.code}`);
     });
 
     it('Open Widget Details from the dropped System Messages widget', () => {
@@ -1375,7 +1375,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                 .open()
                                 .openDetails();
       cy.wait(500);
-      cy.validateUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
+      cy.validateAppBuilderUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
 
       cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
       cy.wrap([
