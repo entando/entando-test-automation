@@ -225,6 +225,9 @@ describe([Tag.GTS], 'Users Management', () => {
 
       cy.validateAppBuilderUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
 
+      currentPage.getContent().typeFullName('Test');
+      currentPage.getContent().typeEmail('test@entando.com');
+
       currentPage.getContent().selectProfileType('')
       currentPage.getContent().getSaveButton()
                  .should('be.disabled')
