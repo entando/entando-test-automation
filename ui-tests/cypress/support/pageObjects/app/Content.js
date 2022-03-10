@@ -4,7 +4,7 @@ export default class Content extends WebElement {
 
   content = `${htmlElements.div}.container-fluid`;
 
-  alertMessageDiv = `${htmlElements.div}.form_ErrorsAlert_Alert`;
+  alertMessageDiv = `${htmlElements.div}.ErrorsAlert`;
 
   get() {
     return this.parent.get()

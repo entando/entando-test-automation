@@ -10,10 +10,14 @@ describe([Tag.GTS], 'Categories', () => {
   let currentPage;
 
   beforeEach(() => {
+    cy.wrap(null).as('categoryToBeDeleted')
     cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {
+    cy.get('@categoryToBeDeleted').then(categoryCode => {
+      if(categoryCode) deleteTestCategory(categoryCode);
+    });
     cy.kcLogout();
   });
 
@@ -22,7 +26,7 @@ describe([Tag.GTS], 'Categories', () => {
     currentPage = currentPage.getContent().openAddCategoryPage();
     currentPage = currentPage.getContent().addCategory(titleEn, titleIt, categoryCode, treePosition);
     currentPage.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible');
-    deleteTestCategory();
+    cy.wrap(categoryCode).as('categoryToBeDeleted');
   });
 
   it('Create a category with an already existing code should not be possible', () => {
@@ -34,7 +38,6 @@ describe([Tag.GTS], 'Categories', () => {
     currentPage.getContent().addCategory(`AAA${titleEn}`, titleIt, categoryCode, treePosition);
     currentPage.getContent().getAlertMessage().contains('span', categoryCode).should('be.visible');
     cy.validateToast(currentPage, categoryCode, false);
-    deleteTestCategory();
   });
 
   it('Edit a category should be possible', () => {
@@ -45,7 +48,6 @@ describe([Tag.GTS], 'Categories', () => {
     currentPage = currentPage.getContent().openEditCategoryPage(categoryCode);
     currentPage = currentPage.getContent().editCategory(newTitleEn, newTitleIt);
     currentPage.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible');
-    deleteTestCategory();
   });
 
   it('Delete a category should be possible', () => {
@@ -54,11 +56,10 @@ describe([Tag.GTS], 'Categories', () => {
     currentPage.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible');
     currentPage = currentPage.getContent().deleteCategory(categoryCode);
     currentPage.getContent().getCategoriesTree().should('not.contain', titleEn);
+    cy.wrap(null).as('categoryToBeDeleted');
   });
 
   describe('Category used in a content', () => {
-
-    let contentId;
 
     const content = {
       description: 'test',
@@ -74,13 +75,12 @@ describe([Tag.GTS], 'Categories', () => {
         .then(controller => controller.postContent(content))
         .then((response) => {
             const { body: { payload } } = response;
-            contentId = payload[0].id;
+            cy.wrap(payload[0].id).as('testContentId');
         });
     });
 
     afterEach(() => {
-      cy.contentsController().then(controller => controller.deleteContent(contentId));
-      deleteTestCategory();
+      cy.get('@testContentId').then(contentId => cy.contentsController().then(controller => controller.deleteContent(contentId)))
     });
 
     it('Update a category used in an unpublished content', () => {
@@ -92,8 +92,8 @@ describe([Tag.GTS], 'Categories', () => {
       currentPage.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible');
     });
 
-    it('Update a category used in an published content', () => {
-      cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
+    it('Update a category used in a published content', () => {
+      cy.contentsController().then(controller => controller.updateStatus(this.testContentId, 'published'));
 
       const newTitleEn = `${titleEn}-new`;
       const newTitleIt = `${titleIt}-new`;
@@ -102,15 +102,16 @@ describe([Tag.GTS], 'Categories', () => {
       currentPage = currentPage.getContent().editCategory(newTitleEn, newTitleIt);
       currentPage.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible');
 
-      cy.contentsController().then(controller => controller.updateStatus(contentId, 'draft'));
+      cy.contentsController().then(controller => controller.updateStatus(this.testContentId, 'draft'));
     });
   });
 
   const postTestCategory = () => {
-    cy.categoriesController().then(controller => controller.postCategory(titleEn, titleIt, categoryCode, rootCode));
+    cy.categoriesController().then(controller => controller.postCategory(titleEn, titleIt, categoryCode, rootCode))
+                             .then(response => cy.wrap(response.body.payload.code).as('categoryToBeDeleted'));
   };
 
-  const deleteTestCategory = () => {
+  const deleteTestCategory = (categoryCode) => {
     cy.categoriesController().then(controller => controller.deleteCategory(categoryCode));
   };
 
