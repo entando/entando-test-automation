@@ -1,18 +1,15 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
-
-import Content from '../../app/Content.js';
-
-import AppPage from '../../app/AppPage.js';
-
+import AppPage        from '../../app/AppPage.js';
 import CategoriesPage from './CategoriesPage';
+import Content        from '../../app/Content.js';
+import {htmlElements} from '../../WebElement';
 
 export default class AddPage extends Content {
 
-  titleItInput      = `${htmlElements.input}[name="titles.it"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  titleEnInput      = `${htmlElements.input}[name="titles.en"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  codeInput         = `${htmlElements.input}[name="code"][${DATA_TESTID}=form_RenderTextInput_input]`;
-  treePositionInput = `${htmlElements.table}[${DATA_TESTID}=common_CategoryTreeSelector_table]`;
-  saveButton        = `${htmlElements.button}[${DATA_TESTID}=common_CategoryForm_Button]`;
+  titleItInput      = `${htmlElements.input}[name="titles.it"][id="titles.it"]`;
+  titleEnInput      = `${htmlElements.input}[name="titles.en"][id="titles.en"]`;
+  codeInput         = `${htmlElements.input}[name="code"]#code`;
+  treePositionInput = `${htmlElements.table}.CategoryTreeSelector`;
+  saveButton        = `${htmlElements.button}[type=submit].CategoryForm__save-btn`;
 
   getTitleItInput() {
     return this.getContents()

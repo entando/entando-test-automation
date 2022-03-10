@@ -1,28 +1,25 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement.js';
-import Content                     from '../../app/Content.js';
-import AddPage                     from './AddPage';
-import EditPage                    from './EditPage';
-import AppPage                     from '../../app/AppPage';
+import AddPage         from './AddPage';
+import AppPage         from '../../app/AppPage';
+import Content         from '../../app/Content.js';
+import EditPage        from './EditPage';
+import {htmlElements}  from '../../WebElement.js';
 
 export default class CategoriesPage extends Content {
 
-  categoryTreeCol   = `${htmlElements.div}[${DATA_TESTID}=list_CategoryTree_Col]`;
-  pageCol           = `${htmlElements.div}[${DATA_TESTID}=list_ListCategoryPage_Col]`;
-  pageLink          = `${htmlElements.a}[${DATA_TESTID}=list_ListCategoryPage_Link]`;
   modalDeleteButton = `${htmlElements.button}#DeleteCategoryModal__button-delete`;
   actionDelete      = `${htmlElements.li}.CategoryListMenuAction__menu-item-delete`;
 
   getCategoriesTree() {
     return this.getContents()
                .children(htmlElements.div).eq(2)
-               .children(this.categoryTreeCol);
+               .children(htmlElements.div);
   }
 
   getAddButton() {
     return this.getContents()
                .children(htmlElements.div).eq(3)
-               .children(this.pageCol)
-               .children(this.pageLink)
+               .children(htmlElements.div)
+               .children(htmlElements.a)
                .children(htmlElements.button);
   }
 
