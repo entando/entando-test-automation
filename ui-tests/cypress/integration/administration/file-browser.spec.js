@@ -40,7 +40,8 @@ describe('File browser', () => {
     it([Tag.SMOKE, 'ENG-3297'], 'Subfolder', () => {
       currentPage = openPublicFolder();
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
-      currentPage.getContent().getTableRow(0).children(htmlElements.td).should('have.length', 4);
+      currentPage.getContent().getTableHeaders().children(htmlElements.th).should('have.length', 4)
+                 .then(elements => cy.validateListTexts(elements, [' up..', 'Size', 'Last Edit', 'Actions']));
       currentPage.getContent().getUpButton().should('exist').and('be.visible');
       currentPage.getContent().getUploadFilesOperationButton().should('exist').and('be.visible');
       currentPage.getContent().getCreateFolderOperationButton().should('exist').and('be.visible');
