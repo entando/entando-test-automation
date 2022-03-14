@@ -40,6 +40,7 @@ import './restAPI/LanguagesController';
 import './restAPI/PagesController';
 import './restAPI/PageTemplatesController';
 import './restAPI/PageWidgetsController';
+import './restAPI/PermissionsController';
 import './restAPI/ProfileTypesController';
 import './restAPI/RolesController';
 import './restAPI/SeoPagesController';
