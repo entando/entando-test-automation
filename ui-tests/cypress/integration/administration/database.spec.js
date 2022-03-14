@@ -24,7 +24,8 @@ describe('Database', () => {
     currentPage = openDatabasePage();
     cy.validateAppBuilderUrlPathname('/database');
     currentPage.getContent().getDatabaseListTable().should('exist').and('be.visible');
-    currentPage.getContent().getTableRowByIndex(0).children(htmlElements.td).should('have.length', 4);
+    currentPage.getContent().getTableHeaders().should('have.length', 4)
+               .then(elements => cy.validateListTexts(elements, ['Code', 'Date', 'Required time', 'Actions']));
     currentPage.getContent().getDeleteButtonByIndex(0).should('exist').and('be.visible');
     currentPage.getContent().getCreateBackupButton().should('exist').and('be.visible');
   });
@@ -36,7 +37,8 @@ describe('Database', () => {
     cy.get('@backupToBeDeleted').then(code => {
       cy.validateAppBuilderUrlPathname(`/database/report/${code}`);
     });
-    currentPage.getContent().getDescriptionData().should('have.length', 4);
+    currentPage.getContent().getDescriptionDataTitles().should('have.length', 2)
+               .then(elements => cy.validateListTexts(elements, ['Date', 'Required time']));
     currentPage.getContent().getComponentTable().should('exist').and('be.visible');
   });
 
@@ -123,8 +125,11 @@ describe('Database', () => {
       currentPage.getContent().getDataSourceTables().should('not.be.visible');
       currentPage.getContent().openDataSource();
       currentPage.getContent().getDataSourceTables().should('be.visible');
-      currentPage.getContent().getDataSourcePortTableRowByIndex(0).should('have.length', 3);
-      currentPage.getContent().getDataSourceServTableRowByIndex(0).should('have.length', 3);
+      currentPage.getContent().getDataSourcePortTableHeaders().should('have.length', 3)
+                 .then(elements => cy.validateListTexts(elements, ['Table name', 'Rows', 'Required time']));
+      currentPage.getContent().getDataSourceServTableHeaders(0).should('have.length', 3)
+                 .then(elements => cy.validateListTexts(elements, ['Table name', 'Rows', 'Required time']));
+
     });
 
     it([Tag.FEATURE, 'ENG-3239'], 'Selecting a table should show the SQL query to create it', () => {
