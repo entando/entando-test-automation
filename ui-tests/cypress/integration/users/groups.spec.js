@@ -34,6 +34,21 @@ describe([Tag.GTS], 'Groups', () => {
     cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
+  it('Add a new group using an existing code - not allowed', () => {
+    cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
+
+    currentPage = openGroupsPage();
+
+    currentPage = currentPage.getContent().openAddGroupPage();
+    currentPage.getContent().typeCode(groupCode);
+    currentPage.getContent().typeName(groupName);
+    currentPage.getContent().submitForm();
+
+    cy.validateToast(currentPage, groupCode, false);
+
+    cy.groupsController().then(controller => controller.deleteGroup(groupCode));
+  });
+
   it('Update an existing group', () => {
     const updatedGroupName = generateRandomId();
 
