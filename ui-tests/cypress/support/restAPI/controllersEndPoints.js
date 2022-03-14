@@ -9,6 +9,7 @@ export const labelsAPIURL          = `${apiURL}/labels`;
 export const languagesAPIURL       = `${apiURL}/languages`;
 export const pagesAPIURL           = `${apiURL}/pages`;
 export const pageModelsAPIURL      = `${apiURL}/pageModels`;
+export const permissionsAPIURL     = `${apiURL}/permissions`;
 export const profileTypesAPIURL    = `${apiURL}/profileTypes`;
 export const rolesAPIURL           = `${apiURL}/roles`;
 export const usersAPIURL           = `${apiURL}/users`;

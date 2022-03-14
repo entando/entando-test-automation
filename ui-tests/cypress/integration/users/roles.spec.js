@@ -14,6 +14,8 @@ describe([Tag.GTS], 'User Roles', () => {
 
   beforeEach(() => {
     cy.kcLogin('login/admin').as('tokens');
+    cy.rolesController().then(controller => controller.intercept({method: 'GET'}, 'loadedTable', '?page=1&pageSize=10'));
+    cy.permissionsController().then(controller => controller.intercept({method: 'GET'}, 'loadedAddEdit', '?page=1&pageSize=0'));
   });
 
   afterEach(() => {
@@ -21,6 +23,10 @@ describe([Tag.GTS], 'User Roles', () => {
   });
 
   describe('UI', () => {
+
+    beforeEach(() => {
+      cy.rolesController().then(controller => controller.intercept({method: 'GET'}, 'loadedDetails', `/${ROLE_CODE_ADMIN}/userreferences?page=1&pageSize=10`));
+    });
 
     it('Roles page', () => {
       currentPage = openRolesPage();
@@ -50,9 +56,7 @@ describe([Tag.GTS], 'User Roles', () => {
     it('Add role page', () => {
       currentPage = openRolesPage();
 
-      currentPage = currentPage.getContent().openAddRolePage();
-
-      cy.validateAppBuilderUrlPathname('/role/add');
+      currentPage = openAddRolePage();
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -70,39 +74,20 @@ describe([Tag.GTS], 'User Roles', () => {
                  .should('be.visible')
                  .and('be.empty');
 
-      currentPage.getContent().getPermissionsGrid().children(htmlElements.div)
-                 .should('have.length', 12)
-                 .then(elements => cy.validateListTexts(elements,
-                     [
-                       'Content EditingON OFF',
-                       'User Profile EditingON OFF',
-                       'User ManagementON OFF',
-                       'Access to Administration AreaON OFF',
-                       'ECR Access PermissionON OFF',
-                       'Operations on CategoriesON OFF',
-                       'Operations on PagesON OFF',
-                       'Asset EditingON OFF',
-                       'Review ManagementON OFF',
-                       'All functionsON OFF',
-                       'Content SupervisionON OFF',
-                       'View Users and ProfilesON OFF'
-                     ]
-                 ));
-
       currentPage.getContent().getCancelButton()
                  .should('be.visible')
                  .and('have.text', 'Cancel');
       currentPage.getContent().getSaveButton()
                  .should('be.visible')
                  .and('have.text', 'Save');
+
+      validatePermissionGrid();
     });
 
     it('Edit role page', () => {
       currentPage = openRolesPage();
 
-      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openEdit();
-
-      cy.validateAppBuilderUrlPathname(`/role/edit/${ROLE_CODE_ADMIN}`);
+      currentPage = openEdit(ROLE_CODE_ADMIN);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -121,39 +106,20 @@ describe([Tag.GTS], 'User Roles', () => {
                  .and('be.disabled')
                  .and('have.value', ROLE_CODE_ADMIN);
 
-      currentPage.getContent().getPermissionsGrid().children(htmlElements.div)
-                 .should('have.length', 12)
-                 .then(elements => cy.validateListTexts(elements,
-                     [
-                       'Content EditingON OFF',
-                       'User Profile EditingON OFF',
-                       'User ManagementON OFF',
-                       'Access to Administration AreaON OFF',
-                       'ECR Access PermissionON OFF',
-                       'Operations on CategoriesON OFF',
-                       'Operations on PagesON OFF',
-                       'Asset EditingON OFF',
-                       'Review ManagementON OFF',
-                       'All functionsON OFF',
-                       'Content SupervisionON OFF',
-                       'View Users and ProfilesON OFF'
-                     ]
-                 ));
-
       currentPage.getContent().getCancelButton()
                  .should('be.visible')
                  .and('have.text', 'Cancel');
       currentPage.getContent().getSaveButton()
                  .should('be.visible')
                  .and('have.text', 'Save');
+
+      validatePermissionGrid();
     });
 
     it('View role details page', () => {
       currentPage = openRolesPage();
 
-      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openDetails();
-
-      cy.validateAppBuilderUrlPathname(`/role/view/${ROLE_CODE_ADMIN}`);
+      currentPage = openDetails(ROLE_CODE_ADMIN);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -177,40 +143,52 @@ describe([Tag.GTS], 'User Roles', () => {
 
   describe('Actions ', () => {
 
+    beforeEach(() => {
+      cy.wrap(null).as('roleToBeDeleted');
+      cy.rolesController().then(controller => controller.intercept({method: 'GET'}, 'loadedDetails', `/${ROLE_CODE}/userreferences?page=1&pageSize=10`));
+    });
+
+    afterEach(() => {
+      cy.get('@roleToBeDeleted').then(code => {
+        if(code) cy.rolesController().then(controller => controller.deleteRole(code));
+      })
+    });
+
     it('Add a new role', () => {
       currentPage = openRolesPage();
+      
+      currentPage = openAddRolePage();
 
-      currentPage = currentPage.getContent().openAddRolePage();
       currentPage = currentPage.getContent().addRole(ROLE_NAME, ROLE_CODE);
+      cy.wrap(ROLE_CODE).as('roleToBeDeleted');
+      cy.wait('@loadedTable');
 
       currentPage.getContent().getTableRow(ROLE_CODE).children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [ROLE_NAME, ROLE_CODE]));
-
-      cy.rolesController().then(controller => controller.deleteRole(ROLE_CODE));
     });
 
     it('Update an existing role', () => {
       const ROLE_NAME_EDIT = generateRandomId();
 
-      cy.rolesController().then(controller => controller.addRole({code: ROLE_CODE, name: ROLE_NAME}));
+      addRole(ROLE_CODE, ROLE_NAME);
 
       currentPage = openRolesPage();
 
-      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE).open().openEdit();
+      currentPage = openEdit(ROLE_CODE);
+      currentPage.getContent().getNameInput().should('have.value', ROLE_NAME);
       currentPage = currentPage.getContent().editRole(ROLE_NAME_EDIT);
+      cy.wait('@loadedTable');
 
       currentPage.getContent().getTableRow(ROLE_CODE).children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [ROLE_NAME_EDIT, ROLE_CODE]));
-
-      currentPage = currentPage.getContent().getKebabMenu(ROLE_CODE).open().openDetails();
+      
+      currentPage = openDetails(ROLE_CODE);
       currentPage.getContent().getCodeValue().should('contain', ROLE_CODE);
       currentPage.getContent().getNameValue().should('contain', ROLE_NAME_EDIT);
-
-      cy.rolesController().then(controller => controller.deleteRole(ROLE_CODE));
     });
 
     it('Delete an unreferenced role', () => {
-      cy.rolesController().then(controller => controller.addRole({code: ROLE_CODE, name: ROLE_NAME}));
+      addRole(ROLE_CODE, ROLE_NAME);
 
       currentPage = openRolesPage();
 
@@ -219,6 +197,7 @@ describe([Tag.GTS], 'User Roles', () => {
 
       currentPage.getDialog().confirm();
       currentPage.getContent().getTableRows().should('not.contain', ROLE_CODE);
+      cy.wrap(null).as('roleToBeDeleted');
     });
 
     it('Deletion of an assigned role is forbidden', () => {
@@ -235,9 +214,60 @@ describe([Tag.GTS], 'User Roles', () => {
 
   const openRolesPage = () => {
     cy.visit('/');
+    cy.wait('@loadedAddEdit');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getUsers().open();
-    return currentPage.openRoles();
+    currentPage = currentPage.openRoles();
+    cy.wait('@loadedTable');
+    return currentPage;
   };
+
+  const openAddRolePage = () => {
+    currentPage = currentPage.getContent().openAddRolePage();
+    cy.validateAppBuilderUrlPathname('/role/add');
+    cy.wait('@loadedAddEdit');
+    return currentPage;
+  }
+
+  const openEdit = (code) => {
+    currentPage = currentPage.getContent().getKebabMenu(code).open().openEdit();
+    cy.validateAppBuilderUrlPathname(`/role/edit/${code}`);
+    cy.wait('@loadedAddEdit');
+    return currentPage;
+  }
+
+  const openDetails = (code) => {
+    currentPage = currentPage.getContent().getKebabMenu(code).open().openDetails();
+    cy.validateAppBuilderUrlPathname(`/role/view/${code}`);
+    cy.wait('@loadedDetails');
+    return currentPage;
+  }
+
+  const validatePermissionGrid = () => {
+    currentPage.getContent().getPermissionsGrid().should('not.have.class', 'spinner');
+    currentPage.getContent().getPermissionsGrid().children(htmlElements.div)
+      .should('have.length', 12)
+      .then(elements => cy.validateListTexts(elements,
+        [
+          'Content EditingON OFF',
+          'User Profile EditingON OFF',
+          'User ManagementON OFF',
+          'Access to Administration AreaON OFF',
+          'ECR Access PermissionON OFF',
+          'Operations on CategoriesON OFF',
+          'Operations on PagesON OFF',
+          'Asset EditingON OFF',
+          'Review ManagementON OFF',
+          'All functionsON OFF',
+          'Content SupervisionON OFF',
+          'View Users and ProfilesON OFF'
+        ]
+      ));
+  }
+
+  const addRole = (code, name) => {
+    cy.rolesController().then(controller => controller.addRole({code: code, name: name}))
+                        .then(response => cy.wrap(response.body.payload.code).as('roleToBeDeleted'));
+  }
 
 });
