@@ -168,7 +168,8 @@ describe('Languages', () => {
         it([Tag.SMOKE, 'ENG-3237'], 'Languages section', () => {
             currentPage = openLanguagesPage();
             currentPage.getContent().getLanguageTable().should('exist').and('be.visible');
-            currentPage.getContent().getLanguageRowByIndex(0).children(htmlElements.td).should('have.length', 3);
+            currentPage.getContent().getLanguageTableHeaders().should('have.length', 3)
+                       .then(elements => cy.validateListTexts(elements, ['Code', 'Name', 'Actions']));
             currentPage.getContent().getDeleteLanguageByIndex(0).should('exist').and('be.visible');
             currentPage.getContent().getLanguageDropdown().should('exist').and('be.visible');
             currentPage.getContent().getAddLanguageSubmit().should('exist').and('be.visible');
@@ -211,9 +212,7 @@ describe('Languages', () => {
         });
 
         it([Tag.SANITY, 'ENG-3237'], 'When trying to remove a not-default language, a confirmation modal is displayed', () => {
-            cy.languagesController()
-                .then(controller => controller.putLanguage(testLanguage.code, testLanguage.name, true, false))
-                .then(res => cy.wrap(res.body.payload).as('languageToDelete'));
+            addLanguage(testLanguage);
             currentPage = openLanguagesPage();
             getLanguageTableRowByCode(testLanguage.code)
                 .then(row => {
@@ -223,9 +222,7 @@ describe('Languages', () => {
         });
 
         it([Tag.SANITY, 'ENG-3237'], 'Remove not-default language updates lists and shows successful toast', () => {
-            cy.languagesController()
-                .then(controller => controller.putLanguage(testLanguage.code, testLanguage.name, true, false))
-                .then(res => cy.wrap(res.body.payload).as('languageToDelete'));
+            addLanguage(testLanguage);
             currentPage = openLanguagesPage();
             getLanguageTableRowByCode(testLanguage.code)
                 .then(row => {
@@ -253,9 +250,7 @@ describe('Languages', () => {
         });
 
         it([Tag.SANITY, 'ENG-3237'], 'When canceling the removal of a language, it is not removed and the modal is closed', () => {
-            cy.languagesController()
-                .then(controller => controller.putLanguage(testLanguage.code, testLanguage.name, true, false))
-                .then(res => cy.wrap(res.body.payload).as('languageToDelete'));
+            addLanguage(testLanguage);
             currentPage = openLanguagesPage();
             getLanguageTableRowByCode(testLanguage.code)
                 .then(row => {
@@ -290,6 +285,12 @@ describe('Languages', () => {
         return currentPage.getContent()
             .getLanguageTable()
             .contains(htmlElements.tr, code);
+    }
+
+    const addLanguage = (language) => {
+        cy.languagesController()
+                .then(controller => controller.putLanguage(language.code, language.name, true, false))
+                .then(res => cy.wrap(res.body.payload).as('languageToDelete'));
     }
 
 });

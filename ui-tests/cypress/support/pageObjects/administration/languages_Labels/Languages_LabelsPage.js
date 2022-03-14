@@ -8,21 +8,21 @@ import KebabMenu      from '../../app/KebabMenu';
 export default class Languages_LabelsPage extends Content {
 
   languageNavigation = `${htmlElements.ul}[role=tablist].nav-tabs`;
-  languageForm = `${htmlElements.form}.LanguageForm`;
-  languageTable = `${htmlElements.table}.ActiveLangTable__table`;
+  languageForm       = `${htmlElements.form}.LanguageForm`;
+  languageTable      = `${htmlElements.table}.ActiveLangTable__table`;
 
-  labelsTabLink = `${htmlElements.a}[role=menuitem]`;
+  labelsTabLink        = `${htmlElements.a}[role=menuitem]`;
   labelSearchFormField = `${htmlElements.input}[name=key]#text`;
-  labelSearchFormArea = `${htmlElements.form}.LabelSearchForm`;
-  searchFormSubmit = `${htmlElements.button}.btn-primary`;
-  displayedLabelRow = `${htmlElements.tr}.LabelsTable__label-row`;
+  labelSearchFormArea  = `${htmlElements.form}.LabelSearchForm`;
+  searchFormSubmit     = `${htmlElements.button}.btn-primary`;
+  displayedLabelRow    = `${htmlElements.tr}.LabelsTable__label-row`;
   displayedLabelsTable = `${htmlElements.table}.LabelsTable__table`;
-  displayedLabelsTab = `${htmlElements.div}[id=labels-tabs-pane-0]`;
-  labelsAddButton = `${htmlElements.button}[type=button].LabelsAndLanguagesPage__add-label`;
-  labelPaginationForm = `${htmlElements.form}.content-view-pf-pagination`;
+  displayedLabelsTab   = `${htmlElements.div}[id=labels-tabs-pane-0]`;
+  labelsAddButton      = `${htmlElements.button}[type=button].LabelsAndLanguagesPage__add-label`;
+  labelPaginationForm  = `${htmlElements.form}.content-view-pf-pagination`;
   labelPaginationInput = `${htmlElements.input}[type=text].pagination-pf-page`;
-  labelForwardButtons = `${htmlElements.ul}.pagination-pf-forward`;
-  labelBackButtons = `${htmlElements.ul}.pagination-pf-back`;
+  labelForwardButtons  = `${htmlElements.ul}.pagination-pf-forward`;
+  labelBackButtons     = `${htmlElements.ul}.pagination-pf-back`;
   
   getLanguagesTabLink() {
     return this.getContents().find(this.labelsTabLink).eq(0);
@@ -65,6 +65,10 @@ export default class Languages_LabelsPage extends Content {
 
   getLanguageTable() {
     return this.get().find(this.languageTable);
+  }
+
+  getLanguageTableHeaders() {
+    return this.getLanguageTable().children(htmlElements.thead).find(htmlElements.th);
   }
 
   getLanguageTableRows() {
@@ -117,6 +121,11 @@ export default class Languages_LabelsPage extends Content {
   getDisplayedLabelsTable() {
     return this.getDisplayedLabelsTab().find(this.displayedLabelsTable);
   }
+
+  getLabelsTableHeaders() {
+    return this.getDisplayedLabelsTable().children(htmlElements.thead).find(htmlElements.th);
+  }
+
 
   getDisplayedLabelsCount() {
     return this.getDisplayedLabelsTable().find(this.displayedLabelRow);

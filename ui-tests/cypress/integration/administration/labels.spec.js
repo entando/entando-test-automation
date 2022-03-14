@@ -24,7 +24,8 @@ describe('Labels', () => {
     it([Tag.SMOKE, 'ENG-3238'], 'Labels section', () => {
       currentPage = openLabelsPage();
       currentPage.getContent().getDisplayedLabelsTable().should('exist').and('be.visible');
-      currentPage.getContent().getDisplayedLabelsCount().eq(0).children(htmlElements.td).should('have.length', 3);
+      currentPage.getContent().getLabelsTableHeaders().should('have.length', 3)
+                 .then(elements => cy.validateListTexts(elements, ['Code', 'English', 'Actions']));
       currentPage.getContent().getActiveLanguageSelector().children(htmlElements.li).should('have.length', 2);
       currentPage.getContent().getActiveLanguageSelector().contains('*').parent().should('have.class', 'active');
       currentPage.getContent().getLabelSearchFormArea().should('exist').and('be.visible');
