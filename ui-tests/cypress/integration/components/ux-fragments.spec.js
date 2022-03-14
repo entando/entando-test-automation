@@ -37,6 +37,45 @@ describe('UX Fragments', () => {
       cy.validateToast(currentPage);
     });
 
+    it('Add a new fragment using an existing code - not allowed', () => {
+      cy.fragmentsController()
+        .then(controller => controller.addFragment(fragment))
+        .then(() => cy.wrap(fragment).as('fragmentToBeDeleted'));
+
+      currentPage = openFragmentsPage();
+
+      currentPage = currentPage.getContent().openAddFragmentPage();
+      cy.validateAppBuilderUrlPathname('/fragment/add');
+      currentPage.getContent().typeCode(fragment.code);
+      currentPage.getContent().typeGuiCode(fragment.guiCode);
+      currentPage.getContent().save();
+
+      cy.validateToast(currentPage, fragment.code, false);
+    });
+
+    it('Add a new fragment with an invalid code - not allowed', () => {
+      currentPage = openFragmentsPage();
+
+      currentPage = currentPage.getContent().openAddFragmentPage();
+      cy.validateAppBuilderUrlPathname('/fragment/add');
+      currentPage.getContent().typeCode(`${fragment.code}!@#$%^&*`);
+      currentPage.getContent().typeGuiCode(fragment.guiCode);
+      currentPage.getContent().clickSaveBtn();
+
+      currentPage.getContent().getSaveOption().closest('li').invoke('attr', 'class').should('contain', 'disabled');
+    });
+
+    it('Add a new fragment without filling in GUI code - not allowed', () => {
+      currentPage = openFragmentsPage();
+
+      currentPage = currentPage.getContent().openAddFragmentPage();
+      cy.validateAppBuilderUrlPathname('/fragment/add');
+      currentPage.getContent().typeCode(fragment.code);
+      currentPage.getContent().clickSaveBtn();
+
+      currentPage.getContent().getSaveOption().closest('li').invoke('attr', 'class').should('contain', 'disabled');
+    });
+
     it('Edit fragment', () => {
       cy.fragmentsController()
         .then(controller => controller.addFragment(fragment))
