@@ -1,20 +1,20 @@
-import AppPage from '../../app/AppPage.js';
-import Content from '../../app/Content.js';
+import AppPage         from '../../app/AppPage.js';
+import Content         from '../../app/Content.js';
 import {DialogContent} from '../../app/Dialog.js';
-import {htmlElements} from '../../WebElement.js';
-import ReportPage from './ReportPage.js';
+import {htmlElements}  from '../../WebElement.js';
+import ReportPage      from './ReportPage.js';
 
 export default class DatabasePage extends Content {
 
-  databaseListTable = `${htmlElements.table}.DatabaseListTable__table`;
+  databaseListTable  = `${htmlElements.table}.DatabaseListTable__table`;
   createBackupButton = `${htmlElements.button}.DatabaseListPage__add`;
-  deleteButton = `${htmlElements.button}.UserAuthorityTable__delete-tag-btn`;
-  noBackupsAlert = `${htmlElements.div}.DatabaseListPage__alert`;
+  deleteButton       = `${htmlElements.button}.UserAuthorityTable__delete-tag-btn`;
+  noBackupsAlert     = `${htmlElements.div}.DatabaseListPage__alert`;
 
-  tablesList = `${htmlElements.ul}.list-unstyled`;
+  tablesList        = `${htmlElements.ul}.list-unstyled`;
   addPageButtonsDiv = `${htmlElements.div}.AddDatabaseListTable__btn-add`;
-  backupNowButton = `${htmlElements.button}.AddDatabaseListTable__backup`;
-  goBackButton = `${htmlElements.button}.AddDatabaseListTable__goto-list`;
+  backupNowButton   = `${htmlElements.button}.AddDatabaseListTable__backup`;
+  goBackButton      = `${htmlElements.button}.AddDatabaseListTable__goto-list`;
 
 
   getDatabaseListTable() {
@@ -23,6 +23,12 @@ export default class DatabasePage extends Content {
 
   getCreateBackupButton() {
     return this.getContents().find(this.createBackupButton);
+  }
+
+  getTableHeaders() {
+    return this.getDatabaseListTable()
+      .children(htmlElements.thead)
+      .find(htmlElements.th);
   }
 
   getTableRows() {
