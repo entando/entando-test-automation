@@ -14,7 +14,6 @@ export default class KebabMenu extends WebElement {
   }
 
   open() {
-    cy.wait(1000); //wait for the kebab menu to load
     this.get()
         .children(htmlElements.button)
         .click();

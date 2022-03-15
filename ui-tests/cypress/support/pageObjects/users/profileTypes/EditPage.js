@@ -37,7 +37,6 @@ export default class EditPage extends Content {
 
   save() {
     this.getSaveButton().click();
-    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     return new AppPage(ProfileTypesPage);
   }
 
