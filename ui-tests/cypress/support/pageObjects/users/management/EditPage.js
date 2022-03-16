@@ -71,7 +71,6 @@ export default class EditPage extends Content {
       this.changeStatus();
     }
     this.submitForm();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(ManagementPage);
   }
 

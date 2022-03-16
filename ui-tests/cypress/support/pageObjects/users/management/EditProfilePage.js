@@ -75,7 +75,6 @@ export default class EditProfilePage extends Content {
       this.typeProfilePicture(profilePicture);
     }
     this.submitForm();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(ManagementPage);
   }
 
