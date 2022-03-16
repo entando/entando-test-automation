@@ -77,7 +77,7 @@ describe('Sender Management Functionalities', () =>{
                     .should('have.text','Delete');
 
       });
-      it.only([Tag.SMOKE, 'ENG-3299'], 'Edit Sender is displayed', () => {
+      it([Tag.SMOKE, 'ENG-3299'], 'Edit Sender is displayed', () => {
 
         addTestSender();
         currentPage = openSenderPage();
@@ -126,7 +126,7 @@ describe('Sender Management Functionalities', () =>{
 
       });
 
-      it.only([Tag.SANITY, 'ENG-3299'], 'Update an existing sender', () => {
+      it([Tag.SANITY, 'ENG-3299'], 'Update an existing sender', () => {
 
         addTestSender();
         currentPage = openSenderPage();
@@ -226,7 +226,7 @@ describe('Sender Management Functionalities', () =>{
       
       });
 
-      it.only([Tag.FEATURE, 'ENG-3299'], 'Code Input is disabled ', () => {
+      it([Tag.FEATURE, 'ENG-3299'], 'Code Input is disabled ', () => {
       
         currentPage = openSenderPage();
         currentPage = currentPage.getContent().getKebabMenu(sender1.code).open().openEdit();
