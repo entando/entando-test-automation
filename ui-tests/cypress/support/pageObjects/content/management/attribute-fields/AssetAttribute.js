@@ -153,7 +153,7 @@ export default class AssetAttribute extends AttributeFormField {
         this.setDialogBodyWithClass(AssetSelector);
         this.getDialogBodyOfAttribute().getUseButtonFromAssetTitle(upload).click();
       } else {
-        this.getUploadButton().selectFile(upload.file);
+        this.getUploadButton().selectFile(upload.file, {force: true});
         cy.wait(500);
         this.setDialogBodyWithClass(AssetUploader);
         this.getDialogBodyOfAttribute().submit();
@@ -161,7 +161,7 @@ export default class AssetAttribute extends AttributeFormField {
     }
     cy.wait(500);
     if (metadata) {
-      this.fillMetadata(metadata);
+      this.fillMetadata(metadata, true);
     }
   }
 
