@@ -10,6 +10,8 @@ describe([Tag.GTS], 'Users Management', () => {
 
   beforeEach(() => {
     cy.kcLogin('login/admin').as('tokens');
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'loadedList', '?page=1&pageSize=10'));
+    cy.usersController().then(controller => controller.intercept({method: 'POST'}, 'addUserRequest'));
   });
 
   afterEach(() => {
@@ -19,6 +21,10 @@ describe([Tag.GTS], 'Users Management', () => {
   describe('UI', () => {
 
     const USERNAME_ADMIN = 'admin';
+
+    beforeEach(() => {
+      cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'userDetails', `/${USERNAME_ADMIN}`));
+    });
 
     it('Users management page', () => {
       currentPage = openManagementPage();
@@ -55,7 +61,7 @@ describe([Tag.GTS], 'Users Management', () => {
     it('Edit user page', () => {
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
-      currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEdit();
+      currentPage = openEdit(USERNAME_ADMIN);
 
       cy.validateAppBuilderUrlPathname(`/user/edit/${USERNAME_ADMIN}`);
 
@@ -139,6 +145,7 @@ describe([Tag.GTS], 'Users Management', () => {
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openViewProfile();
+      cy.wait('@userDetails');
 
       cy.validateAppBuilderUrlPathname(`/user/view/${USERNAME_ADMIN}`);
 
@@ -256,50 +263,56 @@ describe([Tag.GTS], 'Users Management', () => {
     let password;
 
     beforeEach(() => {
+      cy.wrap(null).as('userToBeDeleted');
       username = generateRandomId();
       password = generateRandomId();
+      cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'userDetails', `/${username}`));
+    });
+
+    afterEach(() => {
+      cy.get('@userToBeDeleted').then(user => {
+        if(user) cy.usersController().then(controller => controller.deleteUser(user));
+      });
     });
 
     it('Add a new user', () => {
       currentPage = openManagementPage();
 
       currentPage = currentPage.getContent().openAddUserPage();
-      currentPage = currentPage.getContent().addUser(username, password, PROFILE_TYPE_CODE);
+      currentPage = addUserUI(username, password, PROFILE_TYPE_CODE);
+      cy.validateAppBuilderUrlPathname('/user');
+      cy.wait('@loadedList');
 
       currentPage.getContent().getTableRow(username).children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [username]));
-
-      cy.usersController().then(controller => controller.deleteUser(username));
     });
 
     it('Add a user with existing user name is forbidden', () => {
-      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
-
+      addUserAPI(username, password, PROFILE_TYPE_CODE);
+      
       currentPage = openManagementPage();
 
       currentPage = currentPage.getContent().openAddUserPage();
-      currentPage.getContent().addUser(username, password, PROFILE_TYPE_CODE);
+      addUserUI(username, password, PROFILE_TYPE_CODE);
 
       cy.validateToast(currentPage, `The user '${username}' already exists`, false);
-
-      cy.usersController().then(controller => controller.deleteUser(username));
     });
 
     it('Update an existing user', () => {
       const PASSWORD_EDIT = generateRandomId();
 
-      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
+      addUserAPI(username, password, PROFILE_TYPE_CODE);
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
 
-      currentPage = currentPage.getContent().getKebabMenu(username).open().openEdit();
+      currentPage = openEdit(username);
+
       currentPage = currentPage.getContent().editUser(PASSWORD_EDIT, true);
+      cy.wait('@loadedList');
 
       currentPage.getContent().getTableRow(username).children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [username, null, null, null, '\u00a0Active']));
-
-      cy.usersController().then(controller => controller.deleteUser(username));
     });
 
     it('Update an existing user profile', () => {
@@ -307,7 +320,7 @@ describe([Tag.GTS], 'Users Management', () => {
       const EMAIL             = `${generateRandomId()}@entando.com`;
       const PROFILE_TYPE_DESC = 'Default user profile';
 
-      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
+      addUserAPI(username, password, PROFILE_TYPE_CODE);
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
@@ -321,8 +334,6 @@ describe([Tag.GTS], 'Users Management', () => {
 
       currentPage.getContent().getTableRow(username).children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [username, `${PROFILE_TYPE_DESC} ${PROFILE_TYPE_CODE}`, FULL_NAME, EMAIL, '\u00a0Not active']));
-
-      cy.usersController().then(controller => controller.deleteUser(username));
     });
 
     it('Update an existing user authorization', () => {
@@ -335,7 +346,7 @@ describe([Tag.GTS], 'Users Management', () => {
         DESCRIPTION: 'Administrator'
       };
 
-      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
+      addUserAPI(username, password, PROFILE_TYPE_CODE);
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
@@ -354,12 +365,10 @@ describe([Tag.GTS], 'Users Management', () => {
       });
 
       currentPage.getContent().save();
-
-      cy.usersController().then(controller => controller.deleteUser(username));
     });
 
     it('Search an existing user', () => {
-      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
+      addUserAPI(username, password, PROFILE_TYPE_CODE);
 
       currentPage = openManagementPage();
 
@@ -368,8 +377,6 @@ describe([Tag.GTS], 'Users Management', () => {
                  .should('have.length', 1)
                  .children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [username]));
-
-      cy.usersController().then(controller => controller.deleteUser(username));
     });
 
     it('Search a non-existing user', () => {
@@ -383,7 +390,7 @@ describe([Tag.GTS], 'Users Management', () => {
     });
 
     it('Delete a user', () => {
-      cy.usersController().then(controller => controller.addUser({username: username, password: password, passwordConfirm: password, profileType: PROFILE_TYPE_CODE}));
+      addUserAPI(username, password, PROFILE_TYPE_CODE);
 
       currentPage = openManagementPage();
       currentPage.getContent().getTableRows().contains(htmlElements.td, username);
@@ -391,7 +398,8 @@ describe([Tag.GTS], 'Users Management', () => {
       currentPage.getContent().getKebabMenu(username).open().clickDelete();
       currentPage.getDialog().getBody().getStateInfo().should('contain', username);
       currentPage.getDialog().confirm();
-      cy.wait(1000);
+      cy.wrap(null).as('userToBeDeleted');
+      cy.wait('@loadedList');
       currentPage.getContent().getTableRows().should('not.contain', username);
     });
 
@@ -413,7 +421,38 @@ describe([Tag.GTS], 'Users Management', () => {
   const openManagementPage = () => {
     cy.visit('/');
     currentPage = new HomePage();
-    return currentPage.getMenu().getUsers().open().openManagement();
+    currentPage = currentPage.getMenu().getUsers().open().openManagement();
+    cy.wait('@loadedList');
+    return currentPage;
+  };
+
+  const addUserUI = (username, password, code) => {
+    currentPage = currentPage.getContent().addUser(username, password, code);
+    cy.wait('@addUserRequest').then(res => {
+      cy.get('@userToBeDeleted').then(user => {
+        if(!user) cy.wrap(res.response.body.payload.username).as('userToBeDeleted');
+      });
+      if(res.response.statusCode==200) cy.wait('@loadedList');
+    });
+    return currentPage;
+  };
+
+  const addUserAPI = (username, password, code) => {
+    cy.usersController().then(controller => {
+      controller.addUser({ username: username, password: password, passwordConfirm: password, profileType: code })
+        .then(res => cy.get('@userToBeDeleted')
+          .then(user => {
+            if (!user) cy.wrap(res.body.payload.username).as('userToBeDeleted');
+          })
+        );
+    });
+  };
+
+  const openEdit = (username) => {
+    currentPage = currentPage.getContent().getKebabMenu(username).open().openEdit();
+    currentPage.getContent().getUsernameInput().should('have.value', username);
+    cy.wait('@userDetails');
+    return currentPage;
   };
 
 });

@@ -103,7 +103,6 @@ export default class ManagementPage extends Content {
     }
     this.typeSearch(username);
     this.submitSearch();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(ManagementPage);
   }
 
