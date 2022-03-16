@@ -5,8 +5,8 @@ export default class AbstractController {
     this.accessToken = accessToken;
   }
 
-  intercept(routeMatcher, path, alias) {
-    routeMatcher.url = this.apiURL+path;
+  intercept(routeMatcher, alias, path = '') {
+    routeMatcher.url = this.apiURL + path;
     return cy.intercept(routeMatcher).as(alias);
   }
 
@@ -61,22 +61,22 @@ export default class AbstractController {
 
   uploadTextFile(fileInfo, url, protectedFolder) {
     return cy.fixture(`upload/${fileInfo.name}`)
-      .then(file => {
-        if(fileInfo.type == 'application/json') fileInfo.base64 = btoa(JSON.stringify(file, null, 2) + "\n");
-        else fileInfo.base64 = btoa(file);
-      })
-      .then(() => this.request(
-        {
-          method: 'POST',
-          url: url,
-          body: {
-            protectedFolder: protectedFolder,
-            path:            `/${fileInfo.path}${fileInfo.name}`,
-            filename:        fileInfo.name,
-            base64:          fileInfo.base64
-          }
-        })
-      )
+             .then(file => {
+               if (fileInfo.type == 'application/json') fileInfo.base64 = btoa(JSON.stringify(file, null, 2) + '\n');
+               else fileInfo.base64 = btoa(file);
+             })
+             .then(() => this.request(
+                 {
+                   method: 'POST',
+                   url: url,
+                   body: {
+                     protectedFolder: protectedFolder,
+                     path: `/${fileInfo.path}${fileInfo.name}`,
+                     filename: fileInfo.name,
+                     base64: fileInfo.base64
+                   }
+                 })
+             );
   }
 
 }

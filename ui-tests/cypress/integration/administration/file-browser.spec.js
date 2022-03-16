@@ -10,8 +10,8 @@ describe('File browser', () => {
     cy.wrap(null).as('filesToBeDeleted');
     cy.wrap(null).as('folderToBeDeleted');
     cy.kcLogin('login/admin').as('tokens');
-    cy.fileBrowserController().then(controller => controller.intercept({method: 'GET'}, '?', 'openedRootFolder'));
-    cy.fileBrowserController().then(controller => controller.intercept({method: 'GET'}, '?protectedFolder=*', 'openedFolder'));
+    cy.fileBrowserController().then(controller => controller.intercept({method: 'GET'}, 'openedRootFolder', '?'));
+    cy.fileBrowserController().then(controller => controller.intercept({method: 'GET'}, 'openedFolder', '?protectedFolder=*'));
   });
 
   afterEach(() => {
