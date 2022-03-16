@@ -333,7 +333,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, values: testValue }],
           })
@@ -425,7 +425,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (
@@ -507,7 +507,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (
@@ -591,7 +591,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
       .then((controller) => {
-        controller.postContent({
+        controller.addContent({
           ...CONTENT,
           attributes: [{ code: attribute, values: testValue }],
         }).then((response) => (
@@ -704,7 +704,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (
@@ -814,7 +814,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, values: testValue }],
           }).then((response) => (
@@ -962,7 +962,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{
               code: attribute,
@@ -1131,7 +1131,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         .then(({ response }) => {
           return cy.contentsController()
             .then((controller) => {
-              controller.postContent({
+              controller.addContent({
                 ...CONTENT,
                 attributes: [{
                   code: attribute,
@@ -1223,7 +1223,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (
@@ -1269,7 +1269,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (
@@ -1315,7 +1315,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (
@@ -1377,7 +1377,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{
               code: attribute,
@@ -1447,7 +1447,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (
@@ -1542,7 +1542,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (
@@ -1624,7 +1624,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (
@@ -1694,7 +1694,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT,
             attributes: [{ code: attribute, value: testValue }],
           }).then((response) => (

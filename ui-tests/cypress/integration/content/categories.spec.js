@@ -72,7 +72,7 @@ describe([Tag.GTS], 'Categories', () => {
     beforeEach(() => {
       postTestCategory();
       cy.contentsController()
-        .then(controller => controller.postContent(content))
+        .then(controller => controller.addContent(content))
         .then((response) => {
             const { body: { payload } } = response;
             cy.wrap(payload[0].id).as('testContentId');

@@ -88,7 +88,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
     addAttributeToContentType(attribute, addAttributeProps);
       cy.contentsController()
         .then((controller) => {
-          controller.postContent({
+          controller.addContent({
             ...CONTENT_WITH_LIST,
             attributes: [{
               code: 'List',

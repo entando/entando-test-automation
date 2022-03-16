@@ -146,7 +146,7 @@ describe([Tag.GTS], 'Content Templates', () => {
     templateToBeDeleted = true;
 
     cy.contentsController()
-      .then(controller => controller.postContent(content))
+      .then(controller => controller.addContent(content))
       .then((response) => {
         const { body: { payload } } = response;
         contentId = payload[0].id;

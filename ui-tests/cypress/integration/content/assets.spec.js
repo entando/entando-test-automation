@@ -92,7 +92,7 @@ describe('Assets', () => {
             }
         );
         cy.contentsController()
-          .then(controller => controller.postContent(content))
+          .then(controller => controller.addContent(content))
           .then(response => content.id = response.body.payload[0].id);
         cy.contentsController().then(controller => controller.updateStatus(content.id, 'published'));
 
