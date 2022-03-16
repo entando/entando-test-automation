@@ -559,7 +559,7 @@ describe([Tag.GTS], 'Page Management', () => {
             cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', firstPageTitle)
         );
 
-        //FIXME first always tries to open it, even if it is already opened
+        //TODO first always tries to open it, even if it is already opened
         page.getContent().toggleRowSubPages(parentPageCode);
         page.getContent().toggleRowSubPages(parentPageCode);
         page.getContent().getTableRows().then(rows =>

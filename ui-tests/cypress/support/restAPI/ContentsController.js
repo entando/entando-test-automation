@@ -10,6 +10,13 @@ Cypress.Commands.add('contentsController', () => {
 
 export default class ContentsController extends AbstractController {
 
+  getContent(contentId) {
+    return this.request({
+      url: `${this.apiURL}/${contentId}`,
+      method: 'GET',
+    });
+  }
+
   getContentList() {
     return this.request({
       method: 'GET',
