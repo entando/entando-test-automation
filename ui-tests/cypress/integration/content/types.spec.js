@@ -79,7 +79,7 @@ describe([Tag.GTS], 'Content Types', () => {
         mainGroup: 'administrators',
         status: 'published'
       };
-      cy.contentsController().then(controller => controller.postContent(content))
+      cy.contentsController().then(controller => controller.addContent(content))
         .then((response) => {
           const {body: {payload}} = response;
           contentId               = payload[0].id;

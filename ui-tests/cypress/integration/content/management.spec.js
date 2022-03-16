@@ -42,7 +42,7 @@ describe([Tag.GTS], 'Contents', () => {
 
   describe('Delete content', () => {
     beforeEach(() => {
-      cy.contentsController().then(controller => controller.postContent(testContent))
+      cy.contentsController().then(controller => controller.addContent(testContent))
         .then((response) => {
           const {body: {payload}} = response;
           contentCode             = payload[0].id;
@@ -71,7 +71,7 @@ describe([Tag.GTS], 'Contents', () => {
 
   describe('Edit content', () => {
     beforeEach(() => {
-      cy.contentsController().then(controller => controller.postContent(testContent))
+      cy.contentsController().then(controller => controller.addContent(testContent))
         .then((response) => {
           const {body: {payload}} = response;
           contentCode             = payload[0].id;
@@ -125,7 +125,7 @@ describe([Tag.GTS], 'Contents', () => {
 
     cy.seoPagesController().then(controller => controller.addNewPage(page));
     cy.contentTypesController().then(controller => controller.addContentType(contentTypeCode, contentTypeName));
-    cy.contentsController().then(controller => controller.postContent({...content, typeCode: contentTypeCode}))
+    cy.contentsController().then(controller => controller.addContent({...content, typeCode: contentTypeCode}))
       .then((response) => {
         const {body: {payload}} = response;
         contentId               = payload[0].id;

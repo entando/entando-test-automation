@@ -23,7 +23,7 @@ export default class ContentsController extends AbstractController {
     });
   }
 
-  postContent(content) {
+  addContent(content) {
     return this.request({
       method: 'POST',
       body: [{
