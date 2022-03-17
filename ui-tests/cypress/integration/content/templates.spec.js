@@ -1,6 +1,6 @@
-import HomePage from '../../support/pageObjects/HomePage';
-import { htmlElements }                              from '../../support/pageObjects/WebElement';
-import { generateRandomId, generateRandomNumericId } from '../../support/utils';
+import HomePage                                    from '../../support/pageObjects/HomePage';
+import {htmlElements}                              from '../../support/pageObjects/WebElement';
+import {generateRandomId, generateRandomNumericId} from '../../support/utils';
 
 const openContentTemplatesPage = () => {
   cy.visit('/');
@@ -9,7 +9,7 @@ const openContentTemplatesPage = () => {
   return currentPage.openTemplates();
 };
 
-const addContentTemplate = template => cy.contentTemplatesController().then(controller => controller.addContentTemplate(template));
+const addContentTemplate    = template => cy.contentTemplatesController().then(controller => controller.addContentTemplate(template));
 const deleteContentTemplate = id => cy.contentTemplatesController().then(controller => controller.deleteContentTemplate(id));
 
 describe([Tag.GTS], 'Content Templates', () => {
@@ -25,14 +25,14 @@ describe([Tag.GTS], 'Content Templates', () => {
   let templateToBeDeleted = false;
 
   beforeEach(() => {
-    template.id = generateRandomNumericId();
+    template.id    = generateRandomNumericId();
     template.descr = generateRandomId();
 
     cy.kcLogin('login/admin').as('tokens');
   });
 
   afterEach(() => {
-    if (templateToBeDeleted){
+    if (templateToBeDeleted) {
       deleteContentTemplate(template.id).then(() => templateToBeDeleted = false);
     }
 
@@ -67,7 +67,7 @@ describe([Tag.GTS], 'Content Templates', () => {
 
     cy.log(`Edit content template with id ${template.id}`);
     const newName = `${template.descr}-new`;
-    currentPage = currentPage.getContent().getKebabMenu(template.id).open().openEdit();
+    currentPage   = currentPage.getContent().getKebabMenu(template.id).open().openEdit();
     currentPage.getContent().typeName(newName);
 
     currentPage = currentPage.getContent().submitForm();
@@ -106,9 +106,9 @@ describe([Tag.GTS], 'Content Templates', () => {
 
     cy.wait(1000);
     currentPage.getContent().getPagination()
-                .getItemsCurrent().invoke('text').should('be.equal', '0-0');
+               .getItemsCurrent().invoke('text').should('be.equal', '0-0');
     currentPage.getContent().getPagination()
-                .getItemsTotal().invoke('text').should('be.equal', '0');
+               .getItemsTotal().invoke('text').should('be.equal', '0');
   });
 
   it('Delete content template referenced by a published content - not allowed', () => {
@@ -116,7 +116,7 @@ describe([Tag.GTS], 'Content Templates', () => {
       description: 'test',
       mainGroup: 'administrators',
       typeCode: 'BNR',
-      attributes: [{ code: 'title', values: { en: 'test', it: 'test' } }],
+      attributes: [{code: 'title', values: {en: 'test', it: 'test'}}]
     };
 
     const page = {
@@ -125,7 +125,7 @@ describe([Tag.GTS], 'Content Templates', () => {
       contentType: 'text/html',
       pageModel: '1-2-column',
       parentCode: 'homepage',
-      titles: { en: 'Test' },
+      titles: {en: 'Test'},
       ownerGroup: 'administrators'
     };
 
@@ -148,22 +148,22 @@ describe([Tag.GTS], 'Content Templates', () => {
     cy.contentsController()
       .then(controller => controller.addContent(content))
       .then((response) => {
-        const { body: { payload } } = response;
-        contentId = payload[0].id;
+        const {body: {payload}} = response;
+        contentId               = payload[0].id;
       });
     cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
-    cy.seoPagesController().then(controller => controller.addNewPage(page))
+    cy.seoPagesController().then(controller => controller.addNewPage(page));
     cy.widgetsController(page.code)
       .then(controller =>
-        controller.addWidget(
-          pageWidget.frameId,
-          pageWidget.code,
-          {
-            ...pageWidget.config,
-            contentId
-          }
-        )
-      );
+          controller.addWidget({
+            frameId: pageWidget.frameId,
+            code: pageWidget.code,
+            ownerGroup: pageWidget.config.ownerGroup,
+            joinGroups: pageWidget.config.joinGroups,
+            contentDescription: pageWidget.config.contentDescription,
+            modelId: pageWidget.config.modelId,
+            contentId: contentId
+          }));
 
     currentPage = openContentTemplatesPage();
 
