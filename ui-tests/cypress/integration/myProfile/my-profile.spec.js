@@ -25,7 +25,7 @@ describe([Tag.GTS], 'My Profile', () => {
                  .and('have.text', 'My profile');
 
       currentPage.getContent().selectTab('account');
-      cy.wait(1000);
+      
       currentPage.getContent().getLegend().should('be.visible')
                  .and('have.text', 'Edit my account');
     });
@@ -40,7 +40,9 @@ describe([Tag.GTS], 'My Profile', () => {
                  .and('have.text', 'My profile');
 
       currentPage.getContent().selectTab('profile');
-      cy.wait(1000);
+      
+      currentPage.getContent().getProfileEditButton().should('be.visible');
+
       currentPage.getContent().getLegend()
                  .first()
                  .should('be.visible')
@@ -62,7 +64,9 @@ describe([Tag.GTS], 'My Profile', () => {
                  .and('have.text', 'My profile');
 
       currentPage.getContent().selectTab('preferences');
-      cy.wait(1000);
+
+      currentPage.getContent().getSettingsSaveBtn().should('be.visible');
+
       currentPage.getContent().getLegend()
                  .first()
                  .should('be.visible')
@@ -78,7 +82,6 @@ describe([Tag.GTS], 'My Profile', () => {
 
       currentPage.getContent().selectTab('account');
       currentPage.getContent().clickChangePasswordButton();
-      cy.wait(1000);
 
       cy.fixture(`users/login/admin`)
         .then((userData) => {
@@ -102,12 +105,11 @@ describe([Tag.GTS], 'My Profile', () => {
       currentPage = openMyProfile();
 
       currentPage.getContent().selectTab('profile');
-      cy.wait(1000);
 
       currentPage.getContent().clickProfileEditButton();
 
       currentPage.getContent().uploadProfileImage('cypress/fixtures/upload/entando_400x400.png');
-      cy.wait(2000);
+
       cy.validateToast(currentPage);
       currentPage.getContent().typeFullNameInput('Test name');
       currentPage.getContent().typeEmailInput('email@test.com');
@@ -124,11 +126,12 @@ describe([Tag.GTS], 'My Profile', () => {
       currentPage = openMyProfile();
 
       currentPage.getContent().selectTab('profile');
-      cy.wait(1000);
 
       currentPage.getContent().clickProfileEditButton();
       currentPage.getContent().clickUploadImageButton();
       currentPage.getContent().getProfileDropdown().find('li a').last().click();
+      currentPage.getContent().typeFullNameInput('Test name');
+      currentPage.getContent().typeEmailInput('email@test.com');
       currentPage.getContent().clickProfileSaveButton();
 
       cy.validateToast(currentPage);
@@ -142,7 +145,6 @@ describe([Tag.GTS], 'My Profile', () => {
       currentPage = openMyProfile();
 
       currentPage.getContent().selectTab('preferences');
-      cy.wait(1000);
 
       currentPage.getContent().toggleWelcomeWizard();
       currentPage.getContent().toggleMissingTranslationWizard();

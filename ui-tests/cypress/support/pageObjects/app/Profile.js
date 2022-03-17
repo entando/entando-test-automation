@@ -92,8 +92,12 @@ export default class Profile extends Content {
         this.getAccountModal().find(this.accountModalCancelButton).click();
     }
 
+    getProfileEditButton() {
+        return this.getTabContent().find(this.profileEditButton);
+    }
+
     clickProfileEditButton() {
-        this.getTabContent().find(this.profileEditButton).click();
+        this.getProfileEditButton().click();
     }
 
     clickProfileSaveButton() {
@@ -125,7 +129,7 @@ export default class Profile extends Content {
     }
 
     uploadProfileImage(...fileName) {
-        this.getTabContent().find(this.profileImageInput).selectFile(fileName);
+        this.getTabContent().find(this.profileImageInput).selectFile(fileName, {force: true});
     }
 
     toggleWelcomeWizard() {
@@ -162,8 +166,12 @@ export default class Profile extends Content {
         this.getTabContent().find(this.defaultWidgetOwnerGroupSelect).select(value);
     }
 
+    getSettingsSaveBtn() {
+        return this.getTabContent().find(this.settingsSaveBtn);
+    }
+
     clickSettingsSaveBtn() {
-        this.getTabContent().find(this.settingsSaveBtn).click();
+        this.getSettingsSaveBtn().click();
     }
 
 }
