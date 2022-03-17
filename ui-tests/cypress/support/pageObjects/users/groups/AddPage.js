@@ -56,7 +56,6 @@ export default class AddPage extends Content {
     }
     this.typeCode(code);
     this.submitForm();
-    cy.wait(1000);
     return new AppPage(GroupsPage);
   }
 

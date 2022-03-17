@@ -12,14 +12,23 @@ describe([Tag.GTS], 'Groups', () => {
   let groupCode;
 
   beforeEach(() => {
+    cy.wrap(null).as('groupToBeDeleted');
+
     groupName = generateRandomId();
     groupCode = groupName.toLowerCase();
 
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
+
+    cy.groupsController().then(controller => controller.intercept({method: 'POST'}, 'addedGroup'));
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'loadedGroupsList', '?sort=name&page=1&pageSize=10'));
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'loadedGroupDetails', `/${groupCode}`));
   });
 
   afterEach(() => {
+    cy.get('@groupToBeDeleted').then(groupCode => {
+      if(groupCode) cy.groupsController().then(controller => controller.deleteGroup(groupCode));
+    })
     cy.kcUILogout();
   });
 
@@ -28,15 +37,15 @@ describe([Tag.GTS], 'Groups', () => {
 
     currentPage = currentPage.getContent().openAddGroupPage();
     currentPage = currentPage.getContent().addGroup(groupName, groupCode);
+    cy.wait('@addedGroup').then(res => cy.wrap(res.response.body.payload.code).as('groupToBeDeleted'));
+    cy.wait('@loadedGroupsList');
 
     currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
                .then(cells => cy.validateListTexts(cells, [groupName, groupCode]));
-
-    cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
   it('Add a new group using an existing code - not allowed', () => {
-    cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
+    addGroup(groupCode, groupName);
 
     currentPage = openGroupsPage();
 
@@ -46,19 +55,18 @@ describe([Tag.GTS], 'Groups', () => {
     currentPage.getContent().submitForm();
 
     cy.validateToast(currentPage, groupCode, false);
-
-    cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
   it('Update an existing group', () => {
     const updatedGroupName = generateRandomId();
 
-    cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
+    addGroup(groupCode, groupName);
 
     currentPage = openGroupsPage();
 
-    currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openEdit();
+    currentPage = openEdit(groupCode, groupName);
     currentPage = currentPage.getContent().editGroup(updatedGroupName);
+    cy.wait('@loadedGroupsList');
 
     currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
                .then(cells => cy.validateListTexts(cells, [updatedGroupName, groupCode]));
@@ -69,12 +77,10 @@ describe([Tag.GTS], 'Groups', () => {
                  cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
                  cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
                });
-
-    cy.groupsController().then(controller => controller.deleteGroup(groupCode));
   });
 
   it('Delete an existing group', () => {
-    cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
+    addGroup(groupCode, groupName);
 
     currentPage = openGroupsPage();
 
@@ -83,6 +89,7 @@ describe([Tag.GTS], 'Groups', () => {
 
     currentPage.getDialog().confirm();
     currentPage.getContent().getTableRows().should('not.contain', groupCode);
+    cy.wrap(null).as('groupToBeDeleted');
   });
 
   describe('Groups - referenced by a page', () => {
@@ -96,14 +103,13 @@ describe([Tag.GTS], 'Groups', () => {
     };
 
     beforeEach(() => {
-      cy.groupsController().then(controller => controller.addGroup(groupCode, groupName));
+      addGroup(groupCode, groupName);
       cy.seoPagesController().then(controller => controller.addNewPage({...page, ownerGroup: groupCode}));
     });
 
     afterEach(() => {
       cy.pagesController().then(controller => controller.setPageStatus(page.code, 'draft'));
       cy.pagesController().then(controller => controller.deletePage(page.code));
-      cy.groupsController().then(controller => controller.deleteGroup(groupCode));
     });
 
     it('Update a group used by an unpublished page', () => {
@@ -111,8 +117,9 @@ describe([Tag.GTS], 'Groups', () => {
 
       currentPage = openGroupsPage();
 
-      currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openEdit();
+      currentPage = openEdit(groupCode, groupName);
       currentPage = currentPage.getContent().editGroup(updatedGroupName);
+      cy.wait('@loadedGroupsList');
 
       currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [updatedGroupName, groupCode]));
@@ -132,8 +139,9 @@ describe([Tag.GTS], 'Groups', () => {
 
       currentPage = openGroupsPage();
 
-      currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openEdit();
+      currentPage = openEdit(groupCode, groupName);
       currentPage = currentPage.getContent().editGroup(updatedGroupName);
+      cy.wait('@loadedGroupsList');
 
       currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
                  .then(cells => cy.validateListTexts(cells, [updatedGroupName, groupCode]));
@@ -172,7 +180,23 @@ describe([Tag.GTS], 'Groups', () => {
   const openGroupsPage = () => {
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getUsers().open();
-    return currentPage.openGroups();
+    currentPage = currentPage.openGroups();
+    cy.wait('@loadedGroupsList');
+    return currentPage;
+  };
+
+  const addGroup = (code, name) => {
+    cy.groupsController().then(controller => {
+      controller.addGroup(code, name);
+      cy.wrap(code).as('groupToBeDeleted');
+    });
+  };
+
+  const openEdit = (code, name) => {
+    currentPage = currentPage.getContent().getKebabMenu(code).open().openEdit();
+    cy.wait('@loadedGroupDetails');
+    currentPage.getContent().getNameInput().should('have.value', name);
+    return currentPage;
   };
 
 });
