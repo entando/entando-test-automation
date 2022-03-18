@@ -104,7 +104,6 @@ describe([Tag.GTS], 'Page Management', () => {
     
         beforeEach(() => {
     
-    
           page.code     = generateRandomId();
           page.title    = {
             en: generateRandomId(),
@@ -187,7 +186,6 @@ describe([Tag.GTS], 'Page Management', () => {
     describe('Actions', () => {
 
         beforeEach(() => {
-    
     
           page.code     = generateRandomId();
           page.title    = {
@@ -348,11 +346,9 @@ describe([Tag.GTS], 'Page Management', () => {
           });
           describe('Update an existing page', () => {
 
-            //TODO should be enable after PR #1109 gets merged
-            xit('with an owner not compatible with the users', () => {
+            it('with an owner not compatible with the users', () => {
               currentPage = openManagementPage();
       
-              // edit sitemap page
               currentPage = currentPage.getContent().getKebabMenu('sitemap').open().openEdit();
       
               currentPage.getContent().getOwnerGroupButton().should('be.disabled');
@@ -437,6 +433,61 @@ describe([Tag.GTS], 'Page Management', () => {
             });
       
         });
+
+
+        describe('Delete a page', () => {
+
+          beforeEach(() => postPage(page));
+    
+          it('Delete an unpublished page', () => {
+            currentPage = openManagementPage();
+    
+            currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
+            currentPage.getDialog().getBody().getStateInfo()
+                       .should('contain', page.code);
+    
+            currentPage.getDialog().confirm();
+    
+            currentPage.getContent().getTableRows().should('not.contain', page.title);
+    
+            pageToBeDeleted = false;
+          });
+    
+          it('Delete a published page is forbidden', () => {
+            cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
+    
+            currentPage = openManagementPage();
+    
+            cy.pause();
+            currentPage.getContent().getKebabMenu(page.code).getDelete()
+                       .should('have.class', 'disabled');
+          });
+    
+          it('Delete a drafted page is forbidden', () => {
+            cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
+            cy.pageWidgetsController(page.code).then(controller => controller.addWidget(0, 'search_form'));
+    
+            currentPage = openManagementPage();
+            currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
+            currentPage.getDialog().confirm();
+
+            cy.pause(); //TODO delete a drafted page is NOT forbidden
+    
+            currentPage.getContent().getAlertMessage().should('be.visible');
+          });
+    
+          it('Delete a page with children is forbidden', () => {
+            postPage(subPage, page.code);
+    
+            currentPage = openManagementPage();
+    
+            currentPage.getContent().getKebabMenu(page.code).getDelete().should('have.class', 'disabled');
+          });
+    
+        });
+
+
+
         describe('Form Validations', () => {
 
             describe('Page form should be not possible to save NULL title in default language (ENG-2687)', () => {
@@ -454,7 +505,7 @@ describe([Tag.GTS], 'Page Management', () => {
                 currentPage.getContent().getSaveButton().should('be.disabled');
               });
       
-              it('Adding a title from default language without other languages will be allowed to save', () => {//funziona
+              it('Adding a title from default language without other languages will be allowed to save', () => {
                 page.code  = generateRandomId();
                 page.title = generateRandomId();
       
