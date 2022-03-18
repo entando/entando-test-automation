@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import Content from '../../app/Content.js';
 
@@ -10,31 +10,31 @@ import DesignerPage from '../designer/DesignerPage.js';
 export default class AddPage extends Content {
 
   // SEO
-  seoInfoContainer = `${htmlElements.div}#basic-tabs`;
+  seoInfoContainer = `${htmlElements.div}.SeoInfo`;
 
-  seoInfoTabs          = `${htmlElements.ul}[${DATA_TESTID}=common_SeoInfo_Tabs]`;
+  seoInfoTabs          = `${htmlElements.ul}[role="tablist"]`;
   titleInput           = `${htmlElements.input}[name="titles.{lang}"]`;
   seoDescriptionInput  = `${htmlElements.input}[name="seoData.seoDataByLang.{lang}.description"]`;
   seoKeywordsInput     = `${htmlElements.input}[name="seoData.seoDataByLang.{lang}.keywords"]`;
   seoFriendlyCodeInput = `${htmlElements.input}[name="seoData.seoDataByLang.{lang}.friendlyCode"]`;
   // Meta
-  metaDataFormDiv      = `${htmlElements.div}[${DATA_TESTID}=common_SeoMetadataForm_div]`;
-  metaKeyInput         = `${htmlElements.input}[name=metakey]`;
+  metaDataFormDiv      = `${htmlElements.div}.SeoInfo__addmetadata`;
+  metaKeyInput         = `${htmlElements.input}[name="metakey"]`;
   metaTypeSelect       = `${htmlElements.select}[name=metatype]`;
   metaValueInput       = `${htmlElements.input}[name=metavalue]`;
-  metaTagAddButton     = `${htmlElements.button}[${DATA_TESTID}=common_SeoMetadataForm_Button]`;
+  metaTagAddButton     = `${htmlElements.button}[type="submit"]`;
 
   codeInput = `${htmlElements.input}[name=code]`;
 
-  pageTreeSelector = `${htmlElements.div}[${DATA_TESTID}=PageForm__PageTreeSelector]`;
+  pageTreeSelector = `${htmlElements.table}.PageTreeSelector`;
 
-  ownerGroupDiv = `${htmlElements.div}[${DATA_TESTID}=ownerGroup-typeahead]`;
+  ownerGroupDiv = `${htmlElements.div}[class="DropdownTypeahead form-group"]`;
 
-  pageTemplateSelect = `${htmlElements.select}[name=pageModel]`;
+  pageTemplateSelect = `${htmlElements.select}.form-control.RenderSelectInput`;
 
   // buttons
-  saveAndDesignButton = `${htmlElements.button}[${DATA_TESTID}="common_PageForm_Button"].PageForm__save-and-configure-btn`;
-  saveButton          = `${htmlElements.button}[${DATA_TESTID}="save-page"]`;
+  saveAndDesignButton = `${htmlElements.button}.PageForm__save-and-configure-btn`;
+  saveButton          = `${htmlElements.button}.PageForm__save-btn`;
 
   getSeoContainer() {
     return this.getContents()
@@ -99,31 +99,30 @@ export default class AddPage extends Content {
 
   getPageTreeTable() {
     return this.getContents()
-               .find(this.pageTreeSelector)
-               .children(htmlElements.div)
-               .children(htmlElements.table);
+               .find(this.pageTreeSelector);
   }
 
   getOwnerGroup() {
     return this.getContents()
-               .find(this.ownerGroupDiv);
+               .find(this.ownerGroupDiv).eq(0);
   }
 
   getOwnerGroupButton() {
     return this.getOwnerGroup()
-               .children(htmlElements.div)
-               .children(htmlElements.button);
+               .find(`${htmlElements.div}.rbt.app-tour-step-9`)
+               .find(`${htmlElements.button}.DropdownTypeahead__toggle-button`);
   }
 
   getOwnerGroupDropdown() {
     return this.getOwnerGroup()
-               .children(htmlElements.div)
+               .find(`${htmlElements.div}[tabindex="-1"]`)
                .children(htmlElements.ul);
   }
 
   getPageTemplateSelect() {
     return this.getContents()
-               .find(this.pageTemplateSelect);
+               .find(`${htmlElements.div}.form-group`)
+               .find(this.pageTemplateSelect).eq(1);
   }
 
   getSaveAndDesignButton() {
@@ -135,86 +134,7 @@ export default class AddPage extends Content {
     return this.getContents()
                .find(this.saveButton);
   }
-
-  selectSeoLanguage(langOrder) {
-    this.getSeoTabs()
-        .find(htmlElements.a).eq(langOrder)
-        .click();
-    cy.wait(1000);
-  }
-
-  typeTitle(value, lang = 'en') {
-    this.getTitleInput(lang).type(value);
-  }
-
-  typeSeoDescription(value, lang = 'en') {
-    this.getSeoDescriptionInput(lang).type(value);
-  }
-
-  typeSeoKeywords(value, lang = 'en') {
-    this.getSeoKeywordsInput(lang).type(value);
-  }
-
-  typeSeoFriendlyCode(value, lang = 'en') {
-    this.getSeoFriendlyCodeInput(lang).type(value);
-  }
-
-  typeMetaKey(value) {
-    this.getMetaKeyInput().type(value);
-  }
-
-  selectMetaType(value) {
-    this.getMetaTypeSelect().select(value);
-  }
-
-  typeMetaValue(value) {
-    this.getMetaValueInput().type(value);
-  }
-
-  clickMetaTagAddButton() {
-    this.getMetaTagAddButton().click();
-  }
-
-  typeCode(value) {
-    this.getCodeInput().type(value);
-  }
-
-  clearCode() {
-    this.getCodeInput().clear();
-  }
-
-  openSubPagesOnPageTreePage(pageOrder) {
-    this.getPageTreeTable()
-        .children(htmlElements.tbody)
-        .children(htmlElements.tr).eq(pageOrder)
-        .children(htmlElements.td)
-        .children(htmlElements.span).eq(0)
-        .click();
-  }
-
-  selectPageOnPageTreeTable(pageOrder) {
-    this.getPageTreeTable()
-        .children(htmlElements.tbody)
-        .children(htmlElements.tr).eq(pageOrder)
-        .click();
-  }
-
-  openOwnerGroupMenu() {
-    this.getOwnerGroupButton().click();
-  }
-
-  selectOwnerGroup(value) {
-    this.openOwnerGroupMenu();
-    this.getOwnerGroupDropdown()
-        .find(`${htmlElements.li}[aria-label=${value}]`)
-        .click();
-  }
-
-  selectPageTemplate(value) {
-    this.getPageTemplateSelect()
-        .select(value);
-  }
-
+  
   clickSaveAndDesignButton() {
     this.getSaveAndDesignButton().click();
     return new AppPage(DesignerPage);
@@ -226,6 +146,14 @@ export default class AddPage extends Content {
     return new AppPage(ManagementPage);
   }
 
+  clickMetaTagAddButton() {
+    this.getMetaTagAddButton().click();
+  }
+
+  clearCode() {
+    this.getCodeInput().clear();
+  }
+  
   fillRequiredData(enTitle, itTitle, code, pageIndex, pageTemplate) {
     this.selectSeoLanguage(0);
     this.typeTitle(enTitle, 'en');
@@ -248,6 +176,76 @@ export default class AddPage extends Content {
     this.typeSeoDescription(description, 'it');
     this.typeSeoKeywords(keywords, 'it');
     this.typeSeoFriendlyCode(friendlyCode, 'it');
+  }
+
+  openSubPagesOnPageTreePage(pageOrder) {
+    this.getPageTreeTable()
+        .children(htmlElements.tbody)
+        .children(htmlElements.tr).eq(pageOrder)
+        .children(htmlElements.td)
+        .children(htmlElements.span).eq(0)
+        .click();
+  }
+
+  openOwnerGroupMenu() {
+    this.getOwnerGroupButton().click();
+  }
+
+  selectMetaType(value) {
+    this.getMetaTypeSelect().select(value);
+  }
+
+  selectOwnerGroup(value) {
+    this.openOwnerGroupMenu();
+    this.getOwnerGroupDropdown()
+        .find(`${htmlElements.li}[aria-label=${value}]`)
+        .click();
+  }
+
+  selectPageTemplate(value) {
+    this.getPageTemplateSelect()
+        .select(value);
+  }
+
+  selectPageOnPageTreeTable(pageOrder) {
+    this.getPageTreeTable()
+        .children(htmlElements.tbody)
+        .children(htmlElements.tr).eq(pageOrder)
+        .click();
+  }
+
+  selectSeoLanguage(langOrder) {
+    this.getSeoTabs()
+        .find(htmlElements.a).eq(langOrder)
+        .click();
+    cy.wait(1000);
+  }
+
+  typeCode(value) {
+    this.getCodeInput().type(value);
+  }
+
+  typeMetaKey(value) {
+    this.getMetaKeyInput().type(value);
+  }
+  typeMetaValue(value) {
+    this.getMetaValueInput().type(value);
+  }
+
+  typeSeoDescription(value, lang = 'en') {
+    this.getSeoDescriptionInput(lang).type(value);
+  }
+
+  typeSeoFriendlyCode(value, lang = 'en') {
+    this.getSeoFriendlyCodeInput(lang).type(value);
+  }
+
+  typeSeoKeywords(value, lang = 'en') {
+    this.getSeoKeywordsInput(lang).type(value);
+  }
+
+  typeTitle(value, lang = 'en') {
+    this.getTitleInput(lang).type(value);
   }
 
 }
