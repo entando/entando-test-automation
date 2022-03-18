@@ -80,6 +80,10 @@ export default class EmailConfigurationPage extends Content {
         return this.getContents()
                     .find(this.toolButton);
     }
+    searchFieldError(){
+        return this.getContents()
+                    .find(`${htmlElements.span}.help-block`);
+    }
 
     submit(){
         return this.getToolButton()

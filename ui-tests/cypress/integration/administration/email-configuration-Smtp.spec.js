@@ -1,7 +1,7 @@
 import HomePage       from '../../support/pageObjects/HomePage';
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
-describe('STMP Server Functionalities', () => {
+describe('SMTP Server Functionalities', () => {
 
   let currentPage;
 
