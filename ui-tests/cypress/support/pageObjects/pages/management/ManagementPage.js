@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import Content from '../../app/Content.js';
 
@@ -12,16 +12,16 @@ import DeleteDialog     from '../../app/DeleteDialog';
 
 export default class ManagementPage extends Content {
 
-  searchForm   = `${htmlElements.form}[${DATA_TESTID}=list_PageSearchForm_form]`;
-  searchOption = `${htmlElements.button}[${DATA_TESTID}=list_PageSearchForm_DropdownButton]`;
-  searchInput  = `${htmlElements.input}[${DATA_TESTID}=list_PageSearchForm_Field]`;
-  searchButton = `${htmlElements.button}[${DATA_TESTID}=list_PageSearchForm_Button]`;
+  searchForm   = `${htmlElements.form}.PageSearchForm`;
+  searchOption = `${htmlElements.button}.PageSearchForm__filter-searchby-dropdown`;
+  searchInput  = `${htmlElements.input}[id=pagecode]`;
+  searchButton = `${htmlElements.button}[type="submit"]`;
 
   tableContainer = `${htmlElements.div}.DDTable`;
   expandAll      = `${htmlElements.div}.PageTree__toggler--expand`;
-  expandNode     = `[${DATA_TESTID}=tree-node_TreeNodeExpandedIcon_i]`;
+  expandNode     = `${htmlElements.span}.PageTree__icons-label`;
 
-  addButton = `${htmlElements.button}[${DATA_TESTID}=button-step-5]`;
+  addButton = `${htmlElements.button}.app-tour-step-5`;
 
   getSearchForm() {
     return this.getContents()
