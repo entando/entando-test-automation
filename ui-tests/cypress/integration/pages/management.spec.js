@@ -319,6 +319,37 @@ describe([Tag.GTS], 'Page Management', () => {
                        .and('contain', homepageCode);
     
         });
+        describe('Search a page', () => {
+
+            beforeEach(() => {
+              currentPage = openManagementPage();
+            });
+      
+            it('Search by name', () => {
+              currentPage.getContent().selectSearchOption(0);
+              currentPage.getContent().typeSearch(homePage.name);
+              currentPage = currentPage.getContent().clickSearchButton();
+      
+              currentPage.getContent().getTableRows()
+                         .should('have.length', 2)
+                         .each(row => cy.wrap(row).children(htmlElements.td).eq(2).should('contain', homePage.name));
+            });
+      
+            it('Search by code', () => {
+              currentPage.getContent().selectSearchOption(1);
+              currentPage.getContent().typeSearch(homePage.code);
+              currentPage = currentPage.getContent().clickSearchButton();
+      
+              currentPage.getContent().getTableRows()
+                         .should('have.length', 2)
+                         .each(row => cy.wrap(row).children(htmlElements.td).eq(0).should('contain', homePage.code));
+            });
+      
+          });
+      
+
+
+
     });
 
     
