@@ -58,7 +58,7 @@ describe([Tag.GTS], 'Page Management', () => {
         it('Add page', () => {
     
           const OOTB_PAGE_TEMPLATES = [ 
-            {},
+            {}, //TODO remove this after remove templatesNULL
             {value: '1-2-column', text: '1-2 Columns'},
             {value: '1-2x2-1-column', text: '1-2x2-1 Columns'},
             {value: '1-2x4-1-column', text: '1-2x4-1 Columns'},
@@ -240,8 +240,7 @@ describe([Tag.GTS], 'Page Management', () => {
             it: generateRandomId()
           };
     
-          subPage.parentCode = page.code;
-    
+          subPage.parentCode = page.code;    
     
           cy.seoPagesController()
             .then(controller => controller.addNewPage(newPage))
@@ -434,6 +433,59 @@ describe([Tag.GTS], 'Page Management', () => {
       
         });
 
+        describe('Non admin user', () => {
+          const groupCode = 'group1';
+          const groupName = 'Group1';
+    
+          beforeEach(() => {
+            // create group
+            cy.groupsController().then(controller => {
+              controller.addGroup(groupCode, groupName);
+            });
+    
+            // add new user with no permission
+            cy.fixture(`users/details/user`).then(userJSON =>
+                cy.usersController().then(controller => {
+                  controller.addUser(userJSON);
+                  controller.updateUser(userJSON);
+                  controller.addAuthorities(userJSON.username, groupCode, 'approver');
+                })
+            );
+          });
+    
+          afterEach(() => {
+            cy.kcLogout();
+            cy.kcLogin('login/admin').as('tokens');
+    
+            cy.fixture(`users/details/user`).then(userJSON =>
+                cy.usersController().then(controller => {
+                  controller.deleteAuthorities(userJSON.username);
+                  controller.deleteUser(userJSON.username);
+                })
+            );
+    
+            cy.groupsController().then(controller => {
+              controller.deleteGroup(groupCode);
+            });
+          });
+    
+          it('Unpublish a page without permission', () => {
+            postPage(page);
+            cy.pagesController().then(controller => {
+              controller.setPageStatus(page.code, 'published');
+            });
+    
+            // login with unauthorized user
+            cy.kcLogout();
+            cy.kcLogin('login/user').as('tokens');
+    
+            currentPage = openManagementPage();
+    
+            // user should not be able to see the new page
+            currentPage.getContent().getTableRows().should('not.contain', page.title);
+          });
+        });
+
 
         describe('Delete a page', () => {
 
@@ -471,7 +523,7 @@ describe([Tag.GTS], 'Page Management', () => {
             currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
             currentPage.getDialog().confirm();
 
-            cy.pause(); //TODO delete a drafted page is NOT forbidden
+            cy.pause(); //FIXME delete a drafted page is NOT forbidden!
     
             currentPage.getContent().getAlertMessage().should('be.visible');
           });
