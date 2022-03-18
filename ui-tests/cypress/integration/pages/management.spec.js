@@ -232,7 +232,7 @@ describe([Tag.GTS], 'Page Management', () => {
         });
     
     
-        it('Add a new child page', () => {
+       /* it('Add a new child page', () => {
           
           subPage.code       = generateRandomId();
           subPage.title      = {
@@ -431,7 +431,66 @@ describe([Tag.GTS], 'Page Management', () => {
               currentPage.getContent().getSaveAndDesignButton().invoke('attr', 'disabled').should('eq', 'disabled');
             });
       
+        });*/
+
+        describe('Change page status', () => {
+
+          beforeEach(() => postPage(page));
+    
+          it('Publish a page', () => {
+            currentPage = openManagementPage();
+    
+            currentPage.getContent().getKebabMenu(page.code).open().clickPublish();
+            currentPage.getDialog().confirm();
+    
+            currentPage.getContent().getTableRow(page.code).then(row =>
+                cy.wrap(row).children(htmlElements.td).eq(2).children(htmlElements.i)
+                  .should('have.attr', 'title')
+                  .and('equal', 'Published')
+            );
+          });
+    
+          it('Unpublish a page', () => {
+            cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
+    
+            currentPage = openManagementPage();
+    
+            currentPage.getContent().getKebabMenu(page.code).open().clickUnpublish();
+            currentPage.getDialog().confirm();
+    
+            currentPage.getContent().getTableRow(page.code).then(row =>
+                cy.wrap(row).children(htmlElements.td).eq(2).children(htmlElements.i)
+                  .should('have.attr', 'title')
+                  .and('equal', 'Unpublished')
+            );
+          });
+    
+          it('Publish a subpage of an unpublished page is forbidden', () => {
+            postPage(subPage, page.code);
+    
+            currentPage = openManagementPage();
+            currentPage.getContent().toggleRowSubPages(page.code);
+    
+            currentPage.getContent().getKebabMenu(subPage.code).getPublish()
+                       .should('have.class', 'disabled');
+          });
+    
+          it('Unpublish a page with published children is forbidden', () => {
+            postPage(subPage, page.code);
+            cy.pagesController().then(controller => {
+              controller.setPageStatus(page.code, 'published');
+              controller.setPageStatus(subPage.code, 'published');
+            });
+    
+            currentPage = openManagementPage();
+            currentPage.getContent().toggleRowSubPages(page.code);
+    
+            currentPage.getContent().getKebabMenu(page.code).getUnpublish()
+                       .should('have.class', 'disabled');
+          });
         });
+
+
 
         describe('Non admin user', () => {
           const groupCode = 'group1';
