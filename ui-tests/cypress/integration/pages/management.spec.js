@@ -346,6 +346,97 @@ describe([Tag.GTS], 'Page Management', () => {
             });
       
           });
+          describe('Update an existing page', () => {
+
+            //TODO should be enable after PR #1109 gets merged
+            xit('with an owner not compatible with the users', () => {
+              currentPage = openManagementPage();
+      
+              // edit sitemap page
+              currentPage = currentPage.getContent().getKebabMenu('sitemap').open().openEdit();
+      
+              currentPage.getContent().getOwnerGroupButton().should('be.disabled');
+            });
+      
+            it('Change a page\'s owner group - not allowed', () => {
+              page.code  = generateRandomId();
+              page.title = {
+                en: generateRandomId(),
+                it: generateRandomId()
+              };
+      
+              newPage.code       = page.code;
+              newPage.titles     = {
+                en: page.title.en
+              };
+              newPage.parentCode = homePage.code;
+      
+              cy.seoPagesController()
+                .then(controller => controller.addNewPage(newPage))
+                .then(() => pageToBeDeleted = true);
+      
+              currentPage = openManagementPage();
+              currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+      
+              currentPage.getContent().getOwnerGroupButton().click({force: true});
+              currentPage.getContent().getOwnerGroupDropdown().should('not.exist');
+            });
+      
+            it('when adding secondary language, editing a page automatically adds default page code from default language (ENG-2695)', () => {
+              page.code  = generateRandomId();
+              page.title = {
+                en: generateRandomId(),
+                it: generateRandomId()
+              };
+      
+              newPage.code       = page.code;
+              newPage.titles     = {
+                en: page.title.en
+              };
+              newPage.parentCode = homePage.code;
+      
+              cy.seoPagesController()
+                .then(controller => controller.addNewPage(newPage))
+                .then(() => pageToBeDeleted = true);
+      
+              cy.languagesController()
+                .then(controller => controller.putLanguage('cs', 'Czech', true, false));
+      
+              currentPage = openManagementPage();
+              currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+              currentPage.getContent().getTitleInput('en').invoke('val').should('eq', page.title.en);
+              currentPage.getContent().selectSeoLanguage(1);
+              currentPage.getContent().getTitleInput('cs').invoke('val').should('eq', page.title.en);
+      
+              cy.languagesController()
+                .then(controller => controller.putLanguage('cs', 'Czech', false, false));
+            });
+      
+            it('Avoid accept blank page titles in an inactive language tab (ENG-2642)', () => {
+              page.code  = generateRandomId();
+              page.title = {
+                en: generateRandomId(),
+                it: generateRandomId()
+              };
+              newPage.code       = page.code;
+              newPage.titles     = {
+                en: page.title.en
+              };
+              newPage.parentCode = homePage.code;
+              cy.seoPagesController()
+                .then(controller => controller.addNewPage(newPage))
+                .then(() => pageToBeDeleted = true);
+      
+              currentPage = openManagementPage();
+              currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+              currentPage.getContent().getTitleInput('en').clear();
+              currentPage.getContent().selectSeoLanguage(1);
+              currentPage.getContent().getTitleInput('it').type(`${page.title.it}_1`);
+              currentPage.getContent().getSaveButton().invoke('attr', 'disabled').should('eq', 'disabled');
+              currentPage.getContent().getSaveAndDesignButton().invoke('attr', 'disabled').should('eq', 'disabled');
+            });
+      
+          });
       
 
 
