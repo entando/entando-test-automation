@@ -6,6 +6,7 @@ import DeleteDialog from '../../app/DeleteDialog';
 import AddPage from './AddPage.js';
 import ClonePage from './ClonePage';
 import DesignerPage from '../designer/DesignerPage';
+import { htmlElements } from '../../WebElement';
 
 export default class PagesKebabMenu extends KebabMenu {
 
@@ -18,7 +19,21 @@ export default class PagesKebabMenu extends KebabMenu {
   details           = '.PageTreeActionMenuButton__menu-item-details';
   delete            = '.PageTreeActionMenuButton__menu-item-delete';
   preview           = '.PageTreeActionMenuButton__menu-item-preview';
-  viewPublishedPage = '.PageTreeActionMenuButton__menu-item-viewPublishedPage';
+  viewPublishedPage = '.PageTreeActionMenuButton__menu-item-viewPublishedPage disabled';
+
+
+  get() {
+    return this.parent.getTableRows().eq(-1)
+                      .find(`${htmlElements.div}[role="none"]`)
+                      .children(htmlElements.div);         
+  }
+  open() {
+    cy.wait(1000); //wait for the kebab menu to load
+    this.get()
+        .children(`${htmlElements.button}[id="WidgetListRow-dropown"]`)
+        .click();
+    return this;
+  }
 
   getAdd() {
     return this.get()
@@ -69,6 +84,7 @@ export default class PagesKebabMenu extends KebabMenu {
     return this.get()
                .find(this.viewPublishedPage);
   }
+
 
   openAdd() {
     this.getAdd().click();

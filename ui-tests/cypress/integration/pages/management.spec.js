@@ -90,7 +90,7 @@ describe([Tag.GTS], 'Page Management', () => {
     
     });
 
-    describe('Actions',() => {//funziona
+    describe('AddPage and Seo Attributes',() => {
 
         const OOTB_PAGE_TEMPLATES = [ 
           {value: '1-2-column', text: '1-2 Columns'},
@@ -167,7 +167,7 @@ describe([Tag.GTS], 'Page Management', () => {
     
         describe('Add a new page with SEO Attributes', () => {
           OOTB_PAGE_TEMPLATES.map(template => template.value).forEach(template => {
-            it.only(`Add ${template} template`, () => {
+            it(`Add ${template} template`, () => {
               page.template = template;
               currentPage   = openManagementPage();
               currentPage   = currentPage.getContent().openAddPagePage();
@@ -182,6 +182,143 @@ describe([Tag.GTS], 'Page Management', () => {
           });
         });
     
+    });
+
+    describe('Actions', () => {
+
+        beforeEach(() => {
+    
+    
+          page.code     = generateRandomId();
+          page.title    = {
+            en: generateRandomId(),
+            it: generateRandomId()
+          };
+    
+          newPage.code       = page.code;
+          newPage.titles     = {
+            en: page.title.en
+          };
+          newPage.parentCode = homePage.code;
+    
+          page.seoData  = {
+            en: {
+              description: generateRandomId(),
+              keywords: generateRandomId(),
+              friendlyCode: generateRandomId()
+            },
+            it: {
+              description: generateRandomId(),
+              keywords: generateRandomId(),
+              friendlyCode: generateRandomId()
+            }
+          };
+          page.metaTags = [
+            {
+              key: generateRandomId(),
+              type: 'name',
+              value: generateRandomId()
+            },
+            {
+              key: generateRandomId(),
+              type: 'http-equiv',
+              value: generateRandomId()
+            },
+            {
+              key: generateRandomId(),
+              type: 'property',
+              value: generateRandomId()
+            }
+          ];
+    
+        });
+    
+    
+        it('Add a new child page', () => {
+          
+          subPage.code       = generateRandomId();
+          subPage.title      = {
+            en: generateRandomId(),
+            it: generateRandomId()
+          };
+    
+          subPage.parentCode = page.code;
+    
+    
+          cy.seoPagesController()
+            .then(controller => controller.addNewPage(newPage))
+            .then(() => pageToBeDeleted = true);
+    
+          currentPage = openManagementPage();
+          currentPage = currentPage.getContent().getKebabMenu(page.code).open().openAdd();
+          cy.validateAppBuilderUrlPathname('/page/add');
+    
+          addPageMandatoryData(currentPage, subPage);
+          currentPage        = currentPage.getContent().clickSaveButton();
+          subPageToBeDeleted = true;
+    
+          currentPage.getContent().getTableRows().then(rows =>
+              cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', page.title.en)
+          );
+    
+          currentPage.getContent().toggleRowSubPages(page.code);
+          currentPage.getContent().getTableRows().then(rows =>
+              cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', subPage.title.en)
+          );
+    
+        });
+    
+        it('Adding a new page with non existing parent code is forbidden', () => {
+            openManagementPage();
+            cy.visit('/page/add?parentCode=non-existing-page');
+            cy.wait(3000);
+    
+            cy.location().should(url => {
+              expect(url.pathname).eq('/app-builder/page/add');
+              expect(url.search).eq('');
+            });
+        });
+    
+        it('Adding a new page with empty fields is forbidden', () => {
+            currentPage = openManagementPage();
+            currentPage = currentPage.getContent().openAddPagePage();
+            cy.validateAppBuilderUrlPathname('/page/add');
+    
+            currentPage.getContent().getSaveAndDesignButton().should('be.disabled');
+            currentPage.getContent().getSaveButton().should('be.disabled');
+        });
+    
+        it('Adding a new page without mandatory fields is forbidden', () => {
+            currentPage = openManagementPage();
+            currentPage = currentPage.getContent().openAddPagePage();
+            cy.validateAppBuilderUrlPathname('/page/add');
+    
+            addPageMandatoryData(currentPage, page);
+            currentPage.getContent().getSaveAndDesignButton().should('not.be.disabled');
+            currentPage.getContent().getSaveButton().should('not.be.disabled');
+    
+            currentPage.getContent().clearCode();
+            currentPage.getContent().getSaveAndDesignButton().should('be.disabled');
+            currentPage.getContent().getSaveButton().should('be.disabled');
+        });
+    
+        it('Adding a new page with existing code is forbidden', () => {
+            const homepageCode = 'homepage';
+    
+            currentPage = openManagementPage();
+            currentPage = currentPage.getContent().openAddPagePage();
+            cy.validateAppBuilderUrlPathname('/page/add').wait(1000);
+    
+            page.code = homepageCode;
+            addPageMandatoryData(currentPage, page);
+            currentPage.getContent().clickSaveButton();
+    
+            cy.validateToast(currentPage, page.code, false);
+            currentPage.getContent().getAlertMessage()
+                       .should('be.visible')
+                       .and('contain', homepageCode);
+    
+        });
     });
 
     
