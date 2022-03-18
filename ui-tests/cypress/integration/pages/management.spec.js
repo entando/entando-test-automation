@@ -436,7 +436,49 @@ describe([Tag.GTS], 'Page Management', () => {
               currentPage.getContent().getSaveAndDesignButton().invoke('attr', 'disabled').should('eq', 'disabled');
             });
       
-          });
+        });
+        describe('Form Validations', () => {
+
+            describe('Page form should be not possible to save NULL title in default language (ENG-2687)', () => {
+              it('There must be a page title for default language, otherwise it will not allow to save', () => {
+                postPage(page);
+                pageToBeDeleted = true;
+      
+                currentPage = openManagementPage();
+                currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+      
+                currentPage.getContent().getTitleInput('en').clear();
+                currentPage.getContent().selectSeoLanguage(1);
+      
+                currentPage.getContent().getSaveAndDesignButton().should('be.disabled');
+                currentPage.getContent().getSaveButton().should('be.disabled');
+              });
+      
+              it('Adding a title from default language without other languages will be allowed to save', () => {//funziona
+                page.code  = generateRandomId();
+                page.title = generateRandomId();
+      
+                currentPage = openManagementPage();
+                currentPage = currentPage.getContent().openAddPagePage();
+      
+                currentPage.getContent().selectSeoLanguage(0);
+                currentPage.getContent().typeTitle(page.title, 'en');
+      
+                currentPage.getContent().clearCode();
+                currentPage.getContent().typeCode(page.code);
+      
+                currentPage.getContent().selectPageOnPageTreeTable(page.pageTree);
+      
+                currentPage.getContent().selectOwnerGroup(page.ownerGroup.name);
+                currentPage.getContent().selectPageTemplate(page.template);
+      
+                currentPage.getContent().getSaveAndDesignButton().should('not.be.disabled');
+                currentPage.getContent().getSaveButton().should('not.be.disabled');
+      
+              });
+            });
+        });
+        
       
 
 
@@ -501,6 +543,34 @@ describe([Tag.GTS], 'Page Management', () => {
         page.getContent().typeMetaValue(metaTag.value);
         page.getContent().clickMetaTagAddButton();
     };
+
+    const postPage = (page, parent=null) => {
+    
+
+        page.code  = generateRandomId();
+        page.title = {
+          en: generateRandomId(),
+          //it: generateRandomId()
+        };
+        newPage.code       = page.code;
+        newPage.titles     = {
+          en: page.title.en
+        }; 
+        if (parent) {
+          page.parentCode = parent;
+          newPage.parentCode = parent;
+        } else {
+          newPage.parentCode = homePage.code;
+        }
+        cy.seoPagesController()
+          .then(controller => controller.addNewPage(newPage))
+          .then(() => {
+            if (parent) {
+              subPageToBeDeleted = true;
+            } else {pageToBeDeleted = true
+          }
+        });
+      };
 
     
     const OOTB_OWNER_GROUPS   = ['Administrators', 'Free Access'];
