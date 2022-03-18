@@ -1,5 +1,5 @@
 
-import { DATA_TESTID, htmlElements } from '../../WebElement';
+import {htmlElements } from '../../WebElement';
 
 import Content from '../../app/Content';
 
@@ -11,9 +11,11 @@ export default class AddPage extends Content {
 
   titleInput = `${htmlElements.input}[name="titles.{lang}"]`;
   codeInput = `${htmlElements.input}[name=code]`;
-  pageTreeSelector = `${htmlElements.div}[${DATA_TESTID}=PageForm__PageTreeSelector]`;
-  saveAndDesignButton = `${htmlElements.button}[${DATA_TESTID}="common_PageForm_Button"]`;
-  saveButton = `${htmlElements.button}[${DATA_TESTID}="save-page"]`;
+  pageTreeSelector = `${htmlElements.table}.PageTreeSelector`;
+  selectArea = `${htmlElements.span}.PageTreeSelector__select-area`;
+  saveAndDesignButton = `${htmlElements.button}.
+  PageForm__save-and-configure-btn`;
+  saveButton = `${htmlElements.button}.PageForm__save-btn`;
 
   getTitleInput(lang) {
     return this.getContents()
@@ -27,9 +29,7 @@ export default class AddPage extends Content {
 
   getPageTreeSelectorTable() {
     return this.getContents()
-               .find(this.pageTreeSelector)
-               .children(htmlElements.div)
-               .children(htmlElements.table);
+               .find(this.pageTreeSelector);
   }
 
   getSaveAndDesignButton() {
@@ -54,6 +54,7 @@ export default class AddPage extends Content {
     this.getPageTreeSelectorTable()
         .children(htmlElements.tbody)
         .children(htmlElements.tr).eq(pageOrder)
+        .find(this.selectArea)
         .click();
   }
 
