@@ -478,6 +478,120 @@ describe([Tag.GTS], 'Page Management', () => {
               });
             });
         });
+
+        describe('Clone a page', () => {
+            let newPage;
+      
+            let clonedPageToBeDeleted = false;
+      
+            beforeEach(() => {
+              page.code       = generateRandomId();
+              page.titles     = {
+                en: generateRandomId(),
+                it: generateRandomId()
+              };
+              page.pageModel  = '1-2-column';
+              page.ownerGroup = 'administrators';
+              page.seoData    = {
+                seoDataByLang: {
+                  en: {
+                    description: generateRandomId(),
+                    keywords: generateRandomId(),
+                    friendlyCode: generateRandomId(),
+                    inheritDescriptionFromDefaultLang: false,
+                    inheritFriendlyCodeFromDefaultLang: false,
+                    inheritKeywordsFromDefaultLang: false,
+                    metaTags: []
+                  },
+                  it: {
+                    description: generateRandomId(),
+                    keywords: generateRandomId(),
+                    friendlyCode: generateRandomId(),
+                    inheritDescriptionFromDefaultLang: false,
+                    inheritFriendlyCodeFromDefaultLang: false,
+                    inheritKeywordsFromDefaultLang: false,
+                    metaTags: []
+                  }
+                },
+                useExtraDescriptions: false,
+                useExtraTitles: false
+              };
+      
+              newPage = {
+                title: generateRandomId(),
+                code: generateRandomId(),
+                placement: 0
+              };
+      
+              cy.seoPagesController()
+                .then(controller => controller.addNewPage(page))
+                .then(() => pageToBeDeleted = true);
+            });
+      
+            afterEach(() => {
+              if (clonedPageToBeDeleted) {
+                cy.pagesController()
+                  .then(controller => {
+                    controller.deletePage(newPage.code);
+                  })
+                  .then(() => {
+                    clonedPageToBeDeleted = false;
+                  });
+              }
+            });
+      
+            it('Cloning a page should copy all SEO details to the new page', () => {
+              currentPage = openManagementPage();
+              currentPage = currentPage.getContent().getKebabMenu(page.code).open().clickClone();
+      
+              currentPage.getContent().typeTitle(newPage.title, 'en');
+              currentPage.getContent().typeTitle(newPage.title, 'it');
+              currentPage.getContent().typeTitle(newPage.title, 'es');
+              currentPage.getContent().clearCode();
+              currentPage.getContent().typeCode(newPage.code);
+              currentPage.getContent().selectPagePlacement(newPage.placement);
+              currentPage = currentPage.getContent().clickSave();
+      
+              clonedPageToBeDeleted = true;
+      
+              currentPage = currentPage.getContent().getKebabMenu(newPage.code).open().openEdit();
+              currentPage.getContent().getSeoDescriptionInput('en').should('have.value', page.seoData.seoDataByLang.en.description);
+              currentPage.getContent().getSeoKeywordsInput('en').should('have.value', page.seoData.seoDataByLang.en.keywords);
+              currentPage.getContent().getSeoFriendlyCodeInput('en').should('have.value', page.seoData.seoDataByLang.en.friendlyCode);
+            });
+      
+            it('Cloning a page should copy all attached widgets to the new page', () => {
+              const pageWidget = {
+                frameId: 4,
+                code: 'NWS_Archive'
+              };
+      
+              cy.pageWidgetsController(page.code)
+                .then(controller =>
+                    controller.addWidget(
+                        pageWidget.frameId,
+                        pageWidget.code,
+                        {}
+                    )
+                );
+      
+              currentPage = openManagementPage();
+              currentPage = currentPage.getContent().getKebabMenu(page.code).open().clickClone();
+      
+              currentPage.getContent().typeTitle(newPage.title, 'en');
+              currentPage.getContent().typeTitle(newPage.title, 'it');
+              currentPage.getContent().typeTitle(newPage.title, 'es');
+              currentPage.getContent().clearCode();
+              currentPage.getContent().typeCode(newPage.code);
+              currentPage.getContent().selectPagePlacement(newPage.placement);
+              currentPage = currentPage.getContent().clickSave();
+      
+              clonedPageToBeDeleted = true;
+      
+              currentPage = currentPage.getContent().getKebabMenu(newPage.code).open().openDesigner();
+              currentPage.getContent().getDesigner().contains('News Archive');
+            });
+          });
         
       
 
