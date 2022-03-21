@@ -4,7 +4,6 @@ import {contentsAPIURL}                           from '../../support/restAPI/co
 import {generateRandomTypeCode, generateRandomId} from '../../support/utils.js';
 
 const openContentMgmtPage = () => {
-  cy.visit('/');
   let currentPage = new HomePage();
   currentPage     = currentPage.getMenu().getContent().open();
   return currentPage.openManagement();
@@ -27,7 +26,8 @@ describe([Tag.GTS], 'Contents', () => {
   let contentCode;
 
   beforeEach(() => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
@@ -37,7 +37,7 @@ describe([Tag.GTS], 'Contents', () => {
         .then(() => contentToBeDeleted = false);
     }
 
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   describe('Delete content', () => {

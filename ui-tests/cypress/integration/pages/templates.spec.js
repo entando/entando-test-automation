@@ -1,5 +1,5 @@
-import HomePage from '../../support/pageObjects/HomePage';
-import { htmlElements } from '../../support/pageObjects/WebElement';
+import HomePage       from '../../support/pageObjects/HomePage';
+import {htmlElements} from '../../support/pageObjects/WebElement';
 
 const sampleData = {
   code: '2-2_democol',
@@ -9,9 +9,8 @@ const sampleData = {
 };
 
 const openPageTemplateMgmtPage = () => {
-  cy.visit('/');
   let currentPage = new HomePage();
-  currentPage = currentPage.getMenu().getPages().open();
+  currentPage     = currentPage.getMenu().getPages().open();
   return currentPage.openTemplates();
 };
 
@@ -19,7 +18,8 @@ describe([Tag.GTS], 'Page Templates', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('templateToBeDeleted');
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
@@ -29,7 +29,7 @@ describe([Tag.GTS], 'Page Templates', () => {
           .then(controller => controller.deletePageTemplate(templateToBeDeleted));
       }
     });
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   let currentPage;
@@ -49,7 +49,7 @@ describe([Tag.GTS], 'Page Templates', () => {
       cy.pageTemplatesController()
         .then(controller => controller.addPageTemplate({
           ...sampleData,
-          configuration: JSON.parse(sampleData.configuration),
+          configuration: JSON.parse(sampleData.configuration)
         }));
       cy.wrap(sampleData.code).as('templateToBeDeleted');
       const newDescr = 'edited 2-2 Demo col';
@@ -72,8 +72,8 @@ describe([Tag.GTS], 'Page Templates', () => {
 
     it('Clone Template', () => {
       const cloneCode = `${sampleData.code}-2`;
-      currentPage = openPageTemplateMgmtPage();
-      currentPage = currentPage.getContent().getKebabMenuByCode('1-column').open().openClone();
+      currentPage     = openPageTemplateMgmtPage();
+      currentPage     = currentPage.getContent().getKebabMenuByCode('1-column').open().openClone();
 
       currentPage.getContent().typeCode(cloneCode);
       currentPage.getContent().typeName(sampleData.descr);
@@ -88,7 +88,7 @@ describe([Tag.GTS], 'Page Templates', () => {
       cy.pageTemplatesController()
         .then(controller => controller.addPageTemplate({
           ...sampleData,
-          configuration: JSON.parse(sampleData.configuration),
+          configuration: JSON.parse(sampleData.configuration)
         }));
       cy.wrap(sampleData.code).as('templateToBeDeleted');
 
@@ -104,7 +104,7 @@ describe([Tag.GTS], 'Page Templates', () => {
       cy.pageTemplatesController()
         .then(controller => controller.addPageTemplate({
           ...sampleData,
-          configuration: JSON.parse(sampleData.configuration),
+          configuration: JSON.parse(sampleData.configuration)
         }));
       cy.wrap(sampleData.code).as('templateToBeDeleted');
 
@@ -118,7 +118,7 @@ describe([Tag.GTS], 'Page Templates', () => {
       cy.pageTemplatesController()
         .then(controller => controller.addPageTemplate({
           ...sampleData,
-          configuration: JSON.parse(sampleData.configuration),
+          configuration: JSON.parse(sampleData.configuration)
         }));
       cy.wrap(sampleData.code).as('templateToBeDeleted');
       currentPage = openPageTemplateMgmtPage();
@@ -128,9 +128,9 @@ describe([Tag.GTS], 'Page Templates', () => {
       cy.realType('"descr":{enter}{rightarrow}{rightarrow}');
       cy.realPress(['Meta', 'Shift', 'ArrowRight']);
       cy.realType('{backspace}');
-      cy.realType('{', { parseSpecialCharSequences: false });
+      cy.realType('{', {parseSpecialCharSequences: false});
       currentPage.getContent().getJsonConfigArea().invoke('hasClass', 'has-error').should('be.true');
-      cy.realType('},', { parseSpecialCharSequences: false });
+      cy.realType('},', {parseSpecialCharSequences: false});
       currentPage.getContent().getJsonConfigArea().invoke('hasClass', 'has-error').should('be.false');
     });
   });

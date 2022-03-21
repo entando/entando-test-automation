@@ -9,23 +9,24 @@ describe('File browser', () => {
   beforeEach(() => {
     cy.wrap(null).as('filesToBeDeleted');
     cy.wrap(null).as('folderToBeDeleted');
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
     cy.fileBrowserController().then(controller => controller.intercept({method: 'GET'}, 'openedRootFolder', '?'));
     cy.fileBrowserController().then(controller => controller.intercept({method: 'GET'}, 'openedFolder', '?protectedFolder=*'));
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
     cy.get('@filesToBeDeleted')
       .then(files => {
         if (files) {
-          files.forEach(file => cy.fileBrowserController().then(controller => controller.deleteFile(file)))
+          files.forEach(file => cy.fileBrowserController().then(controller => controller.deleteFile(file)));
         }
       });
     cy.get('@folderToBeDeleted')
       .then(folder => {
         if (folder) cy.fileBrowserController().then(controller => controller.deleteFolder(folder));
-      })
-    cy.kcLogout();
+      });
+    cy.kcUILogout();
   });
 
   describe('File browser structure', () => {
@@ -54,7 +55,7 @@ describe('File browser', () => {
       currentPage = currentPage.getContent().openKebabMenu(-1);
       currentPage.get().should('exist').and('be.visible');
       currentPage.getDelete().should('exist').and('be.visible');
-    })
+    });
 
     it([Tag.SMOKE, 'ENG-3297'], 'File context menu', () => {
       createTestFile(testFileInfo);
@@ -167,8 +168,8 @@ describe('File browser', () => {
 
     afterEach(() => {
       cy.get('@deleteDownloadsFolder').then(deleteFolder => {
-        if(deleteFolder) deleteDownloadsFolder();
-      })
+        if (deleteFolder) deleteDownloadsFolder();
+      });
     });
 
     it([Tag.SANITY, 'ENG-3297'], 'Downloading a file by clicking on it', () => {
@@ -198,7 +199,7 @@ describe('File browser', () => {
       currentPage = currentPage.getContent().openCreateFolderPage();
       cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
       currentPage.getContent().getNameInput().type(testFolderInfo.name);
-      currentPage= currentPage.getContent().clickSaveButton();
+      currentPage = currentPage.getContent().clickSaveButton();
       cy.wait('@openedFolder');
       cy.wrap(testFolderInfo.name).as('folderToBeDeleted');
       cy.validateToast(currentPage);
@@ -447,30 +448,29 @@ describe('File browser', () => {
 
   });
 
-  const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'}
+  const textTestFile = {name: 'test', extension: 'txt', content: 'this is a test'};
 
-  const testFileInfo          = {path: '',      name: 'data1.json', base64: '', type: 'application/json'}
-  const subfolderTestFileInfo = {path: 'test/', name: 'data1.json', base64: '', type: 'application/json'}
+  const testFileInfo          = {path: '', name: 'data1.json', base64: '', type: 'application/json'};
+  const subfolderTestFileInfo = {path: 'test/', name: 'data1.json', base64: '', type: 'application/json'};
 
   const createTestFile = (fileInfo) => {
     cy.fileBrowserController().then(controller => controller.createFile(fileInfo, false))
-                              .then(() => cy.wrap([fileInfo.path + fileInfo.name]).as('filesToBeDeleted'));
-  }
+      .then(() => cy.wrap([fileInfo.path + fileInfo.name]).as('filesToBeDeleted'));
+  };
 
-  const testFolderInfo          = {name: 'test',    path: ''}
-  const subfolderTestFolderInfo = {name: 'subTest', path: 'test/'}
+  const testFolderInfo          = {name: 'test', path: ''};
+  const subfolderTestFolderInfo = {name: 'subTest', path: 'test/'};
 
   const createTestFolder = (folderInfo) => {
     cy.fileBrowserController().then(controller => controller.createFolder(folderInfo.path + folderInfo.name))
-                              .then(response => {
-                                cy.get('@folderToBeDeleted').then(folder => {
-                                 if (!folder) cy.wrap(response.body.payload.path).as('folderToBeDeleted')
-                                })
-                              });
+      .then(response => {
+        cy.get('@folderToBeDeleted').then(folder => {
+          if (!folder) cy.wrap(response.body.payload.path).as('folderToBeDeleted');
+        });
+      });
   };
 
   const openFileBrowserPage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getAdministration().open();
     currentPage = currentPage.openFileBrowser();

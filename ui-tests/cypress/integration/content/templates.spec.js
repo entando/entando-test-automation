@@ -3,7 +3,6 @@ import {htmlElements}                              from '../../support/pageObjec
 import {generateRandomId, generateRandomNumericId} from '../../support/utils';
 
 const openContentTemplatesPage = () => {
-  cy.visit('/');
   let currentPage = new HomePage();
   currentPage     = currentPage.getMenu().getContent().open();
   return currentPage.openTemplates();
@@ -28,7 +27,8 @@ describe([Tag.GTS], 'Content Templates', () => {
     template.id    = generateRandomNumericId();
     template.descr = generateRandomId();
 
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
@@ -36,7 +36,7 @@ describe([Tag.GTS], 'Content Templates', () => {
       deleteContentTemplate(template.id).then(() => templateToBeDeleted = false);
     }
 
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   it('Add content template', () => {

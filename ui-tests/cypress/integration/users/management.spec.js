@@ -9,13 +9,14 @@ describe([Tag.GTS], 'Users Management', () => {
   let currentPage;
 
   beforeEach(() => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
     cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'loadedList', '?page=1&pageSize=10'));
     cy.usersController().then(controller => controller.intercept({method: 'POST'}, 'addUserRequest'));
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   describe('UI', () => {
@@ -235,13 +236,13 @@ describe([Tag.GTS], 'Users Management', () => {
       currentPage.getContent().typeFullName('Test');
       currentPage.getContent().typeEmail('test@entando.com');
 
-      currentPage.getContent().selectProfileType('')
+      currentPage.getContent().selectProfileType('');
       currentPage.getContent().getSaveButton()
-                 .should('be.disabled')
+                 .should('be.disabled');
 
-      currentPage.getContent().selectProfileType('PFL')
+      currentPage.getContent().selectProfileType('PFL');
       currentPage.getContent().getSaveButton()
-                 .should('be.enabled')
+                 .should('be.enabled');
     });
 
     it('Users management page - to not have "User without a profile" filter', () => {
@@ -271,7 +272,7 @@ describe([Tag.GTS], 'Users Management', () => {
 
     afterEach(() => {
       cy.get('@userToBeDeleted').then(user => {
-        if(user) cy.usersController().then(controller => controller.deleteUser(user));
+        if (user) cy.usersController().then(controller => controller.deleteUser(user));
       });
     });
 
@@ -289,7 +290,7 @@ describe([Tag.GTS], 'Users Management', () => {
 
     it('Add a user with existing user name is forbidden', () => {
       addUserAPI(username, password, PROFILE_TYPE_CODE);
-      
+
       currentPage = openManagementPage();
 
       currentPage = currentPage.getContent().openAddUserPage();
@@ -419,7 +420,6 @@ describe([Tag.GTS], 'Users Management', () => {
   });
 
   const openManagementPage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getUsers().open().openManagement();
     cy.wait('@loadedList');
@@ -430,21 +430,21 @@ describe([Tag.GTS], 'Users Management', () => {
     currentPage = currentPage.getContent().addUser(username, password, code);
     cy.wait('@addUserRequest').then(res => {
       cy.get('@userToBeDeleted').then(user => {
-        if(!user) cy.wrap(res.response.body.payload.username).as('userToBeDeleted');
+        if (!user) cy.wrap(res.response.body.payload.username).as('userToBeDeleted');
       });
-      if(res.response.statusCode==200) cy.wait('@loadedList');
+      if (res.response.statusCode == 200) cy.wait('@loadedList');
     });
     return currentPage;
   };
 
   const addUserAPI = (username, password, code) => {
     cy.usersController().then(controller => {
-      controller.addUser({ username: username, password: password, passwordConfirm: password, profileType: code })
-        .then(res => cy.get('@userToBeDeleted')
-          .then(user => {
-            if (!user) cy.wrap(res.body.payload.username).as('userToBeDeleted');
-          })
-        );
+      controller.addUser({username: username, password: password, passwordConfirm: password, profileType: code})
+                .then(res => cy.get('@userToBeDeleted')
+                               .then(user => {
+                                 if (!user) cy.wrap(res.body.payload.username).as('userToBeDeleted');
+                               })
+                );
     });
   };
 

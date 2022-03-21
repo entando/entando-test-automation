@@ -23,15 +23,15 @@ describe([Tag.GTS], 'Pages Designer', () => {
   let currentPage;
 
   before(() => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
     cy.seoPagesController()
       .then(controller => controller.addNewPage(page));
-    cy.kcLogout();
   });
 
   beforeEach(() => {
     cy.wrap(null).as('widgetToBeDeleted');
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
@@ -43,17 +43,16 @@ describe([Tag.GTS], 'Pages Designer', () => {
           .then(controller => controller.setPageStatus(page.code, 'draft'));
       }
     });
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   after(() => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
     cy.pagesController()
       .then(controller => {
         controller.setPageStatus(page.code, 'draft');
         controller.deletePage(page.code);
       });
-    cy.kcLogout();
   });
 
   describe('Drag and drop widgets', () => {
@@ -62,7 +61,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
       addWidgetToPageFrame(currentPage, page.pageModel, 0, 0, 1, 0);
-      cy.wait(1000) //wait for page to update
+      cy.wait(1000); //wait for page to update
       currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                  .then(contents => {
@@ -78,7 +77,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
       addWidgetToPageFrame(currentPage, page.pageModel, 0, 0, 1, 0);
-      cy.wait(1000) //wait for page to update
+      cy.wait(1000); //wait for page to update
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--draft')
                  .and('have.attr', 'title').should('eq', 'Published, with pending changes');
@@ -130,7 +129,6 @@ describe([Tag.GTS], 'Pages Designer', () => {
   });
 
   const openDesignerPage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getPages().open();
     return currentPage.openDesigner();

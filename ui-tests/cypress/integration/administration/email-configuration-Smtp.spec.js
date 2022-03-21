@@ -6,13 +6,14 @@ describe('SMTP Server Functionalities', () => {
   let currentPage;
 
   beforeEach(() => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
     currentPage = openEmailConfigurationPage();
   });
 
   afterEach(() => {
     cy.emailConfigController().then(controller => controller.defaultSettings());
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   it([Tag.SMOKE, 'ENG-3298'], 'SMTP Current Configuration is displayed', () => {
@@ -82,7 +83,6 @@ describe('SMTP Server Functionalities', () => {
   });
 
   const openEmailConfigurationPage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getAdministration().open();
     return currentPage.openEmailConfiguration();

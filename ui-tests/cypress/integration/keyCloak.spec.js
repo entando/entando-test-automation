@@ -39,15 +39,14 @@ describe([Tag.SMOKE], 'Keycloack', () => {
   });
 
   it('Login/Logout via API', () => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcUILogin('login/admin');
 
-    cy.visit('/');
     cy.location().should((location) => {
       expect(location.origin).to.eq(Cypress.config('baseUrl'));
       expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
     });
 
-    cy.kcLogout();
+    cy.kcUILogout();
 
     cy.location().should((location) => {
       expect(location.origin).to.eq(origin);

@@ -10,20 +10,21 @@ describe([Tag.GTS], 'Profile Types', () => {
   const profileType = {};
 
   beforeEach(() => {
-    cy.kcLogin('login/admin').as('tokens');
     profileType.code = generateRandomTypeCode();
     profileType.name = generateRandomId();
+    cy.wrap(null).as('profileTypeToBeDeleted');
+    cy.kcAPILogin();
     cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'loadedList', 'Status'));
     cy.profileTypesController().then(controller => controller.intercept({method: 'POST'}, 'addedProfileType'));
     cy.profileTypesController().then(controller => controller.intercept({method: 'DELETE'}, 'deletedProfileType', `/${profileType.code}`));
-    cy.wrap(null).as('profileTypeToBeDeleted');
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
     cy.get('@profileTypeToBeDeleted').then(code => {
-      if(code) deleteProfileType(code);
+      if (code) deleteProfileType(code);
     });
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   it('Add a new profile type', () => {
@@ -36,7 +37,7 @@ describe([Tag.GTS], 'Profile Types', () => {
 
     cy.wait('@addedProfileType').then(res => cy.wrap(res.response.body.payload.code).as('profileTypeToBeDeleted'));
     cy.validateAppBuilderUrlPathname(`/profiletype/edit/${profileType.code}`);
-    
+
     currentPage.getContent().getCodeInput().should('have.value', profileType.code).and('be.disabled');
     currentPage.getContent().getNameInput().should('have.value', profileType.name);
 
@@ -51,7 +52,7 @@ describe([Tag.GTS], 'Profile Types', () => {
   it('Edit profile type', () => {
     addProfileType(profileType.code, profileType.name);
     currentPage = openProfileTypesPage();
-    
+
     cy.log(`Edit profile type with code ${profileType.code}`);
     openKebabMenu(profileType.code);
     currentPage = currentPage.getContent().getKebabMenu(profileType.code).openEdit();
@@ -78,15 +79,14 @@ describe([Tag.GTS], 'Profile Types', () => {
     cy.wrap(null).as('profileTypeToBeDeleted');
   });
 
-  const addProfileType    = (code, name) => {
+  const addProfileType = (code, name) => {
     cy.profileTypesController().then(controller => controller.addProfileType(code, name))
-                               .then(response => cy.wrap(response.body.payload.code).as('profileTypeToBeDeleted'));
+      .then(response => cy.wrap(response.body.payload.code).as('profileTypeToBeDeleted'));
   };
-  
+
   const deleteProfileType = (code) => cy.profileTypesController().then(controller => controller.deleteProfileType(code));
-  
+
   const openProfileTypesPage = () => {
-    cy.visit('/');
     let currentPage = new HomePage();
     currentPage     = currentPage.getMenu().getUsers().open();
     currentPage     = currentPage.openProfileTypes();
@@ -101,11 +101,11 @@ describe([Tag.GTS], 'Profile Types', () => {
     let page = currentPage.getContent().getKebabMenu(code);
 
     page.get().children(htmlElements.ul).should('not.be.visible')
-              .siblings(htmlElements.button)
-              .pipe(click)
-              .should($el => {
-                expect($el.siblings(htmlElements.ul)).to.be.visible
-              });
-  }
+        .siblings(htmlElements.button)
+        .pipe(click)
+        .should($el => {
+          expect($el.siblings(htmlElements.ul)).to.be.visible;
+        });
+  };
 
 });

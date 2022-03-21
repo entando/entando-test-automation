@@ -3,14 +3,15 @@ import HomePage from '../../support/pageObjects/HomePage';
 describe([Tag.GTS], 'My Profile', () => {
 
   let currentPage;
-  const username = "admin";
+  const username = 'admin';
 
   beforeEach(() => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   describe('UI', () => {
@@ -20,13 +21,13 @@ describe([Tag.GTS], 'My Profile', () => {
       cy.validateAppBuilderUrlPathname('/myProfile');
 
       currentPage.getContent().getTitle()
-      .should('be.visible')
-      .and('have.text', 'My profile');
+                 .should('be.visible')
+                 .and('have.text', 'My profile');
 
       currentPage.getContent().selectTab('account');
       cy.wait(1000);
       currentPage.getContent().getLegend().should('be.visible')
-      .and('have.text', 'Edit my account');
+                 .and('have.text', 'Edit my account');
     });
 
     it('Profile', () => {
@@ -35,20 +36,20 @@ describe([Tag.GTS], 'My Profile', () => {
       cy.validateAppBuilderUrlPathname('/myProfile');
 
       currentPage.getContent().getTitle()
-      .should('be.visible')
-      .and('have.text', 'My profile');
+                 .should('be.visible')
+                 .and('have.text', 'My profile');
 
       currentPage.getContent().selectTab('profile');
       cy.wait(1000);
       currentPage.getContent().getLegend()
-      .first()
-      .should('be.visible')
-      .and('have.text', 'Upload your image profile');
+                 .first()
+                 .should('be.visible')
+                 .and('have.text', 'Upload your image profile');
 
       currentPage.getContent().getLegend()
-      .eq(1)
-      .should('be.visible')
-      .and('have.text', 'Edit my profile');
+                 .eq(1)
+                 .should('be.visible')
+                 .and('have.text', 'Edit my profile');
     });
 
     it('Preferences', () => {
@@ -57,15 +58,15 @@ describe([Tag.GTS], 'My Profile', () => {
       cy.validateAppBuilderUrlPathname('/myProfile');
 
       currentPage.getContent().getTitle()
-      .should('be.visible')
-      .and('have.text', 'My profile');
+                 .should('be.visible')
+                 .and('have.text', 'My profile');
 
       currentPage.getContent().selectTab('preferences');
       cy.wait(1000);
       currentPage.getContent().getLegend()
-      .first()
-      .should('be.visible')
-      .and('have.text', 'Preferences');
+                 .first()
+                 .should('be.visible')
+                 .and('have.text', 'Preferences');
     });
 
   });
@@ -73,7 +74,7 @@ describe([Tag.GTS], 'My Profile', () => {
   describe('Actions', () => {
     it('My Account - Change Password', () => {
       const newPassword = 'test123456';
-      currentPage = openMyProfile();
+      currentPage       = openMyProfile();
 
       currentPage.getContent().selectTab('account');
       currentPage.getContent().clickChangePasswordButton();
@@ -114,8 +115,8 @@ describe([Tag.GTS], 'My Profile', () => {
       currentPage.getContent().clickProfileSaveButton();
       cy.validateToast(currentPage);
       currentPage.getContent().getProfileImage()
-      .invoke('attr', 'src')
-      .should('match', /entando_400x400/);
+                 .invoke('attr', 'src')
+                 .should('match', /entando_400x400/);
 
     });
 
@@ -132,8 +133,8 @@ describe([Tag.GTS], 'My Profile', () => {
 
       cy.validateToast(currentPage);
       currentPage.getContent().getProfileImage()
-      .invoke('attr', 'src')
-      .should('match', /user-icon/);
+                 .invoke('attr', 'src')
+                 .should('match', /user-icon/);
 
     });
 
@@ -156,11 +157,10 @@ describe([Tag.GTS], 'My Profile', () => {
       cy.validateToast(currentPage);
 
       cy.userPreferencesController().then(controller => controller.resetUserPreferences(username));
-    })
+    });
   });
 
   const openMyProfile = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     return currentPage.getNavbar().openUserMenu().openProfile();
   };

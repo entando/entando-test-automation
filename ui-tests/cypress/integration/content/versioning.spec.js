@@ -1,18 +1,20 @@
 import HomePage from '../../support/pageObjects/HomePage';
 
 const openVersioningPage = () => {
-  cy.visit('/');
   let currentPage = new HomePage();
-  currentPage = currentPage.getMenu().getContent().open();
+  currentPage     = currentPage.getMenu().getContent().open();
   return currentPage.openVersioning();
 };
 
 describe([Tag.GTS], 'Content Versioning', () => {
   let currentPage;
 
-  beforeEach(() => cy.kcLogin('login/admin').as('tokens'));
+  beforeEach(() => {
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
+  });
 
-  afterEach(() => cy.kcLogout());
+  afterEach(() => cy.kcUILogout());
 
   describe('Content Version Browsing', () => {
     it('Pagination check when there are no results (ENG-2680)', () => {
@@ -22,9 +24,9 @@ describe([Tag.GTS], 'Content Versioning', () => {
       cy.wait(1000);
 
       currentPage.getContent().getPagination()
-                  .getItemsCurrent().invoke('text').should('be.equal', '0-0');
+                 .getItemsCurrent().invoke('text').should('be.equal', '0-0');
       currentPage.getContent().getPagination()
-                  .getItemsTotal().invoke('text').should('be.equal', '0');
+                 .getItemsTotal().invoke('text').should('be.equal', '0');
     });
 
   });
