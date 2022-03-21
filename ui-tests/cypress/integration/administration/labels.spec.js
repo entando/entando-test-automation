@@ -7,7 +7,8 @@ describe('Labels', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('labelToBeDeleted');
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
@@ -16,7 +17,7 @@ describe('Labels', () => {
         cy.labelsController().then(controller => controller.removeLabel(label.key));
       }
     });
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   describe('Labels pages visualisation', () => {
@@ -308,7 +309,6 @@ describe('Labels', () => {
   };
 
   const openLabelsPage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getAdministration().open();
     currentPage = currentPage.openLanguages_Labels();

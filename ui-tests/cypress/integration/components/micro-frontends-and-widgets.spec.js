@@ -9,19 +9,18 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
   describe('Main functionalities', () => {
 
     before(() => {
-      cy.kcLogin('login/admin').as('tokens');
+      cy.kcAPILogin();
       cy.seoPagesController()
         .then(controller => controller.addNewPage(DEMOPAGE));
       cy.pagesController()
         .then(controller => controller.setPageStatus(DEMOPAGE.code, 'published'));
-      cy.kcLogout();
     });
 
     beforeEach(() => {
       cy.wrap(null).as('widgetsToBeRemovedFromPage');
       cy.wrap(null).as('widgetToBeDelete');
-      cy.kcLogin('login/admin').as('tokens');
-      cy.visit('/');
+      cy.kcAPILogin();
+      cy.kcUILogin('login/admin');
       currentPage = new HomePage();
     });
 
@@ -45,17 +44,16 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
           cy.widgetsController().then(controller => controller.deleteWidget(widget));
         }
       });
-      cy.kcLogout();
+      cy.kcUILogout();
     });
 
     after(() => {
-      cy.kcLogin('login/admin').as('tokens');
+      cy.kcAPILogin();
       cy.pagesController()
         .then(controller => {
           controller.setPageStatus(DEMOPAGE.code, 'draft');
           controller.deletePage(DEMOPAGE.code);
         });
-      cy.kcLogout();
     });
 
     describe('Create New Widget', () => {
@@ -247,7 +245,8 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
       role.code = generateRandomId();
       role.name = generateRandomId();
 
-      cy.kcLogin('login/admin').as('tokens');
+      cy.kcAPILogin();
+      cy.kcUILogin('login/admin');
     });
 
     afterEach(() => {
@@ -263,7 +262,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         }
       });
 
-      cy.kcLogout();
+      cy.kcUILogout();
     });
 
     it('Widgets page should not be accessible without superuser role', () => {
@@ -281,19 +280,14 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         });
       });
 
-      cy.kcLogout();
-      cy.kcLogin('login/user').as('tokens');
+      cy.kcUILogout();
+      cy.kcUILogin('login/user');
 
-      cy.visit('/');
       currentPage = new HomePage();
       currentPage.getMenu().get().should('not.contain', 'Components');
 
       cy.visit('/widget');
       cy.root().should('contain', '403');
-
-      // Log in as admin again to be able to delete created resources
-      cy.kcLogout();
-      cy.kcLogin('login/admin').as('tokens');
     });
 
     const role = {

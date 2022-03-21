@@ -54,7 +54,10 @@ describe([Tag.GTS], 'Page Management', () => {
   let pageToBeDeleted    = false;
   let subPageToBeDeleted = false;
 
-  beforeEach(() => cy.kcLogin('login/admin').as('tokens'));
+  beforeEach(() => {
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
+  });
 
   afterEach(() => {
     if (subPageToBeDeleted) {
@@ -94,7 +97,7 @@ describe([Tag.GTS], 'Page Management', () => {
         });
     }
 
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   describe('UI', () => {
@@ -124,8 +127,8 @@ describe([Tag.GTS], 'Page Management', () => {
     describe('Add a new page', () => {
 
       beforeEach(() => {
-        page.code     = generateRandomId();
-        page.title    = {
+        page.code  = generateRandomId();
+        page.title = {
           en: generateRandomId(),
           it: generateRandomId()
         };
@@ -420,8 +423,8 @@ describe([Tag.GTS], 'Page Management', () => {
       });
 
       it('Avoid accept blank page titles in an inactive language tab (ENG-2642)', () => {
-        page.code  = generateRandomId();
-        page.title = {
+        page.code          = generateRandomId();
+        page.title         = {
           en: generateRandomId(),
           it: generateRandomId()
         };
@@ -457,11 +460,10 @@ describe([Tag.GTS], 'Page Management', () => {
         };
         newPage.parentCode = homePage.code;
 
-        cy.kcLogin('login/admin').as('tokens');
+        cy.kcAPILogin();
         cy.seoPagesController().then(controller =>
             controller.addNewPage(newPage)
         );
-        cy.kcLogout();
       });
 
       beforeEach(() => {
@@ -470,12 +472,11 @@ describe([Tag.GTS], 'Page Management', () => {
       });
 
       after(() => {
-        cy.kcLogin('login/admin').as('tokens');
+        cy.kcAPILogin();
         cy.pagesController().then(controller => {
           controller.setPageStatus(page.code, 'draft');
           controller.deletePage(page.code);
         });
-        cy.kcLogout();
       });
 
       it('Move outside page', () => {
@@ -647,9 +648,6 @@ describe([Tag.GTS], 'Page Management', () => {
       });
 
       afterEach(() => {
-        cy.kcLogout();
-        cy.kcLogin('login/admin').as('tokens');
-
         cy.fixture(`users/details/user`).then(userJSON =>
             cy.usersController().then(controller => {
               controller.deleteAuthorities(userJSON.username);
@@ -669,8 +667,8 @@ describe([Tag.GTS], 'Page Management', () => {
         });
 
         // login with unauthorized user
-        cy.kcLogout();
-        cy.kcLogin('login/user').as('tokens');
+        cy.kcUILogout();
+        cy.kcUILogin('login/user');
 
         currentPage = openManagementPage();
 
@@ -883,7 +881,6 @@ describe([Tag.GTS], 'Page Management', () => {
   });
 
   const openManagementPage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getPages().open();
     return currentPage.openManagement();
@@ -893,13 +890,13 @@ describe([Tag.GTS], 'Page Management', () => {
     page.code  = generateRandomId();
     page.title = generateRandomId();
 
-    newPage.code       = page.code;
-    newPage.titles     = {
+    newPage.code   = page.code;
+    newPage.titles = {
       en: page.title.en
     };
 
     if (parent) {
-      page.parentCode = parent;
+      page.parentCode    = parent;
       newPage.parentCode = parent;
     } else {
       newPage.parentCode = homePage.code;

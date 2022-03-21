@@ -12,14 +12,15 @@ describe([Tag.GTS], 'Groups', () => {
   let groupCode;
 
   beforeEach(() => {
-    cy.kcLogin('login/admin').as('tokens');
-
     groupName = generateRandomId();
     groupCode = groupName.toLowerCase();
+
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   it('Add a new group', () => {
@@ -169,7 +170,6 @@ describe([Tag.GTS], 'Groups', () => {
   });
 
   const openGroupsPage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getUsers().open();
     return currentPage.openGroups();

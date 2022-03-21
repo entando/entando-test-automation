@@ -218,10 +218,9 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
   ];
 
   before(() => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
     cy.contentTypesController()
       .then(controller => controller.addContentType(CONTENT_TYPE.code, CONTENT_TYPE.name));
-    cy.kcLogout();
   });
 
   beforeEach(() => {
@@ -230,8 +229,8 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
     cy.wrap(null).as('contentToBeDeleted');
     cy.wrap(null).as('assetToBeDeleted');
-    cy.kcLogin('login/admin').as('tokens');
-    cy.visit('/');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
     currentPage = new HomePage();
   });
 
@@ -248,14 +247,13 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         cy.assetsController().then(controller => controller.deleteAsset(assetId));
       }
     });
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   after(() => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
     cy.contentTypesController()
       .then(controller => controller.deleteContentType(CONTENT_TYPE.code));
-    cy.kcLogout();
   });
 
   contentTypeAttributes.forEach(contentTypeAttribute => {
@@ -266,14 +264,13 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
       describe('Base attribute options', () => {
 
         before(() => {
-          cy.kcLogin('login/admin').as('tokens');
+          cy.kcAPILogin();
           cy.contentTypeAttributesController(CONTENT_TYPE.code)
             .then(controller => controller.addAttribute({
               type: contentTypeAttribute.type,
               code: contentTypeAttribute.type,
               ...attributeProperties
             }));
-          cy.kcLogout();
         });
 
         after(() => deleteAttribute(contentTypeAttribute));
@@ -317,17 +314,15 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
           describe('FCKEditor', () => {
 
             before(() => {
-              cy.kcLogin('login/admin').as('tokens');
+              cy.kcAPILogin();
               cy.contentSettingsController().then(controller => controller.putContentEditor('fckeditor'));
-              cy.kcLogout();
             });
 
             beforeEach(() => cy.wrap(true).as('contentEditor'));
 
             after(() => {
-              cy.kcLogin('login/admin').as('tokens');
+              cy.kcAPILogin();
               cy.contentSettingsController().then(controller => controller.putContentEditor());
-              cy.kcLogout();
             });
 
             it('Add multiple links to hypertext', () => {
@@ -374,7 +369,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
             before(() => {
               cy.wrap(null).as('imageToBeDeleted');
-              cy.kcLogin('login/admin').as('tokens');
+              cy.kcAPILogin();
               cy.groupsController()
                 .then(controller => controller.addGroup(TEST_GROUP, TEST_GROUP))
                 .then(() => cy.assetsController().then(controller =>
@@ -382,16 +377,14 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
                                   {path: 'upload/entando_400x400.png', name: 'entando_400x400.png', type: 'image/png'},
                                   {group: TEST_GROUP, categories: [], type: 'image'})
                               .then(response => cy.wrap(response.payload.id).as('imageToBeDeleted'))));
-              cy.kcLogout();
             });
 
             after(() => {
-              cy.kcLogin('login/admin').as('tokens');
+              cy.kcAPILogin();
               cy.get('@imageToBeDeleted').then(imageId => {
                 if (imageId) { cy.assetsController().then(controller => controller.deleteAsset(imageId)); }
               });
               cy.groupsController().then(controller => controller.deleteGroup(TEST_GROUP));
-              cy.kcLogout();
             });
 
             it('Check that image group is compatible with current content', () => {
@@ -448,7 +441,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
           describe('Mandatoriness validation', () => {
 
             before(() => {
-              cy.kcLogin('login/admin').as('tokens');
+              cy.kcAPILogin();
               cy.contentTypeAttributesController(CONTENT_TYPE.code)
                 .then(controller => controller.addAttribute({
                   type: contentTypeAttribute.type,
@@ -456,7 +449,6 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
                   mandatory: true,
                   ...attributeProperties
                 }));
-              cy.kcLogout();
             });
 
             after(() => deleteAttribute(contentTypeAttribute));
@@ -474,7 +466,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
           describe('Custom regex validation', () => {
 
             before(() => {
-              cy.kcLogin('login/admin').as('tokens');
+              cy.kcAPILogin();
               cy.contentTypeAttributesController(CONTENT_TYPE.code)
                 .then(controller => controller.addAttribute({
                   type: contentTypeAttribute.type,
@@ -482,7 +474,6 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
                   validationRules: {regex: '^[A-Za-z\\s]+$'},
                   ...attributeProperties
                 }));
-              cy.kcLogout();
             });
 
             after(() => deleteAttribute(contentTypeAttribute));
@@ -516,7 +507,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
           describe('Custom range validation', () => {
 
             before(() => {
-              cy.kcLogin('login/admin').as('tokens');
+              cy.kcAPILogin();
               cy.contentTypeAttributesController(CONTENT_TYPE.code)
                 .then(controller => controller.addAttribute({
                   type: contentTypeAttribute.type,
@@ -524,7 +515,6 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
                   validationRules: contentTypeAttribute.validationRules,
                   ...attributeProperties
                 }));
-              cy.kcLogout();
             });
 
             after(() => deleteAttribute(contentTypeAttribute));
@@ -560,7 +550,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         describe('Nest in a composite attribute', () => {
 
           before(() => {
-            cy.kcLogin('login/admin').as('tokens');
+            cy.kcAPILogin();
             cy.contentTypeAttributesController(CONTENT_TYPE.code)
               .then(controller => controller.addAttribute({
                 ...DEFAULT_COMPOSITE_ATTRIBUTE,
@@ -571,7 +561,6 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
                   ...attributeProperties
                 }]
               }));
-            cy.kcLogout();
           });
 
           after(() => deleteAttribute(DEFAULT_COMPOSITE_ATTRIBUTE));
@@ -812,28 +801,29 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
           .then(addAssetResponse => {
             cy.wrap(addAssetResponse.payload.id).as('assetToBeDeleted');
             cy.contentsController().then(controller =>
-              controller.addContent({
-                          ...DEFAULT_CONTENT,
-                          attributes: [{
-                            code: contentAttribute.type,
-                            values: {
-                              en: {
-                                id: addAssetResponse.payload.id,
-                                name: 'blank.pdf',
-                                metadata: {...contentAttribute.value.en.metadata}
-                              },
-                              it: {
-                                id: addAssetResponse.payload.id,
-                                name: 'blank.pdf',
-                                metadata: {...contentAttribute.value.it.metadata}
+                controller.addContent({
+                            ...DEFAULT_CONTENT,
+                            attributes: [{
+                              code: contentAttribute.type,
+                              values: {
+                                en: {
+                                  id: addAssetResponse.payload.id,
+                                  name: 'blank.pdf',
+                                  metadata: {...contentAttribute.value.en.metadata}
+                                },
+                                it: {
+                                  id: addAssetResponse.payload.id,
+                                  name: 'blank.pdf',
+                                  metadata: {...contentAttribute.value.it.metadata}
+                                }
                               }
-                            }
-                          }]
-                        })
-                        .then(addContentResponse => {
-                          controller.updateStatus(addContentResponse.body.payload[0].id, 'published');
-                          cy.wrap(addContentResponse.body.payload[0].id).as('contentToBeDeleted');
-                        }))});
+                            }]
+                          })
+                          .then(addContentResponse => {
+                            controller.updateStatus(addContentResponse.body.payload[0].id, 'published');
+                            cy.wrap(addContentResponse.body.payload[0].id).as('contentToBeDeleted');
+                          }));
+          });
       },
       fillContent: function (page, contentAttribute) {
         page = this.parent.multilang.fillContent(page, contentAttribute);
@@ -1001,10 +991,9 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
   };
 
   const deleteAttribute = (contentTypeAttribute) => {
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
     cy.contentTypeAttributesController(CONTENT_TYPE.code)
       .then(controller => controller.deleteAttribute(contentTypeAttribute.type));
-    cy.kcLogout();
   };
 
 });

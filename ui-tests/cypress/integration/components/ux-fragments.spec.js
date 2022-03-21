@@ -5,11 +5,14 @@ describe('UX Fragments', () => {
 
   let currentPage;
 
-  beforeEach(() => cy.kcLogin('login/admin').as('tokens'));
+  beforeEach(() => {
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
+  });
 
-  afterEach(() => cy.kcLogout());
+  afterEach(() => cy.kcUILogout());
 
-  describe([Tag.GTS],'Base tests', () => {
+  describe([Tag.GTS], 'Base tests', () => {
 
     beforeEach(() => {
       fragment.code = `${generateRandomId()}`;
@@ -130,7 +133,6 @@ describe('UX Fragments', () => {
   });
 
   const openFragmentsPage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getComponents().open();
     return currentPage.openUXFragments();

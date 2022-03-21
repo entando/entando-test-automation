@@ -44,6 +44,21 @@ declare namespace Cypress {
          * Checks any window.open invocation (_blank types) and converts it to same-tab window navigation
          */
         initWindowOpenChecker(): void
+
+        /**
+         * Perform the login to keycloak with the configured confidential client with grant type client_credentials and stores the response with alias tokens
+         */
+        kcAPILogin(): void
+
+        /**
+         * Perform the login to keycloak with the configured public client for the specified user with grant type authorization_code and stores the response with alias UITokens
+         */
+        kcUILogin(user): void
+
+        /**
+         * Perform the logout of the user associated with the stored value UITokens
+         */
+        kcUILogout(): void
     }
 
     interface Chainable<Subject> {
@@ -120,7 +135,6 @@ declare namespace Cypress {
          * Returns a new instance of an email configuration controller
          */
         emailConfigController(): Chainable<EmailConfigController>
-
 
 
         /**

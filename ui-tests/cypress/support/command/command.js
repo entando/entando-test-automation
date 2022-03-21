@@ -11,3 +11,97 @@ Cypress.Commands.add('initWindowOpenChecker', () => {
     });
   });
 });
+
+Cypress.Commands.add('kcAPILogin', () => {
+  Cypress.log({name: 'Login via client credentials'});
+  const authBaseUrl   = Cypress.env('auth_base_url');
+  const realm         = Cypress.env('auth_realm');
+  const client_id     = Cypress.env('api_client_id');
+  const client_secret = Cypress.env('api_client_secret');
+  cy.request({
+    method: 'post',
+    url: authBaseUrl + '/realms/' + realm + '/protocol/openid-connect/token',
+    body: {
+      client_id: client_id,
+      client_secret: client_secret,
+      grant_type: 'client_credentials'
+    },
+    form: true,
+    followRedirect: false
+  }).its('body').as('tokens');
+});
+
+Cypress.Commands.add('kcUILogin', user => {
+  Cypress.log({name: 'Login via user authorization code'});
+  cy.fixture('users/' + user).then(userData => {
+    const authBaseUrl = Cypress.env('auth_base_url');
+    const realm       = Cypress.env('auth_realm');
+    const client_id   = Cypress.env('auth_client_id');
+    return cy.request({
+               url: authBaseUrl + '/realms/' + realm + '/protocol/openid-connect/auth',
+               method: 'GET',
+               qs: {
+                 scope: 'openid',
+                 response_type: 'code',
+                 approval_prompt: 'auto',
+                 redirect_uri: Cypress.config('baseUrl'),
+                 client_id: client_id
+               },
+               followRedirect: false,
+               failOnStatusCode: false
+             })
+             .then(response => {
+               const html     = document.createElement('html');
+               html.innerHTML = response.body;
+               const form     = html.getElementsByTagName('form')[0];
+               const url      = form.action;
+               return cy.request({
+                 url: url,
+                 method: 'POST',
+                 body: {
+                   username: userData.username,
+                   password: userData.password
+                 },
+                 form: true,
+                 followRedirect: false,
+                 failOnStatusCode: false
+               });
+             })
+             .then(response => {
+               const url  = new URL(response.headers['location']);
+               const code = url.searchParams.get('code');
+               return cy.request({
+                 url: authBaseUrl + '/realms/' + realm + '/protocol/openid-connect/token',
+                 method: 'POST',
+                 body: {
+                   client_id: client_id,
+                   redirect_uri: Cypress.config('baseUrl'),
+                   code: code,
+                   grant_type: 'authorization_code'
+                 },
+                 form: true,
+                 followRedirect: false,
+                 failOnStatusCode: false
+               });
+             });
+  }).its('body').as('UITokens');
+  cy.visit('/');
+});
+
+Cypress.Commands.add('kcUILogout', () => {
+  Cypress.log({name: 'Logout'});
+  const authBaseUrl = Cypress.env('auth_base_url');
+  const realm       = Cypress.env('auth_realm');
+  const client_id   = Cypress.env('auth_client_id');
+  return cy.get('@UITokens').then(tokens => {
+    return cy.request({
+      url: authBaseUrl + '/realms/' + realm + '/protocol/openid-connect/logout',
+      method: 'POST',
+      body: {
+        client_id: client_id,
+        refresh_token: tokens.refresh_token
+      },
+      form: true
+    });
+  });
+});

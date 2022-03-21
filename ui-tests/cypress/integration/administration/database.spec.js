@@ -7,7 +7,8 @@ describe('Database', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('backupToBeDeleted');
-    cy.kcLogin('login/admin').as('tokens');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
@@ -16,7 +17,7 @@ describe('Database', () => {
         cy.databaseController().then(controller => controller.deleteBackup(backup));
       }
     });
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   it([Tag.SMOKE, 'ENG-3239'], 'Database section', () => {
@@ -67,8 +68,8 @@ describe('Database', () => {
       saveBackupCode();
       cy.get('@backupToBeDeleted').then(backup => {
         currentPage.getContent().getTableRowByIndex(0)
-          .children(htmlElements.td).eq(0).should('have.text', backup);
-      })
+                   .children(htmlElements.td).eq(0).should('have.text', backup);
+      });
     });
 
     it([Tag.FEATURE, 'ENG-3239'], 'Backup should not be created when canceling creation', () => {
@@ -161,7 +162,6 @@ describe('Database', () => {
   };
 
   const openDatabasePage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getAdministration().open();
     currentPage = currentPage.openDatabase();

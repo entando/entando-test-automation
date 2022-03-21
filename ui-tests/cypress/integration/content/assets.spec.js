@@ -6,8 +6,9 @@ describe('Assets', () => {
   let currentPage;
 
   beforeEach(() => {
-    cy.kcLogin('login/admin').as('tokens');
     cy.wrap(null).as('assetToBeDeleted');
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
@@ -17,7 +18,7 @@ describe('Assets', () => {
       }
     });
 
-    cy.kcLogout();
+    cy.kcUILogout();
   });
 
   describe([Tag.GTS], 'Add asset', () => {
@@ -181,7 +182,6 @@ describe('Assets', () => {
   const testMetadata = {group: 'administrators', categories: [], type: 'image'};
 
   const openAssetsPage = () => {
-    cy.visit('/');
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getContent().open();
     return currentPage.openAssets();

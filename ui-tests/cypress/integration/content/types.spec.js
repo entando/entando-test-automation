@@ -9,9 +9,12 @@ describe([Tag.GTS], 'Content Types', () => {
   let currentPage;
   let contentType = {};
 
-  beforeEach(() => cy.kcLogin('login/admin').as('tokens'));
+  beforeEach(() => {
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
+  });
 
-  afterEach(() => cy.kcLogout());
+  afterEach(() => cy.kcUILogout());
 
   describe('Unreferenced', () => {
 
@@ -150,9 +153,8 @@ describe([Tag.GTS], 'Content Types', () => {
       contentType.code = generateRandomTypeCode();
       contentType.name = generateRandomId();
 
-      cy.kcLogin('login/admin').as('tokens');
+      cy.kcAPILogin();
       cy.contentTypesController().then(controller => controller.addContentType(contentType.code, contentType.name));
-      cy.kcLogout();
     });
 
     beforeEach(() => attribute.code = generateRandomId());
@@ -171,9 +173,8 @@ describe([Tag.GTS], 'Content Types', () => {
     });
 
     after(() => {
-      cy.kcLogin('login/admin').as('tokens');
+      cy.kcAPILogin();
       cy.contentTypesController().then(controller => controller.deleteContentType(contentType.code));
-      cy.kcLogout();
     });
 
     describe('Basic Attributes', () => {
@@ -519,7 +520,6 @@ describe([Tag.GTS], 'Content Types', () => {
   const deleteContentType = (code) => cy.contentTypesController().then(controller => controller.deleteContentType(code));
 
   const openContentTypesPage = () => {
-    cy.visit('/');
     let currentPage = new HomePage();
     currentPage     = currentPage.getMenu().getContent().open();
     return currentPage.openTypes();
