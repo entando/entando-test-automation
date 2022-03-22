@@ -38,7 +38,7 @@ describe('Labels', () => {
     it([Tag.SMOKE, 'ENG-3238'], 'Add form', () => {
       currentPage = openLabelsPage();
       currentPage = currentPage.getContent().openAddLabel();
-      cy.validateAppBuilderUrlPathname('/labels-languages/add');
+      cy.validateUrlPathname('/labels-languages/add');
       currentPage.getContent().getForm().should('exist').and('be.visible');
       currentPage.getContent().getCodeTextField().should('exist').and('be.visible');
       currentPage.getContent().getLanguageTextField('en').should('exist').and('be.visible');
@@ -58,7 +58,7 @@ describe('Labels', () => {
       addTestLabel();
       currentPage = openLabelsPage();
       currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
-      cy.validateAppBuilderUrlPathname(`/labels-languages/edit/${testLabel.key}`);
+      cy.validateUrlPathname(`/labels-languages/edit/${testLabel.key}`);
       currentPage.getContent().getForm().should('exist').and('be.visible');
       currentPage.getContent().getCodeTextField().should('exist').and('be.visible');
       currentPage.getContent().getLanguageTextField('en').should('exist').and('be.visible');
@@ -158,13 +158,13 @@ describe('Labels', () => {
     it([Tag.SANITY, 'ENG-3238'], 'List should be updated when a new label is added', () => {
       currentPage = openLabelsPage();
       currentPage = currentPage.getContent().openAddLabel();
-      cy.validateAppBuilderUrlPathname('/labels-languages/add');
+      cy.validateUrlPathname('/labels-languages/add');
       currentPage.getContent().typeCodeTextField(testLabel.key);
       currentPage.getContent().typeLanguageTextField('en', testLabel.name.en);
       currentPage.getContent().typeLanguageTextField('it', testLabel.name.it);
       currentPage = currentPage.getContent().submitForm();
       cy.wrap(testLabel).as('labelToBeDeleted');
-      cy.validateAppBuilderUrlPathname('/labels-languages');
+      cy.validateUrlPathname('/labels-languages');
       currentPage.getContent().getDisplayedLabelsTable().should('exist').and('be.visible');
       currentPage.getContent().getLabelPaginationForm().children().eq(1)
                  .find(`${htmlElements.span}.pagination-pf-items-total`)
@@ -177,10 +177,10 @@ describe('Labels', () => {
       addTestLabel();
       currentPage = openLabelsPage();
       currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
-      cy.validateAppBuilderUrlPathname(`/labels-languages/edit/${testLabel.key}`);
+      cy.validateUrlPathname(`/labels-languages/edit/${testLabel.key}`);
       currentPage.getContent().typeLanguageTextField('en', editedName);
       currentPage = currentPage.getContent().submitForm();
-      cy.validateAppBuilderUrlPathname('/labels-languages');
+      cy.validateUrlPathname('/labels-languages');
       currentPage.getContent().getLabelRowByCode(testLabel.key)
                  .children(htmlElements.td).eq(1)
                  .should('not.have.text', testLabel.name.en)
@@ -216,7 +216,7 @@ describe('Labels', () => {
     it([Tag.FEATURE, 'ENG-3238'], 'Save button disabled when add form not filled', () => {
       currentPage = openLabelsPage();
       currentPage = currentPage.getContent().openAddLabel();
-      cy.validateAppBuilderUrlPathname('/labels-languages/add');
+      cy.validateUrlPathname('/labels-languages/add');
       currentPage.getContent().getForm().should('exist').and('be.visible');
       currentPage.getContent().getSubmit().should('be.disabled');
     });
@@ -225,7 +225,7 @@ describe('Labels', () => {
       addTestLabel();
       currentPage = openLabelsPage();
       currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
-      cy.validateAppBuilderUrlPathname(`/labels-languages/edit/${testLabel.key}`);
+      cy.validateUrlPathname(`/labels-languages/edit/${testLabel.key}`);
       currentPage.getContent().getForm().should('exist').and('be.visible');
       currentPage.getContent().getCodeTextField().should('exist').and('be.disabled').and('have.value', testLabel.key);
       currentPage.getContent().getLanguageTextField('en').should('exist').and('have.text', testLabel.name.en);
@@ -235,9 +235,9 @@ describe('Labels', () => {
     it([Tag.FEATURE, 'ENG-3238'], 'No label added when navigating out of the add form using breadcrumb', () => {
       currentPage = openLabelsPage();
       currentPage = currentPage.getContent().openAddLabel();
-      cy.validateAppBuilderUrlPathname('/labels-languages/add');
+      cy.validateUrlPathname('/labels-languages/add');
       currentPage = currentPage.getContent().navigateToLanguagesAndLabelsFromBreadcrumb();
-      cy.validateAppBuilderUrlPathname('/labels-languages');
+      cy.validateUrlPathname('/labels-languages');
       currentPage.getContent().getLabelPaginationForm().children().eq(1)
                  .find(`${htmlElements.span}.pagination-pf-items-total`)
                  .should('have.text', 144);
@@ -248,10 +248,10 @@ describe('Labels', () => {
       addTestLabel();
       currentPage = openLabelsPage();
       currentPage = currentPage.getContent().getKebabMenu(testLabel.key).open().openEdit();
-      cy.validateAppBuilderUrlPathname(`/labels-languages/edit/${testLabel.key}`);
+      cy.validateUrlPathname(`/labels-languages/edit/${testLabel.key}`);
       currentPage.getContent().typeLanguageTextField('en', editedName);
       currentPage = currentPage.getContent().navigateToLanguagesAndLabelsFromBreadcrumb();
-      cy.validateAppBuilderUrlPathname('/labels-languages');
+      cy.validateUrlPathname('/labels-languages');
       currentPage.getContent().getLabelRowByCode(testLabel.key)
                  .closest(htmlElements.tr)
                  .children(htmlElements.td).eq(1)

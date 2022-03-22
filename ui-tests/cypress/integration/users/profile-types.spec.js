@@ -32,17 +32,17 @@ describe([Tag.GTS], 'Profile Types', () => {
 
     cy.log(`Add profile type with code ${profileType.code}`);
     currentPage = currentPage.getContent().openAddProfileTypePage();
-    cy.validateAppBuilderUrlPathname('/profiletype/add');
+    cy.validateUrlPathname('/profiletype/add');
     currentPage = currentPage.getContent().addAndSaveProfileType(profileType.code, profileType.name);
 
     cy.wait('@addedProfileType').then(res => cy.wrap(res.response.body.payload.code).as('profileTypeToBeDeleted'));
-    cy.validateAppBuilderUrlPathname(`/profiletype/edit/${profileType.code}`);
+    cy.validateUrlPathname(`/profiletype/edit/${profileType.code}`);
 
     currentPage.getContent().getCodeInput().should('have.value', profileType.code).and('be.disabled');
     currentPage.getContent().getNameInput().should('have.value', profileType.name);
 
     currentPage = currentPage.getContent().save();
-    cy.validateAppBuilderUrlPathname('/profiletype');
+    cy.validateUrlPathname('/profiletype');
     cy.wait('@loadedList');
 
     currentPage.getContent().getTableRow(profileType.code).find(htmlElements.td).eq(0).should('contain.text', profileType.name);
@@ -56,12 +56,12 @@ describe([Tag.GTS], 'Profile Types', () => {
     cy.log(`Edit profile type with code ${profileType.code}`);
     openKebabMenu(profileType.code);
     currentPage = currentPage.getContent().getKebabMenu(profileType.code).openEdit();
-    cy.validateAppBuilderUrlPathname(`/profiletype/edit/${profileType.code}`);
+    cy.validateUrlPathname(`/profiletype/edit/${profileType.code}`);
     const newProfileTypeName = generateRandomId();
     currentPage.getContent().clearName();
     currentPage.getContent().typeName(newProfileTypeName);
     currentPage = currentPage.getContent().save();
-    cy.validateAppBuilderUrlPathname('/profiletype');
+    cy.validateUrlPathname('/profiletype');
     cy.wait('@loadedList');
     currentPage.getContent().getTableRow(profileType.code).find(htmlElements.td).eq(0).should('contain.text', newProfileTypeName);
   });
@@ -90,7 +90,7 @@ describe([Tag.GTS], 'Profile Types', () => {
     let currentPage = new HomePage();
     currentPage     = currentPage.getMenu().getUsers().open();
     currentPage     = currentPage.openProfileTypes();
-    cy.validateAppBuilderUrlPathname('/profiletype');
+    cy.validateUrlPathname('/profiletype');
     cy.wait('@loadedList');
     return currentPage;
   };

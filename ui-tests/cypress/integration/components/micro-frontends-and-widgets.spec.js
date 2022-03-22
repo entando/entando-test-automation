@@ -67,10 +67,10 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
       });
 
       it('Adding a basic widget with icon', () => {
-        cy.validateAppBuilderUrlPathname('/widget/add');
+        cy.validateUrlPathname('/widget/add');
         currentPage.getContent().fillWidgetForm(SAMPLE_WIDGET_NAMES[0], SAMPLE_BASIC_WIDGET_ID);
         currentPage = currentPage.getContent().submitForm();
-        cy.validateAppBuilderUrlPathname('/widget');
+        cy.validateUrlPathname('/widget');
         currentPage.getContent().getListArea().should('contain', SAMPLE_BASIC_WIDGET_ID);
         cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToBeDelete');
       });
@@ -116,7 +116,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
         //TODO validate this wait
         cy.wait(500);
-        cy.validateAppBuilderUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+        cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
         currentPage.getContent().editFormFields({
           name: SAMPLE_WIDGET_NAMES[1],
           group: 'Free Access',
@@ -124,7 +124,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         });
         currentPage.getContent().submitContinueForm();
         cy.location('pathname').should('not.eq', '/widget');
-        cy.validateAppBuilderUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+        cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
         cy.wait(500);
@@ -135,14 +135,14 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
         //TODO validate this wait
         cy.wait(500);
-        cy.validateAppBuilderUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+        cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
         currentPage.getContent().editFormFields({
           iconUpload,
           name: SAMPLE_WIDGET_NAMES[2],
           group: 'Administrators'
         });
         currentPage = currentPage.getContent().submitForm();
-        cy.validateAppBuilderUrlPathname('/widget');
+        cy.validateUrlPathname('/widget');
         currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[2]);
       });
 
@@ -165,7 +165,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
                                  .openEdit();
         //TODO validate this wait
         cy.wait(500);
-        cy.validateAppBuilderUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+        cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
         currentPage.getContent().editFormFields({
           name: SAMPLE_WIDGET_NAMES[1],
           group: 'Free Access',
@@ -174,7 +174,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         currentPage = currentPage.getContent().submitForm();
         //TODO validate this wait
         cy.wait(3000);
-        cy.validateAppBuilderUrlPathname('/widget');
+        cy.validateUrlPathname('/widget');
         currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[1]);
       });
 

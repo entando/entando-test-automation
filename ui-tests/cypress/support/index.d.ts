@@ -76,12 +76,6 @@ declare namespace Cypress {
         validateUrlPathname(pathname): void
 
         /**
-         * Validate if the url pathname is as expected, prepending /app-builder path
-         * @param pathname - the expected url inside /app-builder
-         */
-        validateAppBuilderUrlPathname(pathname): void
-
-        /**
          * Validate if the toast notification and its message are visible
          * @param page - the current page
          * @param text - the text message that should be visible in the toast notification
