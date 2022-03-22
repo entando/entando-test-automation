@@ -23,7 +23,7 @@ describe('Database', () => {
   it([Tag.SMOKE, 'ENG-3239'], 'Database section', () => {
     createBackup().then(() => saveBackupCode());
     currentPage = openDatabasePage();
-    cy.validateAppBuilderUrlPathname('/database');
+    cy.validateUrlPathname('/database');
     currentPage.getContent().getDatabaseListTable().should('exist').and('be.visible');
     currentPage.getContent().getTableHeaders().should('have.length', 4)
                .then(elements => cy.validateListTexts(elements, ['Code', 'Date', 'Required time', 'Actions']));
@@ -36,7 +36,7 @@ describe('Database', () => {
     currentPage = openDatabasePage();
     currentPage = currentPage.getContent().openDetailsByIndex(0);
     cy.get('@backupToBeDeleted').then(code => {
-      cy.validateAppBuilderUrlPathname(`/database/report/${code}`);
+      cy.validateUrlPathname(`/database/report/${code}`);
     });
     currentPage.getContent().getDescriptionDataTitles().should('have.length', 2)
                .then(elements => cy.validateListTexts(elements, ['Date', 'Required time']));
@@ -46,7 +46,7 @@ describe('Database', () => {
   it([Tag.SMOKE, 'ENG-3239'], 'Create backup page', () => {
     currentPage = openDatabasePage();
     currentPage.getContent().getCreateBackupButton().click();
-    cy.validateAppBuilderUrlPathname('/database/add');
+    cy.validateUrlPathname('/database/add');
     currentPage.getContent().getTablesList().should('exist').and('be.visible');
     currentPage.getContent().getTablesList().children(htmlElements.li).should('have.length', 9);
     currentPage.getContent().getBackupNowButton().should('exist').and('be.visible');
@@ -63,7 +63,7 @@ describe('Database', () => {
     it([Tag.SANITY, 'ENG-3239'], 'Create a backup', () => {
       currentPage = openDatabasePage();
       currentPage.getContent().createBackup();
-      cy.validateAppBuilderUrlPathname('/database');
+      cy.validateUrlPathname('/database');
       currentPage.getContent().getDatabaseListTable().should('exist').and('be.visible');
       saveBackupCode();
       cy.get('@backupToBeDeleted').then(backup => {
@@ -77,10 +77,10 @@ describe('Database', () => {
       currentPage = openDatabasePage();
       currentPage.getContent().getTableRows().should('exist').and('have.length', 1);
       currentPage.getContent().getCreateBackupButton().click();
-      cy.validateAppBuilderUrlPathname('/database/add');
+      cy.validateUrlPathname('/database/add');
       currentPage.getContent().getTablesList().should('exist').and('be.visible');
       currentPage.getContent().getGoBackButton().click();
-      cy.validateAppBuilderUrlPathname('/database');
+      cy.validateUrlPathname('/database');
       currentPage.getContent().getTableRows().should('exist').and('have.length', 1);
     });
 
@@ -121,7 +121,7 @@ describe('Database', () => {
       currentPage = openDatabasePage();
       currentPage = currentPage.getContent().openDetailsByIndex(0);
       cy.get('@backupToBeDeleted').then(code => {
-        cy.validateAppBuilderUrlPathname(`/database/report/${code}`);
+        cy.validateUrlPathname(`/database/report/${code}`);
       });
       currentPage.getContent().getDataSourceTables().should('not.be.visible');
       currentPage.getContent().openDataSource();
@@ -139,7 +139,7 @@ describe('Database', () => {
       currentPage = currentPage.getContent().openDetailsByIndex(0);
       currentPage.getDialog().get().should('not.exist');
       cy.get('@backupToBeDeleted').then(code => {
-        cy.validateAppBuilderUrlPathname(`/database/report/${code}`);
+        cy.validateUrlPathname(`/database/report/${code}`);
       });
       currentPage.getContent().openDataSource();
       currentPage.getContent().openSQLQueryFromDataSourcePortByIndex(0);

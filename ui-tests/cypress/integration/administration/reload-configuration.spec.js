@@ -16,7 +16,7 @@ describe('Reload configuration', () => {
   });
 
   it([Tag.SMOKE, 'ENG-3296'], 'Reload configuration page structure', () => {
-    cy.validateAppBuilderUrlPathname('/reloadConfiguration');
+    cy.validateUrlPathname('/reloadConfiguration');
     currentPage.getContent().getReloadButton().should('exist').and('be.visible');
   });
 
@@ -24,7 +24,7 @@ describe('Reload configuration', () => {
     cy.intercept('POST', '**/reloadConfiguration').as('reloadConfiguration');
     currentPage.getContent().clickReloadButton();
     cy.wait('@reloadConfiguration').its('response.statusCode').should('eq', 200);
-    cy.validateAppBuilderUrlPathname('/reloadConfiguration/confirm');
+    cy.validateUrlPathname('/reloadConfiguration/confirm');
     currentPage.getContent().getReloadConfirmation().should('exist').and('be.visible');
     currentPage.getContent().getReloadConfirmation().find(`${htmlElements.span}.pficon`).should('have.class', 'pficon-ok');
   });
@@ -34,7 +34,7 @@ describe('Reload configuration', () => {
     currentPage.getContent().clickReloadButton();
     cy.wait('@reloadConfiguration').its('response.statusCode').should('eq', 200);
     currentPage.getContent().getBreadCrumb().children(htmlElements.li).eq(1).click();
-    cy.validateAppBuilderUrlPathname('/reloadConfiguration');
+    cy.validateUrlPathname('/reloadConfiguration');
   });
 
   const openReloadConfigurationPage = () => {

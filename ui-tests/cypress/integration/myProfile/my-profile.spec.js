@@ -18,7 +18,7 @@ describe([Tag.GTS], 'My Profile', () => {
     it('Account', () => {
       currentPage = openMyProfile();
 
-      cy.validateAppBuilderUrlPathname('/myProfile');
+      cy.validateUrlPathname('/myProfile');
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -33,7 +33,7 @@ describe([Tag.GTS], 'My Profile', () => {
     it('Profile', () => {
       currentPage = openMyProfile();
 
-      cy.validateAppBuilderUrlPathname('/myProfile');
+      cy.validateUrlPathname('/myProfile');
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -55,7 +55,7 @@ describe([Tag.GTS], 'My Profile', () => {
     it('Preferences', () => {
       currentPage = openMyProfile();
 
-      cy.validateAppBuilderUrlPathname('/myProfile');
+      cy.validateUrlPathname('/myProfile');
 
       currentPage.getContent().getTitle()
                  .should('be.visible')

@@ -25,7 +25,7 @@ describe('Sender Management Functionalities', () => {
 
     it([Tag.SMOKE, 'ENG-3299'], 'Table and Button are visible', () => {
       currentPage = openSenderPage();
-      cy.validateAppBuilderUrlPathname('/email-config/senders');
+      cy.validateUrlPathname('/email-config/senders');
       currentPage.getContent().getSenderTable().should('be.visible');
       currentPage.getContent().getTabHeaders().children(htmlElements.th)
                  .should('have.length', 3)
@@ -40,7 +40,7 @@ describe('Sender Management Functionalities', () => {
 
       currentPage = openSenderPage();
       currentPage = currentPage.getContent().openAddSender();
-      cy.validateAppBuilderUrlPathname('/email-config/senders/add');
+      cy.validateUrlPathname('/email-config/senders/add');
       currentPage.getContent().getSenderForm()
                  .should('be.visible')
                  .and('contain', 'Code ')
@@ -76,7 +76,7 @@ describe('Sender Management Functionalities', () => {
       addTestSender();
       currentPage = openSenderPage();
       currentPage = currentPage.getContent().getKebabMenu(senderTest.code).open().openEdit();
-      cy.validateAppBuilderUrlPathname(`/email-config/senders/edit/${senderTest.code}`);
+      cy.validateUrlPathname(`/email-config/senders/edit/${senderTest.code}`);
       currentPage.getContent().getSenderForm()
                  .should('be.visible')
                  .and('contain', 'Code ')
@@ -125,7 +125,7 @@ describe('Sender Management Functionalities', () => {
       addTestSender();
       currentPage = openSenderPage();
       currentPage = currentPage.getContent().getKebabMenu(senderTest.code).open().openEdit();
-      cy.validateAppBuilderUrlPathname(`/email-config/senders/edit/${senderTest.code}`);
+      cy.validateUrlPathname(`/email-config/senders/edit/${senderTest.code}`);
       currentPage.getContent()
                  .getEmailInput()
                  .clear()
@@ -212,7 +212,7 @@ describe('Sender Management Functionalities', () => {
 
       currentPage = openSenderPage();
       currentPage = currentPage.getContent().openAddSender();
-      cy.validateAppBuilderUrlPathname('/email-config/senders/add');
+      cy.validateUrlPathname('/email-config/senders/add');
       currentPage.getContent().getSenderForm()
                  .should('be.visible');
       currentPage.getContent().senderSubmit()
@@ -224,7 +224,7 @@ describe('Sender Management Functionalities', () => {
 
       currentPage = openSenderPage();
       currentPage = currentPage.getContent().getKebabMenu(sender1.code).open().openEdit();
-      cy.validateAppBuilderUrlPathname(`/email-config/senders/edit/${sender1.code}`);
+      cy.validateUrlPathname(`/email-config/senders/edit/${sender1.code}`);
       currentPage.getContent().getSenderForm()
                  .should('be.visible');
       currentPage.getContent().getCodeInput()

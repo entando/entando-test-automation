@@ -32,7 +32,7 @@ describe([Tag.GTS], 'User Roles', () => {
     it('Roles page', () => {
       currentPage = openRolesPage();
 
-      cy.validateAppBuilderUrlPathname('/role');
+      cy.validateUrlPathname('/role');
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -224,21 +224,21 @@ describe([Tag.GTS], 'User Roles', () => {
 
   const openAddRolePage = () => {
     currentPage = currentPage.getContent().openAddRolePage();
-    cy.validateAppBuilderUrlPathname('/role/add');
+    cy.validateUrlPathname('/role/add');
     cy.wait('@loadedAddEdit');
     return currentPage;
   };
 
   const openEdit = (code) => {
     currentPage = currentPage.getContent().getKebabMenu(code).open().openEdit();
-    cy.validateAppBuilderUrlPathname(`/role/edit/${code}`);
+    cy.validateUrlPathname(`/role/edit/${code}`);
     cy.wait('@loadedAddEdit');
     return currentPage;
   };
 
   const openDetails = (code) => {
     currentPage = currentPage.getContent().getKebabMenu(code).open().openDetails();
-    cy.validateAppBuilderUrlPathname(`/role/view/${code}`);
+    cy.validateUrlPathname(`/role/view/${code}`);
     cy.wait('@loadedDetails');
     return currentPage;
   };

@@ -69,7 +69,7 @@ describe('File browser', () => {
     it([Tag.SMOKE, 'ENG-3297'], 'Upload files page', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openUploadFilesPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      cy.validateUrlPathname('/file-browser/upload');
       currentPage.getContent().getUploadFilesForm().should('exist').and('be.visible');
       currentPage.getContent().getUploadFilesInput().should('exist').and('be.visible');
       currentPage.getContent().getCancelButton().should('exist').and('be.visible');
@@ -79,7 +79,7 @@ describe('File browser', () => {
     it([Tag.SMOKE, 'ENG-3297'], 'Create folder page', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateFolderPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      cy.validateUrlPathname('/file-browser/create-folder');
       currentPage.getContent().getCreateFolderForm().should('exist').and('be.visible');
       currentPage.getContent().getNameInput().should('exist').and('be.visible');
       currentPage.getContent().getCancelButton().should('exist').and('be.visible');
@@ -89,7 +89,7 @@ describe('File browser', () => {
     it([Tag.SMOKE, 'ENG-3297'], 'Create text file page', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateTextFilePage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      cy.validateUrlPathname('/file-browser/create-text-file');
       currentPage.getContent().getCreateTextFileForm().should('exist').and('be.visible');
       currentPage.getContent().getNameInput().should('exist').and('be.visible');
       currentPage.getContent().getExtensionSelector().should('exist').and('be.visible');
@@ -116,7 +116,7 @@ describe('File browser', () => {
     it([Tag.FEATURE, 'ENG-3297'], 'The upload button should be disabled when no file selected', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openUploadFilesPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      cy.validateUrlPathname('/file-browser/upload');
       currentPage.getContent().getUploadFilesForm().should('exist').and('be.visible');
       currentPage.getContent().getUploadButton().should('be.disabled');
     });
@@ -124,7 +124,7 @@ describe('File browser', () => {
     it([Tag.FEATURE, 'ENG-3297'], 'The save button should be disabled when fields are not filled when creating a folder', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateFolderPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      cy.validateUrlPathname('/file-browser/create-folder');
       currentPage.getContent().getCreateFolderForm().should('exist').and('be.visible');
       currentPage.getContent().getSaveButton().should('be.disabled');
     });
@@ -132,7 +132,7 @@ describe('File browser', () => {
     it([Tag.FEATURE, 'ENG-3297'], 'The save button should be disabled when fields are not filled when creating a text file', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateTextFilePage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      cy.validateUrlPathname('/file-browser/create-text-file');
       currentPage.getContent().getCreateTextFileForm().should('exist').and('be.visible');
       currentPage.getContent().getSaveButton().should('be.disabled');
     });
@@ -140,7 +140,7 @@ describe('File browser', () => {
     it([Tag.ERROR, 'ENG-3297'], 'When creating a folder, an error should be displayed when deselecting the folder name field without filling it', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateFolderPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      cy.validateUrlPathname('/file-browser/create-folder');
       currentPage.getContent().getNameInputHelpBlock().should('not.exist');
       currentPage.getContent().getNameInput().focus().blur();
       currentPage.getContent().getNameInputHelpBlock().should('exist').and('be.visible');
@@ -149,7 +149,7 @@ describe('File browser', () => {
     it([Tag.ERROR, 'ENG-3297'], 'When creating a text file, an error should be displayed when deselecting a field without filling it', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateTextFilePage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      cy.validateUrlPathname('/file-browser/create-text-file');
       currentPage.getContent().getNameInputHelpBlock().should('not.exist');
       currentPage.getContent().getNameInput().focus().blur();
       currentPage.getContent().getNameInputHelpBlock().should('exist').and('be.visible');
@@ -182,13 +182,13 @@ describe('File browser', () => {
     it([Tag.SANITY, 'ENG-3297'], 'Uploading a file', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openUploadFilesPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      cy.validateUrlPathname('/file-browser/upload');
       currentPage.getContent().selectFiles(`cypress/fixtures/upload/${testFileInfo.name}`);
       currentPage = currentPage.getContent().confirmUpload();
       cy.wait('@openedFolder');
       cy.wrap([testFileInfo.name]).as('filesToBeDeleted');
       cy.validateToast(currentPage);
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getFileKebabMenu(testFileInfo.name).should('exist');
       currentPage.getContent().getFileDownloadLink(testFileInfo.name).should('exist');
@@ -197,13 +197,13 @@ describe('File browser', () => {
     it([Tag.SANITY, 'ENG-3297'], 'Creating a folder', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateFolderPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      cy.validateUrlPathname('/file-browser/create-folder');
       currentPage.getContent().getNameInput().type(testFolderInfo.name);
       currentPage = currentPage.getContent().clickSaveButton();
       cy.wait('@openedFolder');
       cy.wrap(testFolderInfo.name).as('folderToBeDeleted');
       cy.validateToast(currentPage);
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getTableRows().should('have.length', 7);
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
@@ -212,14 +212,14 @@ describe('File browser', () => {
     it([Tag.SANITY, 'ENG-3297'], 'Creating a text file', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateTextFilePage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      cy.validateUrlPathname('/file-browser/create-text-file');
       currentPage.getContent().getNameInput().type(textTestFile.name);
       currentPage.getContent().getTextArea().type(textTestFile.content);
       currentPage = currentPage.getContent().clickSaveButton();
       cy.wait('@openedFolder');
       cy.wrap([`${textTestFile.name}.${textTestFile.extension}`]).as('filesToBeDeleted');
       cy.validateToast(currentPage);
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getFileKebabMenu(`${textTestFile.name}.${textTestFile.extension}`).should('exist');
       currentPage.getContent().getFileDownloadLink(`${textTestFile.name}.${textTestFile.extension}`).should('exist');
@@ -285,11 +285,11 @@ describe('File browser', () => {
       currentPage.getContent().getFilesTable().should('not.exist');
       currentPage.getContent().getEmptyFolderAlert().should('exist');
       currentPage = currentPage.getContent().openUploadFilesPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      cy.validateUrlPathname('/file-browser/upload');
       currentPage.getContent().selectFiles(`cypress/fixtures/upload/${testFileInfo.name}`);
       currentPage = currentPage.getContent().clickBreadCrumbsRoot();
       cy.wait('@openedRootFolder');
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getTableRows().should('have.length', 2);
       currentPage.getContent().getTableRow(0).should('contain', 'public');
@@ -307,11 +307,11 @@ describe('File browser', () => {
       currentPage.getContent().getFilesTable().should('not.exist');
       currentPage.getContent().getEmptyFolderAlert().should('exist');
       currentPage = currentPage.getContent().openUploadFilesPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      cy.validateUrlPathname('/file-browser/upload');
       currentPage.getContent().selectFiles(`cypress/fixtures/upload/${testFileInfo.name}`);
       currentPage = currentPage.getContent().clickFileBrowserBreadCrumbs(1);
       cy.wait('@openedFolder');
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getTableRows().should('have.length', 7);
       currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
@@ -323,11 +323,11 @@ describe('File browser', () => {
     it([Tag.FEATURE, 'ENG-3297'], 'No file is uploaded when canceling out of upload page', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openUploadFilesPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/upload');
+      cy.validateUrlPathname('/file-browser/upload');
       currentPage.getContent().selectFiles(`cypress/fixtures/upload/${testFileInfo.name}`);
       currentPage = currentPage.getContent().cancelUpload();
       cy.wait('@openedFolder');
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist');
       currentPage.getContent().getTableRows().should('have.length', 6);
       currentPage.getContent().getFileKebabMenu(testFileInfo.name).should('not.exist');
@@ -340,11 +340,11 @@ describe('File browser', () => {
       currentPage.getContent().getFilesTable().should('not.exist');
       currentPage.getContent().getEmptyFolderAlert().should('exist');
       currentPage = currentPage.getContent().openCreateFolderPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      cy.validateUrlPathname('/file-browser/create-folder');
       currentPage.getContent().getNameInput().type(testFolderInfo.name);
       currentPage = currentPage.getContent().clickBreadCrumbsRoot();
       cy.wait('@openedRootFolder');
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getTableRows().should('have.length', 2);
       currentPage.getContent().getTableRow(0).should('contain', 'public');
@@ -362,11 +362,11 @@ describe('File browser', () => {
       currentPage.getContent().getFilesTable().should('not.exist');
       currentPage.getContent().getEmptyFolderAlert().should('exist');
       currentPage = currentPage.getContent().openCreateFolderPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      cy.validateUrlPathname('/file-browser/create-folder');
       currentPage.getContent().getNameInput().type(testFolderInfo.name);
       currentPage = currentPage.getContent().clickFileBrowserBreadCrumbs(1);
       cy.wait('@openedFolder');
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getTableRows().should('have.length', 7);
       currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
@@ -378,11 +378,11 @@ describe('File browser', () => {
     it([Tag.FEATURE, 'ENG-3297'], 'No folder is created when canceling out of create folder page', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateFolderPage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-folder');
+      cy.validateUrlPathname('/file-browser/create-folder');
       currentPage.getContent().getNameInput().type(testFolderInfo.name);
       currentPage = currentPage.getContent().clickCancelButton();
       cy.wait('@openedFolder');
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist');
       currentPage.getContent().getTableRows().should('have.length', 6);
       currentPage.getContent().getFolderLink(-1).should('not.contain', testFolderInfo.name);
@@ -395,12 +395,12 @@ describe('File browser', () => {
       currentPage.getContent().getFilesTable().should('not.exist');
       currentPage.getContent().getEmptyFolderAlert().should('exist');
       currentPage = currentPage.getContent().openCreateTextFilePage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      cy.validateUrlPathname('/file-browser/create-text-file');
       currentPage.getContent().getNameInput().type(textTestFile.name);
       currentPage.getContent().getTextArea().type(textTestFile.content);
       currentPage = currentPage.getContent().clickBreadCrumbsRoot();
       cy.wait('@openedRootFolder');
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getTableRows().should('have.length', 2);
       currentPage.getContent().getTableRow(0).should('contain', 'public');
@@ -418,12 +418,12 @@ describe('File browser', () => {
       currentPage.getContent().getFilesTable().should('not.exist');
       currentPage.getContent().getEmptyFolderAlert().should('exist');
       currentPage = currentPage.getContent().openCreateTextFilePage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      cy.validateUrlPathname('/file-browser/create-text-file');
       currentPage.getContent().getNameInput().type(textTestFile.name);
       currentPage.getContent().getTextArea().type(textTestFile.content);
       currentPage = currentPage.getContent().clickFileBrowserBreadCrumbs(1);
       cy.wait('@openedFolder');
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getTableRows().should('have.length', 7);
       currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
@@ -435,12 +435,12 @@ describe('File browser', () => {
     it([Tag.FEATURE, 'ENG-3297'], 'No file is created when canceling out of create text file page', () => {
       currentPage = openPublicFolder();
       currentPage = currentPage.getContent().openCreateTextFilePage();
-      cy.validateAppBuilderUrlPathname('/file-browser/create-text-file');
+      cy.validateUrlPathname('/file-browser/create-text-file');
       currentPage.getContent().getNameInput().type(textTestFile.name);
       currentPage.getContent().getTextArea().type(textTestFile.content);
       currentPage = currentPage.getContent().clickCancelButton();
       cy.wait('@openedFolder');
-      cy.validateAppBuilderUrlPathname('/file-browser');
+      cy.validateUrlPathname('/file-browser');
       currentPage.getContent().getFilesTable().should('exist');
       currentPage.getContent().getTableRows().should('have.length', 6);
       currentPage.getContent().getFileKebabMenu(`${textTestFile.name}.${textTestFile.extension}`).should('not.exist');
@@ -475,7 +475,7 @@ describe('File browser', () => {
     currentPage = currentPage.getMenu().getAdministration().open();
     currentPage = currentPage.openFileBrowser();
     cy.wait('@openedRootFolder');
-    cy.validateAppBuilderUrlPathname('/file-browser');
+    cy.validateUrlPathname('/file-browser');
     return currentPage;
   };
 

@@ -31,7 +31,7 @@ describe('UX Fragments', () => {
       currentPage = openFragmentsPage();
 
       currentPage = currentPage.getContent().openAddFragmentPage();
-      cy.validateAppBuilderUrlPathname('/fragment/add');
+      cy.validateUrlPathname('/fragment/add');
       currentPage.getContent().typeCode(fragment.code);
       currentPage.getContent().typeGuiCode(fragment.guiCode);
       currentPage = currentPage.getContent().save();
@@ -48,7 +48,7 @@ describe('UX Fragments', () => {
       currentPage = openFragmentsPage();
 
       currentPage = currentPage.getContent().openAddFragmentPage();
-      cy.validateAppBuilderUrlPathname('/fragment/add');
+      cy.validateUrlPathname('/fragment/add');
       currentPage.getContent().typeCode(fragment.code);
       currentPage.getContent().typeGuiCode(fragment.guiCode);
       currentPage.getContent().save();
@@ -60,7 +60,7 @@ describe('UX Fragments', () => {
       currentPage = openFragmentsPage();
 
       currentPage = currentPage.getContent().openAddFragmentPage();
-      cy.validateAppBuilderUrlPathname('/fragment/add');
+      cy.validateUrlPathname('/fragment/add');
       currentPage.getContent().typeCode(`${fragment.code}!@#$%^&*`);
       currentPage.getContent().typeGuiCode(fragment.guiCode);
       currentPage.getContent().clickSaveBtn();
@@ -72,7 +72,7 @@ describe('UX Fragments', () => {
       currentPage = openFragmentsPage();
 
       currentPage = currentPage.getContent().openAddFragmentPage();
-      cy.validateAppBuilderUrlPathname('/fragment/add');
+      cy.validateUrlPathname('/fragment/add');
       currentPage.getContent().typeCode(fragment.code);
       currentPage.getContent().clickSaveBtn();
 
@@ -87,7 +87,7 @@ describe('UX Fragments', () => {
       currentPage = openFragmentsPage();
 
       currentPage = currentPage.getContent().getKebabMenu(fragment.code).open().openEdit();
-      cy.validateAppBuilderUrlPathname(`/fragment/edit/${fragment.code}`);
+      cy.validateUrlPathname(`/fragment/edit/${fragment.code}`);
       currentPage.getContent().getCodeInput().should('be.disabled');
       currentPage.getContent().typeGuiCode('_updated');
 

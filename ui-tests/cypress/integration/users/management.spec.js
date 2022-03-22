@@ -30,7 +30,7 @@ describe([Tag.GTS], 'Users Management', () => {
     it('Users management page', () => {
       currentPage = openManagementPage();
 
-      cy.validateAppBuilderUrlPathname('/user');
+      cy.validateUrlPathname('/user');
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -64,7 +64,7 @@ describe([Tag.GTS], 'Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = openEdit(USERNAME_ADMIN);
 
-      cy.validateAppBuilderUrlPathname(`/user/edit/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/user/edit/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -104,7 +104,7 @@ describe([Tag.GTS], 'Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEditProfile();
 
-      cy.validateAppBuilderUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -148,7 +148,7 @@ describe([Tag.GTS], 'Users Management', () => {
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openViewProfile();
       cy.wait('@userDetails');
 
-      cy.validateAppBuilderUrlPathname(`/user/view/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/user/view/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -180,7 +180,7 @@ describe([Tag.GTS], 'Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openManageAuth();
 
-      cy.validateAppBuilderUrlPathname(`/authority/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/authority/${USERNAME_ADMIN}`);
 
       currentPage.getContent().getTitle()
                  .should('be.visible')
@@ -231,7 +231,7 @@ describe([Tag.GTS], 'Users Management', () => {
       currentPage.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
       currentPage = currentPage.getContent().getKebabMenu(USERNAME_ADMIN).open().openEditProfile();
 
-      cy.validateAppBuilderUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
+      cy.validateUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
 
       currentPage.getContent().typeFullName('Test');
       currentPage.getContent().typeEmail('test@entando.com');
@@ -248,7 +248,7 @@ describe([Tag.GTS], 'Users Management', () => {
     it('Users management page - to not have "User without a profile" filter', () => {
       currentPage = openManagementPage();
 
-      cy.validateAppBuilderUrlPathname(`/user`);
+      cy.validateUrlPathname(`/user`);
 
       currentPage.getContent().getSearchForm().contains('User without a profile')
                  .should('have.length', 0);
@@ -281,7 +281,7 @@ describe([Tag.GTS], 'Users Management', () => {
 
       currentPage = currentPage.getContent().openAddUserPage();
       currentPage = addUserUI(username, password, PROFILE_TYPE_CODE);
-      cy.validateAppBuilderUrlPathname('/user');
+      cy.validateUrlPathname('/user');
       cy.wait('@loadedList');
 
       currentPage.getContent().getTableRow(username).children(htmlElements.td)
