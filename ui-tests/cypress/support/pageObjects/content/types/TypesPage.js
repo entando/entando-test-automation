@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import Content   from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu';
@@ -26,7 +26,7 @@ export default class TypesPage extends Content {
 
   getTableRow(code) {
     return this.getTable()
-               .find(`[${DATA_TESTID}=${code}-actions]`)
+               .find(`#ContentTypeList-dropdown-${code}`)
                .closest(htmlElements.tr);
   }
 
@@ -51,6 +51,12 @@ class TypesKebabMenu extends KebabMenu {
   edit   = `${htmlElements.li}.ContentTypeList__menu-item-edit`;
   reload = `${htmlElements.li}.ContentTypeList__menu-item-reload`;
   delete = `${htmlElements.li}.ContentTypeList__menu-item-delete`;
+
+  get() {
+    return this.parent.getTableRows()
+               .find(`#ContentTypeList-dropdown-${this.code}`)
+               .closest(htmlElements.div);
+  }
 
   getEdit() {
     return this.get()
