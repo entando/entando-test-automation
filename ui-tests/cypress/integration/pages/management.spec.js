@@ -18,7 +18,8 @@ describe([Tag.GTS], 'Page Management', () => {
 
 
     beforeEach(() =>{ 
-        cy.kcLogin('login/admin').as('tokens')
+      cy.kcAPILogin();
+      cy.kcUILogin('login/admin');
       });
     
     afterEach(() => {
@@ -60,12 +61,12 @@ describe([Tag.GTS], 'Page Management', () => {
             });
         }
     
-        cy.kcLogout();
+        cy.kcUILogout();
       });
 
     describe('UI', () => {
 
-        it.only('Add page', () => { //FIXME remove the null Template!
+        it('Add page', () => {
     
     
           const OOTB_PAGE_TEMPLATES_TEXTS = OOTB_PAGE_TEMPLATES.map(template => template.text);
@@ -73,7 +74,7 @@ describe([Tag.GTS], 'Page Management', () => {
     
           currentPage = openManagementPage();
           currentPage = currentPage.getContent().openAddPagePage();
-          cy.validateAppBuilderUrlPathname('/page/add').wait(1000);
+          cy.validateUrlPathname('/page/add').wait(1000);
     
           currentPage.getContent().openOwnerGroupMenu();
           
@@ -144,7 +145,7 @@ describe([Tag.GTS], 'Page Management', () => {
               page.template = template;
               currentPage   = openManagementPage();
               currentPage   = currentPage.getContent().openAddPagePage();
-              cy.validateAppBuilderUrlPathname('/page/add');
+              cy.validateUrlPathname('/page/add');
     
               addPageMandatoryData(currentPage, page);
               saveAndValidate(currentPage, page);
@@ -158,7 +159,7 @@ describe([Tag.GTS], 'Page Management', () => {
               page.template = template;
               currentPage   = openManagementPage();
               currentPage   = currentPage.getContent().openAddPagePage();
-              cy.validateAppBuilderUrlPathname('/page/add');
+              cy.validateUrlPathname('/page/add');
     
               addPageMandatoryData(currentPage, page);
               addSeoData(currentPage, page.seoData);
@@ -236,7 +237,7 @@ describe([Tag.GTS], 'Page Management', () => {
     
           currentPage = openManagementPage();
           currentPage = currentPage.getContent().getKebabMenu(page.code).open().openAdd();
-          cy.validateAppBuilderUrlPathname('/page/add');
+          cy.validateUrlPathname('/page/add');
     
           addPageMandatoryData(currentPage, subPage);
           currentPage        = currentPage.getContent().clickSaveButton();
@@ -267,7 +268,7 @@ describe([Tag.GTS], 'Page Management', () => {
         it('Adding a new page with empty fields is forbidden', () => {
             currentPage = openManagementPage();
             currentPage = currentPage.getContent().openAddPagePage();
-            cy.validateAppBuilderUrlPathname('/page/add');
+            cy.validateUrlPathname('/page/add');
     
             currentPage.getContent().getSaveAndDesignButton().should('be.disabled');
             currentPage.getContent().getSaveButton().should('be.disabled');
@@ -276,7 +277,7 @@ describe([Tag.GTS], 'Page Management', () => {
         it('Adding a new page without mandatory fields is forbidden', () => {
             currentPage = openManagementPage();
             currentPage = currentPage.getContent().openAddPagePage();
-            cy.validateAppBuilderUrlPathname('/page/add');
+            cy.validateUrlPathname('/page/add');
     
             addPageMandatoryData(currentPage, page);
             currentPage.getContent().getSaveAndDesignButton().should('not.be.disabled');
@@ -292,7 +293,7 @@ describe([Tag.GTS], 'Page Management', () => {
     
             currentPage = openManagementPage();
             currentPage = currentPage.getContent().openAddPagePage();
-            cy.validateAppBuilderUrlPathname('/page/add').wait(1000);
+            cy.validateUrlPathname('/page/add').wait(1000);
     
             page.code = homepageCode;
             addPageMandatoryData(currentPage, page);
@@ -437,14 +438,14 @@ describe([Tag.GTS], 'Page Management', () => {
             subPage.code  = generateRandomId();
             subPage.title = generateRandomId();
 
-            postPage(page);
+           addPage(page);
             
           });
 
     
          it('Move outside page', () => {
             
-            postPage(subPage, page.code);
+           addPage(subPage, page.code);
             
     
             currentPage = openManagementPage();
@@ -459,14 +460,14 @@ describe([Tag.GTS], 'Page Management', () => {
           });
     
           it('Move inside page', () => { 
-            postPage(subPage, homePage.code);
+           addPage(subPage, homePage.code);
             currentPage = moveSubPageInPage();
     
             checkPagesPosition(currentPage, page.code, subPage.title.en, page.title.en);
           });
     
           it('Move inside subpages is forbidden', () => {
-            postPage(subPage, page.code);
+           addPage(subPage, page.code);
     
             currentPage = openManagementPage();
     
@@ -490,7 +491,7 @@ describe([Tag.GTS], 'Page Management', () => {
           it('Move free pages inside reserved pages is forbidden', () => {
             subPage.ownerGroup = {code: 'free', name: 'Free Access'};
     
-            postPage(subPage, homePage.code);
+           addPage(subPage, homePage.code);
             currentPage = moveSubPageInPage();
     
             cy.validateToast(currentPage, null, false);
@@ -500,7 +501,7 @@ describe([Tag.GTS], 'Page Management', () => {
     
           it('Move published pages inside unpublished pages is forbidden', () => {
 
-            postPage(subPage, homePage.code);
+           addPage(subPage, homePage.code);
             cy.pagesController().then(controller => controller.setPageStatus(subPage.code, 'published'));
     
             currentPage = moveSubPageInPage();
@@ -539,7 +540,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
         describe('Change page status', () => {
 
-          beforeEach(() => postPage(page));
+          beforeEach(() => addPage(page));
     
           it('Publish a page', () => {
             currentPage = openManagementPage();
@@ -570,7 +571,7 @@ describe([Tag.GTS], 'Page Management', () => {
           });
     
           it('Publish a subpage of an unpublished page is forbidden', () => {
-            postPage(subPage, page.code);
+           addPage(subPage, page.code);
     
             currentPage = openManagementPage();
             currentPage.getContent().toggleRowSubPages(page.code);
@@ -580,7 +581,7 @@ describe([Tag.GTS], 'Page Management', () => {
           });
     
           it('Unpublish a page with published children is forbidden', () => {
-            postPage(subPage, page.code);
+           addPage(subPage, page.code);
             cy.pagesController().then(controller => {
               controller.setPageStatus(page.code, 'published');
               controller.setPageStatus(subPage.code, 'published');
@@ -618,7 +619,8 @@ describe([Tag.GTS], 'Page Management', () => {
     
           afterEach(() => {
             cy.kcLogout();
-            cy.kcLogin('login/admin').as('tokens');
+            cy.kcAPILogin();
+            cy.kcUILogin('login/admin');
     
             cy.fixture(`users/details/user`).then(userJSON =>
                 cy.usersController().then(controller => {
@@ -633,14 +635,14 @@ describe([Tag.GTS], 'Page Management', () => {
           });
     
           it('Unpublish a page without permission', () => {
-            postPage(page);
+           addPage(page);
             cy.pagesController().then(controller => {
               controller.setPageStatus(page.code, 'published');
             });
     
             // login with unauthorized user
             cy.kcLogout();
-            cy.kcLogin('login/user').as('tokens');
+            cy.kcUILogin('login/user');
     
             currentPage = openManagementPage();
     
@@ -652,7 +654,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
         describe('Delete a page', () => {
 
-          beforeEach(() => postPage(page));
+          beforeEach(() => addPage(page));
     
           it('Delete an unpublished page', () => {
             currentPage = openManagementPage();
@@ -692,7 +694,7 @@ describe([Tag.GTS], 'Page Management', () => {
           });
     
           it('Delete a page with children is forbidden', () => {
-            postPage(subPage, page.code);
+           addPage(subPage, page.code);
     
             currentPage = openManagementPage();
     
@@ -707,7 +709,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
             describe('Page form should be not possible to save NULL title in default language (ENG-2687)', () => {
               it('There must be a page title for default language, otherwise it will not allow to save', () => {
-                postPage(page);
+               addPage(page);
                 pageToBeDeleted = true;
       
                 currentPage = openManagementPage();
@@ -916,7 +918,7 @@ describe([Tag.GTS], 'Page Management', () => {
         page.getContent().clickMetaTagAddButton();
     };
 
-    const postPage = (page, parent=null) => {
+    const addPage = (page, parent=null) => {
     
 
         page.code  = generateRandomId();
