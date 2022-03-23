@@ -20,6 +20,7 @@ export default class ManagementPage extends Content {
   tableContainer = `${htmlElements.div}.DDTable`;
   expandAll      = `${htmlElements.div}.PageTree__toggler--expand`;
   expandNode     = `${htmlElements.span}.PageTree__icons-label`;
+  dragHandle     = `${htmlElements.button}.PageTree__drag-handle`;
 
   addButton = `${htmlElements.button}.app-tour-step-5`;
 
@@ -110,7 +111,7 @@ export default class ManagementPage extends Content {
     this.getTableRow(target).then(row => {
       this.getTableRow(source)
           .children(htmlElements.td).eq(0)
-          .children(htmlElements.button)
+          .children(this.dragHandle)
           .drag(row, {force: true, position: pos});
       this.parent.getDialog().setBody(DeleteDialog); //TODO validate for what else this dialog is used and rename it accordingly
     });

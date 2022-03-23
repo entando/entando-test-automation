@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import Content from '../../app/Content.js';
 
@@ -10,14 +10,14 @@ import AddPage from './AddPage.js';
 
 export default class SearchResultPage extends Content {
 
-  searchForm   = `${htmlElements.form}[${DATA_TESTID}=list_PageSearchForm_form]`;
-  searchOption = `${htmlElements.button}[${DATA_TESTID}=list_PageSearchForm_DropdownButton]`;
-  searchInput  = `${htmlElements.input}[${DATA_TESTID}=list_PageSearchForm_Field]`;
-  searchButton = `${htmlElements.button}[${DATA_TESTID}=list_PageSearchForm_Button]`;
+  searchForm   = `${htmlElements.form}.list_PageSearchForm_form`;
+  searchOption = `${htmlElements.button}.list_PageSearchForm_DropdownButton`;
+  searchInput  = `${htmlElements.input}.list_PageSearchForm_Field`;
+  searchButton = `${htmlElements.button}.list_PageSearchForm_Button]`;
 
   tableContainer = `${htmlElements.div}.PageListSearchTable `;
 
-  addButton = `${htmlElements.button}[${DATA_TESTID}=button-step-5]`;
+  addButton = `${htmlElements.button}.app-tour-step-5`;
 
   getSearchForm() {
     return this.getContents()
