@@ -27,6 +27,7 @@ export default class PagesKebabMenu extends KebabMenu {
                       .find(`${htmlElements.div}[role="none"]`)
                       .children(htmlElements.div);         
   }
+
   open() {
     cy.wait(1000); //wait for the kebab menu to load
     this.get()

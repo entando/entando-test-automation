@@ -6,6 +6,16 @@ import HomePage from '../../support/pageObjects/HomePage';
 
 describe([Tag.GTS], 'Page Management', () => {
 
+  const OOTB_PAGE_TEMPLATES = [ 
+    {value: '1-2-column', text: '1-2 Columns'},
+    {value: '1-2x2-1-column', text: '1-2x2-1 Columns'},
+    {value: '1-2x4-1-column', text: '1-2x4-1 Columns'},
+    {value: '1-column', text: '1 Column'},
+    {value: 'content-page', text: 'Content Page'},
+    {value: 'home', text: 'Home Page'},
+    {value: 'single_frame_page', text: 'Single Frame Page'}
+  ];
+
 
     beforeEach(() =>{ 
         cy.kcLogin('login/admin').as('tokens')
@@ -55,23 +65,11 @@ describe([Tag.GTS], 'Page Management', () => {
 
     describe('UI', () => {
 
-        it('Add page', () => {
+        it.only('Add page', () => { //FIXME remove the null Template!
     
-          const OOTB_PAGE_TEMPLATES = [ 
-            {}, //TODO remove this after remove templatesNULL
-            {value: '1-2-column', text: '1-2 Columns'},
-            {value: '1-2x2-1-column', text: '1-2x2-1 Columns'},
-            {value: '1-2x4-1-column', text: '1-2x4-1 Columns'},
-            {value: '1-column', text: '1 Column'},
-            {value: 'content-page', text: 'Content Page'},
-            {value: 'home', text: 'Home Page'},
-            {value: 'single_frame_page', text: 'Single Frame Page'}
-          ];
     
           const OOTB_PAGE_TEMPLATES_TEXTS = OOTB_PAGE_TEMPLATES.map(template => template.text);
           OOTB_PAGE_TEMPLATES_TEXTS.unshift('Choose an option');
-    
-         
     
           currentPage = openManagementPage();
           currentPage = currentPage.getContent().openAddPagePage();
@@ -91,17 +89,7 @@ describe([Tag.GTS], 'Page Management', () => {
     });
 
     describe('AddPage and Seo Attributes',() => {
-
-        const OOTB_PAGE_TEMPLATES = [ 
-          {value: '1-2-column', text: '1-2 Columns'},
-          {value: '1-2x2-1-column', text: '1-2x2-1 Columns'},
-          {value: '1-2x4-1-column', text: '1-2x4-1 Columns'},
-          {value: '1-column', text: '1 Column'},
-          {value: 'content-page', text: 'Content Page'},
-          {value: 'home', text: 'Home Page'},
-          {value: 'single_frame_page', text: 'Single Frame Page'}
-        ];
-    
+ 
         beforeEach(() => {
     
           page.code     = generateRandomId();
@@ -232,7 +220,7 @@ describe([Tag.GTS], 'Page Management', () => {
         });
     
     
-       /* it('Add a new child page', () => {
+        it('Add a new child page', () => {
           
           subPage.code       = generateRandomId();
           subPage.title      = {
@@ -431,7 +419,123 @@ describe([Tag.GTS], 'Page Management', () => {
               currentPage.getContent().getSaveAndDesignButton().invoke('attr', 'disabled').should('eq', 'disabled');
             });
       
-        });*/
+        });
+
+        describe('Change page position in the page tree', () => { //TODO enable dragging
+
+    
+          beforeEach(() => {
+            page.code  = generateRandomId();
+            page.title = generateRandomId();
+    
+            newPage.code       = page.code;
+            newPage.titles     = {
+              en: page.title
+            };
+            newPage.parentCode = homePage.code;
+            
+            subPage.code  = generateRandomId();
+            subPage.title = generateRandomId();
+
+            postPage(page);
+            
+          });
+
+    
+         it('Move outside page', () => {
+            
+            postPage(subPage, page.code);
+            
+    
+            currentPage = openManagementPage();
+    
+            currentPage.getContent().toggleRowSubPages(subPage.code);
+            currentPage.getContent().dragRow(subPage.code, homePage.code, 'top');
+            currentPage.getDialog().confirm();
+    
+            currentPage.getContent().getTableRows().then(rows =>
+                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', subPage.title.en)
+            );
+          });
+    
+          it('Move inside page', () => { 
+            postPage(subPage, homePage.code);
+            currentPage = moveSubPageInPage();
+    
+            checkPagesPosition(currentPage, page.code, subPage.title.en, page.title.en);
+          });
+    
+          it('Move inside subpages is forbidden', () => {
+            postPage(subPage, page.code);
+    
+            currentPage = openManagementPage();
+    
+            currentPage.getContent().toggleRowSubPages(page.code);
+            
+            currentPage.getContent().dragRow(page.code, subPage.code, 'center');
+            currentPage.getDialog().confirm();
+    
+            cy.validateToast(currentPage, null, false);
+    
+            currentPage.getContent().getTableRows().then(rows =>
+                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', subPage.title.en)
+            );
+    
+            currentPage.getContent().toggleRowSubPages(page.code);
+            currentPage.getContent().getTableRows().then(rows =>
+                cy.wrap(rows).eq(-2).children(htmlElements.td).eq(0).should('have.text', page.title.en) 
+            );
+          });
+    
+          it('Move free pages inside reserved pages is forbidden', () => {
+            subPage.ownerGroup = {code: 'free', name: 'Free Access'};
+    
+            postPage(subPage, homePage.code);
+            currentPage = moveSubPageInPage();
+    
+            cy.validateToast(currentPage, null, false);
+    
+            checkPagesPosition(currentPage, page.code, subPage.title.en, subPage.title.en);
+          });
+    
+          it('Move published pages inside unpublished pages is forbidden', () => {
+
+            postPage(subPage, homePage.code);
+            cy.pagesController().then(controller => controller.setPageStatus(subPage.code, 'published'));
+    
+            currentPage = moveSubPageInPage();
+            cy.validateToast(currentPage, null, false);
+    
+            checkPagesPosition(currentPage, page.code, subPage.title.en, subPage.title.en);
+          });
+    
+          const moveSubPageInPage  = () => {
+            currentPage = openManagementPage();
+    
+            currentPage.getContent().getTableRows().then(rows =>
+                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', subPage.title.en)
+            );
+    
+            currentPage.getContent().dragRow(subPage.code, page.code, 'center');
+            currentPage.getDialog().confirm();
+            cy.wait(1000); //TODO find a better way to identify when the page loaded
+    
+            return currentPage;
+          };
+          const checkPagesPosition = (page, parentPageCode, firstPageTitle, secondPageTitle) => {
+            page.getContent().getTableRows().then(rows =>
+                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', firstPageTitle)
+            );
+    
+            //TODO first always tries to open it, even if it is already opened
+            page.getContent().toggleRowSubPages(parentPageCode);
+            page.getContent().toggleRowSubPages(parentPageCode);
+            page.getContent().getTableRows().then(rows =>
+                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', secondPageTitle)
+            );
+          };
+    
+        });
 
         describe('Change page status', () => {
 
@@ -754,18 +858,10 @@ describe([Tag.GTS], 'Page Management', () => {
               currentPage.getContent().getDesigner().contains('News Archive');
             });
           });
-        
-      
-
-
 
     });
 
     
-
-
-
-
     const openManagementPage = () => {
         cy.visit('/');
         currentPage = new HomePage();
@@ -826,7 +922,6 @@ describe([Tag.GTS], 'Page Management', () => {
         page.code  = generateRandomId();
         page.title = {
           en: generateRandomId(),
-          //it: generateRandomId()
         };
         newPage.code       = page.code;
         newPage.titles     = {
@@ -847,6 +942,7 @@ describe([Tag.GTS], 'Page Management', () => {
           }
         });
       };
+    
 
     
     const OOTB_OWNER_GROUPS   = ['Administrators', 'Free Access'];
