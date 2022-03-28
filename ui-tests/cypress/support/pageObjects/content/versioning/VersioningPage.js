@@ -1,10 +1,11 @@
 import Content from '../../app/Content.js';
-import { DATA_TESTID, htmlElements } from '../../WebElement.js';
+import {htmlElements } from '../../WebElement.js';
 import Pagination from '../../app/Pagination.js';
 
 export default class VersioningPage extends Content {
-  searchForm = `${htmlElements.form}[${DATA_TESTID}=versioning_VersioningSearchForm_form]`;
-  searchDescInput = `${htmlElements.input}[name=description]`;
+  
+  searchForm = `${htmlElements.form}[id="search"]`;
+  searchDescInput = `${htmlElements.input}.form-control`;
 
   getSearchForm() {
     return this.get()

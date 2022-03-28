@@ -3,7 +3,7 @@ import {htmlElements} from '../../WebElement';
 import Content   from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu';
 
-import AppPage      from '../../app/AppPage.js';
+import AdminPage      from '../../app/AdminPage.js';
 import DeleteDialog from '../../app/DeleteDialog';
 
 import TypesPage     from './TypesPage.js';
@@ -11,9 +11,9 @@ import AttributePage from './attributes/AttributePage';
 
 export default class EditPage extends Content {
 
-  codeInput           = `${htmlElements.input}[name=code]`;
-  nameInput           = `${htmlElements.input}[name=name]`;
-  saveButton          = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
+  nameInput  = `${htmlElements.input}[name="entityTypeDescription"]`;
+  codeInput  = `${htmlElements.input}[name="entityTypeCode"]`;
+  saveButton = `${htmlElements.button}[name="entandoaction:saveEntityType"]`;
   attributeTypeSelect = `${htmlElements.select}[name=type]`;
   addAttributeButton  = `${htmlElements.button}.ContentTypeForm__add`;
 
@@ -79,13 +79,13 @@ export default class EditPage extends Content {
     this.selectAttribute(attributeCode);
     this.getAddAttributeButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AppPage(AttributePage);
+    return new AdminPage(AttributePage);
   }
 
   save() {
     this.getSaveButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AppPage(TypesPage);
+    return new AdminPage(TypesPage);
   }
 
 }
@@ -120,7 +120,7 @@ class AttributeKebabMenu extends KebabMenu {
   openEdit() {
     this.getEdit().click();
     cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AppPage(AttributePage);
+    return new AdminPage(AttributePage);
   }
 
   clickMoveUp() {

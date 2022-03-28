@@ -2,8 +2,7 @@ import {htmlElements} from '../WebElement.js';
 
 import {SubMenu} from '../app/MenuElement.js';
 
-import AppPage from '../app/AppPage.js';
-
+import AdminPage from '../app/AdminPage.js';
 import ManagementPage from './management/ManagementPage';
 import AssetsPage     from './assets/AssetsPage';
 import TemplatesPage  from './templates/TemplatesPage';
@@ -57,38 +56,38 @@ export default class ContentMenu extends SubMenu {
 
   openManagement() {
     this.getManagement().click();
-    return new AppPage(ManagementPage);
+    return new AdminPage(ManagementPage);
   }
 
   openAssets() {
     this.getAssets().click();
-    return new AppPage(AssetsPage);
+    return new AdminPage(AssetsPage);
   }
 
   openTemplates() {
     this.getTemplates().click();
-    return new AppPage(TemplatesPage);
+    return new AdminPage(TemplatesPage);
   }
 
   openCategories() {
     this.getCategories().click();
     cy.wait(1000);
-    return new AppPage(CategoriesPage);
+    return new AdminPage(CategoriesPage);
   }
 
   openVersioning() {
     this.getVersioning().click();
-    return new AppPage(VersioningPage);
+    return new AdminPage(VersioningPage);
   }
 
   openTypes() {
     this.getTypes().click();
-    return new AppPage(TypesPage);
+    return new AdminPage(TypesPage);
   }
 
   openSettings() {
     this.getSettings().click();
-    return new AppPage(SettingsPage);
+    return new AdminPage(SettingsPage);
   }
 
 }

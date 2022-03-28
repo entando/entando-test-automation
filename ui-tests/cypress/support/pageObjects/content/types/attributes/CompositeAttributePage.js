@@ -2,7 +2,7 @@ import {DATA_TESTID, htmlElements, WebElement} from '../../../WebElement';
 
 import Content from '../../../app/Content';
 
-import AppPage from '../../../app/AppPage';
+import AdminPage from '../../../app/AdminPage';
 
 import EditPage            from '../EditPage';
 import AttributePage       from './AttributePage';
@@ -47,7 +47,7 @@ export default class CompositeAttributePage extends Content {
     this.selectAttribute(attributeCode);
     this.getAddAttributeButton().click();
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AppPage(AttributePage);
+    return new AdminPage(AttributePage);
   }
 
   continue(attribute = '') {
@@ -55,9 +55,9 @@ export default class CompositeAttributePage extends Content {
     cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
     switch (attribute) {
       case 'Monolist':
-        return new AppPage(NestedAttributePage);
+        return new AdminPage(NestedAttributePage);
       default:
-        return new AppPage(EditPage);
+        return new AdminPage(EditPage);
     }
   }
 

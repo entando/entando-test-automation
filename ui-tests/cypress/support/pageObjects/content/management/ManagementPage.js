@@ -2,7 +2,7 @@ import {DATA_TESTID, htmlElements} from '../../WebElement.js';
 
 import Content  from '../../app/Content.js';
 import AddPage  from './AddPage';
-import AppPage  from '../../app/AppPage';
+import AdminPage  from '../../app/AdminPage';
 import KebabMenu from '../../app/KebabMenu.js';
 import Pagination from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
@@ -92,7 +92,7 @@ export default class ManagementPage extends Content {
         .contains(contentType)
         .click();
     cy.wait(1000);
-    return new AppPage(AddPage);
+    return new AdminPage(AddPage);
   }
 
   openEditContentPage() {
@@ -105,7 +105,7 @@ export default class ManagementPage extends Content {
         .get(this.contentsTableDiv)
         .find(this.contentsKebabMenuAction).eq(0)
         .click();
-    return new AppPage(AddPage);
+    return new AdminPage(AddPage);
   }
 
   openKebabLastAddedContent() {
@@ -128,7 +128,7 @@ export default class ManagementPage extends Content {
         .confirm();
     cy.wait(1000);
 
-    return new AppPage(ManagementPage);
+    return new AdminPage(ManagementPage);
   }
 
   deleteLastAddedContent() {
@@ -143,7 +143,7 @@ export default class ManagementPage extends Content {
         .confirm();
     cy.wait(1000);
 
-    return new AppPage(ManagementPage);
+    return new AdminPage(ManagementPage);
   }
 
   unpublishContent(code) {
@@ -188,7 +188,7 @@ class ManagementKebabMenu extends KebabMenu {
   openEdit() {
     this.getEdit().click();
     cy.wait(1000);
-    return new AppPage(AddPage);
+    return new AdminPage(AddPage);
   }
 
   clickDelete() {
