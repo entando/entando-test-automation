@@ -2,7 +2,7 @@ import {htmlElements} from '../../../WebElement';
 
 import Content from '../../../app/Content';
 
-import AppPage from '../../../app/AppPage';
+import AdminPage from '../../../app/AdminPage';
 
 import EditPage from '../EditPage';
 
@@ -21,7 +21,7 @@ export default class NestedAttributePage extends Content {
   continue() {
     this.getContinueButton().click();
     cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AppPage(EditPage);
+    return new AdminPage(EditPage);
   }
 
 }

@@ -2,7 +2,7 @@ import {htmlElements} from '../../../WebElement';
 
 import Content from '../../../app/Content';
 
-import AppPage from '../../../app/AppPage';
+import AdminPage from '../../../app/AdminPage';
 
 import EditPage               from '../EditPage';
 import NestedAttributePage    from './NestedAttributePage';
@@ -57,14 +57,14 @@ export default class AttributePage extends Content {
     switch (attribute) {
       case 'List':
       case 'Monolist':
-        return new AppPage(NestedAttributePage);
+        return new AdminPage(NestedAttributePage);
       case 'Composite':
-        return new AppPage(CompositeAttributePage);
+        return new AdminPage(CompositeAttributePage);
       default:
         if (isComposite) {
-          return new AppPage(CompositeAttributePage);
+          return new AdminPage(CompositeAttributePage);
         } else {
-          return new AppPage(EditPage);
+          return new AdminPage(EditPage);
         }
     }
   }

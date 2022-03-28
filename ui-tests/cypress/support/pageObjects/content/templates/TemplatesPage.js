@@ -1,7 +1,7 @@
 import {htmlElements} from '../../WebElement.js';
 
 import Content      from '../../app/Content.js';
-import AppPage      from '../../app/AppPage.js';
+import AdminPage      from '../../app/AdminPage.js';
 import KebabMenu    from '../../app/KebabMenu.js';
 import Pagination   from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
@@ -72,7 +72,7 @@ export default class TemplatesPage extends Content {
 
   clickAddButton() {
     this.getAddButton().click();
-    return new AppPage(TemplateForm);
+    return new AdminPage(TemplateForm);
   }
 }
 
@@ -100,7 +100,7 @@ class TemplatesKebabMenu extends KebabMenu {
   openEdit() {
     this.getEdit().click();
     cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AppPage(TemplateForm);
+    return new AdminPage(TemplateForm);
   }
 
   clickDelete() {
