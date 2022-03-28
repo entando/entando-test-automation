@@ -1,7 +1,7 @@
 import {htmlElements} from '../../WebElement';
 
 import Content       from '../../app/Content';
-import AppPage       from '../../app/AppPage';
+import AdminPage       from '../../app/AdminPage';
 import TemplatesPage from './TemplatesPage';
 
 export default class TemplateForm extends Content {
@@ -129,6 +129,6 @@ export default class TemplateForm extends Content {
   submitForm() {
     this.getSaveButton().click();
     cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AppPage(TemplatesPage);
+    return new AdminPage(TemplatesPage);
   }
 }

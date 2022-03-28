@@ -1,6 +1,6 @@
 import {htmlElements}          from '../../WebElement';
 import Content                 from '../../app/Content.js';
-import AppPage                 from '../../app/AppPage.js';
+import AdminPage                 from '../../app/AdminPage.js';
 import ManagementPage          from './ManagementPage';
 import DropDownButton          from './DropDownButton';
 import ContentWidgetConfigPage from '../../pages/designer/widgetconfigs/ContentWidgetConfigPage';
@@ -163,7 +163,7 @@ export default class AddPage extends Content {
     if (confirmTranslation) {
       this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
     }
-    return new AppPage(ManagementPage);
+    return new AdminPage(ManagementPage);
   }
 
   submitApproveForm(confirmTranslation = false) {
@@ -172,7 +172,7 @@ export default class AddPage extends Content {
     if (confirmTranslation) {
       this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
     }
-    return new AppPage(ManagementPage);
+    return new AdminPage(ManagementPage);
   }
 
   fillBeginContent(description, group = 'Free Access', append = false) {
@@ -265,7 +265,7 @@ export default class AddPage extends Content {
       this.submitForm();
     }
 
-    return new AppPage(ContentWidgetConfigPage);
+    return new AdminPage(ContentWidgetConfigPage);
   }
 
   addContent(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
@@ -284,7 +284,7 @@ export default class AddPage extends Content {
     this.typeDescription(description);
     this.submitForm();
     cy.wait(1000);
-    return new AppPage(ManagementPage);
+    return new AdminPage(ManagementPage);
   }
 
 }

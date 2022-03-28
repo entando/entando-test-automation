@@ -3,7 +3,7 @@ import {htmlElements} from '../../WebElement.js';
 import Content   from '../../app/Content.js';
 import KebabMenu from '../../app/KebabMenu';
 
-import AppPage      from '../../app/AppPage.js';
+import AdminPage      from '../../app/AdminPage.js';
 import DeleteDialog from '../../app/DeleteDialog';
 
 import AddPage  from './AddPage.js';
@@ -11,7 +11,7 @@ import EditPage from './EditPage.js';
 
 export default class TypesPage extends Content {
 
-  addButton = `${htmlElements.button}.ContentTypeList__addbutton`;
+  addButton = `${htmlElements.a}.btn-primary`;
 
   getTable() {
     return this.getContents()
@@ -36,12 +36,13 @@ export default class TypesPage extends Content {
 
   getAddButton() {
     return this.getContents()
+               .find(`${htmlElements.form}[id="initViewEntityTypes"]`)
                .find(this.addButton);
   }
 
   openAddContentTypePage() {
     this.getAddButton().click();
-    return new AppPage(AddPage);
+    return new AdminPage(AddPage);
   }
 
 }
@@ -76,7 +77,7 @@ class TypesKebabMenu extends KebabMenu {
   openEdit() {
     this.getEdit().click();
     cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AppPage(EditPage);
+    return new AdminPage(EditPage);
   }
 
   clickReload() {
