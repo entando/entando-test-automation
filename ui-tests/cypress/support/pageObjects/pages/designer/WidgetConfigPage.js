@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import Content from '../../app/Content';
 
@@ -6,12 +6,13 @@ import DesignerPage from './DesignerPage';
 import AppPage      from '../../app/AppPage';
 
 export default class WidgetConfigPage extends Content {
-  grid  = `${htmlElements.div}[${DATA_TESTID}=config_WidgetConfigPage_Grid]`;
-  panel = `${htmlElements.div}[${DATA_TESTID}=config_WidgetConfigPage_Panel]`;
+  panel      = `${htmlElements.div}.PageConfigPage__panel-body`;
+  saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
 
   getMainContainer() {
     return this.get()
-               .children(this.grid);
+               .children(htmlElements.div)
+               .children(htmlElements.div).eq(5);
   }
 
   getInnerPanel() {
@@ -21,7 +22,7 @@ export default class WidgetConfigPage extends Content {
 
   getSaveButton() {
     return this.getInnerPanel()
-               .find('.btn.btn-primary').contains(/^Save$/);
+               .find(this.saveButton);
   }
 
   setDialogBodyWithClass(component) {

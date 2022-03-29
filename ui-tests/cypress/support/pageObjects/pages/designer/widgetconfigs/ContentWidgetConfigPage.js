@@ -7,19 +7,11 @@ import AppPage          from '../../../app/AppPage';
 import AddContentPage   from '../../../content/management/AddPage';
 
 export class ContentListSelectModal extends DialogContent {
-  getContentListTable() {
-    return this.get()
-               .children('.Contents__body')
-               .children(htmlElements.div).eq(1)
-               .children(htmlElements.div)
-               .children('.Contents__table')
-               .children(htmlElements.table);
-  }
+
+  contentsTable = `${htmlElements.table}[role="table"].Contents__table-element`;
 
   getTableRows() {
-    return this.getContentListTable()
-               .children(htmlElements.tbody)
-               .children(htmlElements.tr);
+    return cy.get(`${this.contentsTable} ${htmlElements.tbody} ${htmlElements.tr}`);
   }
 
   getCheckboxFromTitle(contentTitle) {

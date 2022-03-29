@@ -11,7 +11,9 @@ const sampleData = {
 const openPageTemplateMgmtPage = () => {
   let currentPage = new HomePage();
   currentPage     = currentPage.getMenu().getPages().open();
-  return currentPage.openTemplates();
+  currentPage     = currentPage.openTemplates();
+  cy.wait('@loadedTemplatesList');
+  return currentPage;
 };
 
 describe([Tag.GTS], 'Page Templates', () => {
@@ -20,6 +22,8 @@ describe([Tag.GTS], 'Page Templates', () => {
     cy.wrap(null).as('templateToBeDeleted');
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
+    cy.pageTemplatesController()
+      .then(controller => controller.intercept({method: 'GET'}, 'loadedTemplatesList', '?page=1&pageSize=10'));
   });
 
   afterEach(() => {
@@ -38,10 +42,11 @@ describe([Tag.GTS], 'Page Templates', () => {
     it('Add Template', () => {
       currentPage = openPageTemplateMgmtPage();
       currentPage = currentPage.getContent().openAddPage();
+      currentPage.getContent().getCodeInput().should('be.empty');
       currentPage.getContent().fillForm(sampleData);
       currentPage = currentPage.getContent().submitForm();
       cy.wrap(sampleData.code).as('templateToBeDeleted');
-      cy.wait(100);
+      cy.wait('@loadedTemplatesList');
       currentPage.getContent().getTableRow(sampleData.code).children(htmlElements.td).eq(2).should('contain.text', sampleData.descr);
     });
 
@@ -56,7 +61,7 @@ describe([Tag.GTS], 'Page Templates', () => {
 
       currentPage = openPageTemplateMgmtPage();
       currentPage = currentPage.getContent().getKebabMenuByCode(sampleData.code).open().openEdit();
-
+      currentPage.getContent().getNameInput().should('have.value', sampleData.descr);
       currentPage.getContent().getNameInput().clear().type(newDescr);
 
       currentPage.getContent().getJsonConfigInput().click();
@@ -66,7 +71,7 @@ describe([Tag.GTS], 'Page Templates', () => {
       cy.realType('{backspace}"Not Logo",');
 
       currentPage = currentPage.getContent().submitForm();
-      cy.wait(100);
+      cy.wait('@loadedTemplatesList');
       currentPage.getContent().getTableRow(sampleData.code).children(htmlElements.td).eq(2).should('contain.text', newDescr);
     });
 
@@ -75,12 +80,13 @@ describe([Tag.GTS], 'Page Templates', () => {
       currentPage     = openPageTemplateMgmtPage();
       currentPage     = currentPage.getContent().getKebabMenuByCode('1-column').open().openClone();
 
+      currentPage.getContent().getCodeInput().should('be.empty');
       currentPage.getContent().typeCode(cloneCode);
       currentPage.getContent().typeName(sampleData.descr);
 
       currentPage = currentPage.getContent().submitForm();
       cy.wrap(cloneCode).as('templateToBeDeleted');
-      cy.wait(100);
+      cy.wait('@loadedTemplatesList');
       currentPage.getContent().getTableRow(cloneCode).children(htmlElements.td).eq(2).should('contain.text', sampleData.descr);
     });
 
@@ -95,7 +101,6 @@ describe([Tag.GTS], 'Page Templates', () => {
       currentPage = openPageTemplateMgmtPage();
       currentPage.getContent().getKebabMenuByCode(sampleData.code).open().clickDelete();
       currentPage.getDialog().confirm();
-      cy.wait(100);
 
       cy.validateToast(currentPage);
     });
