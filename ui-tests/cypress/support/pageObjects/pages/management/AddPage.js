@@ -142,7 +142,6 @@ export default class AddPage extends Content {
 
   clickSaveButton() {
     this.getSaveButton().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(ManagementPage);
   }
 
@@ -218,7 +217,6 @@ export default class AddPage extends Content {
     this.getSeoTabs()
         .find(htmlElements.a).eq(langOrder)
         .click();
-    cy.wait(1000);
   }
 
   typeCode(value) {

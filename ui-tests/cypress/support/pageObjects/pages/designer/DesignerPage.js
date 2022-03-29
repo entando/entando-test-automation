@@ -251,6 +251,15 @@ export default class DesignerPage extends Content {
                .parents(htmlElements.tr);
   }
 
+  designPageFromSidebarPageTreeTable(code) {
+    this.clickSidebarPageTreeKebabMenu(code).clickDesignButton();
+  }
+
+  clickSidebarPageTreeKebabMenu(code) {
+    this.getSidebarPageTreeKebabMenu(code).get().click();
+    return this.getSidebarPageTreeKebabMenu(code);
+  }
+
   getSidebarPageTreeKebabMenu(code) {
     return new SidebarPageTreeKebabMenu(this, code);
   }
@@ -261,7 +270,6 @@ export default class DesignerPage extends Content {
             this.getDesignerGridFrame(oriGridRow, oriGridCol).children(htmlElements.div)
                 .drag(frame, {force: true, position: 'center'})
         );
-    cy.wait(1000); //TODO find a better way to identify when the grid is refreshed
   }
 
   publishPageDesign() {
@@ -276,7 +284,6 @@ export default class DesignerPage extends Content {
     this.getSidebarTabs()
         .children(htmlElements.li).eq(tabPos)
         .click();
-    cy.wait(1000); //TODO find a better way to identify when the sidebar loaded
   }
 
   toggleSidebarWidgetSection(sectionPos) {
@@ -297,7 +304,6 @@ export default class DesignerPage extends Content {
 
   selectPageFromSidebarPageTreeTable(code) {
     this.getSidebarPageTreeTableRow(code).click();
-    cy.wait(3000); //TODO find a better way to identify when the grid loaded
   }
 
   gatherWidgetConfigPage(widgetCode) {
@@ -392,6 +398,18 @@ class SidebarPageTreeKebabMenu extends KebabMenu {
     return this.parent.getSidebarPageTreeTableRows()
                .find(`[aria-labelledby=${this.code}]`)
                .parent();
+  }
+
+  getMenuItems() {
+    return this.get().find(`${htmlElements.a}[role="menuitem"]`);
+  }
+
+  getDesignButton() {
+    return this.getMenuItems().eq(1);
+  }
+
+  clickDesignButton() {
+    this.getDesignButton().click();
   }
 
 }

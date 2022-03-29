@@ -35,7 +35,8 @@ export default class WidgetsController extends AbstractController {
               parentType,
               widgetCategory,
               icon,
-              guiFragments
+              guiFragments,
+              config
             }        = response.body.payload;
       const formData = {
         code,
@@ -45,7 +46,8 @@ export default class WidgetsController extends AbstractController {
         parentType,
         widgetCategory,
         icon,
-        customUi: guiFragments[0].customUi
+        customUi: guiFragments[0].customUi,
+        config
       };
       return {controller: this, response, formData};
     });

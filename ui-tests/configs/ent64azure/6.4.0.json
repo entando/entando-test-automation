@@ -2,6 +2,7 @@
   "extends": "../../cypress.json",
   "baseUrl": "http://test-6-4-0-cypress.apps.ent64azure.com",
   "basePath": "/app-builder",
+  "portalUIPath": "/entando-de-app/en",
   "restAPI": "http://test-6-4-0-cypress.apps.ent64azure.com/entando-de-app/api",
   "env": {
     "auth_base_url": "http://test-6-4-0-cypress.apps.ent64azure.com/auth",

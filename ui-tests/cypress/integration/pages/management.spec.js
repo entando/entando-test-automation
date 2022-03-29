@@ -17,64 +17,70 @@ describe([Tag.GTS], 'Page Management', () => {
   ];
 
 
-    beforeEach(() =>{ 
-      cy.kcAPILogin();
-      cy.kcUILogin('login/admin');
-      });
+  beforeEach(() => {
+    cy.kcAPILogin();
+    cy.kcUILogin('login/admin');
+    cy.languagesController().then(controller => controller.intercept({ method: 'GET' }, 'loadedLanguages', '?page=1&pageSize=0'));
+    cy.pagesController().then(controller => controller.intercept({method: 'POST'}, 'clonedPage', '/**'));
+    cy.seoPagesController().then(controller => controller.intercept({method: 'POST'}, 'addedNewPage'));
+    cy.wrap(null).as('pageToBeDeleted');
+    cy.wrap(null).as('subPageToBeDeleted');
+  });
     
-    afterEach(() => {
-      
-        if (subPageToBeDeleted) {
-          cy.pagesController()
-            .then(controller => {
-              controller.setPageStatus(subPage.code, 'draft');
-              controller.deletePage(subPage.code);
-            })
-            .then(() => {
-              subPage            = {
-                ownerGroup: {
-                  code: 'administrators',
-                  name: 'Administrators'
-                },
-                template: '1-2-column'
-              };
-              subPageToBeDeleted = false;
-            });
-        }
-        if (pageToBeDeleted) {
-          cy.pagesController()
-            .then(controller => {
-              controller.setPageStatus(page.code, 'draft');
-              controller.deletePage(page.code);
-            })
-            .then(() => {
-              page            = {
-                pageTree: 0,
-                parentCode: homePage.code,
-                ownerGroup: {
-                  code: 'administrators',
-                  name: 'Administrators'
-                },
-                template: '1-2-column'
-              };
-              pageToBeDeleted = false;
-            });
-        }
-    
-        cy.kcUILogout();
-      });
+  afterEach(() => {
+    cy.get('@subPageToBeDeleted').then(subPageToBeDeleted => {
+      if (subPageToBeDeleted) {
+        cy.pagesController()
+          .then(controller => {
+            controller.setPageStatus(subPageToBeDeleted, 'draft');
+            controller.deletePage(subPageToBeDeleted);
+          })
+          .then(() => {
+            subPage = {
+              ownerGroup: {
+                code: 'administrators',
+                name: 'Administrators'
+              },
+              template: '1-2-column'
+            };
+          });
+      }
+    });
+
+    cy.get('@pageToBeDeleted').then(pageToBeDeleted => {
+      if (pageToBeDeleted) {
+        cy.pagesController()
+          .then(controller => {
+            controller.setPageStatus(pageToBeDeleted, 'draft');
+            controller.deletePage(pageToBeDeleted);
+          })
+          .then(() => {
+            page = {
+              pageTree: 0,
+              parentCode: homePage.code,
+              ownerGroup: {
+                code: 'administrators',
+                name: 'Administrators'
+              },
+              template: '1-2-column'
+            };
+          });
+      }
+    });
+
+    cy.kcUILogout();
+  });
 
     describe('UI', () => {
 
         it('Add page', () => {
-    
     
           const OOTB_PAGE_TEMPLATES_TEXTS = OOTB_PAGE_TEMPLATES.map(template => template.text);
           OOTB_PAGE_TEMPLATES_TEXTS.unshift('Choose an option');
     
           currentPage = openManagementPage();
           currentPage = currentPage.getContent().openAddPagePage();
-          cy.validateUrlPathname('/page/add').wait(1000);
+          cy.validateUrlPathname('/page/add');
     
           currentPage.getContent().openOwnerGroupMenu();
           
@@ -83,7 +89,7 @@ describe([Tag.GTS], 'Page Management', () => {
                      .then(elements => cy.validateListTexts(elements, OOTB_OWNER_GROUPS));
     
           currentPage.getContent().getPageTemplateSelect().children(htmlElements.option)
-                     .should('have.length', '9')
+                     .should('have.length', 8)
                      .then(elements => cy.validateListTexts(elements, OOTB_PAGE_TEMPLATES_TEXTS));
         });
     
@@ -139,13 +145,13 @@ describe([Tag.GTS], 'Page Management', () => {
     
         describe('Add a new page without SEO attributes', () => {
     
-    
           OOTB_PAGE_TEMPLATES.map(template => template.value).forEach(template => {
             it(`Add ${template} template`, () => {
               page.template = template;
               currentPage   = openManagementPage();
               currentPage   = currentPage.getContent().openAddPagePage();
               cy.validateUrlPathname('/page/add');
+              currentPage.getContent().getTitleInput('en').should('be.empty');
     
               addPageMandatoryData(currentPage, page);
               saveAndValidate(currentPage, page);
@@ -154,12 +160,14 @@ describe([Tag.GTS], 'Page Management', () => {
         });
     
         describe('Add a new page with SEO Attributes', () => {
+
           OOTB_PAGE_TEMPLATES.map(template => template.value).forEach(template => {
             it(`Add ${template} template`, () => {
               page.template = template;
               currentPage   = openManagementPage();
               currentPage   = currentPage.getContent().openAddPagePage();
               cy.validateUrlPathname('/page/add');
+              currentPage.getContent().getTitleInput('en').should('be.empty');
     
               addPageMandatoryData(currentPage, page);
               addSeoData(currentPage, page.seoData);
@@ -233,31 +241,25 @@ describe([Tag.GTS], 'Page Management', () => {
     
           cy.seoPagesController()
             .then(controller => controller.addNewPage(newPage))
-            .then(() => pageToBeDeleted = true);
+            .then(response => cy.wrap(response.body.payload.code).as('pageToBeDeleted'));
     
           currentPage = openManagementPage();
-          currentPage = currentPage.getContent().getKebabMenu(page.code).open().openAdd();
+          currentPage = currentPage.getContent().getKebabMenu(page.title.en).open().openAdd();
           cy.validateUrlPathname('/page/add');
+
+          currentPage.getContent().getTitleInput('en').should('be.empty');
     
           addPageMandatoryData(currentPage, subPage);
           currentPage        = currentPage.getContent().clickSaveButton();
-          subPageToBeDeleted = true;
-    
-          currentPage.getContent().getTableRows().then(rows =>
-              cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', page.title.en)
-          );
-    
-          currentPage.getContent().toggleRowSubPages(page.code);
-          currentPage.getContent().getTableRows().then(rows =>
-              cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', subPage.title.en)
-          );
-    
+          cy.wait('@addedNewPage').then(res => cy.wrap(res.response.body.payload.code).as('subPageToBeDeleted'));
+          cy.wait('@loadedLanguages');
+
+          checkPagesRelation(page.title.en, subPage.title.en);
         });
     
         it('Adding a new page with non existing parent code is forbidden', () => {
             openManagementPage();
             cy.visit('/page/add?parentCode=non-existing-page');
-            cy.wait(3000);
     
             cy.location().should(url => {
               expect(url.pathname).eq('/app-builder/page/add');
@@ -289,20 +291,18 @@ describe([Tag.GTS], 'Page Management', () => {
         });
     
         it('Adding a new page with existing code is forbidden', () => {
-            const homepageCode = 'homepage';
-    
             currentPage = openManagementPage();
             currentPage = currentPage.getContent().openAddPagePage();
-            cy.validateUrlPathname('/page/add').wait(1000);
+            cy.validateUrlPathname('/page/add');
     
-            page.code = homepageCode;
+            page.code = homePage.code;
             addPageMandatoryData(currentPage, page);
             currentPage.getContent().clickSaveButton();
     
             cy.validateToast(currentPage, page.code, false);
             currentPage.getContent().getAlertMessage()
                        .should('be.visible')
-                       .and('contain', homepageCode);
+                       .and('contain', homePage.code);
     
         });
         describe('Search a page', () => {
@@ -337,7 +337,7 @@ describe([Tag.GTS], 'Page Management', () => {
             it('with an owner not compatible with the users', () => {
               currentPage = openManagementPage();
       
-              currentPage = currentPage.getContent().getKebabMenu('sitemap').open().openEdit();
+              currentPage = currentPage.getContent().getKebabMenu('Sitemap').open().openEdit();
       
               currentPage.getContent().getOwnerGroupButton().should('be.disabled');
             });
@@ -357,10 +357,10 @@ describe([Tag.GTS], 'Page Management', () => {
       
               cy.seoPagesController()
                 .then(controller => controller.addNewPage(newPage))
-                .then(() => pageToBeDeleted = true);
+                .then(response => cy.wrap(response.body.payload.code).as('pageToBeDeleted'));
       
               currentPage = openManagementPage();
-              currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+              currentPage = currentPage.getContent().getKebabMenu(page.title.en).open().openEdit();
       
               currentPage.getContent().getOwnerGroupButton().click({force: true});
               currentPage.getContent().getOwnerGroupDropdown().should('not.exist');
@@ -381,13 +381,13 @@ describe([Tag.GTS], 'Page Management', () => {
       
               cy.seoPagesController()
                 .then(controller => controller.addNewPage(newPage))
-                .then(() => pageToBeDeleted = true);
+                .then(response => cy.wrap(response.body.payload.code).as('pageToBeDeleted'));
       
               cy.languagesController()
                 .then(controller => controller.putLanguage('cs', 'Czech', true, false));
       
               currentPage = openManagementPage();
-              currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+              currentPage = currentPage.getContent().getKebabMenu(page.title.en).open().openEdit();
               currentPage.getContent().getTitleInput('en').invoke('val').should('eq', page.title.en);
               currentPage.getContent().selectSeoLanguage(1);
               currentPage.getContent().getTitleInput('cs').invoke('val').should('eq', page.title.en);
@@ -404,25 +404,27 @@ describe([Tag.GTS], 'Page Management', () => {
               };
               newPage.code       = page.code;
               newPage.titles     = {
-                en: page.title.en
+                en: page.title.en,
+                it: page.title.it
               };
               newPage.parentCode = homePage.code;
               cy.seoPagesController()
                 .then(controller => controller.addNewPage(newPage))
-                .then(() => pageToBeDeleted = true);
+                .then(response => cy.wrap(response.body.payload.code).as('pageToBeDeleted'));
       
               currentPage = openManagementPage();
-              currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+              currentPage = currentPage.getContent().getKebabMenu(page.title.en).open().openEdit();
+              currentPage.getContent().getTitleInput('en').should('have.value', page.title.en);
               currentPage.getContent().getTitleInput('en').clear();
               currentPage.getContent().selectSeoLanguage(1);
-              currentPage.getContent().getTitleInput('it').type(`${page.title.it}_1`);
+              currentPage.getContent().getTitleInput('it').clear().type(`${page.title.it}_1`);
               currentPage.getContent().getSaveButton().invoke('attr', 'disabled').should('eq', 'disabled');
               currentPage.getContent().getSaveAndDesignButton().invoke('attr', 'disabled').should('eq', 'disabled');
             });
       
         });
 
-        describe('Change page position in the page tree', () => { //TODO enable dragging
+        describe('Change page position in the page tree', () => {
 
     
           beforeEach(() => {
@@ -438,102 +440,85 @@ describe([Tag.GTS], 'Page Management', () => {
             subPage.code  = generateRandomId();
             subPage.title = generateRandomId();
 
-           addPage(page);
-            
+            addPage(page)
           });
 
     
          it('Move outside page', () => {
             
-           addPage(subPage, page.code);
+            addPage(subPage, page.code);
             
-    
             currentPage = openManagementPage();
     
-            currentPage.getContent().toggleRowSubPages(subPage.code);
-            currentPage.getContent().dragRow(subPage.code, homePage.code, 'top');
+            checkIsParent(page.title.en);
+            currentPage.getContent().toggleRowSubPages(page.title.en);
+            checkPageIsLoaded(page.title.en);
+            currentPage.getContent().dragRow(subPage.title.en, homePage.name, 'top');
             currentPage.getDialog().confirm();
-    
-            currentPage.getContent().getTableRows().then(rows =>
-                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', subPage.title.en)
-            );
+            checkPageIsLoaded(subPage.title.en);
+            checkIsNotParent(page.title.en);
+            checkIsNotParent(subPage.title.en);
           });
     
           it('Move inside page', () => { 
-           addPage(subPage, homePage.code);
+            addPage(subPage, homePage.code);
+            currentPage = openManagementPage();
+            checkIsNotParent(page.title.en);
+            checkIsNotParent(subPage.title.en);
             currentPage = moveSubPageInPage();
-    
-            checkPagesPosition(currentPage, page.code, subPage.title.en, page.title.en);
+            checkPageIsLoaded(subPage.title.en);
+            currentPage.getContent().toggleRowSubPages(page.title.en);
+
+            checkPagesRelation(page.title.en, subPage.title.en);
           });
     
           it('Move inside subpages is forbidden', () => {
-           addPage(subPage, page.code);
+            addPage(subPage, page.code);
     
             currentPage = openManagementPage();
-    
-            currentPage.getContent().toggleRowSubPages(page.code);
+            currentPage.getContent().toggleRowSubPages(page.title.en);
+            checkPagesRelation(page.title.en, subPage.title.en);
             
-            currentPage.getContent().dragRow(page.code, subPage.code, 'center');
+            currentPage.getContent().dragRow(page.title.en, subPage.title.en, 'center');
             currentPage.getDialog().confirm();
     
             cy.validateToast(currentPage, null, false);
-    
-            currentPage.getContent().getTableRows().then(rows =>
-                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', subPage.title.en)
-            );
-    
-            currentPage.getContent().toggleRowSubPages(page.code);
-            currentPage.getContent().getTableRows().then(rows =>
-                cy.wrap(rows).eq(-2).children(htmlElements.td).eq(0).should('have.text', page.title.en) 
-            );
+
+            currentPage.getContent().toggleRowSubPages(page.title.en);
+            checkPagesRelation(page.title.en, subPage.title.en);
           });
     
           it('Move free pages inside reserved pages is forbidden', () => {
             subPage.ownerGroup = {code: 'free', name: 'Free Access'};
-    
-           addPage(subPage, homePage.code);
+
+            addPage(subPage, homePage.code);
+
+            currentPage = openManagementPage();
             currentPage = moveSubPageInPage();
     
             cy.validateToast(currentPage, null, false);
-    
-            checkPagesPosition(currentPage, page.code, subPage.title.en, subPage.title.en);
+
+            checkIsNotParent(page.title.en);
+            checkIsNotParent(subPage.title.en);
           });
     
           it('Move published pages inside unpublished pages is forbidden', () => {
-
-           addPage(subPage, homePage.code);
+            addPage(subPage, homePage.code);
             cy.pagesController().then(controller => controller.setPageStatus(subPage.code, 'published'));
-    
+            currentPage = openManagementPage();
             currentPage = moveSubPageInPage();
+
             cy.validateToast(currentPage, null, false);
     
-            checkPagesPosition(currentPage, page.code, subPage.title.en, subPage.title.en);
+            checkIsNotParent(page.title.en);
+            checkIsNotParent(subPage.title.en);
           });
     
           const moveSubPageInPage  = () => {
-            currentPage = openManagementPage();
-    
-            currentPage.getContent().getTableRows().then(rows =>
-                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', subPage.title.en)
-            );
-    
-            currentPage.getContent().dragRow(subPage.code, page.code, 'center');
+            currentPage.getContent().dragRow(subPage.title.en, page.title.en, 'center');
             currentPage.getDialog().confirm();
-            cy.wait(1000); //TODO find a better way to identify when the page loaded
     
             return currentPage;
-          };
-          const checkPagesPosition = (page, parentPageCode, firstPageTitle, secondPageTitle) => {
-            page.getContent().getTableRows().then(rows =>
-                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', firstPageTitle)
-            );
-    
-            //TODO first always tries to open it, even if it is already opened
-            page.getContent().toggleRowSubPages(parentPageCode);
-            page.getContent().toggleRowSubPages(parentPageCode);
-            page.getContent().getTableRows().then(rows =>
-                cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', secondPageTitle)
-            );
           };
     
         });
@@ -545,10 +530,10 @@ describe([Tag.GTS], 'Page Management', () => {
           it('Publish a page', () => {
             currentPage = openManagementPage();
     
-            currentPage.getContent().getKebabMenu(page.code).open().clickPublish();
+            currentPage.getContent().getKebabMenu(page.title.en).open().clickPublish();
             currentPage.getDialog().confirm();
     
-            currentPage.getContent().getTableRow(page.code).then(row =>
+            currentPage.getContent().getTableRow(page.title.en).then(row =>
                 cy.wrap(row).children(htmlElements.td).eq(2).children(htmlElements.i)
                   .should('have.attr', 'title')
                   .and('equal', 'Published')
@@ -560,10 +545,10 @@ describe([Tag.GTS], 'Page Management', () => {
     
             currentPage = openManagementPage();
     
-            currentPage.getContent().getKebabMenu(page.code).open().clickUnpublish();
+            currentPage.getContent().getKebabMenu(page.title.en).open().clickUnpublish();
             currentPage.getDialog().confirm();
     
-            currentPage.getContent().getTableRow(page.code).then(row =>
+            currentPage.getContent().getTableRow(page.title.en).then(row =>
                 cy.wrap(row).children(htmlElements.td).eq(2).children(htmlElements.i)
                   .should('have.attr', 'title')
                   .and('equal', 'Unpublished')
@@ -574,9 +559,10 @@ describe([Tag.GTS], 'Page Management', () => {
            addPage(subPage, page.code);
     
             currentPage = openManagementPage();
-            currentPage.getContent().toggleRowSubPages(page.code);
+            currentPage.getContent().toggleRowSubPages(page.title.en);
+            checkPageIsLoaded(page.title.en);
     
-            currentPage.getContent().getKebabMenu(subPage.code).getPublish()
+            currentPage.getContent().getKebabMenu(subPage.title.en).getPublish()
                        .should('have.class', 'disabled');
           });
     
@@ -588,9 +574,9 @@ describe([Tag.GTS], 'Page Management', () => {
             });
     
             currentPage = openManagementPage();
-            currentPage.getContent().toggleRowSubPages(page.code);
+            currentPage.getContent().toggleRowSubPages(page.title.en);
     
-            currentPage.getContent().getKebabMenu(page.code).getUnpublish()
+            currentPage.getContent().getKebabMenu(page.title.en).getUnpublish()
                        .should('have.class', 'disabled');
           });
         });
@@ -635,7 +621,7 @@ describe([Tag.GTS], 'Page Management', () => {
           });
     
           it('Unpublish a page without permission', () => {
-           addPage(page);
+            addPage(page);
             cy.pagesController().then(controller => {
               controller.setPageStatus(page.code, 'published');
             });
@@ -644,10 +630,13 @@ describe([Tag.GTS], 'Page Management', () => {
             cy.kcLogout();
             cy.kcUILogin('login/user');
     
-            currentPage = openManagementPage();
+            cy.visit('/');
+            currentPage = new HomePage();
+            currentPage = currentPage.getMenu().getPages().open();
+            currentPage = currentPage.openManagement();
     
             // user should not be able to see the new page
-            currentPage.getContent().getTableRows().should('not.contain', page.title);
+            currentPage.getContent().getTableRows().should('not.contain', page.title.en);
           });
         });
 
@@ -659,15 +648,15 @@ describe([Tag.GTS], 'Page Management', () => {
           it('Delete an unpublished page', () => {
             currentPage = openManagementPage();
     
-            currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
+            currentPage.getContent().getKebabMenu(page.title.en).open().clickDelete();
             currentPage.getDialog().getBody().getStateInfo()
                        .should('contain', page.code);
     
             currentPage.getDialog().confirm();
     
-            currentPage.getContent().getTableRows().should('not.contain', page.title);
+            currentPage.getContent().getTableRows().should('not.contain', page.title.en);
     
-            pageToBeDeleted = false;
+            cy.wrap(null).as('pageToBeDeleted');
           });
     
           it('Delete a published page is forbidden', () => {
@@ -675,8 +664,7 @@ describe([Tag.GTS], 'Page Management', () => {
     
             currentPage = openManagementPage();
     
-            cy.pause();
-            currentPage.getContent().getKebabMenu(page.code).getDelete()
+            currentPage.getContent().getKebabMenu(page.title.en).getDelete()
                        .should('have.class', 'disabled');
           });
     
@@ -685,12 +673,8 @@ describe([Tag.GTS], 'Page Management', () => {
             cy.pageWidgetsController(page.code).then(controller => controller.addWidget(0, 'search_form'));
     
             currentPage = openManagementPage();
-            currentPage.getContent().getKebabMenu(page.code).open().clickDelete();
-            currentPage.getDialog().confirm();
-
-            cy.pause(); //FIXME delete a drafted page is NOT forbidden!
-    
-            currentPage.getContent().getAlertMessage().should('be.visible');
+            currentPage = currentPage.getContent().getKebabMenu(page.title.en).open();
+            currentPage.getDelete().should('have.class', 'disabled');
           });
     
           it('Delete a page with children is forbidden', () => {
@@ -698,7 +682,8 @@ describe([Tag.GTS], 'Page Management', () => {
     
             currentPage = openManagementPage();
     
-            currentPage.getContent().getKebabMenu(page.code).getDelete().should('have.class', 'disabled');
+            currentPage = currentPage.getContent().getKebabMenu(page.title.en).open();
+            currentPage.getDelete().should('have.class', 'disabled');
           });
     
         });
@@ -709,12 +694,12 @@ describe([Tag.GTS], 'Page Management', () => {
 
             describe('Page form should be not possible to save NULL title in default language (ENG-2687)', () => {
               it('There must be a page title for default language, otherwise it will not allow to save', () => {
-               addPage(page);
-                pageToBeDeleted = true;
+                addPage(page);
       
                 currentPage = openManagementPage();
-                currentPage = currentPage.getContent().getKebabMenu(page.code).open().openEdit();
+                currentPage = currentPage.getContent().getKebabMenu(page.title.en).open().openEdit();
       
+                currentPage.getContent().getTitleInput('en').should('have.value', page.title.en);
                 currentPage.getContent().getTitleInput('en').clear();
                 currentPage.getContent().selectSeoLanguage(1);
       
@@ -728,6 +713,8 @@ describe([Tag.GTS], 'Page Management', () => {
       
                 currentPage = openManagementPage();
                 currentPage = currentPage.getContent().openAddPagePage();
+                cy.validateUrlPathname('/page/add');
+                cy.wait('@loadedLanguages');
       
                 currentPage.getContent().selectSeoLanguage(0);
                 currentPage.getContent().typeTitle(page.title, 'en');
@@ -749,8 +736,6 @@ describe([Tag.GTS], 'Page Management', () => {
 
         describe('Clone a page', () => {
             let newPage;
-      
-            let clonedPageToBeDeleted = false;
       
             beforeEach(() => {
               page.code       = generateRandomId();
@@ -790,39 +775,41 @@ describe([Tag.GTS], 'Page Management', () => {
                 code: generateRandomId(),
                 placement: 0
               };
+
+              cy.wrap(null).as('clonedPageToBeDeleted');
       
               cy.seoPagesController()
                 .then(controller => controller.addNewPage(page))
-                .then(() => pageToBeDeleted = true);
+                .then(response => cy.wrap(response.body.payload.code).as('pageToBeDeleted'));
             });
       
             afterEach(() => {
-              if (clonedPageToBeDeleted) {
-                cy.pagesController()
-                  .then(controller => {
-                    controller.deletePage(newPage.code);
-                  })
-                  .then(() => {
-                    clonedPageToBeDeleted = false;
-                  });
-              }
+              cy.get('@clonedPageToBeDeleted').then(clonedPageToBeDeleted => {
+                if (clonedPageToBeDeleted) {
+                  cy.pagesController()
+                    .then(controller => {
+                      controller.deletePage(clonedPageToBeDeleted);
+                    })
+                }
+              });
             });
       
             it('Cloning a page should copy all SEO details to the new page', () => {
               currentPage = openManagementPage();
-              currentPage = currentPage.getContent().getKebabMenu(page.code).open().clickClone();
-      
+              currentPage = currentPage.getContent().getKebabMenu(page.titles.en).open().clickClone();
+              cy.validateUrlPathname(`/page/clone`);
+              cy.wait('@loadedLanguages');
               currentPage.getContent().typeTitle(newPage.title, 'en');
               currentPage.getContent().typeTitle(newPage.title, 'it');
-              currentPage.getContent().typeTitle(newPage.title, 'es');
               currentPage.getContent().clearCode();
               currentPage.getContent().typeCode(newPage.code);
               currentPage.getContent().selectPagePlacement(newPage.placement);
               currentPage = currentPage.getContent().clickSave();
+
+              cy.wait('@clonedPage').then(res => cy.wrap(res.response.body.payload.code).as('clonedPageToBeDeleted'));
+              cy.wait('@loadedLanguages');
       
-              clonedPageToBeDeleted = true;
-      
-              currentPage = currentPage.getContent().getKebabMenu(newPage.code).open().openEdit();
+              currentPage = currentPage.getContent().getKebabMenu(newPage.title).open().openEdit();
               currentPage.getContent().getSeoDescriptionInput('en').should('have.value', page.seoData.seoDataByLang.en.description);
               currentPage.getContent().getSeoKeywordsInput('en').should('have.value', page.seoData.seoDataByLang.en.keywords);
               currentPage.getContent().getSeoFriendlyCodeInput('en').should('have.value', page.seoData.seoDataByLang.en.friendlyCode);
@@ -844,19 +831,20 @@ describe([Tag.GTS], 'Page Management', () => {
                 );
       
               currentPage = openManagementPage();
-              currentPage = currentPage.getContent().getKebabMenu(page.code).open().clickClone();
-      
+              currentPage = currentPage.getContent().getKebabMenu(page.titles.en).open().clickClone();
+              cy.validateUrlPathname(`/page/clone`);
+              cy.wait('@loadedLanguages');
               currentPage.getContent().typeTitle(newPage.title, 'en');
               currentPage.getContent().typeTitle(newPage.title, 'it');
-              currentPage.getContent().typeTitle(newPage.title, 'es');
               currentPage.getContent().clearCode();
               currentPage.getContent().typeCode(newPage.code);
               currentPage.getContent().selectPagePlacement(newPage.placement);
               currentPage = currentPage.getContent().clickSave();
+
+              cy.wait('@clonedPage').then(res => cy.wrap(res.response.body.payload.code).as('clonedPageToBeDeleted'));
+              cy.wait('@loadedLanguages');
       
-              clonedPageToBeDeleted = true;
-      
-              currentPage = currentPage.getContent().getKebabMenu(newPage.code).open().openDesigner();
+              currentPage = currentPage.getContent().getKebabMenu(newPage.title).open().openDesigner();
               currentPage.getContent().getDesigner().contains('News Archive');
             });
           });
@@ -864,126 +852,149 @@ describe([Tag.GTS], 'Page Management', () => {
     });
 
     
-    const openManagementPage = () => {
-        cy.visit('/');
-        currentPage = new HomePage();
-        currentPage = currentPage.getMenu().getPages().open();
-        return currentPage.openManagement();
-    };
+  const openManagementPage = () => {
+    cy.visit('/');
+    cy.wait('@loadedLanguages');
+    currentPage = new HomePage();
+    currentPage = currentPage.getMenu().getPages().open();
+    currentPage = currentPage.openManagement();
+    cy.wait('@loadedLanguages');
+    return currentPage;
+  };
 
-    const addPageMandatoryData = (page, data) => {
-        page.getContent().typeTitle(data.title.en, 'en');
-    
-        page.getContent().selectSeoLanguage(1);
-        page.getContent().typeTitle(data.title.it, 'it');
-    
-        page.getContent().clearCode();
-        page.getContent().typeCode(data.code);
-    
-        if (data.pageTree !== null && data.pageTree !== undefined) {
-          page.getContent().selectPageOnPageTreeTable(data.pageTree);
-        }
-    
-        page.getContent().selectOwnerGroup(data.ownerGroup.name);
-    
-        page.getContent().selectPageTemplate(data.template);
-    };
-    
-    const saveAndValidate      = (page, data) => {
-        currentPage     = page.getContent().clickSaveButton();
-        pageToBeDeleted = true;
-    
-        cy.validateToast(currentPage);
-        currentPage.getContent().getTableRows().then(rows =>
-            cy.wrap(rows).eq(-1).children(htmlElements.td).eq(0).should('have.text', data.title.en)
-        );
-    };
-    
-    const addSeoData           = (page, seoData) => {
-        page.getContent().selectSeoLanguage(0);
-        page.getContent().typeSeoDescription(seoData.en.description, 'en');
-        page.getContent().typeSeoKeywords(seoData.en.keywords, 'en');
-        page.getContent().typeSeoFriendlyCode(seoData.en.friendlyCode, 'en');
-        page.getContent().selectSeoLanguage(1);
-        page.getContent().typeSeoDescription(seoData.it.description, 'it');
-        page.getContent().typeSeoKeywords(seoData.it.keywords, 'it');
-        page.getContent().typeSeoFriendlyCode(seoData.it.friendlyCode, 'it');
-    };
+  const addPageMandatoryData = (page, data) => {
+    cy.wait('@loadedLanguages');
+    page.getContent().typeTitle(data.title.en, 'en');
 
-    const addMetaTag           = (page, metaTag) => {
-        page.getContent().selectSeoLanguage(0);
-        page.getContent().typeMetaKey(metaTag.key);
-        page.getContent().selectMetaType(metaTag.type);
-        page.getContent().typeMetaValue(metaTag.value);
-        page.getContent().clickMetaTagAddButton();
+    page.getContent().selectSeoLanguage(1);
+    page.getContent().typeTitle(data.title.it, 'it');
+
+    page.getContent().clearCode();
+    page.getContent().typeCode(data.code);
+
+    if (data.pageTree !== null && data.pageTree !== undefined) {
+      page.getContent().selectPageOnPageTreeTable(data.pageTree);
+    }
+
+    page.getContent().selectOwnerGroup(data.ownerGroup.name);
+
+    page.getContent().selectPageTemplate(data.template);
+  };
+
+  const saveAndValidate = (page, data) => {
+    currentPage = page.getContent().clickSaveButton();
+    cy.wait('@addedNewPage').then(res => cy.wrap(res.response.body.payload.code).as('pageToBeDeleted'));
+
+    cy.validateToast(currentPage);
+    currentPage.getContent().getTableRow(data.title.en).should('exist');
+  };
+
+  const addSeoData = (page, seoData) => {
+    page.getContent().selectSeoLanguage(0);
+    page.getContent().typeSeoDescription(seoData.en.description, 'en');
+    page.getContent().typeSeoKeywords(seoData.en.keywords, 'en');
+    page.getContent().typeSeoFriendlyCode(seoData.en.friendlyCode, 'en');
+    page.getContent().selectSeoLanguage(1);
+    page.getContent().typeSeoDescription(seoData.it.description, 'it');
+    page.getContent().typeSeoKeywords(seoData.it.keywords, 'it');
+    page.getContent().typeSeoFriendlyCode(seoData.it.friendlyCode, 'it');
+  };
+
+  const addMetaTag = (page, metaTag) => {
+    page.getContent().selectSeoLanguage(0);
+    page.getContent().typeMetaKey(metaTag.key);
+    page.getContent().selectMetaType(metaTag.type);
+    page.getContent().typeMetaValue(metaTag.value);
+    page.getContent().clickMetaTagAddButton();
+  };
+
+  const addPage = (page, parent = null) => {
+
+    page.code = generateRandomId();
+    page.title = {
+      en: generateRandomId(),
     };
-
-    const addPage = (page, parent=null) => {
-    
-
-        page.code  = generateRandomId();
-        page.title = {
-          en: generateRandomId(),
-        };
-        newPage.code       = page.code;
-        newPage.titles     = {
-          en: page.title.en
-        }; 
+    newPage.code = page.code;
+    newPage.titles = {
+      en: page.title.en
+    };
+    newPage.ownerGroup = page.ownerGroup.code;
+    if (parent) {
+      page.parentCode = parent;
+      newPage.parentCode = parent;
+    } else {
+      newPage.parentCode = homePage.code;
+    }
+    cy.seoPagesController()
+      .then(controller => controller.addNewPage(newPage))
+      .then(response => {
         if (parent) {
-          page.parentCode = parent;
-          newPage.parentCode = parent;
+          cy.wrap(response.body.payload.code).as('subPageToBeDeleted');
         } else {
-          newPage.parentCode = homePage.code;
+          cy.wrap(response.body.payload.code).as('pageToBeDeleted');
         }
-        cy.seoPagesController()
-          .then(controller => controller.addNewPage(newPage))
-          .then(() => {
-            if (parent) {
-              subPageToBeDeleted = true;
-            } else {pageToBeDeleted = true
-          }
-        });
-      };
-    
+      });
+  };
 
-    
-    const OOTB_OWNER_GROUPS   = ['Administrators', 'Free Access'];
+  const checkIsNotParent = (pageTitle) => {
+    currentPage.getContent().getTableRow(pageTitle).find(`${htmlElements.i}.fa`).eq(2)
+      .should('have.class', 'fa-folder-o').and('not.have.class', 'fa-folder');
+  };
 
-    const homePage = {
-        code: 'homepage',
-        name: 'Home'
-    };
+  const checkIsParent = (pageTitle) => {
+    currentPage.getContent().getTableRow(pageTitle).find(`${htmlElements.i}.fa`).eq(2)
+      .should('have.class', 'fa-folder').and('not.have.class', 'fa-folder-o');
+  };
 
-    let currentPage;
+  const checkPagesRelation = (parentPageTitle, subPageTitle) => {
+    checkIsParent(parentPageTitle);
+    /*currentPage.getContent().toggleRowSubPages(parentPageTitle);
+    checkPageIsLoaded(parentPageTitle);*/
+    currentPage.getContent().getTableRow(subPageTitle).should('not.exist');
+    currentPage.getContent().toggleRowSubPages(parentPageTitle);
+    checkPageIsLoaded(parentPageTitle);
+    checkIsNotParent(subPageTitle);
+  };
 
-    let page    = {
-        pageTree: 0,
-        parentCode: homePage.code,
-        ownerGroup: {
-        code: 'administrators',
-        name: 'Administrators'
-        },
-        template: '1-2-column'
-    };
-    let subPage = {
-        ownerGroup: {
-        code: 'administrators',
-        name: 'Administrators'
-        },
-        template: '1-2-column'
-    };
+  const checkPageIsLoaded = (pageTitle) => {
+    currentPage.getContent().getTableRow(pageTitle).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
+  }
 
-    let newPage = {
-        charset: 'utf-8',
-        contentType: 'text/html',
-        displayedInMenu: true,
-        joinGroups: null,
-        seo: false,
-        ownerGroup: 'administrators',
-        pageModel: '1-2-column'
-    };
+  const OOTB_OWNER_GROUPS = ['Administrators', 'Free Access'];
 
-    let pageToBeDeleted    = false;
-    let subPageToBeDeleted = false;
+  const homePage = {
+    code: 'homepage',
+    name: 'Home'
+  };
 
+  let currentPage;
+  
+  let page    = {
+    pageTree: 0,
+    parentCode: homePage.code,
+    ownerGroup: {
+      code: 'administrators',
+      name: 'Administrators'
+    },
+    template: '1-2-column'
+  };
+
+  let subPage = {
+    ownerGroup: {
+      code: 'administrators',
+      name: 'Administrators'
+    },
+    template: '1-2-column'
+  };
+  
+  let newPage = {
+    charset: 'utf-8',
+    contentType: 'text/html',
+    displayedInMenu: true,
+    joinGroups: null,
+    seo: false,
+    ownerGroup: 'administrators',
+    pageModel: '1-2-column'
+  };
+  
 });
