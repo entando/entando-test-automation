@@ -1,5 +1,5 @@
-import HomePage       from '../../support/pageObjects/HomePage';
-import {htmlElements} from '../../support/pageObjects/WebElement';
+import HomePage       from '../../../support/pageObjects/HomePage';
+import {htmlElements} from '../../../support/pageObjects/WebElement';
 
 describe('Sender Management Functionalities', () => {
 
