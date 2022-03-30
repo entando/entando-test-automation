@@ -204,7 +204,7 @@ describe('File browser', () => {
       cy.wrap(testFolderInfo.name).as('folderToBeDeleted');
       cy.validateToast(currentPage);
       cy.validateUrlPathname('/file-browser');
-      currentPage.getContent().getTableRows().should('have.length', 7);
+      currentPage.getContent().getTableRows().should('have.length', 6);
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
       currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
     });
@@ -266,7 +266,7 @@ describe('File browser', () => {
       currentPage.getContent().clickUpButton();
       cy.wait('@openedFolder');
       currentPage.getContent().getFilesTable().should('exist').and('be.visible');
-      currentPage.getContent().getTableRows().should('have.length', 7);
+      currentPage.getContent().getTableRows().should('have.length', 6);
       currentPage.getContent().getFolderLink(-1).should('contain', testFolderInfo.name);
     });
 
