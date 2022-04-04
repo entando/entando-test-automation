@@ -29,9 +29,15 @@ describe([Tag.GTS], 'Pages Designer', () => {
   });
 
   beforeEach(() => {
-    cy.wrap(null).as('widgetToBeDeleted');
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
+    cy.pagesController()
+      .then((controller => controller.intercept({ method: 'GET' }, 'sidebarLoaded', '/homepage/widgets?status=published')));
+    cy.pagesController()
+      .then((controller => controller.intercept({ method: 'GET' }, 'pageWidgetsLoaded', `/${page.code}/widgets?status=draft`)));
+    cy.pagesController()
+      .then((controller => controller.intercept({method: 'PUT'}, 'widgetAddedToPage', `/${page.code}/widgets/*`)));
+    cy.wrap(null).as('widgetToBeDeleted');
   });
 
   afterEach(() => {
@@ -61,7 +67,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
       addWidgetToPageFrame(currentPage, page.pageModel, 0, 0, 1, 0);
-      cy.wait(1000); //wait for page to update
+
       currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                  .then(contents => {
@@ -77,7 +83,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
       currentPage = openDesignerPage();
       selectPageFromPageTreeTable(currentPage, page.code);
       addWidgetToPageFrame(currentPage, page.pageModel, 0, 0, 1, 0);
-      cy.wait(1000); //wait for page to update
+
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--draft')
                  .and('have.attr', 'title').should('eq', 'Published, with pending changes');
@@ -92,6 +98,8 @@ describe([Tag.GTS], 'Pages Designer', () => {
       selectPageFromPageTreeTable(currentPage, page.code);
       currentPage.getContent().dragGridWidgetToFrame(1, 0, 1, 1);
       cy.wrap(getGridFrame(page.pageModel, 1, 1)).as('widgetToBeDeleted');
+      cy.wait('@widgetAddedToPage');
+      currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).should('have.class', 'EmptyFrame');
 
       currentPage.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                  .should(contents => expect(contents).to.have.prop('tagName').to.equal('SPAN'));
@@ -107,9 +115,11 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
     const addWidgetToPageFrame = (browserPage, pageTemplate, widgetSection, widgetPos, gridRow, gridCol) => {
       browserPage.getContent().clickSidebarTab(0);
+      cy.get(`${htmlElements.div}#toolbar-tab-pane-0`).should('be.visible');
       browserPage.getContent().dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol);
 
       cy.wrap(getGridFrame(pageTemplate, gridRow, gridCol)).as('widgetToBeDeleted');
+      cy.wait('@widgetAddedToPage');
     };
 
   });
@@ -158,7 +168,9 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
   const selectPageFromPageTreeTable = (browserPage, pageCode) => {
     browserPage.getContent().clickSidebarTab(1);
-    browserPage.getContent().selectPageFromSidebarPageTreeTable(pageCode);
+    cy.wait('@sidebarLoaded');
+    browserPage.getContent().designPageFromSidebarPageTreeTable(pageCode);
+    cy.wait('@pageWidgetsLoaded');
   };
 
 });

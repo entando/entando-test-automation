@@ -51,7 +51,6 @@ export default class EditPage extends Content {
     }
     this.typeName(name);
     this.submitForm();
-    cy.wait(1000);
     return new AppPage(GroupsPage);
   }
 

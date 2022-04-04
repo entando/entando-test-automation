@@ -9,6 +9,8 @@ describe('Database', () => {
     cy.wrap(null).as('backupToBeDeleted');
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
+    cy.databaseController().then(controller => controller.intercept({method: 'GET'}, 'databaseListLoaded', '?page=1&pageSize=0'));
+    cy.databaseController().then(controller => controller.intercept({method: 'DELETE'}, 'backupDeleted', '/report/**'));
   });
 
   afterEach(() => {
@@ -97,9 +99,10 @@ describe('Database', () => {
       currentPage.getContent().getTableRows().should('exist').and('have.length', 1);
       currentPage.getContent().clickDeleteButtonByIndex(0);
       currentPage.getDialog().confirm();
+      cy.wait('@backupDeleted').then(() => cy.wrap(null).as('backupToBeDeleted'));
+      cy.wait(['@databaseListLoaded', '@databaseListLoaded']);
       currentPage.getDialog().get().should('not.exist');
-      currentPage.getContent().getTableRows().should('not.exist');
-      cy.wrap(null).as('backupToBeDeleted');
+      currentPage.getContent().getAlert().should('exist').and('be.visible');
     });
 
     it([Tag.FEATURE, 'ENG-3239'], 'When canceling deletion, the modal is closed and the backup is not deleted', () => {
@@ -149,13 +152,10 @@ describe('Database', () => {
   });
 
   const createBackup = () => {
-    return cy.databaseController().then(controller => {
-      controller.addBackup();
-      cy.wait(1000);  //wait for POST request to finish
-    });
+    return cy.databaseController().then(controller => controller.addBackup());
   };
 
-  //have to perform a GET request because the POST request doesn't return the backup code
+  //FIXME have to perform a GET request because the POST request doesn't return the backup code
   const saveBackupCode = () => {
     cy.databaseController().then(controller => controller.getBackupList())
       .then(response => cy.wrap(response.body.payload[response.body.payload.length - 1].code).as('backupToBeDeleted'));
@@ -165,6 +165,7 @@ describe('Database', () => {
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getAdministration().open();
     currentPage = currentPage.openDatabase();
+    cy.wait('@databaseListLoaded');
     return currentPage;
   };
 

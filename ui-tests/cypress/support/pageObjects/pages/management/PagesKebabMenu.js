@@ -19,17 +19,16 @@ export default class PagesKebabMenu extends KebabMenu {
   details           = '.PageTreeActionMenuButton__menu-item-details';
   delete            = '.PageTreeActionMenuButton__menu-item-delete';
   preview           = '.PageTreeActionMenuButton__menu-item-preview';
-  viewPublishedPage = '.PageTreeActionMenuButton__menu-item-viewPublishedPage disabled';
+  viewPublishedPage = '.PageTreeActionMenuButton__menu-item-viewPublishedPage';
 
 
   get() {
-    return this.parent.getTableRows().eq(-1)
+    return this.parent.getTableRow(this.code)
                       .find(`${htmlElements.div}[role="none"]`)
                       .children(htmlElements.div);         
   }
 
   open() {
-    cy.wait(1000); //wait for the kebab menu to load
     this.get()
         .children(`${htmlElements.button}[id="WidgetListRow-dropown"]`)
         .click();
@@ -114,13 +113,11 @@ export default class PagesKebabMenu extends KebabMenu {
 
   clickClone() {
     this.getClone().click();
-    cy.wait(1000);
     return new AppPage(ClonePage);
   }
 
   openDesigner() {
     this.getDesign().click();
-    cy.wait(1000);
     return new AppPage(DesignerPage);
   }
 

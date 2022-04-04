@@ -62,14 +62,13 @@ export default class ManagementPage extends Content {
                .children(htmlElements.tr);
   }
 
-  getTableRow(code) {
-    return this.getKebabMenu(code)
-               .get()
-               .parents(htmlElements.tr);
+  getTableRow(pageTitle) {
+    return this.getTableRows()
+               .contains(htmlElements.tr, pageTitle);
   }
 
-  getKebabMenu(code) {
-    return new PagesKebabMenu(this, code);
+  getKebabMenu(pageTitle) {
+    return new PagesKebabMenu(this, pageTitle);
   }
 
   getAddButton() {
@@ -91,7 +90,6 @@ export default class ManagementPage extends Content {
 
   clickSearchButton() {
     this.getSearchButton().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(SearchResultPage);
   }
 
@@ -100,11 +98,10 @@ export default class ManagementPage extends Content {
         .click();
   }
 
-  toggleRowSubPages(code) {
-    this.getTableRow(code)
+  toggleRowSubPages(pageTitle) {
+    this.getTableRow(pageTitle)
         .find(this.expandNode)
         .click();
-    cy.wait(1000); //TODO find a better way to identify when the page list is expanded
   }
 
   dragRow(source, target, pos = 'top') {

@@ -1,6 +1,7 @@
 import HomePage           from '../../support/pageObjects/HomePage';
 import MFEWidgetsPage     from '../../support/pageObjects/components/mfeWidgets/MFEWidgetsPage';
 import {generateRandomId} from '../../support/utils';
+import {htmlElements}     from '../../support/pageObjects/WebElement';
 
 describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
@@ -62,8 +63,6 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
         currentPage = currentPage.getContent().openAddWidgetForm();
-        //TODO validate this wait
-        cy.wait(500);
       });
 
       it('Adding a basic widget with icon', () => {
@@ -114,9 +113,8 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
       it('Editing widget by modifying all mandatory fields', () => {
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
-        //TODO validate this wait
-        cy.wait(500);
         cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+        currentPage.getContent().getTitleInput().should('have.value', SAMPLE_BASIC_WIDGET.titles.en);
         currentPage.getContent().editFormFields({
           name: SAMPLE_WIDGET_NAMES[1],
           group: 'Free Access',
@@ -127,15 +125,13 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
         currentPage = currentPage.getMenu().getComponents().open();
         currentPage = currentPage.openMFE_Widgets();
-        cy.wait(500);
         currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[1]);
       });
 
       it('Editing a used widget via widget list modifying all mandatory fields', () => {
         currentPage = currentPage.getContent().openKebabMenuByWidgetCode(SAMPLE_BASIC_WIDGET_ID, WIDGET_ACTIONS.EDIT);
-        //TODO validate this wait
-        cy.wait(500);
         cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+        currentPage.getContent().getTitleInput().should('have.value', SAMPLE_BASIC_WIDGET.titles.en);
         currentPage.getContent().editFormFields({
           iconUpload,
           name: SAMPLE_WIDGET_NAMES[2],
@@ -150,6 +146,13 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
     describe('Editing via different section', () => {
 
+      beforeEach(() => {
+        cy.pagesController()
+          .then((controller => controller.intercept({method: 'GET'}, 'sidebarLoaded', '/homepage/widgets?status=published')));
+        cy.pagesController()
+          .then((controller => controller.intercept({method: 'GET'}, 'pageWidgetsLoaded', `/${DEMOPAGE.code}/widgets?status=published`)));
+      });
+
       it('Editing a used widget via page designer modifying all mandatory fields', () => {
         cy.widgetsController().then(controller => controller.addWidget(SAMPLE_BASIC_WIDGET));
         cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToBeDelete');
@@ -158,22 +161,17 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         currentPage = currentPage.getMenu().getPages().open();
         currentPage = currentPage.openDesigner();
         selectPageFromSidebar(DEMOPAGE.code);
-        //TODO validate this wait
-        cy.wait(500);
         currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SAMPLE_BASIC_WIDGET_ID)
                                  .open()
                                  .openEdit();
-        //TODO validate this wait
-        cy.wait(500);
         cy.validateUrlPathname(`/widget/edit/${SAMPLE_BASIC_WIDGET_ID}`);
+        currentPage.getContent().getTitleInput().should('have.value', SAMPLE_BASIC_WIDGET.titles.en);
         currentPage.getContent().editFormFields({
           name: SAMPLE_WIDGET_NAMES[1],
           group: 'Free Access',
           iconChoose
         });
         currentPage = currentPage.getContent().submitForm();
-        //TODO validate this wait
-        cy.wait(3000);
         cy.validateUrlPathname('/widget');
         currentPage.getContent().getListArea().should('contain', SAMPLE_WIDGET_NAMES[1]);
       });
@@ -201,8 +199,6 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
         cy.wrap(SAMPLE_BASIC_WIDGET_ID).as('widgetToBeDelete');
         cy.pageWidgetsController(DEMOPAGE.code).then(controller => controller.addWidget(FRAMENUM, SAMPLE_BASIC_WIDGET_ID));
         cy.wrap(FRAMENUM).as('widgetsToBeRemovedFromPage');
-        //TODO validate this wait
-        cy.wait(500);
 
         cy.log('now attempt to delete the widget');
         currentPage = currentPage.getMenu().getComponents().open();
@@ -228,10 +224,11 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
     const selectPageFromSidebar = (pageCode) => {
       const currentPageContent = currentPage.getContent();
       currentPageContent.clickSidebarTab(1);
-      //TODO validate this wait
-      cy.wait(3000);
-      currentPageContent.selectPageFromSidebarPageTreeTable(pageCode);
+      cy.wait('@sidebarLoaded');
+      currentPageContent.designPageFromSidebarPageTreeTable(pageCode);
+      cy.wait('@pageWidgetsLoaded');
       currentPageContent.clickSidebarTab(0);
+      cy.get(`${htmlElements.div}#toolbar-tab-pane-0`).should('be.visible');
     };
 
   });

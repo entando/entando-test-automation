@@ -181,7 +181,6 @@ export default class MFEWidgetForm extends Content {
           break;
         case 'iconUpload':
           this.getIconUpload().selectFile(payload[field], {force: true});
-          cy.wait(500);
           break;
         case 'iconChoose':
           this.getIconChooseButton().click();

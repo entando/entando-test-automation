@@ -13,8 +13,7 @@ export default class AddPage extends Content {
   codeInput = `${htmlElements.input}[name=code]`;
   pageTreeSelector = `${htmlElements.table}.PageTreeSelector`;
   selectArea = `${htmlElements.span}.PageTreeSelector__select-area`;
-  saveAndDesignButton = `${htmlElements.button}.
-  PageForm__save-and-configure-btn`;
+  saveAndDesignButton = `${htmlElements.button}.PageForm__save-and-configure-btn`;
   saveButton = `${htmlElements.button}.PageForm__save-btn`;
 
   getTitleInput(lang) {
@@ -64,13 +63,11 @@ export default class AddPage extends Content {
 
   clickSaveAndDesign() {
     this.getSaveAndDesignButton().click();
-    cy.wait(1000); // TODO find a better way to identify when the page loaded
     return new AppPage(DesignerPage);
   }
 
   clickSave() {
     this.getSaveButton().click();
-    cy.wait(1000); // TODO find a better way to identify when the page loaded
     return new AppPage(ManagementPage);
   }
 }

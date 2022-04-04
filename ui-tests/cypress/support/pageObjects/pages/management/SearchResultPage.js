@@ -80,7 +80,6 @@ export default class SearchResultPage extends Content {
 
   clickSearchButton() {
     this.getSearchButton().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AppPage(SearchResultPage);
   }
 
