@@ -1,91 +1,108 @@
-import HomePage       from '../../../support/pageObjects/HomePage';
 import {htmlElements} from '../../../support/pageObjects/WebElement';
 
 describe('SMTP Server Functionalities', () => {
 
-  let currentPage;
-
   beforeEach(() => {
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
-    currentPage = openEmailConfigurationPage();
+    cy.get('@currentPage')
+      .then(page => page
+          .getMenu().getAdministration().open()
+          .openEmailConfiguration());
   });
 
   afterEach(() => {
-    cy.emailConfigController().then(controller => controller.defaultSettings());
+    cy.smtpServerController().then(controller => controller.defaultSettings());
     cy.kcUILogout();
   });
 
   it([Tag.SMOKE, 'ENG-3298'], 'SMTP Current Configuration is displayed', () => {
-    currentPage.getContent().getSmtpServerTab()
-               .should('be.visible')
-               .and('have.class', 'active');
-    currentPage.getContent().getSenderManagementTab()
-               .should('be.visible')
-               .and('not.have.class', 'active');
+    cy.get('@currentPage')
+      .then(page => {
+        page.getContent().getSMTPServerTab()
+            .should('be.visible')
+            .and('have.class', 'active');
+        page.getContent().getSenderManagementTab()
+            .should('be.visible')
+            .and('not.have.class', 'active');
 
-    currentPage.getContent().getActiveSwitch()
-               .children(htmlElements.span).eq(2)
-               .should('be.visible')
-               .and('have.text', 'OFF');
-    currentPage.getContent().getDebugSwitch()
-               .children(htmlElements.span).eq(2)
-               .should('be.visible')
-               .and('have.text', 'OFF');
+        page.getContent().getActiveSwitchLabel()
+            .should('be.visible')
+            .and('have.text', 'Active ');
+        page.getContent().getActiveSwitchSwitch()
+            .should('be.visible')
+            .and('have.class', 'bootstrap-switch-off');
 
-    currentPage.getContent().getHostInput()
-               .should('be.visible')
-               .and('have.value', 'localhost');
-    currentPage.getContent().getPortInput()
-               .should('be.visible')
-               .and('have.value', '25000');
-    currentPage.getContent().getSecurityRender()
-               .should('be.visible')
-               .and('have.class', 'active')
-               .and('have.text', 'None');
-    currentPage.getContent().getCheckServerIdSwitch()
-               .children(htmlElements.span).eq(0)
-               .should('be.visible')
-               .and('have.text', 'ON');
-    currentPage.getContent().getTimeOutInput()
-               .should('be.visible')
-               .and('be.empty');
+        page.getContent().getDebugSwitchLabel()
+            .should('be.visible')
+            .and('have.text', 'Debug Mode ');
+        page.getContent().getDebugSwitchSwitch()
+            .should('be.visible')
+            .and('have.class', 'bootstrap-switch-off');
 
-    currentPage.getContent().getUserNameInput()
-               .should('be.visible')
-               .and('be.empty');
-    currentPage.getContent().getPassWordInput()
-               .should('be.visible')
-               .and('be.empty');
+        page.getContent().getHostInput()
+            .should('be.visible')
+            .and('have.value', 'localhost');
+
+        page.getContent().getPortInput()
+            .should('be.visible')
+            .and('have.value', '25000');
+
+        page.getContent().getSecurityRender()
+            .should('be.visible')
+            .children(htmlElements.label).eq(0)
+            .and('have.text', 'None')
+            .and('have.class', 'active');
+
+        page.getContent().getCheckServerIdSwitchLabel()
+            .should('be.visible')
+            .and('have.text', 'Check Server Identity ');
+        page.getContent().getCheckServerIdSwitchSwitch()
+            .should('be.visible')
+            .and('have.class', 'bootstrap-switch-on');
+
+        page.getContent().getTimeOutInput()
+            .should('be.visible')
+            .and('be.empty');
+
+        page.getContent().getUserNameInput()
+            .should('be.visible')
+            .and('be.empty');
+
+        page.getContent().getPasswordInput()
+            .should('be.visible')
+            .and('be.empty');
+
+        page.getContent().getTestConfigurationButton()
+            .should('be.visible')
+            .and('be.enabled');
+        page.getContent().getSendTestEmailButton()
+            .should('be.visible')
+            .and('be.enabled');
+        page.getContent().getSaveButton()
+            .should('be.visible')
+            .and('be.enabled');
+      });
   });
 
   it([Tag.SANITY, 'ENG-3298'], 'Update configuration', () => {
-    currentPage.getContent().getPortInput()
-               .clear().type('50000');
-
-    currentPage.getContent().submit()
-               .click();
-
-    cy.validateToast(currentPage);
+    cy.get('@currentPage')
+      .then(page => page.getContent().getPortInput().then(input => page.getContent().type(input, '50000')))
+      .then(page => page.getContent().save())
+      .then(page => cy.validateToast(page));
   });
 
   it([Tag.ERROR, 'ENG-3298'], 'Error Validation', () => {
-    currentPage.getContent().getHostInput()
-               .clear().blur();
-
-    currentPage.getContent().searchFieldError()
-               .should('be.visible')
-               .and('have.text', 'Field required');
-
-    currentPage.getContent().getToolButton()
-               .children()
-               .should('be.disabled');
+    cy.get('@currentPage')
+      .then(page => page.getContent().getHostInput().then(input => {
+        page.getContent().clear(input);
+        page.getContent().blur(input);
+        page.getContent().getInputError(input)
+            .should('be.visible')
+            .and('have.text', 'Field required');
+        page.getContent().getToolButtons().children()
+            .each(button => cy.wrap(button).should('be.disabled'));
+      }));
   });
-
-  const openEmailConfigurationPage = () => {
-    currentPage = new HomePage();
-    currentPage = currentPage.getMenu().getAdministration().open();
-    return currentPage.openEmailConfiguration();
-  };
 
 });

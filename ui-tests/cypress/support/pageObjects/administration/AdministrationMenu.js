@@ -4,11 +4,11 @@ import {SubMenu} from '../app/MenuElement.js';
 
 import AppPage from '../app/AppPage.js';
 
-import DatabasePage         from './database/DatabasePage';
-import FilesListPage        from './fileBrowser/FilesListPage';
-import Languages_LabelsPage from './languages_Labels/Languages_LabelsPage';
-import EmailConfigurationPage  from './emailConfiguration/EmailConfigurationPage';
+import DatabasePage            from './database/DatabasePage';
+import FilesListPage           from './fileBrowser/FilesListPage';
+import Languages_LabelsPage    from './languages_Labels/Languages_LabelsPage';
 import ReloadConfigurationPage from './reloadConfiguration/ReloadConfigurationPage';
+import SMTPServerPage          from './emailConfiguration/SMTPServerPage';
 
 export default class AdministrationMenu extends SubMenu {
 
@@ -59,8 +59,8 @@ export default class AdministrationMenu extends SubMenu {
   }
 
   openEmailConfiguration() {
-    this.getEmailConfiguration().click();
-    return new AppPage(EmailConfigurationPage);
+    this.getEmailConfiguration().then(button => SMTPServerPage.openPage(button));
+    return cy.wrap(new AppPage(SMTPServerPage)).as('currentPage');
   }
 
   openReloadConfiguration() {
