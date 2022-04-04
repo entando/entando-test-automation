@@ -51,9 +51,10 @@ describe([Tag.GTS], 'Content Templates', () => {
 
     currentPage = currentPage.getContent().submitForm();
     currentPage.getContent().getTableRow(template.id).find(htmlElements.td).then(($tds) => {
-      cy.wrap($tds).eq(0).should('contain.text', template.id);
-      cy.wrap($tds).eq(2).should('contain.text', template.contentType);
-      cy.wrap($tds).eq(4).should('contain.text', template.descr);
+      cy.wrap($tds).eq(0).should('contain.text', template.descr);
+      cy.wrap($tds).eq(1).should('contain.text', template.contentTypeText);
+      cy.wrap($tds).eq(2).should('contain.text', template.id);
+
     });
 
     templateToBeDeleted = true;
@@ -71,7 +72,7 @@ describe([Tag.GTS], 'Content Templates', () => {
     currentPage.getContent().typeName(newName);
 
     currentPage = currentPage.getContent().submitForm();
-    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(4).should('contain.text', template.descr);
+    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(0).should('contain.text', template.descr);
   });
 
   it('Delete content template', () => {
@@ -80,28 +81,28 @@ describe([Tag.GTS], 'Content Templates', () => {
     currentPage = openContentTemplatesPage();
 
     cy.log(`Delete content template with id ${template.id}`);
-    currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
-    currentPage.getDialog().confirm();
+    currentPage = currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
+    currentPage = currentPage.getContent().submitCancel();
     currentPage.getContent().getTable().should('not.contain', template.id);
   });
 
-  it('Search for content template', () => {
+  it.only('Search for content template', () => {
     addContentTemplate(template);
     templateToBeDeleted = true;
 
     currentPage = openContentTemplatesPage();
 
     cy.log(`Search for content template with name ${template.descr}`);
-    currentPage.getContent().typeSearchKeyword(template.descr);
+    currentPage.getContent().typeSearchKeyword(template.descr); //TODO understand if there's a bug
     currentPage.getContent().clickSearch();
 
-    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(4).should('contain.text', template.descr);
+    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(1).should('contain.text', template.descr);
   });
 
-  it('Check pagination for zero results if info displayed is correct (ENG-2680)', () => {
+  it.only('Check pagination for zero results if info displayed is correct (ENG-2680)', () => {
     currentPage = openContentTemplatesPage();
 
-    currentPage.getContent().typeSearchKeyword('z');
+    currentPage.getContent().typeSearchKeyword('z'); //TODO same problem previous test
     currentPage.getContent().clickSearch();
 
     cy.wait(1000);
@@ -111,7 +112,7 @@ describe([Tag.GTS], 'Content Templates', () => {
                .getItemsTotal().invoke('text').should('be.equal', '0');
   });
 
-  it('Delete content template referenced by a published content - not allowed', () => {
+  it('Delete content template referenced by a published content - not allowed', () => { //problem with a post
     const content = {
       description: 'test',
       mainGroup: 'administrators',
