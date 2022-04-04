@@ -1,16 +1,19 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content      from '../../app/Content.js';
-import AdminPage      from '../../app/AdminPage.js';
-import KebabMenu    from '../../app/KebabMenu.js';
-import Pagination   from '../../app/Pagination.js';
-import DeleteDialog from '../../app/DeleteDialog.js';
-import TemplateForm from './TemplateForm.js';
+import Content           from '../../app/Content.js';
+import AdminPage         from '../../app/AdminPage.js';
+import KebabMenu         from '../../app/KebabMenu.js';
+import Pagination        from '../../app/Pagination.js';
+import TemplateForm                       from './TemplateForm.js';
+import DeleteAdminPage from '../../app/DeleteAdminPage';
 
 export default class TemplatesPage extends Content {
 
+  main = `${htmlElements.div}[id="main"]`;
+  addButton = `${htmlElements.a}[class="btn btn-primary pull-right mb-5"]`;
+
   filterRow = `${htmlElements.div}.ContentTemplateList__filter.row`;
-  searchBtn = `${htmlElements.button}.ContentTemplateList__searchform--button`;
+  searchBtn = `${htmlElements.button}[.ContentTemplateList__searchform--button]`;
 
   getSearchArea() {
     return this.get()
@@ -40,7 +43,7 @@ export default class TemplatesPage extends Content {
 
   getTableRow(code) {
     return this.getTable()
-               .find(`#ContentTemplateList-dropdown-${code}`)
+               .contains(htmlElements.td, code)
                .closest(htmlElements.tr);
   }
 
@@ -58,8 +61,9 @@ export default class TemplatesPage extends Content {
   }
 
   getAddButton() {
-    return this.getFootArea()
-               .find(htmlElements.a);
+    return this.get()
+               .children(this.main)
+               .find(this.addButton);
   }
 
   typeSearchKeyword(value) {
@@ -78,23 +82,29 @@ export default class TemplatesPage extends Content {
 
 class TemplatesKebabMenu extends KebabMenu {
 
-  edit   = `${htmlElements.li}.ContentTemplateList__menu-item-edit`;
-  delete = `${htmlElements.li}.ContentTemplateList__menu-item-delete`;
-
   get() {
     return this.parent.getTableRows()
-               .find(`#ContentTemplateList-dropdown-${this.code}`)
-               .closest(htmlElements.div);
+                      .contains(htmlElements.td, this.code)
+                      .closest(htmlElements.tr)
   }
+
+  open() {
+    this.get()
+        .find(`${htmlElements.button}[class="btn btn-menu-right dropdown-toggle"]`)
+        .click();
+    return this;
+  }
+
 
   getEdit() {
     return this.get()
-               .find(this.edit);
+               .contains(htmlElements.li, 'Edit');
   }
 
   getDelete() {
     return this.get()
-               .find(this.delete);
+               .contains(htmlElements.li, 'Delete');
+
   }
 
   openEdit() {
@@ -105,7 +115,8 @@ class TemplatesKebabMenu extends KebabMenu {
 
   clickDelete() {
     this.getDelete().click();
-    this.parent.parent.getDialog().setBody(DeleteDialog);
+    cy.wait(1000);
+    return new AdminPage(DeleteAdminPage);
   }
 
 }
