@@ -55,16 +55,19 @@ export class Dialog extends WebElement {
   close() {
     this.getCloseButton().click();
     this.body = null;
+    return cy.get('@currentPage');
   }
 
   cancel() {
     this.getCancelButton().click();
     this.body = null;
+    return cy.get('@currentPage');
   }
 
   confirm() {
     this.getConfirmButton().click();
     this.body = null;
+    return cy.get('@currentPage');
   }
 
 }

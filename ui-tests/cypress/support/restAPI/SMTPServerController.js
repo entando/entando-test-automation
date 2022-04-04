@@ -2,13 +2,13 @@ import AbstractController from './abstractController';
 
 import {SMTPServerAPIURL} from './controllersEndPoints';
 
-Cypress.Commands.add('emailConfigController', () => {
+Cypress.Commands.add('smtpServerController', () => {
   cy.get('@tokens').then(tokens => {
-    return new EmailConfigController(SMTPServerAPIURL, tokens.access_token);
+    return new SMTPServerController(SMTPServerAPIURL, tokens.access_token);
   });
 });
 
-export default class EmailConfigController extends AbstractController {
+export default class SMTPServerController extends AbstractController {
 
   smtpDefaultSettings = {
     active: false,

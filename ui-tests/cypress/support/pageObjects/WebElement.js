@@ -28,6 +28,7 @@ export const htmlElements = {
   button: 'button',
   select: 'select',
   option: 'option',
+  label: 'label',
   fieldset: 'fieldset',
   legend: 'legend',
   textarea: 'textarea',
