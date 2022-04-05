@@ -10,16 +10,25 @@ import DeleteAdminPage from '../../app/DeleteAdminPage';
 export default class TemplatesPage extends Content {
 
   main = `${htmlElements.div}[id="main"]`;
+  form  = `${htmlElements.form}[id="search"]`;
   addButton = `${htmlElements.a}[class="btn btn-primary pull-right mb-5"]`;
-
   filterRow = `${htmlElements.form}[class="form-horizontal"]`;
   searchBtn = `${htmlElements.button}[class="btn btn-primary"]`;
 
-  getSearchArea() {
+  getMain(){
     return this.get()
                .children(this.main)
+  }
+
+  getSearchArea() {
+    return this.getMain()
                .find(this.filterRow);
   }
+  getForm() {
+    return this.getMain()
+               .children(this.form);
+  }
+
 
   getSearchInput() {
     return this.getSearchArea()

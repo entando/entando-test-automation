@@ -10,11 +10,12 @@ export default class TemplateForm extends Content {
   contentTypeInput  = `${htmlElements.select}[name="contentType"]`;
   assistButton      = `${htmlElements.a}[id="popover-inline-editing-assist"]`;
   contentShapeInput = `${htmlElements.div}[class="display-block"]`;
-  aceTextInput      = `${htmlElements.div}[class="CodeMirror cm-s-eclipse CodeMirror-wrap"]`;
+  htmlCode = `${htmlElements.div}[class="CodeMirror-code"]`;
+  aceTextInput      = `${htmlElements.div}.CodeMirror-lines`;
   stylesheetInput   = `${htmlElements.input}[name='stylesheet']`;
   submitButton      = `${htmlElements.button}[type='submit'][class="btn btn-primary pull-right"]`;
   cancelButton      = `${htmlElements.button}[type='button'].AddContentTypeFormBody__cancel--btn.btn-default`;
-
+  alert             = `${htmlElements.div}[class="alert alert-danger alert-dismissable"]`;
   getFormArea() {
     return this.get()
                .find(htmlElements.form);
@@ -44,8 +45,7 @@ export default class TemplateForm extends Content {
   getContentShapeInput() {
     return this.getFormArea()
                .find(this.contentShapeInput)
-               .find(this.aceTextInput)
-               .click();
+               .find(this.aceTextInput);
   }
 
 
@@ -67,7 +67,7 @@ export default class TemplateForm extends Content {
   }
 
   typeHTMLModel(value) {
-    this.getContentShapeInput().type(value);
+    this.getContentShapeInput().click().type(value);
   }
 
   typeStylesheet(value) {
@@ -82,8 +82,13 @@ export default class TemplateForm extends Content {
     this.getNameInput().clear();
   }
 
-  clearHTMLModel() {
-    this.getContentShapeInput().focus().clear();
+  clearHTMLModel(text) {
+    this.getContentShapeInput().click();
+    for (let i = 0; i < text.length; i++) {
+      cy.realPress(['Shift', 'ArrowLeft']);
+    }
+    cy.realPress(['Backspace']);
+
   }
 
   editFormFields(payload) {
@@ -116,6 +121,11 @@ export default class TemplateForm extends Content {
       }
     });
   }
+  getAlert(){
+    return this.getFormArea()
+               .find(this.alert);
+  }
+
 
   getSaveButton() {
     return this.getFormArea()

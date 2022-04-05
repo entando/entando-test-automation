@@ -11,6 +11,9 @@ const openContentTemplatesPage = () => {
 const addContentTemplate    = template => cy.contentTemplatesController().then(controller => controller.addContentTemplate(template));
 const deleteContentTemplate = id => cy.contentTemplatesController().then(controller => controller.deleteContentTemplate(id));
 
+const postContentType   = (code, name) => cy.contentTypesController().then(controller => controller.addContentType(code, name));
+const deleteContentType = (code) => cy.contentTypesController().then(controller => controller.deleteContentType(code));
+
 describe([Tag.GTS], 'Content Templates', () => {
 
   let currentPage;
@@ -99,28 +102,27 @@ describe([Tag.GTS], 'Content Templates', () => {
     currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(0).should('contain.text', template.descr);
   });
 
-  it('Check pagination for zero results if info displayed is correct (ENG-2680)', () => {
+  it('Empty template type should be not available', () => {
+    let template = {code: 'BAU', name: 'TEST'};
+
+    postContentType(template.code, template.name);
     currentPage = openContentTemplatesPage();
-
-    currentPage.getContent().typeSearchKeyword('z');
+    currentPage.getContent().searchType(template.code);
     currentPage.getContent().clickSearch();
-
     cy.wait(1000);
-    currentPage.getContent().getPagination()
-               .getItemsCurrent().invoke('text').should('be.equal', '0-0');
-    currentPage.getContent().getPagination()
-               .getItemsTotal().invoke('text').should('be.equal', '0');
+    currentPage.getContent().getForm().should('contain.text', 'There are no models available.')
+    deleteContentType(template.code);
   });
 
-  it('Delete content template referenced by a published content - not allowed', () => { //problem with a post
+  //FIX ME wait for api to be fixed
+  xit('Delete content template referenced by a published content - not allowed', () => {
     const content = {
       description: 'test',
       mainGroup: 'administrators',
       typeCode: 'BNR',
       attributes: [{code: 'title', values: {en: 'test', it: 'test'}}]
     };
-
-    const page = {
+      const page = {
       charset: 'utf-8',
       code: generateRandomId(),
       contentType: 'text/html',
@@ -152,28 +154,28 @@ describe([Tag.GTS], 'Content Templates', () => {
         const {body: {payload}} = response;
         contentId               = payload[0].id;
       });
-    cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
-    cy.seoPagesController().then(controller => controller.addNewPage(page));
-    cy.widgetsController(page.code)
-      .then(controller =>
-          controller.addWidget({
-            frameId: pageWidget.frameId,
-            code: pageWidget.code,
-            ownerGroup: pageWidget.config.ownerGroup,
-            joinGroups: pageWidget.config.joinGroups,
-            contentDescription: pageWidget.config.contentDescription,
-            modelId: pageWidget.config.modelId,
-            contentId: contentId
-          }));
+     cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
+     cy.seoPagesController().then(controller => controller.addNewPage(page));
+     cy.widgetsController(page.code)
+     .then(controller =>
+     controller.addWidget({
+     frameId: pageWidget.frameId,
+     code: pageWidget.code,
+     ownerGroup: pageWidget.config.ownerGroup,
+     joinGroups: pageWidget.config.joinGroups,
+     contentDescription: pageWidget.config.contentDescription,
+     modelId: pageWidget.config.modelId,
+     contentId: contentId
+     }));
 
-    currentPage = openContentTemplatesPage();
+     currentPage = openContentTemplatesPage();
 
-    cy.log(`Delete referenced content template with id ${template.id}`);
-    currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
-    currentPage.getDialog().confirm();
-    cy.validateToast(currentPage, 'referenced', false);
+     cy.log(`Delete referenced content template with id ${template.id}`);
+     currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
+     currentPage.getDialog().confirm();
+     cy.validateToast(currentPage, 'referenced', false);
 
-    cy.pagesController().then(controller => controller.deletePage(page.code));
+     cy.pagesController().then(controller => controller.deletePage(page.code));
     cy.contentsController().then(controller => {
       controller.updateStatus(contentId, 'draft');
       controller.deleteContent(contentId);
@@ -192,16 +194,23 @@ describe([Tag.GTS], 'Content Templates', () => {
 
     cy.log(`Verify that template id is mandatory`);
     currentPage.getContent().clearId();
-    currentPage.getContent().getSaveButton().should('be.disabled');
+    currentPage.getContent().submitForm();
+    currentPage.getContent().getAlert().should('be.visible');
+    currentPage.getContent().getFormArea().should('contain', 'is mandatory');
     currentPage.getContent().typeId(template.id);
 
     cy.log(`Verify that template name is mandatory`);
     currentPage.getContent().clearName();
-    currentPage.getContent().getSaveButton().should('be.disabled');
+    currentPage.getContent().submitForm();
+    currentPage.getContent().getAlert().should('be.visible');
+    currentPage.getContent().getFormArea().should('contain', 'is mandatory');
     currentPage.getContent().typeName(template.descr);
 
     cy.log(`Verify that template HTML model is mandatory`);
-    currentPage.getContent().clearHTMLModel();
-    currentPage.getContent().getSaveButton().should('be.disabled');
+    currentPage.getContent().clearHTMLModel(template.contentShape);
+    currentPage.getContent().submitForm();
+    currentPage.getContent().getAlert().should('be.visible');
+    currentPage.getContent().getFormArea().should('contain', 'is mandatory');
+    currentPage.getContent().typeHTMLModel(template.contentShape);
   });
 });
