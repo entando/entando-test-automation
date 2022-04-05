@@ -86,23 +86,23 @@ describe([Tag.GTS], 'Content Templates', () => {
     currentPage.getContent().getTable().should('not.contain', template.id);
   });
 
-  it.only('Search for content template', () => {
+  it('Search for content template', () => {
     addContentTemplate(template);
     templateToBeDeleted = true;
 
     currentPage = openContentTemplatesPage();
 
     cy.log(`Search for content template with name ${template.descr}`);
-    currentPage.getContent().typeSearchKeyword(template.descr); //TODO understand if there's a bug
+    currentPage.getContent().searchType(template.contentTypeText);
     currentPage.getContent().clickSearch();
 
-    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(1).should('contain.text', template.descr);
+    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(0).should('contain.text', template.descr);
   });
 
-  it.only('Check pagination for zero results if info displayed is correct (ENG-2680)', () => {
+  it('Check pagination for zero results if info displayed is correct (ENG-2680)', () => {
     currentPage = openContentTemplatesPage();
 
-    currentPage.getContent().typeSearchKeyword('z'); //TODO same problem previous test
+    currentPage.getContent().typeSearchKeyword('z');
     currentPage.getContent().clickSearch();
 
     cy.wait(1000);
