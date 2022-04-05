@@ -32,6 +32,7 @@ export default class AppPage extends AbstractPage {
   getToastList() {
     return this.parent.get()
                .children(htmlElements.body)
+               .children(this.root)
                .children(this.toastList);
   }
 
