@@ -1,7 +1,6 @@
 import {htmlElements} from '../WebElement.js';
 import Content        from './Content';
 import AdminPage      from './AdminPage';
-import TemplatesPage  from '../pages/templates/TemplatesPage';
 
 export default class DeleteAdminPage extends Content {
 
@@ -24,9 +23,9 @@ export default class DeleteAdminPage extends Content {
                .find(`${htmlElements.button}[type="submit"]`);
   }
 
-  submitCancel() {
+  submitCancel(pageObject) {
    this.getCancelButton().click()
-   return new AdminPage(TemplatesPage);
+   return new AdminPage(pageObject);
 
   }
 
