@@ -11,9 +11,9 @@ import AttributePage from './attributes/AttributePage';
 
 export default class EditPage extends Content {
 
-  nameInput  = `${htmlElements.input}[name="entityTypeDescription"]`;
-  codeInput  = `${htmlElements.input}[name="entityTypeCode"]`;
-  saveButton = `${htmlElements.button}[name="entandoaction:saveEntityType"]`;
+  codeInput           = `${htmlElements.input}[name=code]`;
+  nameInput           = `${htmlElements.input}[name=name]`;
+  saveButton          = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
   attributeTypeSelect = `${htmlElements.select}[name=type]`;
   addAttributeButton  = `${htmlElements.button}.ContentTypeForm__add`;
 

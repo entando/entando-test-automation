@@ -8,9 +8,9 @@ import EditPage from './EditPage';
 
 export default class AddPage extends Content {
 
-  nameInput  = `${htmlElements.input}[name="entityTypeDescription"]`;
-  codeInput  = `${htmlElements.input}[name="entityTypeCode"]`;
-  saveButton = `${htmlElements.button}[name="entandoaction:saveEntityType"]`;
+  codeInput  = `${htmlElements.input}[name=code]`;
+  nameInput  = `${htmlElements.input}[name=name]`;
+  saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
 
   getCodeInput() {
     return this.getContents()
