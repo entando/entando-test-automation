@@ -1,6 +1,7 @@
 import HomePage                                    from '../../support/pageObjects/HomePage';
 import {htmlElements}                              from '../../support/pageObjects/WebElement';
 import {generateRandomId, generateRandomNumericId} from '../../support/utils';
+import TemplatesPage                               from '../../support/pageObjects/pages/templates/TemplatesPage';
 
 const openContentTemplatesPage = () => {
   let currentPage = new HomePage();
@@ -21,7 +22,9 @@ describe([Tag.GTS], 'Content Templates', () => {
   let template = {
     contentType: 'BNR',
     contentTypeText: 'Banner',
-    contentShape: '<div>test</div>'
+    contentShape: '<div>test</div>',
+    testType: 'BAU',
+    testName:'Test'
   };
 
   let templateToBeDeleted = false;
@@ -85,7 +88,7 @@ describe([Tag.GTS], 'Content Templates', () => {
 
     cy.log(`Delete content template with id ${template.id}`);
     currentPage = currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
-    currentPage = currentPage.getContent().submitCancel();
+    currentPage = currentPage.getContent().submitCancel(TemplatesPage);
     currentPage.getContent().getTable().should('not.contain', template.id);
   });
 
@@ -103,15 +106,14 @@ describe([Tag.GTS], 'Content Templates', () => {
   });
 
   it('Empty template type should be not available', () => {
-    let template = {code: 'BAU', name: 'TEST'};
 
-    postContentType(template.code, template.name);
+    postContentType(template.testType, template.testName);
     currentPage = openContentTemplatesPage();
-    currentPage.getContent().searchType(template.code);
+    currentPage.getContent().searchType(template.testName);
     currentPage.getContent().clickSearch();
     cy.wait(1000);
     currentPage.getContent().getForm().should('contain.text', 'There are no models available.')
-    deleteContentType(template.code);
+    deleteContentType(template.testType);
   });
 
   //FIX ME wait for api to be fixed
