@@ -12,17 +12,18 @@ export default class TemplatesPage extends Content {
   main = `${htmlElements.div}[id="main"]`;
   addButton = `${htmlElements.a}[class="btn btn-primary pull-right mb-5"]`;
 
-  filterRow = `${htmlElements.div}.ContentTemplateList__filter.row`;
-  searchBtn = `${htmlElements.button}[.ContentTemplateList__searchform--button]`;
+  filterRow = `${htmlElements.form}[class="form-horizontal"]`;
+  searchBtn = `${htmlElements.button}[class="btn btn-primary"]`;
 
   getSearchArea() {
     return this.get()
-               .find(this.filterRow).eq(0);
+               .children(this.main)
+               .find(this.filterRow);
   }
 
   getSearchInput() {
     return this.getSearchArea()
-               .find(htmlElements.input);
+               .find(htmlElements.select);
   }
 
   getSearchButton() {
@@ -66,8 +67,8 @@ export default class TemplatesPage extends Content {
                .find(this.addButton);
   }
 
-  typeSearchKeyword(value) {
-    this.getSearchInput().type(value);
+  searchType(value) {
+    this.getSearchInput().select(value);
   }
 
   clickSearch() {
