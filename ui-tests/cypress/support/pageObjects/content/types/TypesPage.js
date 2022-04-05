@@ -11,7 +11,7 @@ import EditPage from './EditPage.js';
 
 export default class TypesPage extends Content {
 
-  addButton = `${htmlElements.a}.btn-primary`;
+  addButton = `${htmlElements.button}.ContentTypeList__addbutton`;
 
   getTable() {
     return this.getContents()
