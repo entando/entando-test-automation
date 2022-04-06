@@ -5,16 +5,17 @@ import AdminPage       from '../../app/AdminPage';
 import TemplatesPage from './TemplatesPage';
 
 export default class TemplateForm extends Content {
-  idInput           = `${htmlElements.input}[name='id']`;
-  nameInput         = `${htmlElements.input}[name='descr']`;
-  contentTypeInput  = `${htmlElements.div}.DropdownTypeahead.form-group`;
-  assistButton      = `${htmlElements.button}[type='button'].AddContentTemplateForm__editassistbtn`;
-  contentShapeInput = `${htmlElements.div}#contentShape`;
-  aceTextInput      = `${htmlElements.textarea}.ace_text-input`;
+  idInput           = `${htmlElements.input}[name="modelId"]`;
+  nameInput         = `${htmlElements.input}[name="description"]`;
+  contentTypeInput  = `${htmlElements.select}[name="contentType"]`;
+  assistButton      = `${htmlElements.a}[id="popover-inline-editing-assist"]`;
+  contentShapeInput = `${htmlElements.div}[class="display-block"]`;
+  htmlCode = `${htmlElements.div}[class="CodeMirror-code"]`;
+  aceTextInput      = `${htmlElements.div}.CodeMirror-lines`;
   stylesheetInput   = `${htmlElements.input}[name='stylesheet']`;
-  submitButton      = `${htmlElements.button}[type='submit'].AddContentTypeFormBody__save--btn.btn-primary`;
+  submitButton      = `${htmlElements.button}[type='submit'][class="btn btn-primary pull-right"]`;
   cancelButton      = `${htmlElements.button}[type='button'].AddContentTypeFormBody__cancel--btn.btn-default`;
-
+  alert             = `${htmlElements.div}[class="alert alert-danger alert-dismissable"]`;
   getFormArea() {
     return this.get()
                .find(htmlElements.form);
@@ -33,6 +34,7 @@ export default class TemplateForm extends Content {
   getContentTypeDropdown() {
     return this.getFormArea()
                .find(this.contentTypeInput);
+
   }
 
   getAssistButton() {
@@ -43,9 +45,9 @@ export default class TemplateForm extends Content {
   getContentShapeInput() {
     return this.getFormArea()
                .find(this.contentShapeInput)
-               .find(this.aceTextInput)
-               .first();
+               .find(this.aceTextInput);
   }
+
 
   getStylesheetInput() {
     return this.getFormArea()
@@ -61,12 +63,11 @@ export default class TemplateForm extends Content {
   }
 
   selectContentType(value) {
-    this.getContentTypeDropdown().click()
-        .contains(value).click();
+    this.getContentTypeDropdown().select(value);
   }
 
   typeHTMLModel(value) {
-    this.getContentShapeInput().focus().type(value);
+    this.getContentShapeInput().click().type(value);
   }
 
   typeStylesheet(value) {
@@ -81,8 +82,13 @@ export default class TemplateForm extends Content {
     this.getNameInput().clear();
   }
 
-  clearHTMLModel() {
-    this.getContentShapeInput().focus().clear();
+  clearHTMLModel(text) {
+    this.getContentShapeInput().click();
+    for (let i = 0; i < text.length; i++) {
+      cy.realPress(['Shift', 'ArrowLeft']);
+    }
+    cy.realPress(['Backspace']);
+
   }
 
   editFormFields(payload) {
@@ -115,14 +121,14 @@ export default class TemplateForm extends Content {
       }
     });
   }
-
-  getFootArea() {
+  getAlert(){
     return this.getFormArea()
-               .children(`${htmlElements.div}.row`).eq(1);
+               .find(this.alert);
   }
 
+
   getSaveButton() {
-    return this.getFootArea()
+    return this.getFormArea()
                .find(this.submitButton);
   }
 
