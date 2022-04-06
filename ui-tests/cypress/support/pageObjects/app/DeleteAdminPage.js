@@ -25,8 +25,7 @@ export default class DeleteAdminPage extends AdminContent {
 
   submitCancel(pageObject) {
     this.getCancelButton().click();
-    return new AdminPage(pageObject);
-
+    return cy.wrap(new AdminPage(pageObject)).as('currentPage');
   }
 
 
