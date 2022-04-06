@@ -70,9 +70,8 @@ export default class ContentMenu extends SubMenu {
   }
 
   openCategories() {
-    this.getCategories().click();
-    cy.wait(1000);
-    return new AdminPage(CategoriesPage);
+    this.getCategories().then(button => CategoriesPage.openPage(button));
+    return cy.wrap(new AdminPage(CategoriesPage)).as('currentPage');
   }
 
   openVersioning() {

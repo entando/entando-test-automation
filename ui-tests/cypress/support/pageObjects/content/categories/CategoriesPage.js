@@ -1,63 +1,83 @@
-import AddPage        from './AddPage';
-import AppPage        from '../../app/AppPage';
-import AdminContent   from '../../app/AdminContent';
-import EditPage       from './EditPage';
-import {htmlElements} from '../../WebElement.js';
+import AddPage         from './AddPage';
+import AdminPage       from '../../app/AdminPage';
+import AdminContent    from '../../app/AdminContent';
+import EditPage        from './EditPage';
+import {htmlElements}  from '../../WebElement.js';
+import DeleteAdminPage from '../../app/DeleteAdminPage';
+import KebabMenu       from '../../app/KebabMenu';
 
 export default class CategoriesPage extends AdminContent {
 
-  modalDeleteButton = `${htmlElements.button}#DeleteCategoryModal__button-delete`;
-  actionDelete      = `${htmlElements.li}.CategoryListMenuAction__menu-item-delete`;
+  categoriesTree = `${htmlElements.table}[id="categoryTree"]`;
+
+  static openPage(button) {
+    cy.get(button).click();
+    cy.wait(1000);
+  }
 
   getCategoriesTree() {
     return this.getContents()
-               .children(htmlElements.div).eq(2)
-               .children(htmlElements.div);
+               .find(this.categoriesTree);
   }
 
   getAddButton() {
     return this.getContents()
-               .children(htmlElements.div).eq(3)
                .children(htmlElements.div)
-               .children(htmlElements.a)
-               .children(htmlElements.button);
+               .children(htmlElements.a);
   }
 
   openAddCategoryPage() {
-    this.getAddButton().click();
-    cy.wait(1000);
-    return new AppPage(AddPage);
+    this.getAddButton().then(button => AddPage.openPage(button));
+    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
 
-  openEditCategoryPage(code) {
-    this.getCategoriesTree()
-        .find(`${htmlElements.button}#${code}-actions`)
-        .click();
-    cy.wait(500);
-    this.getCategoriesTree()
-        .find(`${htmlElements.li}[data-id=edit-${code}]`)
-        .click();
-    cy.wait(1000);
-
-    return new AppPage(EditPage);
+  getKebabMenu(code) {
+    return new CategoriesKebabMenu(this, code);
   }
 
-  deleteCategory(code) {
-    this.getCategoriesTree()
-        .find(`button#${code}-actions`)
-        .click();
-    cy.wait(500);
+}
 
-    this.getCategoriesTree()
-        .find(this.actionDelete)
-        .filter(':visible')
-        .click();
-    cy.wait(1500);
+class CategoriesKebabMenu extends KebabMenu {
 
-    this.parent.getDialog().confirm();
+
+  get() {
+    return this.parent.getCategoriesTree()
+               .contains(htmlElements.td, this.code)
+               .closest(htmlElements.tr);
+  }
+
+  getDropdownMenu() {
+    return this.get()
+               .find(`${htmlElements.button}[id="dropdownKebabRight1"]`);
+  }
+
+  open() {
+    this.getDropdownMenu()
+        .click();
+    return this;
+  }
+
+
+  getEdit() {
+    return this.get()
+               .contains(htmlElements.button, 'Edit');
+  }
+
+  getDelete() {
+    return this.get()
+               .contains(htmlElements.button, 'Delete');
+
+  }
+
+  openEdit() {
+    this.getEdit().click();
+    return cy.wrap(new AdminPage(EditPage)).as('currentPage');
+  }
+
+  clickDelete() {
+    this.getDelete().click();
     cy.wait(1000);
-
-    return new AppPage(CategoriesPage);
+    return cy.wrap(new AdminPage(DeleteAdminPage)).as('currentPage');
   }
 
 }
