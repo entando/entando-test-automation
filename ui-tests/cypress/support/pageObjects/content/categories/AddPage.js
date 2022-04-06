@@ -11,6 +11,8 @@ export default class AddPage extends Content {
   treePositionInput = `${htmlElements.table}#categoryTree`;
   saveButton        = `${htmlElements.button}[type="submit"]`;
 
+
+
   getTitleItInput() {
     return this.getContents()
                .find(this.titleItInput);
