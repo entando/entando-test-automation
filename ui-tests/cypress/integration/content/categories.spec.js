@@ -22,7 +22,7 @@ describe([Tag.GTS], 'Categories', () => {
     cy.kcUILogout();
   });
 
-  it('Create a category should be possible', () => {
+  it.only('Create a category should be possible', () => {
     currentPage = openCategoriesPage();
     currentPage = currentPage.getContent().openAddCategoryPage();
     currentPage = currentPage.getContent().addCategory(titleEn, titleIt, categoryCode, treePosition);
