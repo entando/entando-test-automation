@@ -4,6 +4,10 @@ export default class Content extends WebElement {
 
   content = `${htmlElements.div}.container-fluid`;
 
+  alertMessageDiv = `${htmlElements.div}.ErrorsAlert`;
+  alertAdminConsole      = `${htmlElements.div}.alert`;
+
+
   get() {
     return this.parent.get()
                .children(this.content);
@@ -30,6 +34,11 @@ export default class Content extends WebElement {
   getAlertMessage() {
     return this.getContents()
                .find(this.alertMessageDiv);
+  }
+
+  getAlert() {
+    return this.getContents()
+               .find(this.alertAdminConsole);
   }
 
   getInputError(input) {

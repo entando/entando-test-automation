@@ -1,16 +1,14 @@
 import AdminPage        from '../../app/AdminPage.js';
 import CategoriesPage from './CategoriesPage';
-import AdminContent        from '../../app/AdminContent.js';
+import Content        from '../../app/Content.js';
 import {htmlElements} from '../../WebElement';
 
-export default class EditPage extends AdminContent {
+export default class EditPage extends Content {
 
   titleItInput      = `${htmlElements.input}#langit`;
   titleEnInput      = `${htmlElements.input}#langen`;
   codeInput         = `${htmlElements.input}#categoryCode`;
   saveButton        = `${htmlElements.button}[type="submit"]`;
-
-
 
   getTitleItInput() {
     return this.getContents()
@@ -65,7 +63,7 @@ export default class EditPage extends AdminContent {
     this.typeTitleEn(titleEn);
     this.submitForm();
     cy.wait(1000);
-    return cy.wrap(new AdminPage(CategoriesPage)).as('currentPage');
+    return new AdminPage(CategoriesPage);
   }
 
 }
