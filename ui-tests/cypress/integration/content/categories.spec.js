@@ -37,27 +37,25 @@ describe([Tag.GTS], 'Categories', () => {
     currentPage = currentPage.getContent().openAddCategoryPage();
     // the current page shouldn't change because an error is returned from the add function and an alert is shown
     // in the same page (AddPage)
-    currentPage.getContent().addCategory(`AAA${titleEn}`, titleIt, categoryCode, treePosition);
-    currentPage.getContent().getAlert().should('be.visible');
+    currentPage = currentPage.getContent().addCategory(`AAA${titleEn}`, titleIt, categoryCode, treePosition);
+    currentPage.getContent().getAlertMessage().should('be.visible');
   });
 
-  it('Edit a category should be possible', () => {//root is changing. It's normal?
+  it('Edit a category should be possible', () => {
     const newTitleEn = `${titleEn}-new`;
     const newTitleIt = `${titleIt}-new`;
     postTestCategory();
     currentPage = openCategoriesPage();
-    currentPage = currentPage.getContent().openEditCategoryPage(titleEn);
+    currentPage = currentPage.getContent().getKebabMenu(titleEn).open().openEdit();
     currentPage = currentPage.getContent().editCategory(newTitleEn, newTitleIt);
     currentPage.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible');
-    currentPage = currentPage.getContent().openEditCategoryPage(newTitleEn);
-    currentPage = currentPage.getContent().editCategory(treePosition, treePosition);
   });
 
   it('Delete a category should be possible', () => {
     postTestCategory();
     currentPage = openCategoriesPage();
     currentPage.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible');
-    currentPage = currentPage.getContent().deleteCategory(titleEn);
+    currentPage = currentPage.getContent().getKebabMenu(titleEn).open().clickDelete();
     currentPage = currentPage.getContent().submitCancel(CategoriesPage);
     currentPage.getContent().getCategoriesTree().should('not.contain', titleEn);
     cy.wrap(null).as('categoryToBeDeleted');

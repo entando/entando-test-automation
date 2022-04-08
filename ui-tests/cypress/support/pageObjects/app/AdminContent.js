@@ -1,9 +1,14 @@
 import {htmlElements} from '../WebElement.js';
-
-import Content from './Content';
+import Content                    from './Content';
 
 export default class AdminContent extends Content {
 
-  alertMessageDiv = `${htmlElements.div}.alert`;
+
+  alertAdminConsole = `${htmlElements.div}.alert`;
+
+  getAlertMessage() {
+    return this.getContents()
+               .find(this.alertAdminConsole);
+  }
 
 }
