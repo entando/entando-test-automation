@@ -1,11 +1,11 @@
-import Content                     from '../../app/Content.js';
-import {DATA_TESTID, htmlElements} from '../../WebElement.js';
+import AdminContent                     from '../../app/AdminContent.js';
+import {htmlElements} from '../../WebElement.js';
 import Pagination                  from '../../app/Pagination.js';
 
 
-export default class VersioningPage extends Content {
-  searchForm = `${htmlElements.form}[${DATA_TESTID}=versioning_VersioningSearchForm_form]`;
-  searchDescInput = `${htmlElements.input}[name=description]`;
+export default class VersioningPage extends AdminContent {
+  searchForm      = `${htmlElements.form}[id="search"]`;
+  searchDescInput = `${htmlElements.input}.form-control`;
 
   getSearchForm() {
     return this.get()
@@ -19,7 +19,7 @@ export default class VersioningPage extends Content {
 
   getSearchSubmitButton() {
     return this.getSearchForm()
-               .find(`${htmlElements.button}[type=submit]`);
+               .find(`${htmlElements.button}.btn`);
   }
 
   getTable() {
