@@ -34,4 +34,32 @@ export default class Content extends WebElement {
                .find(this.alertMessageDiv);
   }
 
+  getInputError(input) {
+    return cy.get(input)
+             .parent().parent()
+             .find(`${htmlElements.span}.help-block`);
+  }
+
+  focus(input) {
+    cy.get(input).focus();
+    return cy.get('@currentPage');
+  }
+
+  blur(input = null) {
+    if (input) cy.get(input).blur();
+    else cy.focused().blur();
+    return cy.get('@currentPage');
+  }
+
+  clear(input) {
+    cy.get(input).clear();
+    return cy.get('@currentPage');
+  }
+
+  type(input, value, append = false) {
+    if (!append) cy.get(input).clear();
+    cy.get(input).type(value);
+    return cy.get('@currentPage');
+  }
+
 }
