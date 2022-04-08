@@ -1,19 +1,14 @@
 import AddPage         from './AddPage';
-import AdminContent         from '../../app/AdminContent.js';
+import Content         from '../../app/Content.js';
 import EditPage        from './EditPage';
 import {htmlElements}  from '../../WebElement.js';
 import AdminPage       from '../../app/AdminPage';
 import DeleteAdminPage from '../../app/DeleteAdminPage';
 import KebabMenu       from '../../app/KebabMenu';
 
-export default class CategoriesPage extends AdminContent {
+export default class CategoriesPage extends Content {
 
   categoriesTree    = `${htmlElements.table}[id="categoryTree"]`;
-
-  static openPage(button) {
-    cy.get(button).click();
-    cy.wait(1000);
-  }
 
   getCategoriesTree() {
     return this.getContents()
@@ -27,8 +22,9 @@ export default class CategoriesPage extends AdminContent {
   }
 
   openAddCategoryPage() {
-    this.getAddButton().then(button => AddPage.openPage(button));
-    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
+    this.getAddButton().click();
+    cy.wait(1000);
+    return new AdminPage(AddPage);
   }
 
   getKebabMenu(code) {
@@ -71,13 +67,15 @@ class CategoriesKebabMenu extends KebabMenu {
 
   openEdit() {
     this.getEdit().click();
-    return cy.wrap(new AdminPage(EditPage)).as('currentPage');
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
+    return new AdminPage(EditPage);
   }
 
   clickDelete() {
     this.getDelete().click();
     cy.wait(1000);
-    return cy.wrap( new AdminPage(DeleteAdminPage)).as('currentPage');
+    return new AdminPage(DeleteAdminPage);
   }
 
 }
+
