@@ -1,5 +1,7 @@
 require('cy-verify-downloads').addCustomCommand();
 
+import HomePage from '../pageObjects/HomePage';
+
 Cypress.Commands.overwrite('visit', (originalFn, url, options = {portalUI : false}) => {
   if(options.portalUI === true) {
     url = Cypress.config('portalUIPath') + url;
@@ -39,6 +41,11 @@ Cypress.Commands.add('kcAPILogin', () => {
 Cypress.Commands.add('kcUILogin', user => {
   performAuthorizationCodeLogin(user).its('body').as('UITokens');
   cy.visit('/');
+  cy.wrap(new HomePage())
+    .then(page => {
+      page.closeAppTour();
+      return cy.then(() => page);
+    }).as('currentPage');
 });
 
 const performAuthorizationCodeLogin = (user) => {

@@ -281,6 +281,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
       cy.kcUILogin('login/user');
 
       currentPage = new HomePage();
+      currentPage.closeAppTour();
       currentPage.getMenu().get().should('not.contain', 'Components');
 
       cy.visit('/widget');
