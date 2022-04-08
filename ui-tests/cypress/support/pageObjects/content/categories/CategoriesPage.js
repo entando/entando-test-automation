@@ -4,13 +4,11 @@ import EditPage        from './EditPage';
 import {htmlElements}  from '../../WebElement.js';
 import AdminPage       from '../../app/AdminPage';
 import DeleteAdminPage from '../../app/DeleteAdminPage';
+import KebabMenu       from '../../app/KebabMenu';
 
 export default class CategoriesPage extends Content {
 
-  modalDeleteButton = `${htmlElements.button}#DeleteCategoryModal__button-delete`;
-  actionDelete      = `${htmlElements.li}.CategoryListMenuAction__menu-item-delete`;
   categoriesTree    = `${htmlElements.table}[id="categoryTree"]`;
-  dropDown          = `${htmlElements.ul}.dropdown-menu`;
 
   getCategoriesTree() {
     return this.getContents()
@@ -29,36 +27,55 @@ export default class CategoriesPage extends Content {
     return new AdminPage(AddPage);
   }
 
-  openDropdownMenu(code){
-    return this.getCategoriesTree()
-        .contains(htmlElements.tr, code)
-        .children(htmlElements.td).eq(1)
-        .find(`${htmlElements.button}#dropdownKebabRight1`)
-        .click()
-        .wait(500);
-  }
-  getDropdownMenu(){
-    return this.getCategoriesTree()
-               .find(`${htmlElements.ul}[aria-labelledby="dropdownKebabRight1"]`)
+  getKebabMenu(code) {
+    return new CategoriesKebabMenu(this, code);
   }
 
-  openEditCategoryPage(code) {
-    this.openDropdownMenu(code);
+}
+
+class CategoriesKebabMenu extends KebabMenu {
+
+
+  get() {
+    return this.parent.getCategoriesTree()
+               .contains(htmlElements.td, this.code)
+               .closest(htmlElements.tr)
+  }
+
+  getDropdownMenu(){
+    return this.get()
+               .find(`${htmlElements.button}[id="dropdownKebabRight1"]`);
+  }
+
+  open() {
     this.getDropdownMenu()
-        .contains(htmlElements.button, 'Edit')
-        .click({force:true})
-                .wait(1000);
+        .click();
+    return this;
+  }
+
+
+  getEdit() {
+    return this.get()
+               .contains(htmlElements.button, 'Edit');
+  }
+
+  getDelete() {
+    return this.get()
+               .contains(htmlElements.button, 'Delete');
+
+  }
+
+  openEdit() {
+    this.getEdit().click();
+    cy.wait(1000); //TODO find a better way to identify when the page loaded
     return new AdminPage(EditPage);
   }
 
-  deleteCategory(code) {
-    this.openDropdownMenu(code);
-    this.getDropdownMenu()
-        .contains(htmlElements.button, 'Delete')
-        .click({force:true})
-        .wait(1000);
+  clickDelete() {
+    this.getDelete().click();
+    cy.wait(1000);
     return new AdminPage(DeleteAdminPage);
   }
 
-
 }
+
