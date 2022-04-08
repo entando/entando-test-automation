@@ -4,18 +4,18 @@ import AdminPage      from './AdminPage';
 
 export default class DeleteAdminPage extends Content {
 
-  form      = `${htmlElements.form}[id="delete"]`;
-  closeButton = `${htmlElements.a}`;
-  cancelButton      = `${htmlElements.button}[type="submit"]`;
+  form         = `${htmlElements.form}[id="delete"]`;
+  closeButton  = `${htmlElements.a}`;
+  cancelButton = `${htmlElements.button}[type="submit"]`;
 
   getForm(){
-     return this.getContents()
+    return this.getContents()
                 .children(this.form);
   }
 
   getCloseButton() {
-        return   this.getForm()
-                     .children(htmlElements.a);
+    return this.getForm()
+               .children(htmlElements.a);
   }
 
   getCancelButton(){
