@@ -1,13 +1,13 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content           from '../../app/Content.js';
+import AdminContent           from '../../app/AdminContent.js';
 import AdminPage         from '../../app/AdminPage.js';
 import KebabMenu         from '../../app/KebabMenu.js';
 import Pagination        from '../../app/Pagination.js';
 import TemplateForm                       from './TemplateForm.js';
 import DeleteAdminPage from '../../app/DeleteAdminPage';
 
-export default class TemplatesPage extends Content {
+export default class TemplatesPage extends AdminContent {
 
   main = `${htmlElements.div}[id="main"]`;
   form  = `${htmlElements.form}[id="search"]`;

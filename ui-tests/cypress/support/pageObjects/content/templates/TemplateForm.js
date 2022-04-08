@@ -1,10 +1,11 @@
 import {htmlElements} from '../../WebElement';
 
-import Content       from '../../app/Content';
+import AdminContent       from '../../app/AdminContent';
 import AdminPage       from '../../app/AdminPage';
 import TemplatesPage from './TemplatesPage';
 
-export default class TemplateForm extends Content {
+export default class TemplateForm extends AdminContent {
+
   idInput           = `${htmlElements.input}[name="modelId"]`;
   nameInput         = `${htmlElements.input}[name="description"]`;
   contentTypeInput  = `${htmlElements.select}[name="contentType"]`;
@@ -15,7 +16,7 @@ export default class TemplateForm extends Content {
   stylesheetInput   = `${htmlElements.input}[name='stylesheet']`;
   submitButton      = `${htmlElements.button}[type='submit'][class="btn btn-primary pull-right"]`;
   cancelButton      = `${htmlElements.button}[type='button'].AddContentTypeFormBody__cancel--btn.btn-default`;
-  alert             = `${htmlElements.div}[class="alert alert-danger alert-dismissable"]`;
+
   getFormArea() {
     return this.get()
                .find(htmlElements.form);
@@ -121,11 +122,6 @@ export default class TemplateForm extends Content {
       }
     });
   }
-  getAlert(){
-    return this.getFormArea()
-               .find(this.alert);
-  }
-
 
   getSaveButton() {
     return this.getFormArea()
