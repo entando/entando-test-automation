@@ -197,21 +197,21 @@ describe([Tag.GTS], 'Content Templates', () => {
     cy.log(`Verify that template id is mandatory`);
     currentPage.getContent().clearId();
     currentPage.getContent().submitForm();
-    currentPage.getContent().getAlert().should('be.visible');
+    currentPage.getContent().getAlertMessage().should('be.visible');
     currentPage.getContent().getFormArea().should('contain', 'is mandatory');
     currentPage.getContent().typeId(template.id);
 
     cy.log(`Verify that template name is mandatory`);
     currentPage.getContent().clearName();
     currentPage.getContent().submitForm();
-    currentPage.getContent().getAlert().should('be.visible');
+    currentPage.getContent().getAlertMessage().should('be.visible');
     currentPage.getContent().getFormArea().should('contain', 'is mandatory');
     currentPage.getContent().typeName(template.descr);
 
     cy.log(`Verify that template HTML model is mandatory`);
     currentPage.getContent().clearHTMLModel(template.contentShape);
     currentPage.getContent().submitForm();
-    currentPage.getContent().getAlert().should('be.visible');
+    currentPage.getContent().getAlertMessage().should('be.visible');
     currentPage.getContent().getFormArea().should('contain', 'is mandatory');
     currentPage.getContent().typeHTMLModel(template.contentShape);
   });

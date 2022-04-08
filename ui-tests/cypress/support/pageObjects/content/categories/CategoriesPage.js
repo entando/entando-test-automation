@@ -1,12 +1,12 @@
 import AddPage         from './AddPage';
-import Content         from '../../app/Content.js';
+import AdminContent         from '../../app/AdminContent.js';
 import EditPage        from './EditPage';
 import {htmlElements}  from '../../WebElement.js';
 import AdminPage       from '../../app/AdminPage';
 import DeleteAdminPage from '../../app/DeleteAdminPage';
 import KebabMenu       from '../../app/KebabMenu';
 
-export default class CategoriesPage extends Content {
+export default class CategoriesPage extends AdminContent {
 
   categoriesTree    = `${htmlElements.table}[id="categoryTree"]`;
 
