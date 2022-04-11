@@ -1,13 +1,13 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
 import ManagementPage from './ManagementPage.js';
 import DesignerPage from '../designer/DesignerPage.js';
 
-export default class AddPage extends Content {
+export default class AddPage extends AppContent {
 
   // SEO
   seoInfoContainer = `${htmlElements.div}.SeoInfo`;

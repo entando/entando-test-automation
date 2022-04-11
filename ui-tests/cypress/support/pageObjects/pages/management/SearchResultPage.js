@@ -1,6 +1,6 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
@@ -8,7 +8,7 @@ import PagesKebabMenu from './PagesKebabMenu';
 
 import AddPage from './AddPage.js';
 
-export default class SearchResultPage extends Content {
+export default class SearchResultPage extends AppContent {
 
   searchForm   = `${htmlElements.form}.list_PageSearchForm_form`;
   searchOption = `${htmlElements.button}.list_PageSearchForm_DropdownButton`;

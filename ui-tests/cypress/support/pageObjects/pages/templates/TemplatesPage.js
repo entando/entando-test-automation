@@ -1,5 +1,5 @@
 import AppPage from '../../app/AppPage.js';
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 import KebabMenu from '../../app/KebabMenu.js';
 import Pagination from '../../app/Pagination.js';
 import { htmlElements } from '../../WebElement.js';
@@ -76,7 +76,7 @@ class TemplatesKebabMenu extends KebabMenu {
   }
 }
 
-export default class TemplatesPage extends Content {
+export default class TemplatesPage extends AppContent {
   filterRow = `${htmlElements.div}.row`;
   
   getTable() {
