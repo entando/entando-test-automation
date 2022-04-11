@@ -10,28 +10,26 @@ describe([Tag.SMOKE], 'Keycloack', () => {
   const pathName = `/${authBaseUrl[3]}/realms/${realm}/protocol/openid-connect/auth`;
 
   it('Login/Logout via UI', () => {
-    let currentPage;
     cy.visit('/');
-
     cy.location().should((location) => {
       expect(location.origin).to.eq(origin);
       expect(location.pathname).to.eq(pathName);
     });
 
     cy.fixture(`users/login/admin`)
-      .then((userData) => {
-        currentPage = new LoginPage();
-        currentPage.login(userData);
-      });
-
+      .then(userData =>
+          cy.wrap(new LoginPage())
+            .then(page => page.login(userData)));
     cy.location().should((location) => {
       expect(location.origin).to.eq(Cypress.config('baseUrl'));
       expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
     });
 
-    currentPage = new HomePage();
-    currentPage.getNavbar().openUserMenu().logout();
-
+    cy.wrap(new HomePage())
+        .then(page => {
+          page.closeAppTour();
+          page.getNavbar().openUserMenu().logout();
+        });
     cy.location().should((location) => {
       expect(location.origin).to.eq(origin);
       expect(location.pathname).to.eq(pathName);
@@ -40,7 +38,6 @@ describe([Tag.SMOKE], 'Keycloack', () => {
 
   it('Login/Logout via API', () => {
     cy.kcUILogin('login/admin');
-
     cy.location().should((location) => {
       expect(location.origin).to.eq(Cypress.config('baseUrl'));
       expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
@@ -48,6 +45,7 @@ describe([Tag.SMOKE], 'Keycloack', () => {
 
     cy.kcUILogout();
 
+    cy.visit('/');
     cy.location().should((location) => {
       expect(location.origin).to.eq(origin);
       expect(location.pathname).to.eq(pathName);
