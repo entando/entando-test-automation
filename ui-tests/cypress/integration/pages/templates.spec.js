@@ -107,6 +107,29 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.SMOKE, Tag.FEATURE, 'ENG-3525'], 'Clone template page', () => {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openClone())
+        .then(page => {
+          cy.validateUrlPathname(`/page-template/clone/${sampleData.code}`);
+          page.getContent().getCodeInput().should('exist').and('be.visible');
+          page.getContent().getNameInput().should('exist').and('be.visible');
+          page.getContent().getJsonConfigInput().should('exist').and('be.visible');
+          page.getContent().getTemplateInput().should('exist').and('be.visible');
+          page.getContent().getPreviewGrid().should('exist').and('be.visible');
+          if (!Cypress.env('INCLUDE_TAGS') || Cypress.env('INCLUDE_TAGS').split(',').includes('SMOKE')) {
+            page.getContent().getCancelButton().should('exist').and('be.visible');
+            page.getContent().getSaveDropdownButton().should('exist').and('be.visible');
+          }
+          if (!Cypress.env('INCLUDE_TAGS') || Cypress.env('INCLUDE_TAGS').split(',').includes('FEATURE')) {
+            page.getContent().getJsonConfigValue().should(value => expect(value.replaceAll('\n', '').replaceAll(' ', '')).to.equal(sampleData.configuration.replaceAll(' ', '')));
+            page.getContent().getTemplateValue().should(value => expect(value).to.equal(sampleData.template));
+          }
+        });
+    });
+
   });
 
 });
