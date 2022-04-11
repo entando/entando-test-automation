@@ -45,12 +45,12 @@ export default class Pagination extends WebElement {
 
   getPreviousButtonsArea() {
     return this.getRightArea()
-              .find(this.ulPrev);
+               .find(this.ulPrev);
   }
 
   getNextButtonsArea() {
     return this.getRightArea()
-              .find(this.ulNext);
+               .find(this.ulNext);
   }
 
   getPreviousButton() {

@@ -1,12 +1,12 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
 import ProfileTypesPage from './ProfileTypesPage';
 
-export default class EditPage extends Content {
+export default class EditPage extends AppContent {
 
   codeInput  = `${htmlElements.input}[name=code]`;
   nameInput  = `${htmlElements.input}[name=name]`;

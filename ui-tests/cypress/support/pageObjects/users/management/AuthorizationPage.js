@@ -1,13 +1,13 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content';
+import AppContent from '../../app/AppContent';
 
 import AppPage from '../../app/AppPage';
 
 import ManagementPage      from './ManagementPage';
 import AuthorizationDialog from './AuthorizationDialog';
 
-export default class AuthorizationPage extends Content {
+export default class AuthorizationPage extends AppContent {
 
   addButton  = `${htmlElements.button}[type=button].UserAuthorityTable__addNew`;
   table      = `${htmlElements.table}.table`;

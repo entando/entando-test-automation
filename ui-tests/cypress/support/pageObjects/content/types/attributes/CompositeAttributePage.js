@@ -1,6 +1,6 @@
 import {DATA_TESTID, htmlElements, WebElement} from '../../../WebElement';
 
-import Content from '../../../app/Content';
+import AdminContent from '../../../app/AdminContent';
 
 import AdminPage from '../../../app/AdminPage';
 
@@ -8,7 +8,7 @@ import EditPage            from '../EditPage';
 import AttributePage       from './AttributePage';
 import NestedAttributePage from './NestedAttributePage';
 
-export default class CompositeAttributePage extends Content {
+export default class CompositeAttributePage extends AdminContent {
 
   attributeTable     = `${htmlElements.div}.AttributeListTableComposite`;
   addAttributeButton = `${htmlElements.button}.ContentTypeForm__add`;

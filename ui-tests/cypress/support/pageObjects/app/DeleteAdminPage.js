@@ -1,31 +1,31 @@
 import {htmlElements} from '../WebElement.js';
-import Content        from './Content';
+import AdminContent   from './AdminContent';
 import AdminPage      from './AdminPage';
 
-export default class DeleteAdminPage extends Content {
+export default class DeleteAdminPage extends AdminContent {
 
-  form      = `${htmlElements.form}[id="delete"]`;
-  closeButton = `${htmlElements.a}`;
-  cancelButton      = `${htmlElements.button}[type="submit"]`;
+  form         = `${htmlElements.form}[id="delete"]`;
+  closeButton  = `${htmlElements.a}`;
+  cancelButton = `${htmlElements.button}[type="submit"]`;
 
-  getForm(){
-     return this.getContents()
-                .children(this.form);
+  getForm() {
+    return this.getContents()
+               .children(this.form);
   }
 
   getCloseButton() {
-        return   this.getForm()
-                     .children(htmlElements.a);
+    return this.getForm()
+               .children(htmlElements.a);
   }
 
-  getCancelButton(){
+  getCancelButton() {
     return this.getForm()
                .find(`${htmlElements.button}[type="submit"]`);
   }
 
   submitCancel(pageObject) {
-   this.getCancelButton().click()
-   return new AdminPage(pageObject);
+    this.getCancelButton().click();
+    return new AdminPage(pageObject);
 
   }
 

@@ -1,29 +1,30 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content           from '../../app/Content.js';
-import AdminPage         from '../../app/AdminPage.js';
-import KebabMenu         from '../../app/KebabMenu.js';
-import Pagination        from '../../app/Pagination.js';
-import TemplateForm                       from './TemplateForm.js';
+import AdminContent    from '../../app/AdminContent';
+import AdminPage       from '../../app/AdminPage.js';
+import KebabMenu       from '../../app/KebabMenu.js';
+import Pagination      from '../../app/Pagination.js';
+import TemplateForm    from './TemplateForm.js';
 import DeleteAdminPage from '../../app/DeleteAdminPage';
 
-export default class TemplatesPage extends Content {
+export default class TemplatesPage extends AdminContent {
 
-  main = `${htmlElements.div}[id="main"]`;
-  form  = `${htmlElements.form}[id="search"]`;
+  main      = `${htmlElements.div}[id="main"]`;
+  form      = `${htmlElements.form}[id="search"]`;
   addButton = `${htmlElements.a}[class="btn btn-primary pull-right mb-5"]`;
   filterRow = `${htmlElements.form}[class="form-horizontal"]`;
   searchBtn = `${htmlElements.button}[class="btn btn-primary"]`;
 
-  getMain(){
+  getMain() {
     return this.get()
-               .children(this.main)
+               .children(this.main);
   }
 
   getSearchArea() {
     return this.getMain()
                .find(this.filterRow);
   }
+
   getForm() {
     return this.getMain()
                .children(this.form);
@@ -94,8 +95,8 @@ class TemplatesKebabMenu extends KebabMenu {
 
   get() {
     return this.parent.getTableRows()
-                      .contains(htmlElements.td, this.code)
-                      .closest(htmlElements.tr)
+               .contains(htmlElements.td, this.code)
+               .closest(htmlElements.tr);
   }
 
   open() {

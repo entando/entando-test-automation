@@ -1,17 +1,19 @@
 import AttributeFormField from '../AttributeFormField';
-import AssetAttribute from './AssetAttribute';
-import BooleanAttribute from './BooleanAttribute';
-import CheckboxAttribute from './CheckboxAttribute';
-import DateAttribute from './DateAttribute';
+
+import AssetAttribute      from './AssetAttribute';
+import BooleanAttribute    from './BooleanAttribute';
+import CheckboxAttribute   from './CheckboxAttribute';
+import DateAttribute       from './DateAttribute';
 import EnumeratorAttribute from './EnumeratorAttribute';
-import HypertextAttribute from './HypertextAttribute';
-import LinkAttribute from './LinkAttribute';
-import TextAttribute from './TextAttribute';
+import HypertextAttribute  from './HypertextAttribute';
+import LinkAttribute       from './LinkAttribute';
+import TextAttribute       from './TextAttribute';
 import ThreeStateAttribute from './ThreeStateAttribute';
-import TimestampAttribute from './TimestampAttribute';
+import TimestampAttribute  from './TimestampAttribute';
 
 export default class CompositeAttribute extends AttributeFormField {
   panelBody = 'div.panel-body';
+
   constructor(parent, attributeIndex, lang = 'en') {
     super(parent, 'Composite', attributeIndex, lang);
   }
@@ -25,9 +27,9 @@ export default class CompositeAttribute extends AttributeFormField {
   }
 
   setValue(values, editMode = false) {
-    values.forEach(({ type, value }, idx) => {
+    values.forEach(({type, value}, idx) => {
       let field;
-      switch(type) {
+      switch (type) {
         case 'Text':
         case 'Longtext':
         case 'Monotext':

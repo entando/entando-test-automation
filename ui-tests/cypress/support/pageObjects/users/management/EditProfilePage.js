@@ -1,12 +1,12 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
 import ManagementPage from './ManagementPage.js';
 
-export default class EditProfilePage extends Content {
+export default class EditProfilePage extends AppContent {
 
   profileTypeSelect   = `${htmlElements.select}[name=typeCode].RenderSelectInput`;
   usernameInput       = `${htmlElements.input}[name=id]#id`;

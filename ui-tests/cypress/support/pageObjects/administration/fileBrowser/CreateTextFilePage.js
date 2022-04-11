@@ -1,17 +1,17 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content';
+import AppContent from '../../app/AppContent';
 
 import AppPage from '../../app/AppPage';
 
 import UploadFilesPage  from './UploadFilesPage';
 import CreateFolderPage from './CreateFolderPage';
-import FilesListPage from './FilesListPage';
+import FilesListPage    from './FilesListPage';
 
-export default class CreateTextFilePage extends Content {
+export default class CreateTextFilePage extends AppContent {
 
-  breadCrumbs        = `${htmlElements.ol}.breadcrumb`;
-  operationButtons   = `${htmlElements.div}.btn-group`;
+  breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
+  operationButtons = `${htmlElements.div}.btn-group`;
 
   createTextFileForm = `${htmlElements.form}.CreateTextFileForm`;
   textFileNameInput  = `${htmlElements.input}[name='name']#name`;
@@ -105,7 +105,7 @@ export default class CreateTextFilePage extends Content {
     this.getCancelButton().click();
     return new AppPage(FilesListPage);
   }
-  
+
   getSaveButton() {
     return this.getCreateTextFileForm()
                .find(this.saveButton);

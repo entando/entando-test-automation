@@ -1,8 +1,8 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content';
+import AppContent from '../../app/AppContent';
 
-export default class EmailConfigurationPage extends Content {
+export default class EmailConfigurationPage extends AppContent {
 
   emailConfigurationTabList = `${htmlElements.ul}[role=tablist]`;
 

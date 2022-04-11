@@ -1,12 +1,12 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content';
+import AppContent from '../../app/AppContent';
 
 import AppPage from '../../app/AppPage';
 
 import SenderManagementPage from './SenderManagementPage';
 
-export default class SenderPage extends Content {
+export default class SenderPage extends AppContent {
 
   static openPage(button, code = '') {
     cy.senderController().then(controller => controller.intercept({method: 'GET'}, 'pageLoading', `/${code}`));

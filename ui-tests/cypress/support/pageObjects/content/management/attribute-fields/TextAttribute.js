@@ -8,7 +8,7 @@ export default class TextAttribute extends AttributeFormField {
   }
 
   getInputName() {
-    switch(this.attributeType) {
+    switch (this.attributeType) {
       case 'Monotext':
       case 'Email':
       case 'Number':
@@ -29,12 +29,12 @@ export default class TextAttribute extends AttributeFormField {
 
   getHelpBlock() {
     return this.getContents()
-      .find('.help-block');
+               .find('.help-block');
   }
 
   getInput() {
     return this.getContents()
-      .find(`${this.element}[name="${this.getInputName()}"]`);
+               .find(`${this.element}[name="${this.getInputName()}"]`);
   }
 
   setValue(text) {

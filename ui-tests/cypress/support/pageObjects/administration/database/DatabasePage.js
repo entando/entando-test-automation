@@ -1,10 +1,13 @@
-import AppPage         from '../../app/AppPage.js';
-import Content         from '../../app/Content.js';
+import {htmlElements} from '../../WebElement.js';
+
+import AppContent from '../../app/AppContent.js';
+
+import AppPage from '../../app/AppPage.js';
+
 import {DialogContent} from '../../app/Dialog.js';
-import {htmlElements}  from '../../WebElement.js';
 import ReportPage      from './ReportPage.js';
 
-export default class DatabasePage extends Content {
+export default class DatabasePage extends AppContent {
 
   databaseListTable  = `${htmlElements.table}.DatabaseListTable__table`;
   createBackupButton = `${htmlElements.button}.DatabaseListPage__add`;
@@ -27,14 +30,14 @@ export default class DatabasePage extends Content {
 
   getTableHeaders() {
     return this.getDatabaseListTable()
-      .children(htmlElements.thead)
-      .find(htmlElements.th);
+               .children(htmlElements.thead)
+               .find(htmlElements.th);
   }
 
   getTableRows() {
     return this.getDatabaseListTable()
-      .children(htmlElements.tbody)
-      .children(htmlElements.tr);
+               .children(htmlElements.tbody)
+               .children(htmlElements.tr);
   }
 
   getTableRowByIndex(index) {
@@ -43,7 +46,7 @@ export default class DatabasePage extends Content {
 
   getDeleteButtonByIndex(index) {
     return this.getTableRowByIndex(index)
-      .find(this.deleteButton);
+               .find(this.deleteButton);
   }
 
   clickDeleteButtonByIndex(index) {
@@ -53,7 +56,7 @@ export default class DatabasePage extends Content {
 
   getDetailsByIndex(index) {
     return this.getTableRowByIndex(index)
-      .find(htmlElements.a);
+               .find(htmlElements.a);
   }
 
   openDetailsByIndex(index) {

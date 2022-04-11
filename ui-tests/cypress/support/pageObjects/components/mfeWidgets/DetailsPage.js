@@ -1,3 +1,3 @@
-import Content from '../../app/Content';
+import AppContent from '../../app/AppContent';
 
-export default class DetailsPage extends Content {}
+export default class DetailsPage extends AppContent {}

@@ -1,6 +1,6 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
@@ -10,7 +10,7 @@ import AddPage          from './AddPage.js';
 import SearchResultPage from './SearchResultPage';
 import DeleteDialog     from '../../app/DeleteDialog';
 
-export default class ManagementPage extends Content {
+export default class ManagementPage extends AppContent {
 
   searchForm   = `${htmlElements.form}.PageSearchForm`;
   searchOption = `${htmlElements.button}.PageSearchForm__filter-searchby-dropdown`;

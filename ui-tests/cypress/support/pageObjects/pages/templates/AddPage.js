@@ -1,15 +1,17 @@
-import Content from '../../app/Content';
-import AppPage from '../../app/AppPage';
-import TemplatesPage from '../../pages/templates/TemplatesPage';
-import { DATA_TESTID, htmlElements } from '../../WebElement';
+import {DATA_TESTID, htmlElements} from '../../WebElement';
 
-export default class AddPage extends Content {
-  codeInput = `${htmlElements.input}[name="code"]#code`;
-  nameInput = `${htmlElements.input}[name="descr"]#descr`;
-  codeMirrorDiv = `${htmlElements.div}.form-group`
-  codeMirror = '.CodeMirror-code';
-  formRowDiv = `${htmlElements.div}.row`;
-  cancelButton = `[${DATA_TESTID}=common_PageTemplateForm_Button]`;
+import AppContent from '../../app/AppContent';
+
+import AppPage       from '../../app/AppPage';
+import TemplatesPage from '../../pages/templates/TemplatesPage';
+
+export default class AddPage extends AppContent {
+  codeInput             = `${htmlElements.input}[name="code"]#code`;
+  nameInput             = `${htmlElements.input}[name="descr"]#descr`;
+  codeMirrorDiv         = `${htmlElements.div}.form-group`;
+  codeMirror            = '.CodeMirror-code';
+  formRowDiv            = `${htmlElements.div}.row`;
+  cancelButton          = `[${DATA_TESTID}=common_PageTemplateForm_Button]`;
   saveDropdownContainer = `${htmlElements.div}.dropdown`;
   saveDropdownButton    = `${htmlElements.button}#saveopts`;
   regularSaveButton     = `${htmlElements.a}#regularSaveButton`;
@@ -69,7 +71,7 @@ export default class AddPage extends Content {
 
   typeJsonConfig(input) {
     this.clearJsonConfig();
-    this.getJsonConfigInput().type(input, { parseSpecialCharSequences: false });
+    this.getJsonConfigInput().type(input, {parseSpecialCharSequences: false});
   }
 
   clearTemplate() {
@@ -80,12 +82,12 @@ export default class AddPage extends Content {
 
   typeTemplate(input) {
     this.clearTemplate();
-    this.getTemplateInput().type(input, { parseSpecialCharSequences: false });
+    this.getTemplateInput().type(input, {parseSpecialCharSequences: false});
   }
 
   fillForm(data) {
     Object.keys(data).forEach((fieldName) => {
-      switch(fieldName) {
+      switch (fieldName) {
         case 'code':
           this.typeCode(data[fieldName]);
           break;

@@ -1,12 +1,12 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
 import ManagementPage from './ManagementPage.js';
 
-export default class ViewProfilePage extends Content {
+export default class ViewProfilePage extends AppContent {
 
   table      = `${htmlElements.table}.table`;
   backButton = `${htmlElements.button}[type=button].btn-primary`;

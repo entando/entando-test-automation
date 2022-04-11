@@ -1,57 +1,59 @@
-import { DialogContent } from '../../../app/Dialog';
-import { htmlElements } from '../../../WebElement';
+import {htmlElements} from '../../../WebElement';
+
+import {DialogContent} from '../../../app/Dialog';
+
 import AttributeFormField from '../AttributeFormField';
 
 export class AssetSelector extends DialogContent {
   getAssetsBody() {
     return this.get()
-      .find('div.AssetsList__body');
+               .find('div.AssetsList__body');
   }
 
   getAssetListTable() {
     return this.getAssetsBody()
-      .find('table.AssetsList__table');
+               .find('table.AssetsList__table');
   }
 
   getUseButtonFromAssetTitle(assetTitle) {
     return this.getAssetListTable()
-      .contains(assetTitle)
-      .closest(htmlElements.tr)
-      .children('td:last-of-type')
-      .children('button');
+               .contains(assetTitle)
+               .closest(htmlElements.tr)
+               .children('td:last-of-type')
+               .children('button');
   }
 }
 
 export class AssetUploader extends DialogContent {
   fileContainer = 'div.UploadAssetModal__file-container';
-  fileBody = 'div.UploadAssetModal__file';
-  fileButtons = 'div.UploadAssetModal__upload-modal-buttons';
+  fileBody      = 'div.UploadAssetModal__file';
+  fileButtons   = 'div.UploadAssetModal__upload-modal-buttons';
 
   getFormBody() {
     return this.get()
-      .children('form');
+               .children('form');
   }
 
   getFormFieldArea() {
     return this.getFormBody()
-      .children(this.fileContainer)
-      .children(this.fileBody);
+               .children(this.fileContainer)
+               .children(this.fileBody);
   }
 
   getFileNameField() {
     return this.getFormFieldArea()
-      .find('input[name="files[0].filename"][type="text"]')
+               .find('input[name="files[0].filename"][type="text"]');
   }
 
   getGroupField() {
     return this.getFormFieldArea()
-      .find('select[name="files[0].group"]');
+               .find('select[name="files[0].group"]');
   }
 
   getSubmitButton() {
     return this.getFormBody()
-      .children(this.fileButtons)
-      .children('button[type=submit]');
+               .children(this.fileButtons)
+               .children('button[type=submit]');
   }
 
   submit() {
@@ -60,7 +62,7 @@ export class AssetUploader extends DialogContent {
 }
 
 export default class AssetAttribute extends AttributeFormField {
-  inputInfo = 'input.AssetAttributeField__input--inner[type="text"]';
+  inputInfo    = 'input.AssetAttributeField__input--inner[type="text"]';
   uploadButton = 'input[type=file][multiple]';
 
   constructor(parent, attributeIndex, assetType = 'Image', lang = 'en') {
@@ -77,37 +79,37 @@ export default class AssetAttribute extends AttributeFormField {
 
   getSelectedInfoArea() {
     return this.getContents()
-      .find('div.AssetAttributeField__selected-info');
+               .find('div.AssetAttributeField__selected-info');
   }
 
   getInfoNameInput() {
     return this.getSelectedInfoArea()
-      .find(`${this.inputInfo}[name="name"]`)
+               .find(`${this.inputInfo}[name="name"]`);
   }
 
   getInfoLegendInput() {
     return this.getSelectedInfoArea()
-      .find(`${this.inputInfo}[name="legend"]`);
+               .find(`${this.inputInfo}[name="legend"]`);
   }
 
   getInfoAltInput() {
     return this.getSelectedInfoArea()
-      .find(`${this.inputInfo}[name="alt"]`);
+               .find(`${this.inputInfo}[name="alt"]`);
   }
 
   getInfoDescInput() {
     return this.getSelectedInfoArea()
-      .find(`${this.inputInfo}[name="description"]`);
+               .find(`${this.inputInfo}[name="description"]`);
   }
 
   getInfoTitleInput() {
     return this.getSelectedInfoArea()
-      .find(`${this.inputInfo}[name="title"]`);
+               .find(`${this.inputInfo}[name="title"]`);
   }
 
   getDeleteButton() {
     return this.getSelectedInfoArea()
-        .find('button.btn-danger');
+               .find('button.btn-danger');
   }
 
   fillMetadata(metadata, editMode = false) {
@@ -144,7 +146,7 @@ export default class AssetAttribute extends AttributeFormField {
     }
   }
 
-  setValue({ upload, metadata }) {
+  setValue({upload, metadata}) {
     const uploadMode = typeof upload !== 'string';
     if (this.lang === 'en') {
       if (!uploadMode) {
@@ -180,9 +182,9 @@ export default class AssetAttribute extends AttributeFormField {
       this.getInfoLegendInput().invoke('val'),
       this.getInfoAltInput().invoke('val'),
       this.getInfoDescInput().invoke('val'),
-      this.getInfoTitleInput().invoke('val'),
+      this.getInfoTitleInput().invoke('val')
     ]).then(([name, legend, alt, description, title]) => ({
-      name, legend, alt, description, title,
+      name, legend, alt, description, title
     }));
   }
 }
