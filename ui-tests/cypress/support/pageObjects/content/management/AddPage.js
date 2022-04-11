@@ -1,5 +1,5 @@
 import {htmlElements}          from '../../WebElement';
-import Content                 from '../../app/Content.js';
+import AdminContent                 from '../../app/AdminContent.js';
 import AdminPage                 from '../../app/AdminPage.js';
 import ManagementPage          from './ManagementPage';
 import DropDownButton          from './DropDownButton';
@@ -17,7 +17,7 @@ import TimestampAttribute from './attribute-fields/TimestampAttribute';
 import LinkAttribute from './attribute-fields/LinkAttribute';
 import ListAttribute from './attribute-fields/ListAttribute';
 
-export default class AddPage extends Content {
+export default class AddPage extends AdminContent {
 
   static ATTRIBUTES = [
     'Attach',

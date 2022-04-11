@@ -1,13 +1,13 @@
 import {DATA_TESTID, htmlElements} from '../../WebElement.js';
 
-import Content  from '../../app/Content.js';
+import AdminContent  from '../../app/Content.js';
 import AddPage  from './AddPage';
 import AdminPage  from '../../app/AdminPage';
 import KebabMenu from '../../app/KebabMenu.js';
 import Pagination from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
 
-export default class ManagementPage extends Content {
+export default class ManagementPage extends AdminContent {
 
   contentTabs   = `${htmlElements.div}#secondary-tabs-1`;
   addButton     = `${htmlElements.button}#addContent`;

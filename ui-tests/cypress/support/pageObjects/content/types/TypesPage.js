@@ -1,6 +1,6 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content   from '../../app/Content.js';
+import AdminContent   from '../../app/AdminContent.js';
 import KebabMenu from '../../app/KebabMenu';
 
 import AdminPage      from '../../app/AdminPage.js';
@@ -9,7 +9,7 @@ import DeleteDialog from '../../app/DeleteDialog';
 import AddPage  from './AddPage.js';
 import EditPage from './EditPage.js';
 
-export default class TypesPage extends Content {
+export default class TypesPage extends AdminContent {
 
   addButton = `${htmlElements.button}.ContentTypeList__addbutton`;
 
