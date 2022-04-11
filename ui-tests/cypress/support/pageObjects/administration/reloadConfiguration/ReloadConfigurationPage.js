@@ -1,7 +1,7 @@
-import Content from '../../app/Content.js';
 import {htmlElements} from '../../WebElement.js';
+import AppContent     from '../../app/AppContent';
 
-export default class ReloadConfigurationPage extends Content {
+export default class ReloadConfigurationPage extends AppContent{
 
   reloadConfigurationButton = `${htmlElements.button}[type=button].ReloadConfig__reload-button`;
   reloadConfirmDiv = `${htmlElements.div}.ReloadConfirm`;

@@ -1,6 +1,6 @@
 import {htmlElements} from '../../WebElement';
 
-import Content   from '../../app/Content';
+import AppContent   from '../../app/AppContent';
 import KebabMenu from '../../app/KebabMenu';
 
 import AppPage      from '../../app/AppPage';
@@ -10,7 +10,7 @@ import UploadFilesPage    from './UploadFilesPage';
 import CreateFolderPage   from './CreateFolderPage';
 import CreateTextFilePage from './CreateTextFilePage';
 
-export default class FilesListPage extends Content {
+export default class FilesListPage extends AppContent {
 
   breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
   operationButtons = `${htmlElements.div}.FileButtonsGroup`;

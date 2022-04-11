@@ -1,13 +1,13 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content';
+import AppContent from '../../app/AppContent';
 
 import AppPage from '../../app/AppPage';
 
 import SystemLabelsPage       from './SystemLabelsPage';
 import LanguagesAndLabelsPage from './LanguagesAndLabelsPage';
 
-export default class LabelPage extends Content {
+export default class LabelPage extends AppContent {
 
   static openPage(button, code = null) {
     if (code) cy.labelsController().then(controller => controller.intercept({method: 'GET'}, 'labelPageLoadingGET', `/${code}`));

@@ -1,8 +1,8 @@
-import Content         from '../../app/Content.js';
+import AppContent         from '../../app/AppContent.js';
 import {DialogContent} from '../../app/Dialog.js';
 import {htmlElements}  from '../../WebElement.js';
 
-export default class ReportPage extends Content {
+export default class ReportPage extends AppContent {
 
   descriptionList    = `${htmlElements.dl}.dl-horizontal`;
   componentTable     = `${htmlElements.table}.ReportDatabaseListTable__table`;

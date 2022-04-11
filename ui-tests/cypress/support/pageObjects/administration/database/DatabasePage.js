@@ -1,10 +1,10 @@
 import AppPage         from '../../app/AppPage.js';
-import Content         from '../../app/Content.js';
+import AppContent         from '../../app/AppContent.js';
 import {DialogContent} from '../../app/Dialog.js';
 import {htmlElements}  from '../../WebElement.js';
 import ReportPage      from './ReportPage.js';
 
-export default class DatabasePage extends Content {
+export default class DatabasePage extends AppContent {
 
   databaseListTable  = `${htmlElements.table}.DatabaseListTable__table`;
   createBackupButton = `${htmlElements.button}.DatabaseListPage__add`;
