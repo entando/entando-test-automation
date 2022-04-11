@@ -9,8 +9,9 @@ import SenderManagementPage from './SenderManagementPage';
 export default class SenderPage extends AppContent {
 
   static openPage(button, code = '') {
-    cy.senderController().then(controller => controller.intercept({method: 'GET'}, 'pageLoading', `/${code}`));
+    cy.senderController().then(controller => controller.intercept({method: 'GET'}, 'senderPageLoadingGET', `/${code}`));
     cy.get(button).click();
+    cy.wait('@senderPageLoadingGET');
   }
 
   getSenderForm() {
