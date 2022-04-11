@@ -108,13 +108,13 @@ class TemplatesKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getEditButton().click();
-    return new AppPage(AddPage);
+    this.getEditButton().then(button => AddPage.openEditClonePage(button, this.code));
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
   openClone() {
-    this.getCloneButton().click();
-    return new AppPage(AddPage);
+    this.getCloneButton().then(button => AddPage.openEditClonePage(button, this.code));
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
   clickDetails() {
