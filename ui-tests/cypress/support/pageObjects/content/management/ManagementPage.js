@@ -10,7 +10,7 @@ import DeleteDialog from '../../app/DeleteDialog.js';
 export default class ManagementPage extends Content {
 
   contentTabs   = `${htmlElements.div}#secondary-tabs-1`;
-  addButton     = `${htmlElements.button}#addContent`;
+  addButton     = `${htmlElements.button}[data-toggle="dropdown"].btn.btn-primary.dropdown-toggle`;
   actionOptions = `${htmlElements.ul}.dropdown-menu`;
   actionOption  = `${htmlElements.li}`;
 
@@ -30,8 +30,7 @@ export default class ManagementPage extends Content {
 
   getAddButton() {
     return this.get()
-               .find(this.addButton)
-               .eq(0);
+               .find(this.addButton);
   }
 
   getAddContentDropdownList() {
