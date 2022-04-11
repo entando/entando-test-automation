@@ -3,7 +3,7 @@ import {htmlElements} from '../../../WebElement';
 import {DialogContent} from '../../../app/Dialog';
 
 import WidgetConfigPage from '../WidgetConfigPage';
-import AppPage          from '../../../app/AppPage';
+import AdminPage        from '../../../app/AdminPage';
 import AddContentPage   from '../../../content/management/AddPage';
 
 export class ContentListSelectModal extends DialogContent {
@@ -53,7 +53,7 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   clickNewContentWith(ctype) {
     this.getAddNewButtonDropdown().click();
     this.getButtonAddByContentTypeName(ctype).click();
-    return new AppPage(AddContentPage);
+    return new AdminPage(AddContentPage);
   }
 
   clickAddContentButton() {

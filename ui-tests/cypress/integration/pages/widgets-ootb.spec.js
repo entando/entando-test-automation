@@ -122,6 +122,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     const currentPageContent = currentPage.getContent();
     currentPageContent.clickSidebarTab(1);
     cy.wait('@sidebarLoaded');
+    cy.get(`${htmlElements.div}#toolbar-tab-pane-1`).should('be.visible');
     currentPageContent.designPageFromSidebarPageTreeTable(pageCode);
     cy.wait('@pageWidgetsLoaded');
     currentPageContent.clickSidebarTab(0);
@@ -467,96 +468,134 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       name: 'Banner'
     };
 
-    // TODO: not working until the cms structure is updated
-    it('select a content and a content template that is unrelated or inconsistent with the content type, then implement in Content widget. Publish the page and click on Preview/View published page', () => {
-     currentPage = currentPage.getMenu().getContent().open();
-     currentPage = currentPage.openTemplates();
-     cy.wait(500);
-
-     currentPage = currentPage.getContent().clickAddButton();
-     cy.wait(500);
-
-     currentPage.getContent().editFormFields({
-     id: '10079',
-     descr: 'Demo Faux',
-     contentType: 'Banner',
-     contentShape: '<article>$content.toto.text</article>',
-     });
-
-     currentPage = currentPage.getContent().submitForm();
-     cy.wait(500);
-
-     currentPage = currentPage.getMenu().getPages().open();
-     currentPage = currentPage.openDesigner();
-
-     cy.initWindowOpenChecker();
-
-     selectPageFromSidebar();
-     cy.wait(500);
-
-     currentPage = currentPage.getContent().dragWidgetToFrame(CMS_WIDGETS.CONTENT, WIDGET_FRAME.frameName);
-
-     currentPage.getContent().clickAddContentButton();
-     cy.wait(4500);
-
-     currentPage.getDialog().getBody()
-     .getCheckboxFromTitle('Sample Banner').click();
-     currentPage.getDialog().getConfirmButton().click();
-     cy.wait(500);
-
-     currentPage.getContent().getModelIdSelect().select('Demo Faux');
-     currentPage = currentPage.getContent().confirmConfig();
-     cy.wait(500);
-
-     currentPage.getContent().getPageStatus().should('match', /^Published, with pending changes$/);
-     currentPage.getContent().publishPageDesign();
-     currentPage.getContent().getPageStatus().should('match', /^Published$/);
-
-     const viewPage = currentPage.getContent().viewPublished();
-     cy.get('@windowOpen').should('be.called');
-     viewPage.parent.get().should('contain', '$content.toto.text');
-     });
-
-    // TODO: not working until the cms structure is updated
-    it('add a new no published content with a content type and content template, fill in all mandatory fields, save the content, then save the widget configuration', () => {
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
-      selectPageFromSidebar();
-
-      currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
-      cy.wait('@pageWidgetsLoaded');
-
-      currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
-      cy.validateUrlPathname(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
-
-      currentPage = currentPage.getContent().addContentFromContentWidgetConfig('Unpublish En Title', 'Unpublish It Title', 'Unpublish Sample Description');
-      cy.wait('@interceptedPOST').then(interception => cy.wrap([interception.response.body.payload[0].id]).as('contentsToBeDeleted'));
-
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
-      cy.wait('@pageWidgetsLoaded');
-
-      currentPage = currentPage.getContent().confirmConfig();
-      currentPage.getToastList().should('have.length', 1);
+    beforeEach(() => {
+      cy.contentTypesController()
+        .then((controller => controller.intercept({method: 'GET'}, 'contentTypeLoaded', `/${NEW_CONTENT_TYPE.code}`)));
     });
 
-    // TODO: not working until the cms structure is updated
-    it('add a new content with a content type and content template, fill in all mandatory fields, save and approve, then save the configuration', () => {
+    // FIXME: when moving from admin console to app builder, the app tour starts again
+    //        can't use API calls to clean the environment after the test
+    xit('select a content and a content template that is unrelated or inconsistent with the content type, then implement in Content widget. Publish the page and view published page', () => {
+      currentPage = currentPage.getMenu().getContent().open();
+      currentPage = currentPage.openTemplates();
+
+      currentPage = currentPage.getContent().clickAddButton();
+
+      currentPage.getContent().editFormFields({
+        id: '10079',
+        descr: 'Demo Faux',
+        contentType: 'Banner',
+        contentShape: '<article>$content.toto.text</article>',
+      });
+
+      currentPage = currentPage.getContent().submitForm();
+
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openDesigner();
+
+      //closes the app tour again
+      currentPage.closeAppTour();
+
+      selectPageFromSidebar();
+
+      currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
+      cy.wait('@pageWidgetsLoaded');
+      currentPage.getContent().clickAddContentButton();
+
+      currentPage.getDialog().getBody()
+                 .getCheckboxFromTitle('Sample Banner').click();
+      currentPage.getDialog().getConfirmButton().click();
+
+      currentPage.getContent().getModelIdSelect().select('Demo Faux');
+      currentPage = currentPage.getContent().confirmConfig();
+      cy.wait('@pageWidgetsLoaded');
+
+      currentPage.getContent().getPageStatusIcon()
+                 .should('have.class', 'PageStatusIcon--draft')
+                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+
+      currentPage.getContent().publishPageDesign();
+
+      currentPage.getContent().getPageStatusIcon()
+                 .should('have.class', 'PageStatusIcon--published')
+                 .and('have.attr', 'title').should('eq', 'Published');
+
+      cy.visit(`/${THE_PAGE.code}.page`, {portalUI: true});
+      cy.get(`${htmlElements.div}.bar-content-edit-container`).should('contain', '$content.toto.text');
+
+      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
+    });
+
+    // FIXME: when moving from admin console to app builder, the app tour starts again
+    //        can't use API calls to clean the environment after the test
+    //        creating a new content from page designer doesn't automatically bring back to page designer like it used to 
+    xit('add a new no published content with a content type and content template, fill in all mandatory fields, save the content, then save the widget configuration', () => {
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openDesigner();
+      selectPageFromSidebar();
+
+      currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
+      cy.wait('@pageWidgetsLoaded');
+      currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
+
+      currentPage = currentPage.getContent().addContentFromContentWidgetConfig('Unpublish En Title', 'Unpublish It Title', 'Unpublish Sample Description', true);
+
+      //go back to page designer
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openDesigner();
+
+      //closes the app tour again
+      currentPage.closeAppTour();
+
+      selectPageFromSidebar();
+      
+      //drag the widget to the grid again
+      currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
+
+      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      currentPage.getContent().clickAddContentButton();
+      cy.wait('@contentsLoaded');
+      currentPage.getDialog().getBody().getCheckboxFromTitle('Unpublish Sample Description').click();
+      currentPage.getDialog().getConfirmButton().click();
+      cy.wait('@contentTypeLoaded');
+
+      currentPage = currentPage.getContent().confirmConfig();
+      currentPage.getToastList().should('be.visible').and('have.length', 1);
+      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
+    });
+
+    // FIXME: when moving from admin console to app builder, the app tour starts again
+    //        can't use API calls to clean the environment after the test
+    //        creating a new content from page designer doesn't automatically bring back to page designer like it used to
+    xit('add a new content with a content type and content template, fill in all mandatory fields, save and approve, then save the configuration', () => {
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openDesigner();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
       cy.wait('@pageWidgetsLoaded');
-
       currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
-      cy.validateUrlPathname(`/cms/content/add/${NEW_CONTENT_TYPE.code}`);
 
       currentPage = currentPage.getContent().addContentFromContentWidgetConfig('En Title', 'It Title', 'Sample Description', true);
-      cy.wait('@interceptedPOST').then(interception => cy.wrap([interception.response.body.payload[0].id]).as('contentsToBeDeleted'));
+      
+      //go back to page designer
+      currentPage = currentPage.getMenu().getPages().open();
+      currentPage = currentPage.openDesigner();
 
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
+      //closes the app tour again
+      currentPage.closeAppTour();
+
+      selectPageFromSidebar();
+
+      //drag the widget to the grid again
+      currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
+      cy.wait('@pageWidgetsLoaded');
+      currentPage.getContent().clickAddContentButton();
+
+      currentPage.getDialog().getBody()
+                 .getCheckboxFromTitle('Sample Description').click();
+      currentPage.getDialog().getConfirmButton().click();
 
       currentPage.getContent().getModelIdSelect().select('Banner - Text, Image, CTA');
-      cy.wait('@pageWidgetsLoaded');
       currentPage = currentPage.getContent().confirmConfig();
       cy.wait('@pageWidgetsLoaded');
 
@@ -635,28 +674,23 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
     });
 
-    // TODO: not working until the cms structure is updated
-    it('Add new existing published contents', () => {
+    // FIXME: when moving from admin console to app builder, the app tour starts again
+    //        can't use API calls to clean the environment after the test
+    xit('Add new existing published contents', () => {
 
       currentPage = currentPage.getMenu().getContent().open();
       currentPage = currentPage.openManagement();
-      cy.wait('@usersLoaded');
 
       currentPage = currentPage.getContent().openAddContentPage(CONTENT_TYPE.name);
       currentPage = currentPage.getContent().addContent('En Title', 'It Title', 'Sample Description', true);
-      cy.wait('@interceptedPOST').then(interception => cy.wrap([interception.response.body.payload[0].id]).as('contentsToBeDeleted'));
-      cy.wait('@usersLoaded');
       currentPage = currentPage.getContent().openAddContentPage(CONTENT_TYPE.name);
       currentPage = currentPage.getContent().addContent('En Title 2', 'It Title 2', 'Another Content so its more than 1', true);
-      cy.wait('@interceptedPOST').then(interception => {
-        cy.get('@contentsToBeDeleted').then(contentID => {
-          cy.wrap([contentID[0], interception.response.body.payload[0].id]).as('contentsToBeDeleted');
-        })
-      });
-      cy.wait('@usersLoaded');
 
       currentPage = currentPage.getMenu().getPages().open();
       currentPage = currentPage.openDesigner();
+
+      //closes the app tour again
+      currentPage.closeAppTour();
 
       selectPageFromSidebar();
 
@@ -664,8 +698,8 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 4, 0, CMS_WIDGETS.CONTENT_LIST.code);
 
       cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME_2.frameNum}`);
-      cy.wait('@pageWidgetsLoaded');
-      cy.wait(['@contentsLoaded', '@contentsLoaded']);
+      cy.wait(['@contentsLoaded', '@contentsLoaded', '@pageWidgetsLoaded']);
+
       currentPage.getContent().getAddButtonFromTableRowWithTitle('Another Content so its more than 1').click();
       currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Description').click();
       currentPage.getContent().getModelIdDropdownByIndex(0).select('Banner - Text, Image, CTA');

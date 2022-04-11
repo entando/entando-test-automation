@@ -2,7 +2,6 @@ import {htmlElements}          from '../../WebElement';
 import Content                 from '../../app/Content.js';
 import AdminPage                 from '../../app/AdminPage.js';
 import ManagementPage          from './ManagementPage';
-import DropDownButton          from './DropDownButton';
 import ContentWidgetConfigPage from '../../pages/designer/widgetconfigs/ContentWidgetConfigPage';
 import TextAttribute           from './attribute-fields/TextAttribute';
 import HypertextAttribute from './attribute-fields/HypertextAttribute';
@@ -53,16 +52,19 @@ export default class AddPage extends Content {
     'Attach',
   ];
 
-  contentDescriptionInput = `${htmlElements.input}#description`;
-  contentGroupFormBody    = `${htmlElements.div}.GroupsFormBody.EditContentForm__outer-fieldset`;
-  contentGroupInput       = `${htmlElements.div}.DropdownTypeahead`;
-  contentTitleAttrInput   = `.RenderTextInput`;
+  contentDescriptionInput = `${htmlElements.input}#contentDescription`;
+  contentGroupFormBody    = `${htmlElements.div}.form-group`;
+  contentGroupInput       = `${htmlElements.select}#contentMainGroup`;
+  setGroupButton          = `${htmlElements.button}[name="entandoaction:configureMainGroup"]`;
+  contentTitleAttrEnInput = `${htmlElements.input}[name="Text:en_title"]`;
+  contentTitleAttrItInput = `${htmlElements.input}[name="Text:it_title"]`;
   contentAttrsEnTab       = `${htmlElements.a}#content-attributes-tabs-tab-en`;
-  contentAttrsItTab       = `${htmlElements.a}#content-attributes-tabs-tab-it`;
+  contentAttrsItTab       = `${htmlElements.a}[href="#it_tab"]`;
   contentTitleAttrInputIt = `attributes[0].values.it`;
-  contentAttrEnPane       = `${htmlElements.div}#content-attributes-tabs-pane-en`;
-  contentAttrItPane       = `${htmlElements.div}#content-attributes-tabs-pane-it`;
+  contentAttrEnPane       = `${htmlElements.div}#en_tab`;
+  contentAttrItPane       = `${htmlElements.div}#it_tab`;
   groupsFormSection       = `${htmlElements.div}.GroupsFormBody`;
+  stickyToolbar           = `${htmlElements.div}#sticky-toolbar`;
 
   static get BASIC_ATTRIBUTES() {
     return AddPage.ATTRIBUTES.filter(attribute => !AddPage.COMPLEX_ATTRIBUTES.includes(attribute));
@@ -70,12 +72,12 @@ export default class AddPage extends Content {
 
   getTitleAttrItInput() {
     return this.getContents().get(this.contentAttrItPane)
-               .find(this.contentTitleAttrInput).eq(0);
+               .find(this.contentTitleAttrItInput).eq(0);
   }
 
   getTitleAttrEnInput() {
     return this.getContents().get(this.contentAttrEnPane)
-               .find(this.contentTitleAttrInput).eq(0);
+               .find(this.contentTitleAttrEnInput);
   }
 
   getDescriptionInput() {
@@ -86,8 +88,7 @@ export default class AddPage extends Content {
   getGroupDropdown() {
     return this.getContents()
                .find(this.contentGroupFormBody)
-               .find(this.contentGroupInput).eq(0)
-               .children(htmlElements.div).eq(1);
+               .find(this.contentGroupInput);
   }
 
   getEnLanguageTab() {
@@ -105,19 +106,6 @@ export default class AddPage extends Content {
                .eq(0);
   }
 
-  getSaveDropDownButton() {
-    return new DropDownButton(this);
-  }
-
-  getSaveDropDownListItems() {
-    return this.getSaveDropDownButton().open();
-  }
-
-  getSaveAction() {
-    // 0 is the Save action number
-    return this.getSaveDropDownListItems().get(0);
-  }
-
   getOwnerGroup() {
     return this.getContents()
                .get(this.groupsFormSection)
@@ -125,12 +113,24 @@ export default class AddPage extends Content {
                .eq(0);
   }
 
+  getStickyToolbar() {
+    return this.getContents()
+               .find(this.stickyToolbar);
+  }
+
+  getSaveAction() {
+    return this.getStickyToolbar()
+               .find(`${htmlElements.button}[name="entandoaction:save"]`);
+  }
+
   getSaveContinueAction() {
-    return this.getSaveDropDownListItems().get(1);
+    return this.getStickyToolbar()
+               .find(`${htmlElements.button}#edit-saveAndContinue`);
   }
 
   getSaveApproveAction() {
-    return this.getSaveDropDownListItems().get(2);
+    return this.getStickyToolbar()
+               .find(`${htmlElements.button}[name="entandoaction:saveAndApprove"]`);
   }
 
   typeAttrTitleIt(input) {
@@ -159,7 +159,6 @@ export default class AddPage extends Content {
 
   submitForm(confirmTranslation = false) {
     this.getSaveAction().click();
-    cy.wait(1000);
     if (confirmTranslation) {
       this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
     }
@@ -168,17 +167,19 @@ export default class AddPage extends Content {
 
   submitApproveForm(confirmTranslation = false) {
     this.getSaveApproveAction().click();
-    cy.wait(1000);
     if (confirmTranslation) {
       this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
     }
     return new AdminPage(ManagementPage);
   }
 
+  getSetGroupButton() {
+    return this.getGroupDropdown().parent().find(this.setGroupButton);
+  }
+
   fillBeginContent(description, group = 'Free Access', append = false) {
-    this.getGroupDropdown().click({scrollBehavior: 'center'});
-    cy.wait(500);
-    this.getGroupDropdown().contains(group).click({scrollBehavior: 'center'});
+    this.getGroupDropdown().select(group);
+    this.getSetGroupButton().click();
     if (!append) {
       this.clearDescription();
     }
@@ -283,7 +284,6 @@ export default class AddPage extends Content {
     }
     this.typeDescription(description);
     this.submitForm();
-    cy.wait(1000);
     return new AdminPage(ManagementPage);
   }
 
