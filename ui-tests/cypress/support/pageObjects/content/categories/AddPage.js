@@ -76,7 +76,7 @@ export default class AddPage extends AdminContent {
 
     this.submitForm();
     cy.wait(1000);
-    return new AdminPage(CategoriesPage);
+    return cy.wrap(new AdminPage(CategoriesPage)).as('currentPage');
 
   }
 

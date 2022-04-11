@@ -10,6 +10,8 @@ export default class EditPage extends AdminContent {
   codeInput         = `${htmlElements.input}#categoryCode`;
   saveButton        = `${htmlElements.button}[type="submit"]`;
 
+
+
   getTitleItInput() {
     return this.getContents()
                .find(this.titleItInput);
@@ -63,7 +65,7 @@ export default class EditPage extends AdminContent {
     this.typeTitleEn(titleEn);
     this.submitForm();
     cy.wait(1000);
-    return new AdminPage(CategoriesPage);
+    return cy.wrap(new AdminPage(CategoriesPage)).as('currentPage');
   }
 
 }

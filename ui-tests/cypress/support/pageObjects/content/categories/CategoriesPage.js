@@ -71,14 +71,13 @@ class CategoriesKebabMenu extends KebabMenu {
 
   openEdit() {
     this.getEdit().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AdminPage(EditPage);
+    return cy.wrap(new AdminPage(EditPage)).as('currentPage');
   }
 
   clickDelete() {
     this.getDelete().click();
     cy.wait(1000);
-    return new AdminPage(DeleteAdminPage);
+    return cy.wrap( new AdminPage(DeleteAdminPage)).as('currentPage');
   }
 
 }
