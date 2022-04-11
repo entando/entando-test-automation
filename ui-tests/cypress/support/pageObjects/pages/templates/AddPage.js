@@ -9,7 +9,7 @@ export default class AddPage extends AppContent {
   codeInput             = `${htmlElements.input}[name="code"]#code`;
   nameInput             = `${htmlElements.input}[name="descr"]#descr`;
   codeMirrorDiv         = `${htmlElements.div}.form-group`;
-  codeMirror            = '.CodeMirror-code';
+  codeMirror            = `${htmlElements.div}.CodeMirror`;
   formRowDiv            = `${htmlElements.div}.row`;
   cancelButton          = `${htmlElements.button}.UserForm__action-button`;
   saveDropdownContainer = `${htmlElements.div}.dropdown`;
@@ -17,6 +17,13 @@ export default class AddPage extends AppContent {
   regularSaveButton     = `${htmlElements.a}#regularSaveButton`;
   continueSaveButton    = `${htmlElements.a}#continueSaveButton`;
   previewGrid           = `${htmlElements.div}.PageConfigGridCol.PageConfigGridCol--container`;
+
+  static openEditClonePage(button, code) {
+    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'templateLoadingGET', `/${code}`));
+    if (button) cy.get(button).click();
+    else cy.realType('{enter}');
+    cy.wait('@templateLoadingGET');
+  }
 
   getFormArea() {
     return this.getContents()
@@ -80,6 +87,14 @@ export default class AddPage extends AppContent {
     this.getJsonConfigInput().type(input, {parseSpecialCharSequences: false});
   }
 
+  getJsonConfigValue() {
+    return this.getJsonConfigInput()
+        .first()
+        .then((editor) => {
+          return editor[0].CodeMirror.getValue();
+        });
+  }
+
   clearTemplate() {
     this.getTemplateInput().type('{movetoend}');
     cy.realPress(['Meta', 'A']);
@@ -89,6 +104,14 @@ export default class AddPage extends AppContent {
   typeTemplate(input) {
     this.clearTemplate();
     this.getTemplateInput().type(input, {parseSpecialCharSequences: false});
+  }
+
+  getTemplateValue() {
+    return this.getTemplateInput()
+        .first()
+        .then((editor) => {
+          return editor[0].CodeMirror.getValue();
+        });
   }
 
   fillForm(data) {
