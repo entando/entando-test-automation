@@ -1,10 +1,10 @@
 import {htmlElements} from '../../WebElement';
 
-import Content       from '../../app/Content';
+import AppContent       from '../../app/AppContent';
 import AppPage       from '../../app/AppPage';
 import MFEWidgetForm from './MFEWidgetForm';
 
-export default class MFEWidgetsPage extends Content {
+export default class MFEWidgetsPage extends AppContent {
 
   static WIDGET_ACTIONS = {
     EDIT: 'WidgetListRow__menu-item-edit',

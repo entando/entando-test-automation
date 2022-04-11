@@ -1,6 +1,6 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content';
+import AppContent from '../../app/AppContent';
 
 
 import AppPage         from '../../app/AppPage';
@@ -8,7 +8,7 @@ import DesignerPage    from '../../pages/designer/DesignerPage';
 import MFEWidgetsPage  from './MFEWidgetsPage';
 import {DialogContent} from '../../app/Dialog';
 
-export default class MFEWidgetForm extends Content {
+export default class MFEWidgetForm extends AppContent {
 
   cloneMode = false;
 

@@ -1,4 +1,4 @@
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 import { DATA_ID, htmlElements } from '../../WebElement.js';
 import Pagination from '../../app/Pagination.js';
 import AppPage from '../../app/AppPage.js';
@@ -6,7 +6,7 @@ import AddPage from './AddPage';
 import KebabMenu from '../../app/KebabMenu.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
 
-export default class UXFragmentsPage extends Content {
+export default class UXFragmentsPage extends AppContent {
 
   searchForm       = `${htmlElements.form}.FragmentSearchForm`;
   searchCodeInput  = `${htmlElements.input}#fragmentcode[name="code"]`;

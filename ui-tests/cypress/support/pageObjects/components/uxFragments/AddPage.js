@@ -1,9 +1,9 @@
 import AppPage from '../../app/AppPage.js';
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 import { htmlElements } from '../../WebElement.js';
 import UXFragmentsPage from './UXFragments.js';
 
-export default class AddPage extends Content {
+export default class AddPage extends AppContent {
 
   codeInput = `${htmlElements.input}[name="code"]`;
   guiCodeInput = `${htmlElements.textarea}[name="guiCode"]`;
