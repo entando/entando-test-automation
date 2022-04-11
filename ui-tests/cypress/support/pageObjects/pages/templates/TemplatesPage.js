@@ -8,7 +8,7 @@ import Pagination   from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog';
 import AddPage      from './AddPage.js';
 
-export default class TemplatesPage extends Content {
+export default class TemplatesPage extends AppContent {
   filterRow = `${htmlElements.div}.row`;
 
   static openPage(button) {
