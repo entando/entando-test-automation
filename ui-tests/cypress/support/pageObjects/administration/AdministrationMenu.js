@@ -4,11 +4,12 @@ import {SubMenu} from '../app/MenuElement.js';
 
 import AppPage from '../app/AppPage.js';
 
-import DatabasePage         from './database/DatabasePage';
-import FilesListPage        from './fileBrowser/FilesListPage';
-import Languages_LabelsPage from './languages_Labels/Languages_LabelsPage';
-import EmailConfigurationPage  from './emailConfiguration/EmailConfigurationPage';
+import DatabasePage            from './database/DatabasePage';
+import FilesListPage           from './fileBrowser/FilesListPage';
+import LanguagesAndLabelsPage  from './languagesAndLabels/LanguagesAndLabelsPage';
+import LanguagesPage           from './languagesAndLabels/LanguagesPage';
 import ReloadConfigurationPage from './reloadConfiguration/ReloadConfigurationPage';
+import SMTPServerPage          from './emailConfiguration/SMTPServerPage';
 
 export default class AdministrationMenu extends SubMenu {
 
@@ -28,7 +29,7 @@ export default class AdministrationMenu extends SubMenu {
                .children(htmlElements.li).eq(1);
   }
 
-  getLanguages_Labels() {
+  getLanguagesAndLabels() {
     return this.getElements()
                .children(htmlElements.li).eq(2);
   }
@@ -53,14 +54,14 @@ export default class AdministrationMenu extends SubMenu {
     return new AppPage(FilesListPage);
   }
 
-  openLanguages_Labels() {
-    this.getLanguages_Labels().click();
-    return new AppPage(Languages_LabelsPage);
+  openLanguagesAndLabels() {
+    this.getLanguagesAndLabels().then(button => LanguagesAndLabelsPage.openPage(button));
+    return cy.wrap(new AppPage(LanguagesPage)).as('currentPage');
   }
 
   openEmailConfiguration() {
-    this.getEmailConfiguration().click();
-    return new AppPage(EmailConfigurationPage);
+    this.getEmailConfiguration().then(button => SMTPServerPage.openPage(button));
+    return cy.wrap(new AppPage(SMTPServerPage)).as('currentPage');
   }
 
   openReloadConfiguration() {

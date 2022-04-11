@@ -6,7 +6,6 @@ export default class HomePage extends AppPage {
 
   constructor() {
     super(Dashboard);
-    this.closeAppTour();
   }
 
 }
