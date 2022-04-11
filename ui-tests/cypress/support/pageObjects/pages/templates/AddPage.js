@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import AppContent from '../../app/AppContent';
 
@@ -11,11 +11,12 @@ export default class AddPage extends AppContent {
   codeMirrorDiv         = `${htmlElements.div}.form-group`;
   codeMirror            = '.CodeMirror-code';
   formRowDiv            = `${htmlElements.div}.row`;
-  cancelButton          = `[${DATA_TESTID}=common_PageTemplateForm_Button]`;
+  cancelButton          = `${htmlElements.button}.UserForm__action-button`;
   saveDropdownContainer = `${htmlElements.div}.dropdown`;
   saveDropdownButton    = `${htmlElements.button}#saveopts`;
   regularSaveButton     = `${htmlElements.a}#regularSaveButton`;
   continueSaveButton    = `${htmlElements.a}#continueSaveButton`;
+  previewGrid           = `${htmlElements.div}.PageConfigGridCol.PageConfigGridCol--container`;
 
   getFormArea() {
     return this.getContents()
@@ -53,6 +54,11 @@ export default class AddPage extends AppContent {
                .children(htmlElements.div).eq(2)
                .find(this.codeMirrorDiv)
                .find(this.codeMirror);
+  }
+
+  getPreviewGrid() {
+    return this.getFormArea()
+               .find(this.previewGrid);
   }
 
   typeName(input) {

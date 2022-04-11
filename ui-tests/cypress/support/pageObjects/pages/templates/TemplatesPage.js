@@ -53,7 +53,7 @@ export default class TemplatesPage extends Content {
 
   openAddPage() {
     this.getAddButton().click({ force: true });
-    return new AppPage(AddPage);
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 }
 
