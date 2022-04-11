@@ -3,7 +3,6 @@ import {htmlElements, WebElement} from '../WebElement.js';
 export default class Content extends WebElement {
 
   content = `${htmlElements.div}.container-fluid`;
-  alertMessageDiv = `${htmlElements.div}.ErrorsAlert`;
 
   get() {
     return this.parent.get()
