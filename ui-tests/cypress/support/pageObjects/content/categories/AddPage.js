@@ -11,7 +11,10 @@ export default class AddPage extends AdminContent {
   treePositionInput = `${htmlElements.table}#categoryTree`;
   saveButton        = `${htmlElements.button}[type="submit"]`;
 
-
+  static openPage(button) {
+    cy.get(button).click();
+    cy.wait(1000);
+  }
 
   getTitleItInput() {
     return this.getContents()
