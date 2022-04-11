@@ -37,14 +37,17 @@ describe([Tag.GTS], 'Categories', () => {
       .then (page => page.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible'));
   });
 
-  it('Create a category with an already existing code should not be possible', () => {
+  it.only('Create a category with an already existing code should not be possible', () => {
     postTestCategory();
-    currentPage = openCategoriesPage();
-    currentPage = currentPage.getContent().openAddCategoryPage();
+    cy.get('@currentPage')
+      .then(page => page.getContent().openAddCategoryPage());
+
+    cy.get('@currentPage')
+      .then(page => page.getContent().addCategory(`AAA${titleEn}`, titleIt, categoryCode, treePosition))
+      .then(page => page.getContent().getAlertMessage().should('be.visible'));
+
     // the current page shouldn't change because an error is returned from the add function and an alert is shown
     // in the same page (AddPage)
-    currentPage = currentPage.getContent().addCategory(`AAA${titleEn}`, titleIt, categoryCode, treePosition);
-    currentPage.getContent().getAlertMessage().should('be.visible');
   });
 
   it('Edit a category should be possible', () => {
