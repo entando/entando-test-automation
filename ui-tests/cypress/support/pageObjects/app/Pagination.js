@@ -10,6 +10,7 @@ export default class Pagination extends WebElement {
   ulNext           = `${htmlElements.ul}.pagination-pf-forward`;
   buttonPrev       = `${htmlElements.a}[title="Previous page"]`;
   buttonNext       = `${htmlElements.a}[title="Next page"]`;
+  input            = `${htmlElements.input}.pagination-pf-page`;
 
   constructor(parent) {
     super(parent);
@@ -61,6 +62,11 @@ export default class Pagination extends WebElement {
   getNextButton() {
     return this.getNextButtonsArea()
                .find(this.buttonNext);
+  }
+
+  getInput() {
+    return this.getRightArea()
+               .find(this.input);
   }
 
 }

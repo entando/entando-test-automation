@@ -8,6 +8,55 @@ import Pagination   from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog';
 import AddPage      from './AddPage.js';
 
+export default class TemplatesPage extends Content {
+  filterRow = `${htmlElements.div}.row`;
+
+  static openPage(button) {
+    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'templatesPageLoadingGET', '?*'));
+    if (button) cy.get(button).click();
+    else cy.realType('{enter}');
+    cy.wait('@templatesPageLoadingGET');
+  }
+
+  getTable() {
+    return this.get()
+               .find(htmlElements.table);
+  }
+
+  getTableRows() {
+    return this.getTable()
+               .children(htmlElements.tbody)
+               .children(htmlElements.tr);
+  }
+
+  getKebabMenuByCode(code) {
+    return new TemplatesKebabMenu(this, code);
+  }
+
+  getTableRow(code) {
+    const menu = this.getKebabMenuByCode(code);
+    return menu.get().closest(htmlElements.tr);
+  }
+
+  getPagination() {
+    return new Pagination(this);
+  }
+
+  getFootArea() {
+    return this.get()
+               .find(this.filterRow).eq(3);
+  }
+
+  getAddButton() {
+    return this.getFootArea().find(htmlElements.button);
+  }
+
+  openAddPage() {
+    this.getAddButton().click({ force: true });
+    return new AppPage(AddPage);
+  }
+}
+
 class TemplatesKebabMenu extends KebabMenu {
   static MENU_OPTIONS = {
     EDIT: 'editTemplate',
@@ -75,47 +124,5 @@ class TemplatesKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDeleteButton().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
-  }
-}
-
-export default class TemplatesPage extends AppContent {
-  filterRow = `${htmlElements.div}.row`;
-
-  getTable() {
-    return this.get()
-               .find(htmlElements.table);
-  }
-
-  getTableRows() {
-    return this.getTable()
-               .children(htmlElements.tbody)
-               .children(htmlElements.tr);
-  }
-
-  getKebabMenuByCode(code) {
-    return new TemplatesKebabMenu(this, code);
-  }
-
-  getTableRow(code) {
-    const menu = this.getKebabMenuByCode(code);
-    return menu.get().closest(htmlElements.tr);
-  }
-
-  getPagination() {
-    return new Pagination(this);
-  }
-
-  getFootArea() {
-    return this.get()
-               .find(this.filterRow).eq(3);
-  }
-
-  getAddButton() {
-    return this.getFootArea().find(htmlElements.button);
-  }
-
-  openAddPage() {
-    this.getAddButton().click({force: true});
-    return new AppPage(AddPage);
   }
 }
