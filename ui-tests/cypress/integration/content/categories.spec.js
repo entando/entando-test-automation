@@ -1,5 +1,5 @@
 import {generateRandomId} from '../../support/utils';
-import HomePage           from '../../support/pageObjects/HomePage';
+
 import CategoriesPage     from '../../support/pageObjects/content/categories/CategoriesPage';
 
 describe([Tag.GTS], 'Categories', () => {
@@ -24,9 +24,10 @@ describe([Tag.GTS], 'Categories', () => {
   });
 
   it('Create a category should be possible', () => {
-    currentPage = openCategoriesPage();
-    currentPage = currentPage.getContent().openAddCategoryPage();
-    currentPage = currentPage.getContent().addCategory(titleEn, titleIt, categoryCode, treePosition);
+    openCategoriesPage()
+        .then(page => page.getContent().openAddCategoryPage())
+        .then(page => page.getContent().addCategory(titleEn, titleIt, categoryCode, treePosition))
+
     currentPage.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible');
     cy.wrap(categoryCode).as('categoryToBeDeleted');
   });
@@ -121,9 +122,8 @@ describe([Tag.GTS], 'Categories', () => {
   };
 
   const openCategoriesPage = () => {
-    let currentPage = new HomePage();
-    currentPage     = currentPage.getMenu().getContent().open();
-    return currentPage.openCategories();
+    return cy.get('@currentPage')
+        .then(page => page.getMenu().getContent().open().openCategories());
   };
 
 });

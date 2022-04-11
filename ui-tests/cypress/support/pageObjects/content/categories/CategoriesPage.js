@@ -10,6 +10,11 @@ export default class CategoriesPage extends AdminContent {
 
   categoriesTree    = `${htmlElements.table}[id="categoryTree"]`;
 
+  static openPage(button) {
+    cy.get(button).click();
+    cy.wait(1000);
+  }
+
   getCategoriesTree() {
     return this.getContents()
                .find(this.categoriesTree);
@@ -22,9 +27,8 @@ export default class CategoriesPage extends AdminContent {
   }
 
   openAddCategoryPage() {
-    this.getAddButton().click();
-    cy.wait(1000);
-    return new AdminPage(AddPage);
+    this.getAddButton().then(button => AddPage.openPage(button));
+    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
 
   getKebabMenu(code) {
@@ -78,4 +82,3 @@ class CategoriesKebabMenu extends KebabMenu {
   }
 
 }
-
