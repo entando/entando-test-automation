@@ -4,17 +4,23 @@ import Menu                       from './Menu';
 
 export default class Menus extends WebElement {
 
-  menus = `${htmlElements.div}.safari-menu-fix`;
+  menus     = `${htmlElements.div}.safari-menu-fix`;
+  adminPage = false;
 
-  constructor(parent) {
+  constructor(parent, adminPage = false) {
     super(parent);
-    this.navbar = new Navbar(this);
-    this.menu   = new Menu(this);
+    this.navbar    = new Navbar(this);
+    this.menu      = new Menu(this);
+    if(adminPage) this.adminPage = adminPage;
   }
 
   get() {
-    return this.parent.get()
-               .children(this.menus);
+    if(this.adminPage) {
+      return this.parent.get();
+    } else {
+      return this.parent.get()
+                 .children(this.menus);
+    }
   }
 
   getNavbar() {

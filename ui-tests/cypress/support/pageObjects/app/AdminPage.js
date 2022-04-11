@@ -1,7 +1,7 @@
 import {htmlElements} from '../WebElement.js';
 
-import AbstractPage from './AbstractPage';
-import Menus        from './Menus';
+import AbstractPage   from './AbstractPage';
+import Menus          from './Menus';
 
 export default class AdminPage extends AbstractPage {
 
@@ -10,7 +10,7 @@ export default class AdminPage extends AbstractPage {
 
   constructor(content) {
     super();
-    this.menus   = new Menus(this);
+    this.menus   = new Menus(this, true);
     this.content = new content(this);
   }
 
