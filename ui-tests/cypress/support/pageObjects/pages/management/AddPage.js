@@ -1,13 +1,13 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
 import ManagementPage from './ManagementPage.js';
-import DesignerPage from '../designer/DesignerPage.js';
+import DesignerPage   from '../designer/DesignerPage.js';
 
-export default class AddPage extends Content {
+export default class AddPage extends AppContent {
 
   // SEO
   seoInfoContainer = `${htmlElements.div}.SeoInfo`;
@@ -134,7 +134,7 @@ export default class AddPage extends Content {
     return this.getContents()
                .find(this.saveButton);
   }
-  
+
   clickSaveAndDesignButton() {
     this.getSaveAndDesignButton().click();
     return new AppPage(DesignerPage);
@@ -152,7 +152,7 @@ export default class AddPage extends Content {
   clearCode() {
     this.getCodeInput().clear();
   }
-  
+
   fillRequiredData(enTitle, itTitle, code, pageIndex, pageTemplate) {
     this.selectSeoLanguage(0);
     this.typeTitle(enTitle, 'en');
@@ -226,6 +226,7 @@ export default class AddPage extends Content {
   typeMetaKey(value) {
     this.getMetaKeyInput().type(value);
   }
+
   typeMetaValue(value) {
     this.getMetaValueInput().type(value);
   }

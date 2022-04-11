@@ -1,10 +1,10 @@
-import AddPage         from './AddPage';
-import AppPage         from '../../app/AppPage';
-import Content         from '../../app/Content.js';
-import EditPage        from './EditPage';
-import {htmlElements}  from '../../WebElement.js';
+import AddPage        from './AddPage';
+import AppPage        from '../../app/AppPage';
+import AdminContent   from '../../app/AdminContent';
+import EditPage       from './EditPage';
+import {htmlElements} from '../../WebElement.js';
 
-export default class CategoriesPage extends Content {
+export default class CategoriesPage extends AdminContent {
 
   modalDeleteButton = `${htmlElements.button}#DeleteCategoryModal__button-delete`;
   actionDelete      = `${htmlElements.li}.CategoryListMenuAction__menu-item-delete`;

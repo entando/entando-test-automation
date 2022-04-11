@@ -7,17 +7,17 @@ export default class BooleanAttribute extends AttributeFormField {
 
   getInputArea() {
     return this.getContents()
-      .find('[role="toolbar"]');
+               .find('[role="toolbar"]');
   }
 
   getYesSwitch() {
     return this.getInputArea()
-      .find('label').eq(0);
+               .find('label').eq(0);
   }
 
   getNoSwitch() {
     return this.getInputArea()
-      .find('label').eq(1);
+               .find('label').eq(1);
   }
 
   setValue(value) {

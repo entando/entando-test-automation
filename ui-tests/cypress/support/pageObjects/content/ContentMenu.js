@@ -2,7 +2,7 @@ import {htmlElements} from '../WebElement.js';
 
 import {SubMenu} from '../app/MenuElement.js';
 
-import AdminPage from '../app/AdminPage.js';
+import AdminPage      from '../app/AdminPage.js';
 import ManagementPage from './management/ManagementPage';
 import AssetsPage     from './assets/AssetsPage';
 import TemplatesPage  from './templates/TemplatesPage';

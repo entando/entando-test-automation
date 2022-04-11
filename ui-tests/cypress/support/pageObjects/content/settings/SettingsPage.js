@@ -1,3 +1,3 @@
-import Content from '../../app/Content.js';
+import AdminContent from '../../app/AdminContent';
 
-export default class SettingsPage extends Content {}
+export default class SettingsPage extends AdminContent {}

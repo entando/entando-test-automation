@@ -1,14 +1,14 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content      from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
+import KebabMenu  from '../../app/KebabMenu.js';
+
 import AppPage      from '../../app/AppPage.js';
-import KebabMenu    from '../../app/KebabMenu.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
+import AddPage      from './AddPage.js';
+import EditPage     from './EditPage.js';
 
-import AddPage  from './AddPage.js';
-import EditPage from './EditPage.js';
-
-export default class ProfileTypesPage extends Content {
+export default class ProfileTypesPage extends AppContent {
 
   addButton = `${htmlElements.button}.ProfileType__add`;
 

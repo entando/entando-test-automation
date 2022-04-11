@@ -1,9 +1,9 @@
 import AppPage        from '../../app/AppPage.js';
 import CategoriesPage from './CategoriesPage';
-import Content        from '../../app/Content.js';
+import AdminContent   from '../../app/AdminContent';
 import {htmlElements} from '../../WebElement';
 
-export default class AddPage extends Content {
+export default class AddPage extends AdminContent {
 
   titleItInput      = `${htmlElements.input}[name="titles.it"][id="titles.it"]`;
   titleEnInput      = `${htmlElements.input}[name="titles.en"][id="titles.en"]`;

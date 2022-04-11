@@ -1,11 +1,11 @@
-import { WebElement } from '../../WebElement';
+import {WebElement} from '../../WebElement';
 
 export default class AttributeFormField extends WebElement {
   constructor(pageParent, attributeType, index, lang = 'en') {
     super(pageParent);
-    this.attributeType = attributeType;
-    this.index = index;
-    this.lang = lang;
+    this.attributeType   = attributeType;
+    this.index           = index;
+    this.lang            = lang;
     this.parentAttribute = null;
   }
 
@@ -15,18 +15,18 @@ export default class AttributeFormField extends WebElement {
 
   getLangPane() {
     return this.parent.get()
-      .find(`#content-attributes-tabs-pane-${this.lang}`);
+               .find(`#content-attributes-tabs-pane-${this.lang}`);
   }
 
   getCollapseMain() {
     return this.getLangPane()
-      .children('div.ContentFormFieldCollapse').then(el => Array.isArray(el) ? el[this.index] : el);
+               .children('div.ContentFormFieldCollapse').then(el => Array.isArray(el) ? el[this.index] : el);
   }
 
   getTopContents() {
     return this.getCollapseMain().children('div.ReactCollapse--collapse')
-      .children('div.ReactCollapse--content')
-      .children('div.ContentFormFieldCollapse__body');
+               .children('div.ReactCollapse--content')
+               .children('div.ContentFormFieldCollapse__body');
   }
 
   get() {
@@ -44,7 +44,7 @@ export default class AttributeFormField extends WebElement {
     if (!this.parentAttribute) {
       return `attributes[${this.index}]`;
     }
-    const { prefix, attributeType } = this.parentAttribute;
+    const {prefix, attributeType} = this.parentAttribute;
     switch (attributeType) {
       default:
         return `attributes[${this.index}]`;
@@ -55,11 +55,11 @@ export default class AttributeFormField extends WebElement {
       case 'Monolist':
         return `${prefix}.elements[${this.index}]`;
     }
-    
+
   }
 
   isCollapsed() {
-    return this.getCollapseMain().invoke('hasClass','closed');
+    return this.getCollapseMain().invoke('hasClass', 'closed');
   }
 
   getToggleTitle() {

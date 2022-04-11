@@ -1,15 +1,15 @@
 import {htmlElements} from '../../WebElement';
 
-import Content   from '../../app/Content.js';
-import KebabMenu from '../../app/KebabMenu';
+import AdminContent from '../../app/AdminContent.js';
+import KebabMenu    from '../../app/KebabMenu';
 
-import AdminPage      from '../../app/AdminPage.js';
+import AdminPage    from '../../app/AdminPage.js';
 import DeleteDialog from '../../app/DeleteDialog';
 
 import TypesPage     from './TypesPage.js';
 import AttributePage from './attributes/AttributePage';
 
-export default class EditPage extends Content {
+export default class EditPage extends AdminContent {
 
   codeInput           = `${htmlElements.input}[name=code]`;
   nameInput           = `${htmlElements.input}[name=name]`;

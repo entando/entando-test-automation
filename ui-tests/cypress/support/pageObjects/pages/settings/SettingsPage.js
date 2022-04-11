@@ -1,3 +1,3 @@
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
-export default class SettingsPage extends Content {}
+export default class SettingsPage extends AppContent {}

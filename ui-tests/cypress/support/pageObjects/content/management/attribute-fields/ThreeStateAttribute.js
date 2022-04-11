@@ -7,7 +7,7 @@ export default class ThreeStateAttribute extends BooleanAttribute {
 
   getBothSwitch() {
     return this.getInputArea()
-      .find('label').eq(2);
+               .find('label').eq(2);
   }
 
   setValue(value) {

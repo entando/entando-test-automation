@@ -1,20 +1,19 @@
+import {htmlElements} from '../../WebElement';
 
-import {htmlElements } from '../../WebElement';
+import AppContent from '../../app/AppContent';
 
-import Content from '../../app/Content';
-
-import AppPage from '../../app/AppPage';
+import AppPage        from '../../app/AppPage';
 import ManagementPage from './ManagementPage';
-import DesignerPage from '../designer/DesignerPage';
+import DesignerPage   from '../designer/DesignerPage';
 
-export default class AddPage extends Content {
+export default class AddPage extends AppContent {
 
-  titleInput = `${htmlElements.input}[name="titles.{lang}"]`;
-  codeInput = `${htmlElements.input}[name=code]`;
-  pageTreeSelector = `${htmlElements.table}.PageTreeSelector`;
-  selectArea = `${htmlElements.span}.PageTreeSelector__select-area`;
+  titleInput          = `${htmlElements.input}[name="titles.{lang}"]`;
+  codeInput           = `${htmlElements.input}[name=code]`;
+  pageTreeSelector    = `${htmlElements.table}.PageTreeSelector`;
+  selectArea          = `${htmlElements.span}.PageTreeSelector__select-area`;
   saveAndDesignButton = `${htmlElements.button}.PageForm__save-and-configure-btn`;
-  saveButton = `${htmlElements.button}.PageForm__save-btn`;
+  saveButton          = `${htmlElements.button}.PageForm__save-btn`;
 
   getTitleInput(lang) {
     return this.getContents()

@@ -1,7 +1,7 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content   from '../../app/Content.js';
-import KebabMenu from '../../app/KebabMenu';
+import AppContent from '../../app/AppContent.js';
+import KebabMenu  from '../../app/KebabMenu';
 
 import AppPage      from '../../app/AppPage.js';
 import DeleteDialog from '../../app/DeleteDialog';
@@ -10,7 +10,7 @@ import AddPage     from './AddPage.js';
 import EditPage    from './EditPage.js';
 import DetailsPage from './DetailsPage';
 
-export default class GroupsPage extends Content {
+export default class GroupsPage extends AppContent {
 
   tableDiv = `${htmlElements.div}.list_GroupListTable_div`;
   tableCol = `${htmlElements.div}.list_GroupListTable_Col`;

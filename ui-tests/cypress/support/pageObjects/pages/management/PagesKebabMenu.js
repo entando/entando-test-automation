@@ -1,12 +1,12 @@
+import {htmlElements} from '../../WebElement';
+
 import KebabMenu from '../../app/KebabMenu';
 
 import AppPage      from '../../app/AppPage.js';
 import DeleteDialog from '../../app/DeleteDialog';
-
-import AddPage from './AddPage.js';
-import ClonePage from './ClonePage';
+import AddPage      from './AddPage.js';
+import ClonePage    from './ClonePage';
 import DesignerPage from '../designer/DesignerPage';
-import { htmlElements } from '../../WebElement';
 
 export default class PagesKebabMenu extends KebabMenu {
 
@@ -24,8 +24,8 @@ export default class PagesKebabMenu extends KebabMenu {
 
   get() {
     return this.parent.getTableRow(this.code)
-                      .find(`${htmlElements.div}[role="none"]`)
-                      .children(htmlElements.div);         
+               .find(`${htmlElements.div}[role="none"]`)
+               .children(htmlElements.div);
   }
 
   open() {

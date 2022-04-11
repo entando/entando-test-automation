@@ -1,7 +1,7 @@
 import {htmlElements} from '../../WebElement.js';
 
-import Content   from '../../app/Content.js';
-import KebabMenu from '../../app/KebabMenu';
+import AppContent from '../../app/AppContent.js';
+import KebabMenu  from '../../app/KebabMenu';
 
 import AppPage      from '../../app/AppPage';
 import DeleteDialog from '../../app/DeleteDialog';
@@ -12,7 +12,7 @@ import AuthorizationPage from './AuthorizationPage';
 import EditProfilePage   from './EditProfilePage';
 import ViewProfilePage   from './ViewProfilePage';
 
-export default class ManagementPage extends Content {
+export default class ManagementPage extends AppContent {
 
   tableDiv     = `${htmlElements.div}.UserListTable`;
   tableCol     = `${htmlElements.div}.col-xs-12`;

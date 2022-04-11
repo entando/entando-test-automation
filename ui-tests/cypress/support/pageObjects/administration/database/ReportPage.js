@@ -1,8 +1,10 @@
-import Content         from '../../app/Content.js';
-import {DialogContent} from '../../app/Dialog.js';
-import {htmlElements}  from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
-export default class ReportPage extends Content {
+import AppContent from '../../app/AppContent.js';
+
+import {DialogContent} from '../../app/Dialog.js';
+
+export default class ReportPage extends AppContent {
 
   descriptionList    = `${htmlElements.dl}.dl-horizontal`;
   componentTable     = `${htmlElements.table}.ReportDatabaseListTable__table`;
@@ -31,28 +33,28 @@ export default class ReportPage extends Content {
 
   getDataSourcePortTableHeaders() {
     return this.getDataSourceTables().eq(0)
-      .children(htmlElements.thead)
-      .find(htmlElements.th);
+               .children(htmlElements.thead)
+               .find(htmlElements.th);
   }
 
   getDataSourcePortTableRowByIndex(index) {
     return this.getDataSourceTables().eq(0)
-      .children(htmlElements.tbody)
-      .children(htmlElements.tr).eq(index)
-      .children(htmlElements.td);
+               .children(htmlElements.tbody)
+               .children(htmlElements.tr).eq(index)
+               .children(htmlElements.td);
   }
 
   getDataSourceServTableHeaders() {
     return this.getDataSourceTables().eq(1)
-      .children(htmlElements.thead)
-      .find(htmlElements.th);
+               .children(htmlElements.thead)
+               .find(htmlElements.th);
   }
 
   getDataSourceServTableRowByIndex(index) {
     return this.getDataSourceTables().eq(1)
-      .children(htmlElements.tbody)
-      .children(htmlElements.tr).eq(index)
-      .children(htmlElements.td);
+               .children(htmlElements.tbody)
+               .children(htmlElements.tr).eq(index)
+               .children(htmlElements.td);
   }
 
   openSQLQueryFromDataSourcePortByIndex(index) {
