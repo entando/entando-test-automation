@@ -1,19 +1,39 @@
-import {htmlElements} from "../../support/pageObjects/WebElement";
+import {htmlElements}     from "../../support/pageObjects/WebElement";
+import {generateRandomId} from "../../support/utils";
+import sampleData         from "../../fixtures/data/sampleData.json";
 
 describe('Page Templates', () => {
 
   beforeEach(() => {
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
+    cy.wrap([]).as('templatesToBeDeleted');
+    sampleData.code  = generateRandomId();
+    sampleData.descr = generateRandomId();
   });
 
   afterEach(() => {
+    cy.get('@templatesToBeDeleted').then(templatesToBeDeleted => {
+      if (templatesToBeDeleted) cy.pageTemplatesController()
+                                  .then(controller => {
+                                    templatesToBeDeleted.forEach(templateToBeDeleted => controller.deletePageTemplate(templateToBeDeleted))
+                                  });
+    });
     cy.kcUILogout();
   });
 
   const openPageTemplateMgmtPage = () => {
     return cy.get('@currentPage')
              .then(page => page.getMenu().getPages().open().openTemplates());
+  };
+
+  const addPageTemplate = (data) => {
+    cy.pageTemplatesController()
+        .then(controller => controller.addPageTemplate({
+          ...data,
+          configuration: JSON.parse(data.configuration)
+        }));
+    cy.pushAlias('@templatesToBeDeleted', data.code);
   };
 
   describe('Templates section structure', () => {
@@ -48,6 +68,17 @@ describe('Page Templates', () => {
           page.getContent().getPreviewGrid().should('exist').and('be.visible');
           page.getContent().getCancelButton().should('exist').and('be.visible');
           page.getContent().getSaveDropdownButton().should('exist').and('be.visible');
+        });
+    });
+
+    it([Tag.SMOKE, 'ENG-3525'], 'Templates context menu', () => {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => {
+          const kebabMenu = page.getContent().getKebabMenuByCode(sampleData.code).open();
+          kebabMenu.getMenu().should('exist').and('be.visible');
+          kebabMenu.getMenuList().then(elements => cy.validateListTexts(elements, ['Edit', 'Clone', 'Details', 'Delete']));
         });
     });
 

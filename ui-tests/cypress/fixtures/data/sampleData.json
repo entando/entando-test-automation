@@ -1,0 +1,6 @@
+{
+   "code":"test",
+   "descr":"test",
+   "configuration":"{\"frames\": [{\"pos\": 0, \"descr\": \"Logo\", \"mainFrame\": false, \"defaultWidget\": {\"code\": \"logo\",\"properties\": null}, \"sketch\": {\"x1\": 0, \"y1\": 0, \"x2\": 2, \"y2\": 0}}]}",
+   "template":"<h1>hello there a frame</h1>"
+}
