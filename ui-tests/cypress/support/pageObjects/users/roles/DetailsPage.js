@@ -1,8 +1,8 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
-export default class DetailsPage extends Content {
+export default class DetailsPage extends AppContent {
 
   description = `${htmlElements.dl}.DetailRole__detail-list`;
 

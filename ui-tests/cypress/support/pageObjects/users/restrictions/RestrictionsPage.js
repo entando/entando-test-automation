@@ -1,3 +1,3 @@
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
-export default class RestrictionsPage extends Content {}
+export default class RestrictionsPage extends AppContent {}
