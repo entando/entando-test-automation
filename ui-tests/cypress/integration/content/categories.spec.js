@@ -14,6 +14,7 @@ describe([Tag.GTS], 'Categories', () => {
     cy.wrap(null).as('categoryToBeDeleted');
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
+    openCategoriesPage();
   });
 
   afterEach(() => {
@@ -24,12 +25,16 @@ describe([Tag.GTS], 'Categories', () => {
   });
 
   it('Create a category should be possible', () => {
-    openCategoriesPage()
-        .then(page => page.getContent().openAddCategoryPage())
-        .then(page => page.getContent().addCategory(titleEn, titleIt, categoryCode, treePosition))
+    cy.get('@currentPage')
+      .then(page => page.getContent().openAddCategoryPage());
 
-    currentPage.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible');
-    cy.wrap(categoryCode).as('categoryToBeDeleted');
+    cy.get('@currentPage')
+      .then(page => {
+        page.getContent().addCategory(titleEn, titleIt, categoryCode, treePosition);
+        cy.wrap(categoryCode).as('categoryToBeDeleted');
+      });
+    cy.get('@currentPage')
+      .then (page => page.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible'));
   });
 
   it('Create a category with an already existing code should not be possible', () => {
