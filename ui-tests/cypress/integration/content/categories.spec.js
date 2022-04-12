@@ -14,7 +14,7 @@ describe([Tag.GTS], 'Categories', () => {
     cy.wrap(null).as('categoryToBeDeleted');
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
-    openCategoriesPage();
+
   });
 
   afterEach(() => {
@@ -25,10 +25,8 @@ describe([Tag.GTS], 'Categories', () => {
   });
 
   it('Create a category should be possible', () => {
-    cy.get('@currentPage')
-      .then(page => page.getContent().openAddCategoryPage());
-
-    cy.get('@currentPage')
+    openCategoriesPage()
+      .then(page => page.getContent().openAddCategoryPage())
       .then(page => {
         page.getContent().addCategory(titleEn, titleIt, categoryCode, treePosition);
         cy.wrap(categoryCode).as('categoryToBeDeleted');
@@ -37,12 +35,10 @@ describe([Tag.GTS], 'Categories', () => {
       .then (page => page.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible'));
   });
 
-  it.only('Create a category with an already existing code should not be possible', () => {
+  it('Create a category with an already existing code should not be possible', () => {
     postTestCategory();
-    cy.get('@currentPage')
-      .then(page => page.getContent().openAddCategoryPage());
-
-    cy.get('@currentPage')
+    openCategoriesPage()
+      .then(page => page.getContent().openAddCategoryPage())
       .then(page => page.getContent().addCategory(`AAA${titleEn}`, titleIt, categoryCode, treePosition))
       .then(page => page.getContent().getAlertMessage().should('be.visible'));
 
@@ -54,19 +50,22 @@ describe([Tag.GTS], 'Categories', () => {
     const newTitleEn = `${titleEn}-new`;
     const newTitleIt = `${titleIt}-new`;
     postTestCategory();
-    currentPage = openCategoriesPage();
-    currentPage = currentPage.getContent().getKebabMenu(titleEn).open().openEdit();
-    currentPage = currentPage.getContent().editCategory(newTitleEn, newTitleIt);
-    currentPage.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible');
+    openCategoriesPage()
+        .then(page => page.getContent().getKebabMenu(titleEn).open().openEdit())
+        .then(page => page.getContent().editCategory(newTitleEn, newTitleIt))
+        .then(page => page.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible'));
   });
 
   it('Delete a category should be possible', () => {
     postTestCategory();
-    currentPage = openCategoriesPage();
-    currentPage.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible');
-    currentPage = currentPage.getContent().getKebabMenu(titleEn).open().clickDelete();
-    currentPage = currentPage.getContent().submitCancel(CategoriesPage);
-    currentPage.getContent().getCategoriesTree().should('not.contain', titleEn);
+    openCategoriesPage()
+        .then(page => {
+          page.getContent().getCategoriesTree().contains('td', titleEn).should('contain.text', titleEn);
+          page.getContent().getKebabMenu(titleEn).open().clickDelete()
+        });
+    cy.get('@currentPage')
+      .then(page => page.getContent().submitCancel(CategoriesPage))
+      .then(page => page.getContent().getCategoriesTree().should('not.contain', titleEn));
     cy.wrap(null).as('categoryToBeDeleted');
   });
 
@@ -121,7 +120,8 @@ describe([Tag.GTS], 'Categories', () => {
   });
 
   const postTestCategory = () => {
-    cy.categoriesController().then(controller => controller.postCategory(titleEn, titleIt, categoryCode, rootCode))
+    return cy.categoriesController()
+      .then(controller => controller.postCategory(titleEn, titleIt, categoryCode, rootCode))
       .then(response => cy.wrap(response.body.payload.code).as('categoryToBeDeleted'));
   };
 
