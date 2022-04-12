@@ -45,8 +45,8 @@ export default class AdministrationMenu extends SubMenu {
   }
 
   openDatabase() {
-    this.getDatabase().click();
-    return new AppPage(DatabasePage);
+    this.getDatabase().then(button => DatabasePage.openPage(button));
+    return cy.wrap(new AppPage(DatabasePage)).as('currentPage');
   }
 
   openFileBrowser() {

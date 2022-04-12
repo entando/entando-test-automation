@@ -1,5 +1,7 @@
 import {htmlElements, WebElement} from '../WebElement.js';
 
+import AppPage from './AppPage';
+
 export class Dialog extends WebElement {
 
   dialog      = `${htmlElements.div}[role=dialog]`;
@@ -65,9 +67,17 @@ export class Dialog extends WebElement {
   }
 
   confirm() {
-    this.getConfirmButton().click();
+    const body = {...this.body};
     this.body = null;
-    return cy.get('@currentPage');
+    this.getConfirmButton().then(button => {
+      if (body.loadOnConfirm) {
+        body.loadOnConfirm.openPage(button);
+        return cy.wrap(new body.appOrAdmin(body.loadOnConfirm)).as('currentPage');
+      } else {
+        cy.get(button).click();
+        return cy.get('@currentPage');
+      }
+    });
   }
 
 }
@@ -75,10 +85,17 @@ export class Dialog extends WebElement {
 export class DialogContent extends WebElement {
 
   body = `${htmlElements.div}.modal-body`;
+  loadOnConfirm = null;
+  appOrAdmin = null;
 
   get() {
     return this.parent.get()
                .find(this.body);
+  }
+
+  setLoadOnConfirm(loadOnConfirm, appOrAdmin = AppPage) {
+    this.loadOnConfirm = loadOnConfirm;
+    this.appOrAdmin = appOrAdmin;
   }
 
 }

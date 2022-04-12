@@ -4,34 +4,41 @@ import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
-import {DialogContent} from '../../app/Dialog.js';
 import ReportPage      from './ReportPage.js';
+import AddDatabasePage from './AddDatabasePage';
+import DeleteDialog    from '../../app/DeleteDialog';
 
 export default class DatabasePage extends AppContent {
 
-  databaseListTable  = `${htmlElements.table}.DatabaseListTable__table`;
   createBackupButton = `${htmlElements.button}.DatabaseListPage__add`;
-  deleteButton       = `${htmlElements.button}.UserAuthorityTable__delete-tag-btn`;
-  noBackupsAlert     = `${htmlElements.div}.DatabaseListPage__alert`;
 
-  tablesList        = `${htmlElements.ul}.list-unstyled`;
-  addPageButtonsDiv = `${htmlElements.div}.AddDatabaseListTable__btn-add`;
-  backupNowButton   = `${htmlElements.button}.AddDatabaseListTable__backup`;
-  goBackButton      = `${htmlElements.button}.AddDatabaseListTable__goto-list`;
+  noBackupsAlert = `${htmlElements.div}.DatabaseListPage__alert`;
 
+  databaseListTable = `${htmlElements.table}.DatabaseListTable__table`;
+  deleteButton      = `${htmlElements.button}.UserAuthorityTable__delete-tag-btn`;
 
-  getDatabaseListTable() {
-    return this.getContents().find(this.databaseListTable);
+  static openPage(button) {
+    cy.databaseController().then(controller => controller.intercept({method: 'GET'}, 'databasePageLoadingGET', '?*'));
+    cy.get(button).click();
+    cy.wait(['@databasePageLoadingGET', '@databasePageLoadingGET']);
   }
 
   getCreateBackupButton() {
     return this.getContents().find(this.createBackupButton);
   }
 
+  getAlert() {
+    return this.getContents().find(this.noBackupsAlert);
+  }
+
+  getDatabaseListTable() {
+    return this.getContents().find(this.databaseListTable);
+  }
+
   getTableHeaders() {
     return this.getDatabaseListTable()
                .children(htmlElements.thead)
-               .find(htmlElements.th);
+               .children(htmlElements.tr);
   }
 
   getTableRows() {
@@ -40,49 +47,35 @@ export default class DatabasePage extends AppContent {
                .children(htmlElements.tr);
   }
 
-  getTableRowByIndex(index) {
-    return this.getTableRows().eq(index);
+  getTableRow(code) {
+    return this.getTableRows()
+               .contains(htmlElements.td, code)
+               .parent();
   }
 
-  getDeleteButtonByIndex(index) {
-    return this.getTableRowByIndex(index)
-               .find(this.deleteButton);
+  getRowDetails(code) {
+    return this.getTableRow(code).find(htmlElements.a);
   }
 
-  clickDeleteButtonByIndex(index) {
-    this.getDeleteButtonByIndex(index).click();
-    this.parent.getDialog().setBody(DialogContent);
+  getRowDeleteButton(code) {
+    return this.getTableRow(code).find(this.deleteButton);
   }
 
-  getDetailsByIndex(index) {
-    return this.getTableRowByIndex(index)
-               .find(htmlElements.a);
+  openCreateBackup() {
+    this.getCreateBackupButton().then(button => AddDatabasePage.openPage(button));
+    return cy.wrap(new AppPage(AddDatabasePage)).as('currentPage');
   }
 
-  openDetailsByIndex(index) {
-    this.getDetailsByIndex(index).click();
-    return new AppPage(ReportPage);
+  openRowDetails(code) {
+    this.getRowDetails(code).then(button => ReportPage.openPage(button, code));
+    return cy.wrap(new AppPage(ReportPage)).as('currentPage');
   }
 
-  getTablesList() {
-    return this.getContents().find(this.tablesList);
-  }
-
-  getBackupNowButton() {
-    return this.getContents().find(this.addPageButtonsDiv).find(this.backupNowButton);
-  }
-
-  getGoBackButton() {
-    return this.getContents().find(this.addPageButtonsDiv).find(this.goBackButton);
-  }
-
-  createBackup() {
-    this.getCreateBackupButton().click();
-    this.getBackupNowButton().click();
-  }
-
-  getAlert() {
-    return this.getContents().find(this.noBackupsAlert);
+  clickDeleteButton(code) {
+    this.getRowDeleteButton(code).click();
+    this.parent.getDialog().setBody(DeleteDialog);
+    this.parent.getDialog().getBody().setLoadOnConfirm(DatabasePage);
+    return cy.get('@currentPage');
   }
 
 }
