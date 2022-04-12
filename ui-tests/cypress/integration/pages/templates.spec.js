@@ -130,6 +130,22 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.SMOKE, 'ENG-3525'], 'Template details page', () => {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openDetails())
+        .then(page => {
+          cy.validateUrlPathname(`/page-template/view/${sampleData.code}`);
+          page.getContent().getTemplateDetailsTable().should('exist').and('be.visible')
+              .then(table => cy.wrap(table).find(htmlElements.th)
+                                           .then(headers => cy.validateListTexts(headers, ['Name', 'Code', 'Plugin code', 'JSON configuration', 'Template', 'Template preview'])));
+          page.getContent().getPluginCode().should('exist').and('be.visible');
+          page.getContent().getReferencedPagesDiv().should('exist').and('be.visible');
+          page.getContent().getEditButton().should('exist').and('be.visible');
+        });
+    });
+
   });
 
 });
