@@ -7,6 +7,7 @@ import AppPage      from '../../app/AppPage.js';
 import Pagination   from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog';
 import AddPage      from './AddPage.js';
+import DetailsPage  from './DetailsPage.js';
 
 export default class TemplatesPage extends AppContent {
   filterRow = `${htmlElements.div}.row`;
@@ -117,8 +118,9 @@ class TemplatesKebabMenu extends KebabMenu {
     return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
-  clickDetails() {
-    this.getDetailsButton().click();
+  openDetails() {
+    this.getDetailsButton().then(button => DetailsPage.openPage(button, this.code));
+    return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
   }
 
   clickDelete() {
