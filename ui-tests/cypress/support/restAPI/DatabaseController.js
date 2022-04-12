@@ -10,13 +10,6 @@ Cypress.Commands.add('databaseController', () => {
 
 export default class DatabaseController extends AbstractController {
 
-  addBackup() {
-    return this.request({
-      url: `${this.apiURL}/startBackup`,
-      method: 'POST'
-    });
-  }
-
   getBackupList() {
     return this.request({
       method: 'GET',
@@ -24,6 +17,13 @@ export default class DatabaseController extends AbstractController {
         page: 1,
         pageSize: 0
       }
+    });
+  }
+
+  addBackup() {
+    return this.request({
+      url: `${this.apiURL}/startBackup`,
+      method: 'POST'
     });
   }
 
