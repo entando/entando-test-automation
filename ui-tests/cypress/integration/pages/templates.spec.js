@@ -1,5 +1,6 @@
 import {htmlElements}     from "../../support/pageObjects/WebElement";
 import {generateRandomId} from "../../support/utils";
+import defaultTemplates   from "../../fixtures/data/defaultTemplates.json";
 import sampleData         from "../../fixtures/data/sampleData.json";
 
 describe('Page Templates', () => {
@@ -143,6 +144,22 @@ describe('Page Templates', () => {
           page.getContent().getPluginCode().should('exist').and('be.visible');
           page.getContent().getReferencedPagesDiv().should('exist').and('be.visible');
           page.getContent().getEditButton().should('exist').and('be.visible');
+        });
+    });
+
+  });
+
+  describe('Templates list', () => {
+
+    it([Tag.SANITY, 'ENG-3525'], 'Default page templates', () => {
+      openPageTemplateMgmtPage()
+        .then(page => {
+          cy.validateUrlPathname('/page-template');
+          page.getContent().getTable().should('exist').and('be.visible')
+              .then(table => {
+                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
+                  .then(rows => cy.validateListTexts(rows, defaultTemplates.map(template => template.code + template.descr + 'EditCloneDetailsDelete')));
+              });
         });
     });
 

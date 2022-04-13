@@ -1,0 +1,30 @@
+[
+   {
+      "code":"1-2-column",
+      "descr":"1-2 Columns"
+   },
+   {
+      "code":"1-2x2-1-column",
+      "descr":"1-2x2-1 Columns"
+   },
+   {
+      "code":"1-2x4-1-column",
+      "descr":"1-2x4-1 Columns"
+   },
+   {
+      "code":"1-column",
+      "descr":"1 Column"
+   },
+   {
+      "code":"content-page",
+      "descr":"Content Page"
+   },
+   {
+      "code":"home",
+      "descr":"Home Page"
+   },
+   {
+      "code":"single_frame_page",
+      "descr":"Single Frame Page"
+   }
+]
