@@ -37,6 +37,13 @@ describe('Page Templates', () => {
     cy.pushAlias('@templatesToBeDeleted', data.code);
   };
 
+  const addRandomPageTemplates = (number) => {
+    for (let index = 0; index < number; index++) {
+      const randomData = {code: generateRandomId(), descr: generateRandomId(), configuration: sampleData.configuration, template: sampleData.template};
+      addPageTemplate(randomData);
+    }
+  };
+
   describe('Templates section structure', () => {
 
     it([Tag.SMOKE, 'ENG-3525'], 'Templates section', () => {
@@ -160,6 +167,23 @@ describe('Page Templates', () => {
                 cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
                   .then(rows => cy.validateListTexts(rows, defaultTemplates.map(template => template.code + template.descr + 'EditCloneDetailsDelete')));
               });
+        });
+    });
+
+    it([Tag.SANITY, 'ENG-3525'], 'The templates list pagination should be correct', () => {
+      addRandomPageTemplates(4);
+
+      openPageTemplateMgmtPage()
+        .then(page => {
+          cy.validateUrlPathname('/page-template');
+          page.getContent().getTable().should('exist').and('be.visible')
+              .then(table => {
+                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
+                  .then(rows => {
+                    page.getContent().getPagination().getDropdownButton().should('have.text', rows.length+' ');
+                  });
+              });
+          page.getContent().getPagination().getInput().should('have.value', 1);
         });
     });
 

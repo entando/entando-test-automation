@@ -11,6 +11,7 @@ export default class Pagination extends WebElement {
   buttonPrev       = `${htmlElements.a}[title="Previous page"]`;
   buttonNext       = `${htmlElements.a}[title="Next page"]`;
   input            = `${htmlElements.input}.pagination-pf-page`;
+  dropdown         = `${htmlElements.button}#pagination-row-dropdown`;
 
   constructor(parent) {
     super(parent);
@@ -67,6 +68,11 @@ export default class Pagination extends WebElement {
   getInput() {
     return this.getRightArea()
                .find(this.input);
+  }
+
+  getDropdownButton() {
+    return this.getLeftArea()
+               .find(this.dropdown);
   }
 
 }
