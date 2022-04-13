@@ -5,6 +5,7 @@ import AdminPage     from '../../app/AdminPage';
 import TemplatesPage from './TemplatesPage';
 
 export default class TemplateForm extends AdminContent {
+
   idInput           = `${htmlElements.input}[name="modelId"]`;
   nameInput         = `${htmlElements.input}[name="description"]`;
   contentTypeInput  = `${htmlElements.select}[name="contentType"]`;
@@ -15,7 +16,6 @@ export default class TemplateForm extends AdminContent {
   stylesheetInput   = `${htmlElements.input}[name='stylesheet']`;
   submitButton      = `${htmlElements.button}[type='submit'][class="btn btn-primary pull-right"]`;
   cancelButton      = `${htmlElements.button}[type='button'].AddContentTypeFormBody__cancel--btn.btn-default`;
-  alert             = `${htmlElements.div}[class="alert alert-danger alert-dismissable"]`;
 
   getFormArea() {
     return this.get()
@@ -48,7 +48,6 @@ export default class TemplateForm extends AdminContent {
                .find(this.contentShapeInput)
                .find(this.aceTextInput);
   }
-
 
   getStylesheetInput() {
     return this.getFormArea()
@@ -89,7 +88,6 @@ export default class TemplateForm extends AdminContent {
       cy.realPress(['Shift', 'ArrowLeft']);
     }
     cy.realPress(['Backspace']);
-
   }
 
   editFormFields(payload) {
@@ -123,12 +121,6 @@ export default class TemplateForm extends AdminContent {
     });
   }
 
-  getAlert() {
-    return this.getFormArea()
-               .find(this.alert);
-  }
-
-
   getSaveButton() {
     return this.getFormArea()
                .find(this.submitButton);
@@ -138,4 +130,5 @@ export default class TemplateForm extends AdminContent {
     this.getSaveButton().click();
     return new AdminPage(TemplatesPage);
   }
+
 }
