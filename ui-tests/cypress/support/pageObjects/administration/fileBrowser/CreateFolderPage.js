@@ -1,113 +1,43 @@
 import {htmlElements} from '../../WebElement';
 
-import AppContent from '../../app/AppContent';
+import FilesBrowserPage from './FilesBrowserPage';
 
 import AppPage from '../../app/AppPage';
 
+import BrowserPage        from './BrowserPage';
 import UploadFilesPage    from './UploadFilesPage';
 import CreateTextFilePage from './CreateTextFilePage';
-import FilesListPage      from './FilesListPage';
 
-export default class CreateFolderPage extends AppContent {
+export default class CreateFolderPage extends FilesBrowserPage {
 
-  breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
-  operationButtons = `${htmlElements.div}.btn-group`;
-
-  createFolderForm   = `${htmlElements.form}.FileBrowserCreateFolder`;
-  folderNameInput    = `${htmlElements.input}[name='path']#path`;
-  nameInputHelpBlock = `${htmlElements.span}.help-block`;
-  cancelButton       = `${htmlElements.a}.FileBrowserCreateFolderForm__btn-cancel`;
-  saveButton         = `${htmlElements.button}.FileBrowserCreateFolderForm__btn-submit`;
-
-  getFileBrowserBreadCrumbs() {
-    return this.getContents()
-               .children(htmlElements.div).eq(2)
-               .find(this.breadCrumbs);
-  }
-
-  getBreadCrumbsElement(element) {
-    return this.getFileBrowserBreadCrumbs().children(htmlElements.li).eq(element);
-  }
-
-  clickBreadCrumbsRoot() {
-    this.getBreadCrumbsElement(0).click();
-    return new AppPage(FilesListPage);
-  }
-
-  clickFileBrowserBreadCrumbs(element) {
-    this.getBreadCrumbsElement(element).click();
-    return new AppPage(FilesListPage);
-  }
-
-  getFileBrowserOperationButtons() {
-    return this.getContents()
-               .children(htmlElements.div).eq(2)
-               .find(this.operationButtons);
-  }
-
-  getUploadFilesOperationButton() {
-    return this.getFileBrowserOperationButtons()
-               .children(htmlElements.a)
-               .eq(2);
-  }
-
-  getCreateFolderOperationButton() {
-    return this.getFileBrowserOperationButtons()
-               .children(htmlElements.a)
-               .eq(1);
-  }
-
-  getCreateTextFileOperationButton() {
-    return this.getFileBrowserOperationButtons()
-               .children(htmlElements.a)
-               .eq(0);
+  constructor(parent) {
+    super(parent, BrowserPage, UploadFilesPage, CreateFolderPage, CreateTextFilePage);
   }
 
   getCreateFolderForm() {
-    return this.getContents()
-               .find(this.createFolderForm);
+    return this.getContents().find(`${htmlElements.form}.FileBrowserCreateFolder`);
   }
 
   getNameInput() {
-    return this.getCreateFolderForm()
-               .find(this.folderNameInput);
+    return this.getCreateFolderForm().find(`${htmlElements.input}#path`);
   }
-
-  getNameInputHelpBlock() {
-    return this.getNameInput()
-               .parent()
-               .siblings(this.nameInputHelpBlock);
-  }
-
 
   getCancelButton() {
-    return this.getCreateFolderForm()
-               .find(this.cancelButton);
-  }
-
-  clickCancelButton() {
-    this.getCancelButton().click();
-    return new AppPage(FilesListPage);
+    return this.getCreateFolderForm().find(`${htmlElements.a}.FileBrowserCreateFolderForm__btn-cancel`);
   }
 
   getSaveButton() {
-    return this.getCreateFolderForm()
-               .find(this.saveButton);
+    return this.getCreateFolderForm().find(`${htmlElements.button}.FileBrowserCreateFolderForm__btn-submit`);
   }
 
-  clickSaveButton() {
-    this.getSaveButton().click();
-    return new AppPage(FilesListPage);
+  cancel() {
+    this.getCancelButton().then(button => BrowserPage.openPage(button));
+    return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
-  openUploadFilesPage() {
-    this.getUploadFilesOperationButton().click();
-    return new AppPage(UploadFilesPage);
-  }
-
-  openCreateTextFilePage() {
-    this.getCreateTextFileOperationButton().click();
-    return new AppPage(CreateTextFilePage);
+  save() {
+    this.getSaveButton().then(button => BrowserPage.openPage(button));
+    return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
 }
