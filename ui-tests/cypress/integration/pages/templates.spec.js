@@ -228,6 +228,18 @@ describe('Page Templates', () => {
           });
       });
 
+      it([Tag.SANITY, 'ENG-3525'], 'Previous page button', () => {
+        openPageTemplateMgmtPage()
+          .then(page => {
+            page.getContent().getPagination().getInput()
+                .then(input => page.getContent().type(input, 3));
+            TemplatesPage.openPage();
+            page.getContent().getPagination().getPreviousButton().then(button => TemplatesPage.openPage(button));
+            page.getContent().getPagination().getInput().should('have.value', 2);
+            page.getContent().getPagination().getItemsCurrent().should('have.text', '11-20');
+          });
+      });
+
     });
 
   });
