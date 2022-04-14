@@ -9,8 +9,12 @@ export default class AddPage extends AppContent {
 
   codeInput    = `${htmlElements.input}[name="code"]`;
   guiCodeInput = `${htmlElements.textarea}[name="guiCode"]`;
+  guiCodeSelector = `${htmlElements.a}[id="basic-tabs-tab-1"]`;
+  defaultGuiSelector =`${htmlElements.a}[id="basic-tabs-tab-2"]`;
   saveBtn      = `${htmlElements.button}[type=button]#saveopts`;
   saveOption   = `${htmlElements.a}#regularSaveButton`;
+  cancelBtn    = `${htmlElements.button}[class="pull-right btn btn-default"]`;
+
 
   getCodeInput() {
     return this.get()
@@ -22,6 +26,16 @@ export default class AddPage extends AppContent {
                .find(this.guiCodeInput);
   }
 
+  getGuiCodeSelector(){
+    return this.get()
+        .find(this.guiCodeSelector);
+
+  }
+  getDefaultGuiCodeSelector(){
+    return this.get()
+        .find(this.defaultGuiSelector);
+  }
+
   getSaveBtn() {
     return this.get()
                .find(this.saveBtn);
@@ -30,6 +44,11 @@ export default class AddPage extends AppContent {
   getSaveOption() {
     return this.get()
                .find(this.saveOption);
+  }
+
+  getCancelBtn(){
+    return this.get()
+        .find(this.cancelBtn);
   }
 
   typeCode(value) {
