@@ -88,8 +88,10 @@ describe([Tag.GTS], 'Content Templates', () => {
 
     cy.log(`Delete content template with id ${template.id}`);
     currentPage = currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
-    currentPage = currentPage.getContent().submitCancel(TemplatesPage);
-    currentPage.getContent().getTable().should('not.contain', template.id);
+    currentPage = currentPage.getContent().submitCancel(TemplatesPage)
+                             .then(page =>
+                                 page.getContent()
+                                     .getTable().should('not.contain', template.id));
   });
 
   it('Search for content template', () => {
