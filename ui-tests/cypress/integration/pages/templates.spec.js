@@ -217,6 +217,17 @@ describe('Page Templates', () => {
           });
       });
 
+      it([Tag.SANITY, 'ENG-3525'], 'Page field navigation', () => {
+        openPageTemplateMgmtPage()
+          .then(page => {
+            page.getContent().getPagination().getInput()
+                .then(input => page.getContent().type(input, 3));
+            TemplatesPage.openPage();
+            page.getContent().getPagination().getInput().should('have.value', 3);
+            page.getContent().getPagination().getItemsCurrent().should('have.text', '21-21');
+          });
+      });
+
     });
 
   });
