@@ -1,12 +1,12 @@
 import {htmlElements} from '../../../WebElement';
 
-import Content from '../../../app/Content';
+import AdminContent from '../../../app/AdminContent';
 
 import AdminPage from '../../../app/AdminPage';
 
 import EditPage from '../EditPage';
 
-export default class NestedAttributePage extends Content {
+export default class NestedAttributePage extends AdminContent {
 
   getContinueButton() {
     return this.getContents()

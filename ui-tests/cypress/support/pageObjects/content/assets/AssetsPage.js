@@ -1,10 +1,12 @@
-import Content         from '../../app/Content.js';
-import DeleteDialog    from '../../app/DeleteDialog.js';
-import {DialogContent} from '../../app/Dialog.js';
-import KebabMenu       from '../../app/KebabMenu.js';
 import {htmlElements}  from '../../WebElement.js';
 
-export default class AssetsPage extends Content {
+import AdminContent    from '../../app/AdminContent';
+import KebabMenu       from '../../app/KebabMenu.js';
+
+import DeleteDialog    from '../../app/DeleteDialog.js';
+import {DialogContent} from '../../app/Dialog.js';
+
+export default class AssetsPage extends AdminContent {
 
   fileInput                = `${htmlElements.input}[type=file]`;
   assetsFilter             = `${htmlElements.div}.AssetsAdvancedFilter`;

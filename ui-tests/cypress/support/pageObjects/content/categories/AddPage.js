@@ -1,15 +1,20 @@
-import AppPage        from '../../app/AppPage.js';
+import AdminPage      from '../../app/AdminPage';
 import CategoriesPage from './CategoriesPage';
-import Content        from '../../app/Content.js';
+import AdminContent   from '../../app/AdminContent';
 import {htmlElements} from '../../WebElement';
 
-export default class AddPage extends Content {
+export default class AddPage extends AdminContent {
 
-  titleItInput      = `${htmlElements.input}[name="titles.it"][id="titles.it"]`;
-  titleEnInput      = `${htmlElements.input}[name="titles.en"][id="titles.en"]`;
-  codeInput         = `${htmlElements.input}[name="code"]#code`;
-  treePositionInput = `${htmlElements.table}.CategoryTreeSelector`;
-  saveButton        = `${htmlElements.button}[type=submit].CategoryForm__save-btn`;
+  titleItInput      = `${htmlElements.input}#langit`;
+  titleEnInput      = `${htmlElements.input}#langen`;
+  codeInput         = `${htmlElements.input}#categoryCode`;
+  treePositionInput = `${htmlElements.table}#categoryTree`;
+  saveButton        = `${htmlElements.button}[type="submit"]`;
+
+  static openPage(button) {
+    cy.get(button).click();
+    cy.wait(1000);
+  }
 
   getTitleItInput() {
     return this.getContents()
@@ -71,7 +76,7 @@ export default class AddPage extends Content {
 
     this.submitForm();
     cy.wait(1000);
-    return new AppPage(CategoriesPage);
+    return cy.wrap(new AdminPage(CategoriesPage)).as('currentPage');
 
   }
 

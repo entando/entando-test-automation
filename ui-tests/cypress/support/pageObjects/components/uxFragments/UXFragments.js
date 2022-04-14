@@ -1,31 +1,33 @@
-import Content from '../../app/Content.js';
-import { DATA_ID, htmlElements } from '../../WebElement.js';
-import Pagination from '../../app/Pagination.js';
-import AppPage from '../../app/AppPage.js';
-import AddPage from './AddPage';
-import KebabMenu from '../../app/KebabMenu.js';
+import {DATA_ID, htmlElements} from '../../WebElement.js';
+
+import AppContent from '../../app/AppContent.js';
+
+import Pagination   from '../../app/Pagination.js';
+import AppPage      from '../../app/AppPage.js';
+import AddPage      from './AddPage';
+import KebabMenu    from '../../app/KebabMenu.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
 
-export default class UXFragmentsPage extends Content {
+export default class UXFragmentsPage extends AppContent {
 
-  searchForm       = `${htmlElements.form}.FragmentSearchForm`;
-  searchCodeInput  = `${htmlElements.input}#fragmentcode[name="code"]`;
-  addBtn           = `${htmlElements.button}[type=button].FragmentListContent__add`;
-  spinner          = `${htmlElements.div}.spinner.spinner-md`;
+  searchForm      = `${htmlElements.form}.FragmentSearchForm`;
+  searchCodeInput = `${htmlElements.input}#fragmentcode[name="code"]`;
+  addBtn          = `${htmlElements.button}[type=button].FragmentListContent__add`;
+  spinner         = `${htmlElements.div}.spinner.spinner-md`;
 
   getSearchForm() {
     return this.get()
-        .find(this.searchForm);
+               .find(this.searchForm);
   }
 
   getSearchCodeInput() {
     return this.getSearchForm()
-        .find(this.searchCodeInput);
+               .find(this.searchCodeInput);
   }
 
   getSearchSubmitButton() {
     return this.getSearchForm()
-        .find(`${htmlElements.button}[type=submit]`);
+               .find(`${htmlElements.button}[type=submit]`);
   }
 
   getTable() {

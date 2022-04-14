@@ -1,22 +1,24 @@
-import {htmlElements}          from '../../WebElement';
-import Content                 from '../../app/Content.js';
-import AdminPage                 from '../../app/AdminPage.js';
+import {htmlElements} from '../../WebElement';
+
+import AdminContent from '../../app/AdminContent.js';
+
+import AdminPage               from '../../app/AdminPage.js';
 import ManagementPage          from './ManagementPage';
 import ContentWidgetConfigPage from '../../pages/designer/widgetconfigs/ContentWidgetConfigPage';
 import TextAttribute           from './attribute-fields/TextAttribute';
-import HypertextAttribute from './attribute-fields/HypertextAttribute';
-import AssetAttribute from './attribute-fields/AssetAttribute';
-import CompositeAttribute from './attribute-fields/CompositeAttribute';
-import BooleanAttribute from './attribute-fields/BooleanAttribute';
-import EnumeratorAttribute from './attribute-fields/EnumeratorAttribute';
-import ThreeStateAttribute from './attribute-fields/ThreeStateAttribute';
-import CheckboxAttribute from './attribute-fields/CheckboxAttribute';
-import DateAttribute from './attribute-fields/DateAttribute';
-import TimestampAttribute from './attribute-fields/TimestampAttribute';
-import LinkAttribute from './attribute-fields/LinkAttribute';
-import ListAttribute from './attribute-fields/ListAttribute';
+import HypertextAttribute      from './attribute-fields/HypertextAttribute';
+import AssetAttribute          from './attribute-fields/AssetAttribute';
+import CompositeAttribute      from './attribute-fields/CompositeAttribute';
+import BooleanAttribute        from './attribute-fields/BooleanAttribute';
+import EnumeratorAttribute     from './attribute-fields/EnumeratorAttribute';
+import ThreeStateAttribute     from './attribute-fields/ThreeStateAttribute';
+import CheckboxAttribute       from './attribute-fields/CheckboxAttribute';
+import DateAttribute           from './attribute-fields/DateAttribute';
+import TimestampAttribute      from './attribute-fields/TimestampAttribute';
+import LinkAttribute           from './attribute-fields/LinkAttribute';
+import ListAttribute           from './attribute-fields/ListAttribute';
 
-export default class AddPage extends Content {
+export default class AddPage extends AdminContent {
 
   static ATTRIBUTES = [
     'Attach',
@@ -35,13 +37,13 @@ export default class AddPage extends Content {
     'Timestamp',
     'Composite',
     'List',
-    'Monolist',
+    'Monolist'
   ];
 
   static COMPLEX_ATTRIBUTES = [
     'Composite',
     'List',
-    'Monolist',
+    'Monolist'
   ];
 
   static MULTILANG_ATTRIBUTES = [
@@ -49,7 +51,7 @@ export default class AddPage extends Content {
     'Image',
     'Longtext',
     'Hypertext',
-    'Attach',
+    'Attach'
   ];
 
   contentDescriptionInput = `${htmlElements.input}#contentDescription`;
@@ -195,7 +197,7 @@ export default class AddPage extends Content {
   }
 
   getAttributeByTypeIndex(type, idx, lang = 'en') {
-    switch(type) {
+    switch (type) {
       case 'Text':
       case 'Longtext':
       case 'Monotext':
@@ -233,14 +235,14 @@ export default class AddPage extends Content {
   }
 
   fillAttributes(attributeValues, options) {
-    const { lang, editMode } = { lang: 'en', editMode: false, ...options };
+    const {lang, editMode} = {lang: 'en', editMode: false, ...options};
     if (lang === 'it') {
       this.getItLanguageTab().click();
     } else {
       this.getEnLanguageTab().click();
     }
     cy.wait(500);
-    attributeValues.forEach(({ type, value, nestedType }, idx) => {
+    attributeValues.forEach(({type, value, nestedType}, idx) => {
       const field = this.getAttributeByTypeIndex(type, idx, lang);
       if (field === null) {
         return;

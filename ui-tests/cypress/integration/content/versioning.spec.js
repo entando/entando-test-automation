@@ -22,11 +22,7 @@ describe([Tag.GTS], 'Content Versioning', () => {
       currentPage.getContent().getSearchDescInput().type('z');
       currentPage.getContent().getSearchSubmitButton().click();
       cy.wait(1000);
-
-      currentPage.getContent().getPagination()
-                 .getItemsCurrent().invoke('text').should('be.equal', '0-0');
-      currentPage.getContent().getPagination()
-                 .getItemsTotal().invoke('text').should('be.equal', '0');
+      currentPage.getContent().getSearchForm().should('contain.text', 'There aren\'t modified contents.');
     });
 
   });

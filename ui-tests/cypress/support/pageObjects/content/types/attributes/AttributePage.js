@@ -1,6 +1,6 @@
 import {htmlElements} from '../../../WebElement';
 
-import Content from '../../../app/Content';
+import AdminContent from '../../../app/AdminContent';
 
 import AdminPage from '../../../app/AdminPage';
 
@@ -8,7 +8,7 @@ import EditPage               from '../EditPage';
 import NestedAttributePage    from './NestedAttributePage';
 import CompositeAttributePage from './CompositeAttributePage';
 
-export default class AttributePage extends Content {
+export default class AttributePage extends AdminContent {
 
   codeInput           = `${htmlElements.input}[name=code]`;
   nameInput           = `${htmlElements.input}[name="names.{lang}"]`;

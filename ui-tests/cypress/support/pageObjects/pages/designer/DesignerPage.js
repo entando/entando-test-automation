@@ -1,7 +1,7 @@
 import {DATA_TESTID, htmlElements} from '../../WebElement';
 
-import Content   from '../../app/Content';
-import KebabMenu from '../../app/KebabMenu';
+import AppContent from '../../app/AppContent';
+import KebabMenu  from '../../app/KebabMenu';
 
 import AppPage from '../../app/AppPage';
 
@@ -11,7 +11,7 @@ import ContentQueryWidgetConfigPage from './widgetconfigs/ContentQueryWidgetConf
 import MFEWidgetForm                from '../../components/mfeWidgets/MFEWidgetForm';
 import DetailsPage                  from '../../components/mfeWidgets/DetailsPage';
 
-export default class DesignerPage extends Content {
+export default class DesignerPage extends AppContent {
 
   // Structure
   grid      = `${htmlElements.div}.container-fluid`;

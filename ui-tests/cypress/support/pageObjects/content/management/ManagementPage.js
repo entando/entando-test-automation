@@ -1,13 +1,14 @@
 import {DATA_TESTID, htmlElements} from '../../WebElement.js';
 
-import Content  from '../../app/Content.js';
-import AddPage  from './AddPage';
-import AdminPage  from '../../app/AdminPage';
-import KebabMenu from '../../app/KebabMenu.js';
-import Pagination from '../../app/Pagination.js';
+import AdminContent from '../../app/AdminContent';
+
+import AddPage      from './AddPage';
+import AdminPage    from '../../app/AdminPage';
+import KebabMenu    from '../../app/KebabMenu.js';
+import Pagination   from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
 
-export default class ManagementPage extends Content {
+export default class ManagementPage extends AdminContent {
 
   contentTabs   = `${htmlElements.div}#secondary-tabs-1`;
   addButton     = `${htmlElements.button}[data-toggle="dropdown"].btn.btn-primary.dropdown-toggle`;
@@ -22,9 +23,9 @@ export default class ManagementPage extends Content {
   searchFilterTextfield    = `${htmlElements.input}[type=text]`;
   searchFilterSubmitButton = `${htmlElements.button}.ContentsFilter__search-button`;
 
-  listPagination           = `${htmlElements.form}.table-view-pf-pagination`;
-  paginationItemsCurrent   = `${htmlElements.span}.pagination-pf-items-current`;
-  paginationItemsTotal     = `${htmlElements.span}.pagination-pf-items-total`;
+  listPagination         = `${htmlElements.form}.table-view-pf-pagination`;
+  paginationItemsCurrent = `${htmlElements.span}.pagination-pf-items-current`;
+  paginationItemsTotal   = `${htmlElements.span}.pagination-pf-items-total`;
 
   modalDeleteButton = `${htmlElements.button}#DeleteContentModal__button-delete`;
 
@@ -171,7 +172,7 @@ class ManagementKebabMenu extends KebabMenu {
                .getTableRowAction(this.code)
                .closest(htmlElements.div);
   }
-  
+
   getEdit() {
     return this.get()
                .find(htmlElements.li)

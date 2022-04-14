@@ -1,20 +1,20 @@
-import Content from '../../app/Content.js';
+import AppContent     from '../../app/AppContent';
 import {htmlElements} from '../../WebElement.js';
 
-export default class ReloadConfigurationPage extends Content {
+export default class ReloadConfigurationPage extends AppContent {
 
   reloadConfigurationButton = `${htmlElements.button}[type=button].ReloadConfig__reload-button`;
-  reloadConfirmDiv = `${htmlElements.div}.ReloadConfirm`;
+  reloadConfirmDiv          = `${htmlElements.div}.ReloadConfirm`;
 
-  getReloadButton(){
+  getReloadButton() {
     return this.getContents().find(this.reloadConfigurationButton);
   }
 
-  clickReloadButton(){
+  clickReloadButton() {
     this.getReloadButton().click();
   }
 
-  getReloadConfirmation(){
+  getReloadConfirmation() {
     return this.getContents().find(this.reloadConfirmDiv);
   }
 

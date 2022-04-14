@@ -1,21 +1,22 @@
-import { WebElement } from "../../../WebElement";
-import AttributeFormField from "../AttributeFormField";
-import AssetAttribute from './AssetAttribute';
-import BooleanAttribute from './BooleanAttribute';
-import CheckboxAttribute from './CheckboxAttribute';
-import DateAttribute from './DateAttribute';
+import {WebElement} from '../../../WebElement';
+
+import AttributeFormField  from '../AttributeFormField';
+import AssetAttribute      from './AssetAttribute';
+import BooleanAttribute    from './BooleanAttribute';
+import CheckboxAttribute   from './CheckboxAttribute';
+import DateAttribute       from './DateAttribute';
 import EnumeratorAttribute from './EnumeratorAttribute';
-import HypertextAttribute from './HypertextAttribute';
-import LinkAttribute from './LinkAttribute';
-import TextAttribute from './TextAttribute';
+import HypertextAttribute  from './HypertextAttribute';
+import LinkAttribute       from './LinkAttribute';
+import TextAttribute       from './TextAttribute';
 import ThreeStateAttribute from './ThreeStateAttribute';
-import TimestampAttribute from './TimestampAttribute';
-import CompositeAttribute from "./CompositeAttribute";
+import TimestampAttribute  from './TimestampAttribute';
+import CompositeAttribute  from './CompositeAttribute';
 
 export class ListAttributeItem extends WebElement {
   constructor(parent, content, index) {
     super(parent);
-    this.index = index;
+    this.index   = index;
     this.content = content;
   }
 
@@ -37,7 +38,7 @@ export class ListAttributeItem extends WebElement {
 
   getSubAttributeItemDelete() {
     return this.getCollapsePanelHead()
-      .find(`button[title="Delete ${this.index + 1}"].btn-danger`);
+               .find(`button[title="Delete ${this.index + 1}"].btn-danger`);
   }
 
   toggleSubAttributeCollapse() {
@@ -46,7 +47,7 @@ export class ListAttributeItem extends WebElement {
   }
 
   isCollapsed() {
-    return this.getCollapseToggler().invoke('hasClass','fa-chevron-right');
+    return this.getCollapseToggler().invoke('hasClass', 'fa-chevron-right');
   }
 
   collapse() {
@@ -70,17 +71,18 @@ export class ListAttributeItem extends WebElement {
 }
 
 export default class ListAttribute extends AttributeFormField {
-  listBody = 'div.RenderListField__body';
+  listBody       = 'div.RenderListField__body';
   attributeItems = [];
-  nestedType = '';
+  nestedType     = '';
+
   constructor(parent, attributeIndex, lang = 'en', useMonolist = false) {
     super(parent, useMonolist ? 'Monolist' : 'List', attributeIndex, lang);
   }
 
   getCollapseMain() {
     return this.getLangPane()
-      .children('div').eq(this.index + (this.lang === 'en' ? 1 : 0))
-      .children('div.ContentFormFieldCollapse');
+               .children('div').eq(this.index + (this.lang === 'en' ? 1 : 0))
+               .children('div.ContentFormFieldCollapse');
   }
 
   getAttributesArea() {
@@ -101,7 +103,7 @@ export default class ListAttribute extends AttributeFormField {
 
   getSubAttributeChildrenAt(idx) {
     return this.getSubAttributeCollapseAt(idx)
-      .find('div.ReactCollapse--content').children('div.panel-body');
+               .find('div.ReactCollapse--content').children('div.panel-body');
   }
 
   setAttributeType(type) {
@@ -109,7 +111,7 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   createFieldInstance(attribute, idx) {
-    switch(attribute) {
+    switch (attribute) {
       case 'Text':
       case 'Longtext':
       case 'Monotext':
@@ -146,26 +148,26 @@ export default class ListAttribute extends AttributeFormField {
     field.setParentAttribute(this);
     return new ListAttributeItem(this, field, idx);
   }
-  
+
   setValue(values, editMode = false) {
     cy.wrap(0).as('toAddItem');
     if (editMode) {
       cy.wrap(0).as('toMinusItem');
       cy.wrap(0).as('attributeElementsLength');
       this.getAttributesArea().children()
-        .then((attributeElements) => {
-          const attributeElementsLength = attributeElements.length - 1;
-          cy.wrap(attributeElementsLength).as('attributeElementsLength');
-          if (attributeElementsLength === values.length) {
-            return;
-          }
-          const diff = values.length - attributeElementsLength;
-          if (diff > 0) {
-            cy.wrap(diff).as('toAddItem');
-          } else {
-            cy.wrap(diff * -1).as('toMinusItem');
-          }
-        });
+          .then((attributeElements) => {
+            const attributeElementsLength = attributeElements.length - 1;
+            cy.wrap(attributeElementsLength).as('attributeElementsLength');
+            if (attributeElementsLength === values.length) {
+              return;
+            }
+            const diff = values.length - attributeElementsLength;
+            if (diff > 0) {
+              cy.wrap(diff).as('toAddItem');
+            } else {
+              cy.wrap(diff * -1).as('toMinusItem');
+            }
+          });
     }
     values.forEach((item, idx) => {
       cy.get('@toAddItem').then((toAdd) => {
@@ -190,7 +192,7 @@ export default class ListAttribute extends AttributeFormField {
               attributeItem.getSubAttributeItemDelete().click();
             }
           });
-          
+
         }
       });
     }

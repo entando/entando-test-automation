@@ -1,14 +1,16 @@
-import AppPage from '../../app/AppPage.js';
-import Content from '../../app/Content.js';
-import { htmlElements } from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
+
+import AppContent from '../../app/AppContent.js';
+
+import AppPage         from '../../app/AppPage.js';
 import UXFragmentsPage from './UXFragments.js';
 
-export default class AddPage extends Content {
+export default class AddPage extends AppContent {
 
-  codeInput = `${htmlElements.input}[name="code"]`;
+  codeInput    = `${htmlElements.input}[name="code"]`;
   guiCodeInput = `${htmlElements.textarea}[name="guiCode"]`;
-  saveBtn = `${htmlElements.button}[type=button]#saveopts`;
-  saveOption = `${htmlElements.a}#regularSaveButton`;
+  saveBtn      = `${htmlElements.button}[type=button]#saveopts`;
+  saveOption   = `${htmlElements.a}#regularSaveButton`;
 
   getCodeInput() {
     return this.get()

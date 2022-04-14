@@ -1,21 +1,22 @@
 import {htmlElements} from '../../WebElement';
 
-import Content       from '../../app/Content';
-import AdminPage       from '../../app/AdminPage';
+import AdminContent  from '../../app/AdminContent';
+import AdminPage     from '../../app/AdminPage';
 import TemplatesPage from './TemplatesPage';
 
-export default class TemplateForm extends Content {
+export default class TemplateForm extends AdminContent {
+
   idInput           = `${htmlElements.input}[name="modelId"]`;
   nameInput         = `${htmlElements.input}[name="description"]`;
   contentTypeInput  = `${htmlElements.select}[name="contentType"]`;
   assistButton      = `${htmlElements.a}[id="popover-inline-editing-assist"]`;
   contentShapeInput = `${htmlElements.div}[class="display-block"]`;
-  htmlCode = `${htmlElements.div}[class="CodeMirror-code"]`;
+  htmlCode          = `${htmlElements.div}[class="CodeMirror-code"]`;
   aceTextInput      = `${htmlElements.div}.CodeMirror-lines`;
   stylesheetInput   = `${htmlElements.input}[name='stylesheet']`;
   submitButton      = `${htmlElements.button}[type='submit'][class="btn btn-primary pull-right"]`;
   cancelButton      = `${htmlElements.button}[type='button'].AddContentTypeFormBody__cancel--btn.btn-default`;
-  alert             = `${htmlElements.div}[class="alert alert-danger alert-dismissable"]`;
+
   getFormArea() {
     return this.get()
                .find(htmlElements.form);
@@ -47,7 +48,6 @@ export default class TemplateForm extends Content {
                .find(this.contentShapeInput)
                .find(this.aceTextInput);
   }
-
 
   getStylesheetInput() {
     return this.getFormArea()
@@ -88,7 +88,6 @@ export default class TemplateForm extends Content {
       cy.realPress(['Shift', 'ArrowLeft']);
     }
     cy.realPress(['Backspace']);
-
   }
 
   editFormFields(payload) {
@@ -121,11 +120,6 @@ export default class TemplateForm extends Content {
       }
     });
   }
-  getAlert(){
-    return this.getFormArea()
-               .find(this.alert);
-  }
-
 
   getSaveButton() {
     return this.getFormArea()
@@ -136,4 +130,5 @@ export default class TemplateForm extends Content {
     this.getSaveButton().click();
     return new AdminPage(TemplatesPage);
   }
+
 }

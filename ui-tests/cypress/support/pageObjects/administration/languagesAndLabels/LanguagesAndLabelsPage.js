@@ -1,8 +1,8 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content';
+import AppContent from '../../app/AppContent';
 
-export default class LanguagesAndLabelsPage extends Content {
+export default class LanguagesAndLabelsPage extends AppContent {
 
   languageAndLabelsTabList = `${htmlElements.ul}.nav-tabs`;
 

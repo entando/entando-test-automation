@@ -1,5 +1,7 @@
-import { DialogContent } from '../../../app/Dialog';
-import { htmlElements } from '../../../WebElement';
+import {htmlElements} from '../../../WebElement';
+
+import {DialogContent} from '../../../app/Dialog';
+
 import AttributeFormField from '../AttributeFormField';
 
 export class LinkDialog extends DialogContent {
@@ -7,7 +9,7 @@ export class LinkDialog extends DialogContent {
   pageTreeTable = `${htmlElements.table}.PageTreeSelector`;
   expandAll     = `${htmlElements.div}.PageTreeSelector__button--expand`;
   contentSearch = `${htmlElements.div}.ContentSearch`;
-  contentsBody = `${htmlElements.div}.Contents__body`;
+  contentsBody  = `${htmlElements.div}.Contents__body`;
   contentTable  = `${htmlElements.table}.Contents__table-element`;
 
   getTabArea() {
@@ -31,7 +33,7 @@ export class LinkDialog extends DialogContent {
   }
 
   getTabBlockByTypeSelected() {
-    switch(this.typeSelected) {
+    switch (this.typeSelected) {
       default:
       case 1:
         return this.getTabURL();
@@ -45,7 +47,7 @@ export class LinkDialog extends DialogContent {
   clickTabByDestType(destType) {
     this.typeSelected = destType;
     return this.getTabArea().children('li').eq(destType - 1)
-      .children(htmlElements.a).click();
+               .children(htmlElements.a).click();
   }
 
   setUrlValue(value) {
@@ -101,7 +103,7 @@ export class LinkDialog extends DialogContent {
 
   confirm() {
     this.getTabBlockByTypeSelected().find(htmlElements.button)
-      .then(el => el.length ? el[el.length - 1] : el).click();
+        .then(el => el.length ? el[el.length - 1] : el).click();
   }
 }
 
@@ -128,10 +130,10 @@ export default class LinkAttribute extends AttributeFormField {
 
   setLinkInfo(link) {
     this.setDialogBodyWithClass(LinkDialog);
-    const { destType, rel, target, hreflang } = link;
+    const {destType, rel, target, hreflang} = link;
     this.getDialogBodyOfAttribute().clickTabByDestType(destType);
 
-    switch(destType) {
+    switch (destType) {
       case 1:
       default:
         this.getDialogBodyOfAttribute().setUrlValue(link.urlDest);
@@ -155,15 +157,15 @@ export default class LinkAttribute extends AttributeFormField {
     this.getDialogBodyOfAttribute().confirm();
   }
 
-  setValue({ link, value }) {
+  setValue({link, value}) {
     if (this.lang === 'en') {
       this.getAddButton().click();
       this.setLinkInfo(link);
     }
     this.getTextInput().type(value);
-  } 
+  }
 
-  editValue({ link, value }) {
+  editValue({link, value}) {
     if (link && this.lang === 'en') {
       this.getEditButton().click();
       this.setLinkInfo(link);

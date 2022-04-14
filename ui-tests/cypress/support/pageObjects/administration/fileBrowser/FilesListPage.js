@@ -1,7 +1,7 @@
 import {htmlElements} from '../../WebElement';
 
-import Content   from '../../app/Content';
-import KebabMenu from '../../app/KebabMenu';
+import AppContent from '../../app/AppContent';
+import KebabMenu  from '../../app/KebabMenu';
 
 import AppPage      from '../../app/AppPage';
 import DeleteDialog from '../../app/DeleteDialog';
@@ -10,7 +10,7 @@ import UploadFilesPage    from './UploadFilesPage';
 import CreateFolderPage   from './CreateFolderPage';
 import CreateTextFilePage from './CreateTextFilePage';
 
-export default class FilesListPage extends Content {
+export default class FilesListPage extends AppContent {
 
   breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
   operationButtons = `${htmlElements.div}.FileButtonsGroup`;
@@ -117,7 +117,7 @@ export default class FilesListPage extends Content {
 
   openFileKebabMenu(name) {
     this.getFileKebabMenu(name).click();
-    return new FilesKebabMenu(this, name)
+    return new FilesKebabMenu(this, name);
   }
 
   openUploadFilesPage() {

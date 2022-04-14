@@ -1,22 +1,24 @@
-import AppPage from '../../app/AppPage.js';
-import Content from '../../app/Content.js';
-import KebabMenu from '../../app/KebabMenu.js';
-import Pagination from '../../app/Pagination.js';
-import { htmlElements } from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
+
+import AppContent from '../../app/AppContent.js';
+import KebabMenu  from '../../app/KebabMenu.js';
+
+import AppPage      from '../../app/AppPage.js';
+import Pagination   from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog';
-import AddPage from './AddPage.js';
+import AddPage      from './AddPage.js';
 
 class TemplatesKebabMenu extends KebabMenu {
   static MENU_OPTIONS = {
     EDIT: 'editTemplate',
     CLONE: 'cloneTemplate',
     DETAILS: 'detailsTemplate',
-    DELETE: 'detailsDelete',
+    DELETE: 'detailsDelete'
   };
 
   get() {
     return this.getKebabButton()
-    .closest(`${htmlElements.div}.PageTemplateListMenuActions`);
+               .closest(`${htmlElements.div}.PageTemplateListMenuActions`);
   }
 
   getKebabButton() {
@@ -36,7 +38,7 @@ class TemplatesKebabMenu extends KebabMenu {
 
   getListItemByOption(option) {
     const options = Object.values(TemplatesKebabMenu.MENU_OPTIONS);
-    const idx = options.indexOf(option);
+    const idx     = options.indexOf(option);
     return this.getMenuList().eq(idx > -1 ? idx : 0);
   }
 
@@ -76,9 +78,9 @@ class TemplatesKebabMenu extends KebabMenu {
   }
 }
 
-export default class TemplatesPage extends Content {
+export default class TemplatesPage extends AppContent {
   filterRow = `${htmlElements.div}.row`;
-  
+
   getTable() {
     return this.get()
                .find(htmlElements.table);
@@ -113,7 +115,7 @@ export default class TemplatesPage extends Content {
   }
 
   openAddPage() {
-    this.getAddButton().click({ force: true });
+    this.getAddButton().click({force: true});
     return new AppPage(AddPage);
   }
 }

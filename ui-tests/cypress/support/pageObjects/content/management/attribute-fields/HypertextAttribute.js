@@ -1,12 +1,14 @@
-import { htmlElements } from '../../../WebElement';
+import {htmlElements} from '../../../WebElement';
+
 import AttributeFormField from '../AttributeFormField';
-import { LinkDialog } from './LinkAttribute';
+
+import {LinkDialog} from './LinkAttribute';
 
 export default class HypertextAttribute extends AttributeFormField {
-  fckeditor = false;
+  fckeditor    = false;
   quillToolbar = `${htmlElements.div}.ql-toolbar`;
-  linkButton = `${htmlElements.button}.ql-enlink[title="Link"]`;
-  quillEditor = `${htmlElements.div}.quill`;
+  linkButton   = `${htmlElements.button}.ql-enlink[title="Link"]`;
+  quillEditor  = `${htmlElements.div}.quill`;
 
   constructor(parent, attributeIndex, lang = 'en') {
     super(parent, 'Hypertext', attributeIndex, lang);
@@ -14,7 +16,7 @@ export default class HypertextAttribute extends AttributeFormField {
 
   getEditorToolbar() {
     return this.getContents().find(this.quillToolbar);
-  } 
+  }
 
   getAddLinkButton() {
     return this.getEditorToolbar().find(this.linkButton);
@@ -24,10 +26,10 @@ export default class HypertextAttribute extends AttributeFormField {
     this.setDialogBodyWithClass(LinkDialog);
     this.getAddLinkButton().click();
 
-    const { destType, rel, target, hreflang } = link;
+    const {destType, rel, target, hreflang} = link;
     this.getDialogBodyOfAttribute().clickTabByDestType(destType);
 
-    switch(destType) {
+    switch (destType) {
       case 1:
       default:
         this.getDialogBodyOfAttribute().setUrlValue(link.urlDest);
@@ -61,7 +63,7 @@ export default class HypertextAttribute extends AttributeFormField {
         return this.getEditorArea().find('div.ql-editor');
       }
       return this.getContents()
-        .find(`textarea[name="${this.prefix}.values.${this.lang}"]`);
+                 .find(`textarea[name="${this.prefix}.values.${this.lang}"]`);
     });
   }
 

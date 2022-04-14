@@ -1,12 +1,12 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content.js';
+import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
 import ManagementPage from './ManagementPage.js';
 
-export default class AddPage extends Content {
+export default class AddPage extends AppContent {
 
   usernameInput        = `${htmlElements.input}[name=username]#username`;
   passwordInput        = `${htmlElements.input}[name=password]#password`;

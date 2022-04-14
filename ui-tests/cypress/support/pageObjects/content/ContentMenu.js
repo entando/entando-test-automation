@@ -2,7 +2,7 @@ import {htmlElements} from '../WebElement.js';
 
 import {SubMenu} from '../app/MenuElement.js';
 
-import AdminPage from '../app/AdminPage.js';
+import AdminPage      from '../app/AdminPage.js';
 import ManagementPage from './management/ManagementPage';
 import AssetsPage     from './assets/AssetsPage';
 import TemplatesPage  from './templates/TemplatesPage';
@@ -70,9 +70,8 @@ export default class ContentMenu extends SubMenu {
   }
 
   openCategories() {
-    this.getCategories().click();
-    cy.wait(1000);
-    return new AdminPage(CategoriesPage);
+    this.getCategories().then(button => CategoriesPage.openPage(button));
+    return cy.wrap(new AdminPage(CategoriesPage)).as('currentPage');
   }
 
   openVersioning() {

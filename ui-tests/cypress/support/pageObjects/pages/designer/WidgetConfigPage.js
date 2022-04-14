@@ -1,11 +1,11 @@
 import {htmlElements} from '../../WebElement';
 
-import Content from '../../app/Content';
+import AppContent from '../../app/AppContent';
 
 import DesignerPage from './DesignerPage';
 import AppPage      from '../../app/AppPage';
 
-export default class WidgetConfigPage extends Content {
+export default class WidgetConfigPage extends AppContent {
   panel      = `${htmlElements.div}.PageConfigPage__panel-body`;
   saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
 

@@ -17,6 +17,7 @@ export default class AbstractPage extends WebElement {
   getDialog() {
     return this.dialog;
   }
+
   getContent() {
     return this.content;
   }
