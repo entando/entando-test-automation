@@ -13,6 +13,11 @@ export default class KebabMenu extends WebElement {
                .closest(htmlElements.div);
   }
 
+  getDropdown() {
+    return this.get()
+               .children(`${htmlElements.ul}.dropdown-menu`);
+  }
+
   open() {
     this.get()
         .children(htmlElements.button)

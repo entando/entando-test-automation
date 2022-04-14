@@ -1,110 +1,52 @@
 import {htmlElements} from '../../WebElement';
 
-import AppContent from '../../app/AppContent';
+import FilesBrowserPage from './FilesBrowserPage';
 
 import AppPage from '../../app/AppPage';
 
-import FilesListPage      from './FilesListPage';
+import BrowserPage        from './BrowserPage';
 import CreateFolderPage   from './CreateFolderPage';
 import CreateTextFilePage from './CreateTextFilePage';
 
-export default class UploadFilesPage extends AppContent {
+export default class UploadFilesPage extends FilesBrowserPage {
 
-  breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
-  operationButtons = `${htmlElements.div}.btn-group`;
-
-  uploadFilesForm  = `${htmlElements.form}.UploadFileBrowserForm`;
-  uploadFilesInput = `${htmlElements.input}[name="file"]`;
-  buttonsDiv       = `${htmlElements.div}.UploadFileBrowserForm__btn`;
-
-  getFileBrowserBreadCrumbs() {
-    return this.getContents()
-               .children(htmlElements.div).eq(2)
-               .find(this.breadCrumbs);
-  }
-
-  getBreadCrumbsElement(element) {
-    return this.getFileBrowserBreadCrumbs().children(htmlElements.li).eq(element);
-  }
-
-  clickBreadCrumbsRoot() {
-    this.getBreadCrumbsElement(0).click();
-    return new AppPage(FilesListPage);
-  }
-
-  clickFileBrowserBreadCrumbs(element) {
-    this.getBreadCrumbsElement(element).click();
-    return new AppPage(FilesListPage);
-  }
-
-  getFileBrowserOperationButtons() {
-    return this.getContents()
-               .children(htmlElements.div).eq(2)
-               .find(this.operationButtons);
-  }
-
-  getUploadFilesOperationButton() {
-    return this.getFileBrowserOperationButtons()
-               .children(htmlElements.a)
-               .eq(2);
-  }
-
-  getCreateFolderOperationButton() {
-    return this.getFileBrowserOperationButtons()
-               .children(htmlElements.a)
-               .eq(1);
-  }
-
-  getCreateTextFileOperationButton() {
-    return this.getFileBrowserOperationButtons()
-               .children(htmlElements.a)
-               .eq(0);
-  }
-
-  openCreateFolderPage() {
-    this.getCreateFolderOperationButton().click();
-    return new AppPage(CreateFolderPage);
-  }
-
-  openCreateTextFilePage() {
-    this.getCreateTextFileOperationButton().click();
-    return new AppPage(CreateTextFilePage);
+  constructor(parent) {
+    super(parent, BrowserPage, UploadFilesPage, CreateFolderPage, CreateTextFilePage);
   }
 
   getUploadFilesForm() {
-    return this.get()
-               .find(this.uploadFilesForm);
+    return this.get().find(`${htmlElements.form}.UploadFileBrowserForm`);
   }
 
   getUploadFilesInput() {
-    return this.getUploadFilesForm()
-               .find(this.uploadFilesInput);
+    return this.getUploadFilesForm().find(`${htmlElements.input}[name="file"]`);
+  }
+
+  getFormButtons() {
+    return this.getUploadFilesForm().find(`${htmlElements.div}.UploadFileBrowserForm__btn`);
   }
 
   getCancelButton() {
-    return this.getUploadFilesForm()
-               .find(this.buttonsDiv)
-               .find(htmlElements.button).eq(1);
+    return this.getFormButtons().find(htmlElements.button).eq(1);
   }
 
   getUploadButton() {
-    return this.getUploadFilesForm()
-               .find(this.buttonsDiv)
-               .find(htmlElements.button).eq(0);
+    return this.getFormButtons().find(htmlElements.button).eq(0);
   }
 
   selectFiles(fileName, options) {
     this.getUploadFilesInput().selectFile(fileName, options);
+    return cy.get('@currentPage');
   }
 
   cancelUpload() {
-    this.getCancelButton().click();
-    return new AppPage(FilesListPage);
+    this.getCancelButton().then(button => BrowserPage.openPage(button));
+    return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
   confirmUpload() {
-    this.getUploadButton().click();
-    return new AppPage(FilesListPage);
+    this.getUploadButton().then(button => BrowserPage.openPage(button));
+    return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
 }

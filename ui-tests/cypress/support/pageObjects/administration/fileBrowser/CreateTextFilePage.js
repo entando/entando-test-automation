@@ -1,129 +1,51 @@
 import {htmlElements} from '../../WebElement';
 
-import AppContent from '../../app/AppContent';
+import FilesBrowserPage from './FilesBrowserPage';
 
 import AppPage from '../../app/AppPage';
 
+import BrowserPage      from './BrowserPage';
 import UploadFilesPage  from './UploadFilesPage';
 import CreateFolderPage from './CreateFolderPage';
-import FilesListPage    from './FilesListPage';
 
-export default class CreateTextFilePage extends AppContent {
+export default class CreateTextFilePage extends FilesBrowserPage {
 
-  breadCrumbs      = `${htmlElements.ol}.breadcrumb`;
-  operationButtons = `${htmlElements.div}.btn-group`;
-
-  createTextFileForm = `${htmlElements.form}.CreateTextFileForm`;
-  textFileNameInput  = `${htmlElements.input}[name='name']#name`;
-  extensionSelector  = `${htmlElements.select}[name='extension'].CreateTextFileForm__select-extension`;
-  textArea           = `${htmlElements.textarea}[name='content'].RenderTextAreaInput-textarea`;
-  helpBlock          = `${htmlElements.span}.help-block`;
-  cancelButton       = `${htmlElements.a}.CreateTextFileForm__btn-cancel`;
-  saveButton         = `${htmlElements.button}.CreateTextFileForm__btn-submit`;
-
-  getFileBrowserBreadCrumbs() {
-    return this.getContents()
-               .children(htmlElements.div).eq(2)
-               .find(this.breadCrumbs);
-  }
-
-  getBreadCrumbsElement(element) {
-    return this.getFileBrowserBreadCrumbs().children(htmlElements.li).eq(element);
-  }
-
-  clickBreadCrumbsRoot() {
-    this.getBreadCrumbsElement(0).click();
-    return new AppPage(FilesListPage);
-  }
-
-  clickFileBrowserBreadCrumbs(element) {
-    this.getBreadCrumbsElement(element).click();
-    return new AppPage(FilesListPage);
-  }
-
-  getFileBrowserOperationButtons() {
-    return this.getContents()
-               .children(htmlElements.div).eq(2)
-               .find(this.operationButtons);
-  }
-
-  getUploadFilesOperationButton() {
-    return this.getFileBrowserOperationButtons()
-               .children(htmlElements.a)
-               .eq(2);
-  }
-
-  getCreateFolderOperationButton() {
-    return this.getFileBrowserOperationButtons()
-               .children(htmlElements.a)
-               .eq(1);
-  }
-
-  getCreateTextFileOperationButton() {
-    return this.getFileBrowserOperationButtons()
-               .children(htmlElements.a)
-               .eq(0);
+  constructor(parent) {
+    super(parent, BrowserPage, UploadFilesPage, CreateFolderPage, CreateTextFilePage);
   }
 
   getCreateTextFileForm() {
-    return this.getContents()
-               .find(this.createTextFileForm);
+    return this.getContents().find(`${htmlElements.form}.CreateTextFileForm`);
   }
 
   getNameInput() {
-    return this.getCreateTextFileForm()
-               .find(this.textFileNameInput);
-  }
-
-  getNameInputHelpBlock() {
-    return this.getNameInput()
-               .siblings(this.helpBlock);
+    return this.getCreateTextFileForm().find(`${htmlElements.input}#name`);
   }
 
   getExtensionSelector() {
-    return this.getCreateTextFileForm()
-               .find(this.extensionSelector);
+    return this.getCreateTextFileForm().find(`${htmlElements.select}[name='extension']`);
   }
 
   getTextArea() {
-    return this.getCreateTextFileForm()
-               .find(this.textArea);
-  }
-
-  getTextAreaHelpBlock() {
-    return this.getTextArea()
-               .parent()
-               .siblings(this.helpBlock);
+    return this.getCreateTextFileForm().find(`${htmlElements.textarea}[name='content']`);
   }
 
   getCancelButton() {
-    return this.getCreateTextFileForm()
-               .find(this.cancelButton);
-  }
-
-  clickCancelButton() {
-    this.getCancelButton().click();
-    return new AppPage(FilesListPage);
+    return this.getCreateTextFileForm().find(`${htmlElements.a}.CreateTextFileForm__btn-cancel`);
   }
 
   getSaveButton() {
-    return this.getCreateTextFileForm()
-               .find(this.saveButton);
+    return this.getCreateTextFileForm().find(`${htmlElements.button}.CreateTextFileForm__btn-submit`);
   }
 
-  clickSaveButton() {
-    this.getSaveButton().click();
-    return new AppPage(FilesListPage);
+  cancel() {
+    this.getCancelButton().then(button => BrowserPage.openPage(button));
+    return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
-  openUploadFilesPage() {
-    this.getUploadFilesOperationButton().click();
-    return new AppPage(UploadFilesPage);
-  }
-
-  openCreateFolderPage() {
-    this.getCreateFolderOperationButton().click();
-    return new AppPage(CreateFolderPage);
+  save() {
+    this.getSaveButton().then(button => BrowserPage.openPage(button));
+    return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
 }
