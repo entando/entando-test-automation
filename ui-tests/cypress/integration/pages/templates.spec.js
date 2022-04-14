@@ -252,6 +252,15 @@ describe('Page Templates', () => {
           });
       });
 
+      it([Tag.SANITY, 'ENG-3525'], 'Last page button', () => {
+        openPageTemplateMgmtPage()
+          .then(page => {
+            page.getContent().getPagination().getLastPageButton().then(button => TemplatesPage.openPage(button));
+            page.getContent().getPagination().getInput().should('have.value', 3);
+            page.getContent().getPagination().getItemsCurrent().should('have.text', '21-21');
+          });
+      });
+
     });
 
   });
