@@ -1,19 +1,20 @@
 import {DATA_ID, htmlElements} from '../../WebElement.js';
 
 import AppContent from '../../app/AppContent.js';
-
-import Pagination   from '../../app/Pagination.js';
 import AppPage      from '../../app/AppPage.js';
 import AddPage      from './AddPage';
 import KebabMenu    from '../../app/KebabMenu.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
+import DetailsPage from '../../components/uxFragments/DetailsPage.js';
 
 export default class UXFragmentsPage extends AppContent {
 
-  searchForm      = `${htmlElements.form}.FragmentSearchForm`;
-  searchCodeInput = `${htmlElements.input}#fragmentcode[name="code"]`;
-  addBtn          = `${htmlElements.button}[type=button].FragmentListContent__add`;
-  spinner         = `${htmlElements.div}.spinner.spinner-md`;
+  searchForm                 = `${htmlElements.form}.FragmentSearchForm`;
+  searchCodeInput            = `${htmlElements.input}#fragmentcode[name="code"]`;
+  addBtn                     = `${htmlElements.button}[type=button].FragmentListContent__add`;
+  spinner                    = `${htmlElements.div}.spinner.spinner-md`;
+  paginationForm             = `${htmlElements.form}.content-view-pf-pagination`;
+  paginationFormPageSelector = `${htmlElements.input}[type=text].pagination-pf-page`;
 
   getSearchForm() {
     return this.get()
@@ -41,8 +42,22 @@ export default class UXFragmentsPage extends AppContent {
                .children(htmlElements.tr);
   }
 
+  getTableHeaders(){
+    return this.getTable()
+        .children(htmlElements.thead)
+        .children(htmlElements.tr)
+        .find(htmlElements.th);
+  }
+
   getPagination() {
-    return new Pagination(this);
+    return this.get()
+        .find(this.paginationForm);
+  }
+
+  getPaginationSelector(){
+    return this.getPagination()
+        .find(this.paginationFormPageSelector);
+
   }
 
   getAddButton() {
@@ -61,7 +76,7 @@ export default class UXFragmentsPage extends AppContent {
 
   openAddFragmentPage() {
     this.getAddButton().click();
-    return new AppPage(AddPage);
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 }
 
@@ -73,10 +88,25 @@ class FragmentsKebabMenu extends KebabMenu {
                .closest(htmlElements.div);
   }
 
+  getDropdown() {
+    return this.get().find(`${htmlElements.ul}[role="menu"]`);
+  }
+
   getEdit() {
     return this.get()
                .find(`[${DATA_ID}=edit-${this.code}]`)
                .eq(0);
+  }
+
+  getClone(){
+    return this.get()
+        .find(`[${DATA_ID}=clone-${this.code}]`);
+  }
+
+  getDetails(){
+    return this.get()
+        .find(`.FragmentListMenuAction__menu-item-details`);
+
   }
 
   getDelete() {
@@ -86,8 +116,19 @@ class FragmentsKebabMenu extends KebabMenu {
 
   openEdit() {
     this.getEdit().click();
-    return new AppPage(AddPage);
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
+
+  openClone(){
+    this.getClone().click();
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
+  }
+
+  openDetails(){
+    this.getDetails().click();
+    return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
+  }
+
 
   clickDelete() {
     this.getDelete().click();
