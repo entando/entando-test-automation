@@ -24,4 +24,11 @@ export default class PageTemplatesController extends AbstractController {
     });
   }
 
+  getPageTemplatesList() {
+    return this.request({
+      url: `${this.apiURL}?page=1&pageSize=50`,
+      method: 'GET'
+    });
+  }
+
 }

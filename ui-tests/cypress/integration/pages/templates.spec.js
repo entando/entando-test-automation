@@ -1,3 +1,4 @@
+import TemplatesPage      from "../../support/pageObjects/pages/templates/TemplatesPage";
 import {htmlElements}     from "../../support/pageObjects/WebElement";
 import {generateRandomId} from "../../support/utils";
 import defaultTemplates   from "../../fixtures/data/defaultTemplates.json";
@@ -185,6 +186,37 @@ describe('Page Templates', () => {
               });
           page.getContent().getPagination().getInput().should('have.value', 1);
         });
+    });
+
+    describe('Navigating the pagination', () => {
+
+      before(() => {
+        cy.kcAPILogin();
+        cy.wrap([]).as('templatesToBeDeleted');
+        addRandomPageTemplates(14);
+        cy.get('@templatesToBeDeleted').then(templates => Cypress.env('commonTemplatesToBeDeleted', templates));
+      });
+
+      after(() => {
+        cy.kcAPILogin();
+
+        cy.wrap(Cypress.env('commonTemplatesToBeDeleted')).then(templatesToBeDeleted => {
+          if (templatesToBeDeleted) cy.pageTemplatesController()
+                                      .then(controller => {
+                                        templatesToBeDeleted.forEach(templateToBeDeleted => controller.deletePageTemplate(templateToBeDeleted));
+                                      });
+        });
+      });
+
+      it([Tag.SANITY, 'ENG-3525'], 'Next page button', () => {
+        openPageTemplateMgmtPage()
+          .then(page => {
+            page.getContent().getPagination().getNextButton().then(button => TemplatesPage.openPage(button));
+            page.getContent().getPagination().getInput().should('have.value', 2);
+            page.getContent().getPagination().getItemsCurrent().should('have.text', '11-20');
+          });
+      });
+
     });
 
   });
