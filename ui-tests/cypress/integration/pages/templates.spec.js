@@ -265,4 +265,29 @@ describe('Page Templates', () => {
 
   });
 
+  describe('Adding and editing templates', () => {
+
+    it([Tag.SANITY, 'ENG-3525'], 'Creating a new template', () => {
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().fillForm(sampleData);
+          page.getContent().submitForm();
+        })
+        .then(page => {
+          cy.wrap([sampleData.code]).as('templatesToBeDeleted');
+          cy.validateToast(page, sampleData.code);
+          cy.validateUrlPathname('/page-template');
+          page.getContent().getTable().should('exist').and('be.visible')
+              .then(table => {
+                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
+                  .should('have.length', defaultTemplates.length + 1);
+              });
+          page.getContent().getTableRow(sampleData.code).should('exist').children(htmlElements.td).eq(2).should('have.text', sampleData.descr);
+          page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length+1);
+        });
+    });
+
+  });
+
 });
