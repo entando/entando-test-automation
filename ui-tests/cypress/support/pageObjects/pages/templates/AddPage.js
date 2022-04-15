@@ -68,23 +68,32 @@ export default class AddPage extends AppContent {
                .find(this.previewGrid);
   }
 
-  typeName(input) {
-    this.getNameInput().type(input);
+  typeName(value) {
+    this.getNameInput().then(input => {
+      return this.type(input, value);
+    });
   }
 
-  typeCode(input) {
-    this.getCodeInput().type(input);
+  typeCode(value) {
+    this.getCodeInput().then(input => {
+      return this.type(input, value);
+    });
   }
 
   clearJsonConfig() {
-    this.getJsonConfigInput().type('{movetoend}');
-    cy.realPress(['Meta', 'A']);
-    cy.realType('{backspace}');
+    this.getJsonConfigInput()
+        .first()
+        .then((editor) => {
+          editor[0].CodeMirror.setValue('');
+        });
+    return cy.get('@currentPage');
   }
 
-  typeJsonConfig(input) {
+  typeJsonConfig(value) {
     this.clearJsonConfig();
-    this.getJsonConfigInput().type(input, {parseSpecialCharSequences: false});
+    this.getJsonConfigInput().then(input => {
+      return this.type(input, value, true, false);
+    });
   }
 
   getJsonConfigValue() {
@@ -96,14 +105,19 @@ export default class AddPage extends AppContent {
   }
 
   clearTemplate() {
-    this.getTemplateInput().type('{movetoend}');
-    cy.realPress(['Meta', 'A']);
-    cy.realType('{backspace}');
+    this.getTemplateInput()
+        .first()
+        .then((editor) => {
+          editor[0].CodeMirror.setValue('');
+        });
+    return cy.get('@currentPage');
   }
 
-  typeTemplate(input) {
+  typeTemplate(value) {
     this.clearTemplate();
-    this.getTemplateInput().type(input, {parseSpecialCharSequences: false});
+    this.getTemplateInput().then(input => {
+      return this.type(input, value, true, false);
+    });
   }
 
   getTemplateValue() {
@@ -171,8 +185,8 @@ export default class AddPage extends AppContent {
 
   submitForm() {
     this.getSaveDropdownButton().click();
-    this.getRegularSaveButton().click();
-    return new AppPage(TemplatesPage);
+    this.getRegularSaveButton().then(button => TemplatesPage.openPage(button));
+    return cy.wrap(new AppPage(TemplatesPage));
   }
 
 }

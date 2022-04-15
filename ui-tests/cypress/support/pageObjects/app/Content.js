@@ -59,9 +59,13 @@ export default class Content extends WebElement {
     return cy.get('@currentPage');
   }
 
-  type(input, value, append = false) {
+  type(input, value, append = false, parse = true) {
     if (!append) cy.get(input).clear();
-    cy.get(input).type(value);
+    if (parse) {
+      cy.get(input).type(value);
+    } else {
+      cy.get(input).type(value, {parseSpecialCharSequences: false});
+    }
     return cy.get('@currentPage');
   }
 
