@@ -70,7 +70,7 @@ export default class AddPage extends AppContent {
   save() {
     this.clickSaveBtn();
     this.clickSaveOption();
-    return new AppPage(UXFragmentsPage);
+    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
 }
