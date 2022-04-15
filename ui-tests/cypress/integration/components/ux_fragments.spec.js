@@ -1,4 +1,5 @@
-import {generateRandomId} from '../../support/utils';
+import {generateRandomId, generateRandomTypeCode} from '../../support/utils';
+import {htmlElements} from "../../support/pageObjects/WebElement";
 
 describe('UX Fragments', () => {
 
@@ -157,31 +158,119 @@ describe('UX Fragments', () => {
         });
 
         describe([Tag.GTS], 'Actions', () => {
-            it([Tag.SANITY, 'ENG-3522'],'Searching a fragment', () => {});
+            it([Tag.SANITY, 'ENG-3522'],'Searching a fragment', () => {
+                addTestFragment();
+                openFragmentsPage()
+                    .then(page=>
+                        page.getContent().getSearchCodeInput().then(input=> page.getContent().type(input, fragment.code)))
+                    .then(page => page.getContent().clickSearchSubmitButton())
+                    .then(page =>
+                        page.getContent().getTableRows().should('have.length', 1)
+                            .each(row => cy.get(row).children(htmlElements.td).eq(0).should('contain', fragment.code)));
+            });
 
             it([Tag.SANITY, 'ENG-3522'],'Adding a fragment', () => {
+                openFragmentsPage()
+                    .then(page =>
+                    page.getContent().openAddFragmentPage());
+
+                cy.get('@currentPage')
+                    .then(page => {
+                        page.getContent().getCodeInput().then(input => page.getContent().type(input, fragment.code));
+                        page.getContent().getGuiCodeInput().then(input => page.getContent().type(input, fragment.guiCode));
+                    })
+                    .then(page => page.getContent().save())
+                    .then(page => {
+                        cy.validateToast(page);
+                        cy.wrap(fragment).as('fragmentToBeDeleted');
+
+                        page.getContent().getTableRows(fragment.code).should('be.visible')
+                            .children(htmlElements.td).then(cells =>
+                            cy.validateListTexts(cells, [fragment.code]));
+                    });
 
             });
-            it([Tag.SANITY, 'ENG-3522'],'Editing a fragment', () => {});
-            it([Tag.SANITY, 'ENG-3522'],'Checking Delete Modal', () => {});
-            it([Tag.SANITY, 'ENG-3522'],'Cloning', () => {});
-            it([Tag.SANITY, 'ENG-3522'],'Deleting', () => {});
-            it([Tag.SANITY, 'ENG-3522'],'Stopping delete', () => {});
+            it([Tag.SANITY, 'ENG-3522'],'Editing a fragment', () => {
+                addTestFragment();
+                openFragmentsPage()
+                    .then(page =>
+                        page.getContent().getKebabMenu(fragment.code).open().openEdit())
+                    .then(page => page.getContent().getGuiCodeInput().then(input => page.getContent().type(input, fragment.guiCode)))
+                    .then(page => page.getContent().save())
+                    .then(page => {
+                        cy.validateToast(page);
+                        page.getContent().getTableRow(fragment.code).should('be.visible')
+                            .children(htmlElements.td).then(cells =>
+                            cy.validateListTexts(cells, [fragment.code, false]));
+                    });
+            });
+            it([Tag.SANITY, 'ENG-3522'],'Cloning', () => {
+                addTestFragment();
+                openFragmentsPage()
+                    .then(page =>
+                        page.getContent().getKebabMenu(fragment.code).open().openClone());
+
+                cy.get('@currentPage')
+                    .then(page => {
+                        page.getContent().getCodeInput().then(input => page.getContent().type(input, fragmentCloned.code));
+                        page.getContent().getGuiCodeInput().then(input => page.getContent().type(input,fragmentCloned.guiCode));
+                    })
+                    .then(page => page.getContent().save())
+                    .then(page => {
+                        cy.validateToast(page);
+                        cy.wrap(fragment).as('fragmentToBeDeleted');
+
+                        page.getContent().getTableRow(fragmentCloned.code).should('be.visible')
+                            .children(htmlElements.td).then(cells =>
+                            cy.validateListTexts(cells, [fragmentCloned.code, false]));
+                    });
+            });
+
+            it([Tag.SANITY, 'ENG-3522'],'Checking Delete Modal', () => {
+                addTestFragment().then(fragment =>
+                    openFragmentsPage()
+                        .then(page => {
+                            page.getContent().getKebabMenu(fragment.code).open().clickDelete();
+                            page.getDialog().get().should('exist');
+                            page.getDialog().getBody().getStateInfo()
+                                .should('be.visible')
+                                .should('contain', fragment.code);
+                        })
+                );
+            });
+
+            it([Tag.SANITY, 'ENG-3522'],'Deleting', () => {
+                addTestFragment().then(fragment =>
+                    openFragmentsPage()
+                        .then(page => page.getContent().getKebabMenu(fragment.code).open().clickDelete())
+                        .then(page => page.getDialog().confirm())
+                        .then(page => {
+                            cy.validateToast(page);
+                            page.getContent().getTableRows().should('not.contain', fragment.code);
+                            cy.wrap(null).as('fragmentToBeDeleted');
+                        })
+                );
+            });
+            it([Tag.SANITY, 'ENG-3522'],'Stopping delete', () => {
+                addTestFragment().then(fragment =>
+                    openFragmentsPage()
+                        .then(page => page.getContent().getKebabMenu(fragment.code).open().clickDelete())
+                        .then(page => page.getDialog().cancel())
+                        .then(page => {
+                            page.getDialog().get().should('not.exist');
+                            page.getContent().getTableRow(fragment.code).should('be.visible')
+                                .children(htmlElements.td).then(cells =>
+                                cy.validateListTexts(cells, [fragment.code, false]));
+                        })
+                );
+            });
+
         });
     });
 
-    /*it('Add a new fragment', () => {
-      currentPage = openFragmentsPage();
 
-      currentPage = currentPage.getContent().openAddFragmentPage();
-      cy.validateUrlPathname('/fragment/add');
-      currentPage.getContent().typeCode(fragment.code);
-      currentPage.getContent().typeGuiCode(fragment.guiCode);
-      currentPage = currentPage.getContent().save();
-      cy.wrap(fragment).as('fragmentToBeDeleted');
 
-      cy.validateToast(currentPage);
-    });
+ /*
 
     it('Add a new fragment using an existing code - not allowed', () => {
       cy.fragmentsController()
@@ -282,6 +371,10 @@ describe('UX Fragments', () => {
   const fragment = {
     guiCode: 'test'
   };
+    const fragmentCloned= {
+        code: generateRandomId(),
+        guiCode: generateRandomTypeCode()
+    };
   const addTestFragment = () =>
       cy.fragmentsController()
           .then(controller => controller.addFragment(fragment))

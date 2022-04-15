@@ -31,6 +31,11 @@ export default class UXFragmentsPage extends AppContent {
                .find(`${htmlElements.button}[type=submit]`);
   }
 
+  clickSearchSubmitButton(){
+    this.getSearchSubmitButton().click();
+    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
+  }
+
   getTable() {
     return this.get()
                .find(htmlElements.table);
@@ -40,6 +45,12 @@ export default class UXFragmentsPage extends AppContent {
     return this.getTable()
                .children(htmlElements.tbody)
                .children(htmlElements.tr);
+  }
+
+  getTableRow(code){
+    return this.getTableRows()
+        .find(`${htmlElements.button}#${code}-actions`)
+        .closest(htmlElements.tr);
   }
 
   getTableHeaders(){
@@ -129,10 +140,10 @@ class FragmentsKebabMenu extends KebabMenu {
     return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
   }
 
-
   clickDelete() {
     this.getDelete().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    return cy.get('@currentPage');
   }
 
 }
