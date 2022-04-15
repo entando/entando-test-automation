@@ -35,8 +35,9 @@ export default class TemplatesPage extends AppContent {
   }
 
   getTableRow(code) {
-    const menu = this.getKebabMenuByCode(code);
-    return menu.get().closest(htmlElements.tr);
+    return this.getTableRows()
+               .find(`button#${code}-actions`)
+               .closest(htmlElements.tr);
   }
 
   getPagination() {

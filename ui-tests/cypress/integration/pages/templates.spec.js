@@ -12,6 +12,8 @@ describe('Page Templates', () => {
     cy.wrap([]).as('templatesToBeDeleted');
     sampleData.code  = generateRandomId();
     sampleData.descr = generateRandomId();
+    cy.wrap(generateRandomId()).as('editedDataCode');
+    cy.wrap(generateRandomId()).as('editedDataDescr');
   });
 
   afterEach(() => {
@@ -285,6 +287,25 @@ describe('Page Templates', () => {
               });
           page.getContent().getTableRow(sampleData.code).should('exist').children(htmlElements.td).eq(2).should('have.text', sampleData.descr);
           page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length+1);
+        });
+    });
+
+    it([Tag.SANITY, 'ENG-3525'], 'Editing a template', function () {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openEdit())
+        .then(page => {
+          page.getContent().getNameInput().should('have.value', sampleData.descr);
+          page.getContent().typeName(this.editedDataDescr);
+          page.getContent().submitForm();
+        })
+        .then(page => {
+          cy.validateToast(page, sampleData.code);
+          cy.validateUrlPathname('/page-template');
+          page.getContent().getTable().should('exist').and('be.visible');
+          page.getContent().getTableRow(sampleData.code).children(htmlElements.td).eq(2).should('have.text', this.editedDataDescr)
+                                                                                        .and('not.have.text', sampleData.descr);
         });
     });
 
