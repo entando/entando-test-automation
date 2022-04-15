@@ -309,6 +309,32 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.SANITY, 'ENG-3525'], 'Cloning a template', function () {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openClone())
+        .then(page => {
+          page.getContent().typeCode(this.editedDataCode);
+          page.getContent().typeName(this.editedDataDescr);
+          page.getContent().submitForm();
+        })
+        .then(page => {
+          cy.pushAlias('@templatesToBeDeleted', this.editedDataCode);
+          cy.validateToast(page, this.editedDataCode);
+          cy.validateUrlPathname('/page-template');
+          page.getContent().getTable().should('exist').and('be.visible');
+          page.getContent().getTable().should('exist').and('be.visible')
+              .then(table => {
+                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
+                  .should('have.length', defaultTemplates.length + 2);
+              });
+          page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length+2);
+          page.getContent().getTableRow(sampleData.code).should('exist').children(htmlElements.td).eq(2).should('have.text', sampleData.descr);
+          page.getContent().getTableRow(this.editedDataCode).should('exist').children(htmlElements.td).eq(2).should('have.text', this.editedDataDescr);
+        });
+    });
+
   });
 
 });
