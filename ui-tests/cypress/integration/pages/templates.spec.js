@@ -370,6 +370,24 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.SANITY, 'ENG-3525'], 'When canceling deletion, the template should not be deleted', () => {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => {
+          page.getContent().getKebabMenuByCode(sampleData.code).open().clickDelete();
+          page.getDialog().cancel();
+          page.getDialog().get().should('not.exist');
+          page.getContent().getTable().should('exist').and('be.visible')
+              .then(table => {
+                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
+                  .should('have.length', defaultTemplates.length+1);
+              });
+          page.getContent().getTableRow(sampleData.code).should('exist').and('be.visible');
+          page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length+1);
+        });
+    });
+
   });
 
 });
