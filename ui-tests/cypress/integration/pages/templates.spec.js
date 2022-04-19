@@ -337,4 +337,39 @@ describe('Page Templates', () => {
 
   });
 
+  describe('Deletion of a template', () => {
+
+    it([Tag.SANITY, 'ENG-3525'], 'When trying to delete a template, a confirmation modal should be displayed', () => {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => {
+          page.getContent().getKebabMenuByCode(sampleData.code).open().clickDelete();
+          page.getDialog().get().should('exist');
+          page.getDialog().getBody().getStateInfo().should('be.visible').and('contain', sampleData.code);
+        });
+    });
+
+    it([Tag.SANITY, 'ENG-3525'], 'When confirming deletion, the list should be updated and a successful toast notification displayed', () => {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => {
+          page.getContent().getKebabMenuByCode(sampleData.code).open().clickDelete();
+          page.getDialog().confirm();
+          page.getDialog().get().should('not.exist');
+          cy.validateToast(page);
+          page.getContent().getTable().should('exist').and('be.visible')
+              .then(table => {
+                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
+                  .should('have.length', defaultTemplates.length);
+              });
+          page.getContent().getTableRows().find(`button#${sampleData.code}-actions`).should('not.exist');
+          cy.wrap(null).as('templatesToBeDeleted');
+          page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length);
+        });
+    });
+
+  });
+
 });

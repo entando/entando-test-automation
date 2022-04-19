@@ -127,5 +127,6 @@ class TemplatesKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDeleteButton().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    return cy.get('@currentPage');
   }
 }
