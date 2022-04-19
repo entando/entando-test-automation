@@ -20,57 +20,131 @@ import ListAttribute           from './attribute-fields/ListAttribute';
 
 export default class AddPage extends AdminContent {
 
-  static ATTRIBUTES = [
-    'Attach',
-    'Boolean',
-    'CheckBox',
-    'Date',
-    'Email',
-    'Hypertext',
-    'Image',
-    'Link',
-    'Longtext',
-    'Monotext',
-    'Number',
-    'Text',
-    'ThreeState',
-    'Timestamp',
-    'Composite',
-    'List',
-    'Monolist'
-  ];
+  form = `${htmlElements.form}#configureMainGroup`;
 
-  static COMPLEX_ATTRIBUTES = [
-    'Composite',
-    'List',
-    'Monolist'
-  ];
-
-  static MULTILANG_ATTRIBUTES = [
-    'Text',
-    'Image',
-    'Longtext',
-    'Hypertext',
-    'Attach'
-  ];
-
-  contentDescriptionInput = `${htmlElements.input}#contentDescription`;
-  contentGroupFormBody    = `${htmlElements.div}.form-group`;
-  contentGroupInput       = `${htmlElements.select}#contentMainGroup`;
-  setGroupButton          = `${htmlElements.button}[name="entandoaction:configureMainGroup"]`;
   contentTitleAttrEnInput = `${htmlElements.input}[name="Text:en_title"]`;
   contentTitleAttrItInput = `${htmlElements.input}[name="Text:it_title"]`;
   contentAttrsEnTab       = `${htmlElements.a}#content-attributes-tabs-tab-en`;
   contentAttrsItTab       = `${htmlElements.a}[href="#it_tab"]`;
-  contentTitleAttrInputIt = `attributes[0].values.it`;
   contentAttrEnPane       = `${htmlElements.div}#en_tab`;
   contentAttrItPane       = `${htmlElements.div}#it_tab`;
-  groupsFormSection       = `${htmlElements.div}.GroupsFormBody`;
   stickyToolbar           = `${htmlElements.div}#sticky-toolbar`;
 
-  static get BASIC_ATTRIBUTES() {
-    return AddPage.ATTRIBUTES.filter(attribute => !AddPage.COMPLEX_ATTRIBUTES.includes(attribute));
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openPage(button) {
+    cy.intercept('http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/createNew.action?*').as('addContentPageLoadingGET');
+    cy.get(button).click();
+    cy.wait('@addContentPageLoadingGET');
   }
+
+  //FIXME AdminConsole is not built on REST APIs
+  static reloadPage(button) {
+    cy.intercept('http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/entryContent.action').as('addContentPageLoadingGET');
+    cy.get(button).click();
+    cy.wait('@addContentPageLoadingGET');
+  }
+
+  getContents() {
+    return this.get()
+               .children(`${htmlElements.div}#main`);
+  }
+
+  getForm() {
+    return this.getContents().children(htmlElements.form);
+  }
+
+  getInfo() {
+    return this.getForm().children(`${htmlElements.div}.form-horizontal`);
+  }
+
+  getVersion() {
+    return this.getInfo().children(`${htmlElements.div}.form-group`).eq(0);
+  }
+
+  getContentType() {
+    return this.getInfo().children(`${htmlElements.div}.form-group`).eq(1);
+  }
+
+  getContentDescription() {
+    return this.getInfo().children(`${htmlElements.div}.form-group`).eq(2);
+  }
+
+  getContentDescriptionInput() {
+    return this.getContentDescription().find(`${htmlElements.input}#contentDescription`);
+  }
+
+  getOwnerGroup() {
+    return this.getForm().children(`${htmlElements.div}.form-group`).eq(0);
+  }
+
+  getOwnerGroupSelect() {
+    return this.getOwnerGroup().find(`${htmlElements.select}#contentMainGroup`);
+  }
+
+  getOwnerGroupSetGroupButton() {
+    return this.getOwnerGroup().find(`${htmlElements.button}[name="entandoaction:configureMainGroup"]`);
+  }
+
+  getViewOnlyGroups() {
+    return this.getForm().children(`${htmlElements.div}.form-group`).eq(1);
+  }
+
+  getCategories() {
+    return this.getForm().children(`${htmlElements.div}.form-group`).eq(2);
+  }
+
+  getContentAttributesLanguageTabs() {
+    return this.getForm().children(`${htmlElements.ul}#tab-togglers`);
+  }
+
+  getContentAttributesLanguageTab(lang) {
+    return this.getContentAttributesLanguageTabs().find(`${htmlElements.a}[href=#${lang}_tab]`);
+  }
+
+  getContentAttributesContent() {
+    return this.getForm()
+               .children(`${htmlElements.div}#tab-container`)
+               .children(`${htmlElements.div}.active`);
+  }
+
+  getContentAttributesContentAttribute(attribute) {
+    return this.getContentAttributesContent()
+               .children(`${htmlElements.div}[id^=contentedit_][id$=_${attribute}]`);
+  }
+
+  getContentAttributesContentAttributeInput(attribute) {
+    return this.getContentAttributesContentAttribute(attribute)
+               .find(`${htmlElements.input}[id^="Text:"][id$=_${attribute}]`);
+  }
+
+  getContentInfo() {
+    return this.getForm().children(`${htmlElements.div}#info`);
+  }
+
+  getToolbar() {
+    return this.getForm().children(`${htmlElements.div}#sticky-toolbar`);
+  }
+
+  getToolbarActions() {
+    return this.getToolbar().find(`${htmlElements.div}.toolbar-pf-actions`);
+  }
+
+  getSaveButton() {
+    return this.getToolbarActions().find(`${htmlElements.button}[name="entandoaction:save"]`);
+  }
+
+  clickOwnerGroupSetGroupButton() {
+    this.getOwnerGroupSetGroupButton().then(button => AddPage.reloadPage(button));
+    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
+  }
+
+  save() {
+    this.getSaveButton().then(button => ManagementPage.savePage(button));
+    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
+  }
+
+  // ----- old -----
 
   getTitleAttrItInput() {
     return this.getContents().get(this.contentAttrItPane)
@@ -80,17 +154,6 @@ export default class AddPage extends AdminContent {
   getTitleAttrEnInput() {
     return this.getContents().get(this.contentAttrEnPane)
                .find(this.contentTitleAttrEnInput);
-  }
-
-  getDescriptionInput() {
-    return this.getContents()
-               .find(this.contentDescriptionInput);
-  }
-
-  getGroupDropdown() {
-    return this.getContents()
-               .find(this.contentGroupFormBody)
-               .find(this.contentGroupInput);
   }
 
   getEnLanguageTab() {
@@ -108,13 +171,6 @@ export default class AddPage extends AdminContent {
                .eq(0);
   }
 
-  getOwnerGroup() {
-    return this.getContents()
-               .get(this.groupsFormSection)
-               .find(htmlElements.input)
-               .eq(0);
-  }
-
   getStickyToolbar() {
     return this.getContents()
                .find(this.stickyToolbar);
@@ -123,11 +179,6 @@ export default class AddPage extends AdminContent {
   getSaveAction() {
     return this.getStickyToolbar()
                .find(`${htmlElements.button}[name="entandoaction:save"]`);
-  }
-
-  getSaveContinueAction() {
-    return this.getStickyToolbar()
-               .find(`${htmlElements.button}#edit-saveAndContinue`);
   }
 
   getSaveApproveAction() {
@@ -144,15 +195,11 @@ export default class AddPage extends AdminContent {
   }
 
   typeDescription(input) {
-    this.getDescriptionInput().type(input);
+    this.getContentDescriptionInput().type(input);
   }
 
   clearDescription() {
-    this.getDescriptionInput().clear();
-  }
-
-  clearOwnerGroup() {
-    this.getOwnerGroup().clear();
+    this.getContentDescriptionInput().clear();
   }
 
   copyToAllLanguages() {
@@ -175,16 +222,10 @@ export default class AddPage extends AdminContent {
     return new AdminPage(ManagementPage);
   }
 
-  getSetGroupButton() {
-    return this.getGroupDropdown().parent().find(this.setGroupButton);
-  }
-
   fillBeginContent(description, group = 'Free Access', append = false) {
-    this.getGroupDropdown().select(group);
-    this.getSetGroupButton().click();
-    if (!append) {
-      this.clearDescription();
-    }
+    this.getOwnerGroupSelect().select(group);
+    this.getOwnerGroupSetGroupButton().click();
+    if (!append) this.clearDescription();
     this.typeDescription(description);
     return this;
   }
@@ -236,26 +277,14 @@ export default class AddPage extends AdminContent {
 
   fillAttributes(attributeValues, options) {
     const {lang, editMode} = {lang: 'en', editMode: false, ...options};
-    if (lang === 'it') {
-      this.getItLanguageTab().click();
-    } else {
-      this.getEnLanguageTab().click();
-    }
-    cy.wait(500);
+    this.getContentAttributesLanguageTab(lang).click();
     attributeValues.forEach(({type, value, nestedType}, idx) => {
       const field = this.getAttributeByTypeIndex(type, idx, lang);
-      if (field === null) {
-        return;
-      }
-      if (['List', 'Monolist'].includes(type)) {
-        field.setAttributeType(nestedType);
-      }
+      if (field === null) return;
+      if (['List', 'Monolist'].includes(type)) field.setAttributeType(nestedType);
       field.expand();
-      if (editMode) {
-        field.editValue(value);
-      } else {
-        field.setValue(value);
-      }
+      if (editMode) field.editValue(value);
+      else field.setValue(value);
     });
     return this;
   }

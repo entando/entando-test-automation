@@ -55,8 +55,8 @@ export default class ContentMenu extends SubMenu {
   }
 
   openManagement() {
-    this.getManagement().click();
-    return new AdminPage(ManagementPage);
+    this.getManagement().then(button => ManagementPage.openPage(button));
+    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
   }
 
   openAssets() {
