@@ -8,6 +8,10 @@ export default class DetailsPage extends AppContent {
     editBtn = `${htmlElements.button}[class="pull-right btn btn-primary"]`;
     referencedSection = `${htmlElements.div}[class="row"]`;
 
+    static openPage(button) {
+        cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'detailsFragmentPageLoadingGET'));
+        cy.get(button).click();
+    }
 
     getMain(){
         return this.get()

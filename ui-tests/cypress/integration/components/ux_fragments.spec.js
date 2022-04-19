@@ -10,7 +10,7 @@ describe('UX Fragments', () => {
 
   afterEach(() => cy.kcUILogout());
 
-  describe([Tag.GTS], 'Fragments pages visualization', () => {
+  describe.only([Tag.GTS], 'Fragments pages visualization', () => {
 
     beforeEach(() => {
       fragment.code = `${generateRandomId()}`;
@@ -139,8 +139,6 @@ describe('UX Fragments', () => {
             })
     });
 
-
-
   });
     describe([Tag.GTS], 'Sanity Tests', () => {
 
@@ -266,7 +264,72 @@ describe('UX Fragments', () => {
             });
 
         });
+        describe([Tag.GTS], 'Pagination', () => {
+            it([Tag.SANITY, 'ENG-3522'],'Fragments list with proper pagination', () => {
+                openFragmentsPage()
+                    .then(page => {
+                        page.getContent().getTableRows().should('exist').and('be.visible');
+                        page.getContent().getPaginationRowDropdown().should('have.text', '10 ');
+                        page.getContent().getTableRows().should('have.length', 10);
+                        page.getContent().getPaginationSelector().should('have.value', 1);
+                    });
+            });
+            it([Tag.SANITY, 'ENG-3522'],'Next Page', () => {
+                openFragmentsPage()
+                    .then(page =>
+                        page.getContent().navigateToNextPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 2));
+            });
+            it([Tag.SANITY, 'ENG-3522'],'Previous Page', () => {//TODO when input page field is fixed, than generalize with a navigateRandomPage
+
+                openFragmentsPage()
+                    .then(page => page.getContent().navigateToLastPage())
+                    .then(page => page.getContent().navigateToPreviousPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 6))
+                cy.get('@currentPage')
+                    .then(page => page.getContent().navigateToPreviousPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 5))
+                cy.get('@currentPage')
+                    .then(page => page.getContent().navigateToPreviousPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 4))
+                cy.get('@currentPage')
+                    .then(page => page.getContent().navigateToPreviousPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 3))
+                cy.get('@currentPage')
+                    .then(page => page.getContent().navigateToPreviousPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 2))
+                cy.get('@currentPage')
+                    .then(page => page.getContent().navigateToPreviousPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 1))
+
+            });
+            it([Tag.SANITY, 'ENG-3522'],'First Page', () => {//TODO when input page field is fixed, than generalize with a navigateRandomPage
+                openFragmentsPage()
+                    .then(page => page.getContent().navigateToLastPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 7))
+                cy.get('@currentPage')
+                    .then(page => page.getContent().navigateToFirstPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 1))
+            });
+            it([Tag.SANITY, 'ENG-3522'],'Last Page', () => {//TODO when input page field is fixed, than generalize with a navigateRandomPage
+                openFragmentsPage()
+
+                    .then(page => page.getContent().navigateToLastPage())
+                    .then(page => page.getContent().getPaginationSelector().should('have.value', 7));
+            });
+
+            //TOFIX there's a bug in input page field: it's impossible to change the value.
+            it([Tag.SANITY, 'ENG-3522'],'Page field', () => {
+                const randomPage = Math.floor(Math.random() * 12) + 2;
+                openFragmentsPage()
+                    .then(page => {
+                        page.getContent().getPaginationSelector().then(input => page.getContent().type(input, randomPage));
+                        page.getContent().getPaginationSelector().should('have.value', randomPage);
+                    })
+            });
+        });
     });
+
 
 
 
