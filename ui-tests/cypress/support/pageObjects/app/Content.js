@@ -38,6 +38,11 @@ export default class Content extends WebElement {
              .find(`${htmlElements.span}.help-block`);
   }
 
+  click(input) {
+    cy.get(input).click();
+    return cy.get('@currentPage');
+  }
+
   focus(input) {
     cy.get(input).focus();
     return cy.get('@currentPage');
@@ -57,6 +62,11 @@ export default class Content extends WebElement {
   type(input, value, append = false) {
     if (!append) cy.get(input).clear();
     cy.get(input).type(value);
+    return cy.get('@currentPage');
+  }
+
+  select(input, value) {
+    cy.get(input).select(value);
     return cy.get('@currentPage');
   }
 

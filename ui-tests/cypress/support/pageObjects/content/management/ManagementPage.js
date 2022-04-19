@@ -1,98 +1,139 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import AdminContent from '../../app/AdminContent';
 
 import AddPage      from './AddPage';
 import AdminPage    from '../../app/AdminPage';
 import KebabMenu    from '../../app/KebabMenu.js';
-import Pagination   from '../../app/Pagination.js';
 import DeleteDialog from '../../app/DeleteDialog.js';
 
 export default class ManagementPage extends AdminContent {
 
-  contentTabs   = `${htmlElements.div}#secondary-tabs-1`;
-  addButton     = `${htmlElements.button}[data-toggle="dropdown"].btn.btn-primary.dropdown-toggle`;
-  actionOptions = `${htmlElements.ul}.dropdown-menu`;
-  actionOption  = `${htmlElements.li}`;
+  contentsTableDiv        = `${htmlElements.div}.Contents__table`;
+  contentsKebabMenu       = `${htmlElements.div}.dropdown-kebab-pf`;
+  contentsKebabMenuButton = `${htmlElements.button}`;
+  contentsKebabMenuAction = `${htmlElements.li}`;
 
-  contentsTableDiv         = `${htmlElements.div}.Contents__table`;
-  contentsKebabMenu        = `${htmlElements.div}.dropdown-kebab-pf`;
-  contentsKebabMenuButton  = `${htmlElements.button}`;
-  contentsKebabMenuAction  = `${htmlElements.li}`;
-  contentsFilter           = `${htmlElements.div}.ContentsFilter[${DATA_TESTID}=contents_ContentsFilter_div]`;
-  searchFilterTextfield    = `${htmlElements.input}[type=text]`;
-  searchFilterSubmitButton = `${htmlElements.button}.ContentsFilter__search-button`;
+  //FIXME AdminConsole is not built on REST APIs
+  static openPage(button) {
+    cy.intercept('http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/list.action').as('contentManagementPageLoadingGET');
+    cy.get(button).click();
+    cy.wait('@contentManagementPageLoadingGET');
+  }
 
-  listPagination         = `${htmlElements.form}.table-view-pf-pagination`;
-  paginationItemsCurrent = `${htmlElements.span}.pagination-pf-items-current`;
-  paginationItemsTotal   = `${htmlElements.span}.pagination-pf-items-total`;
+  //FIXME AdminConsole is not built on REST APIs
+  static openSearchPage(button) {
+    cy.intercept('http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/search.action').as('contentManagementPageLoadingGET');
+    cy.get(button).click();
+    cy.wait('@contentManagementPageLoadingGET');
+  }
 
-  modalDeleteButton = `${htmlElements.button}#DeleteContentModal__button-delete`;
+  //FIXME AdminConsole is not built on REST APIs
+  static savePage(button) {
+    cy.intercept(' http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/results.action').as('contentManagementPageLoadingGET');
+    cy.get(button).click();
+    cy.wait('@contentManagementPageLoadingGET');
+  }
+
+  getContents() {
+    return this.get()
+               .children(`${htmlElements.div}#main`);
+  }
+
+  getSearchForm() {
+    return this.getContents()
+               .children(htmlElements.div).eq(0)
+               .children(htmlElements.form);
+  }
+
+  getFormNameInput() {
+    return this.getSearchForm()
+               .find(`${htmlElements.input}#text`);
+  }
+
+  getFormCodeInput() {
+    return this.getSearchForm()
+               .find(`${htmlElements.input}#contentIdToken`);
+  }
+
+  getFormSearchButton() {
+    return this.getSearchForm()
+               .find(`${htmlElements.button}[type=submit]`);
+  }
 
   getAddButton() {
-    return this.get()
-               .find(this.addButton);
-  }
-
-  getAddContentDropdownList() {
-    return this.getAddButton()
-               .closest(htmlElements.div)
-               .find(htmlElements.ul);
-  }
-
-  getSearchPanel() {
     return this.getContents()
-               .find(this.contentsFilter);
+               .children(htmlElements.div).eq(1)
+               .children(htmlElements.div)
+               .children(htmlElements.button);
   }
 
-  getSearchTextField() {
-    return this.getSearchPanel()
-               .find(this.searchFilterTextfield);
+  getAddOptionsList() {
+    return this.getContents()
+               .children(htmlElements.div).eq(1)
+               .children(htmlElements.div)
+               .children(htmlElements.ul);
   }
 
-  getSearchSubmitButton() {
-    return this.getSearchPanel()
-               .find(this.searchFilterSubmitButton);
+  //FIXME elements should be identifiable by a more reliable properties
+  getAddOption(typeName) {
+    return this.getAddOptionsList()
+               .children(htmlElements.li)
+               .contains(typeName);
+  }
+
+  getContentsForm() {
+    return this.getContents()
+               .children(htmlElements.div).eq(2)
+               .children(`${htmlElements.form}#search`);
+  }
+
+  getTableWrapper() {
+    return this.getContentsForm().find(`${htmlElements.div}#contentListTable_wrapper`);
   }
 
   getTable() {
-    return this.getContents()
-               .find(htmlElements.table);
+    return this.getTableWrapper().find(`${htmlElements.table}#contentListTable`);
   }
+
+  getTableHeaders() {
+    //TODO it's a separate table!!
+  }
+
+  getTableRows() {
+    return this.getTable()
+               .children(htmlElements.tbody)
+               .children(htmlElements.tr);
+  }
+
+  //FIXME we should have the code generated during the creation of the content
+  getTableRow(name) {
+    return this.getTableRows()
+               .contains(htmlElements.td, name)
+               .parents(htmlElements.tr);
+  }
+
+  clickFormSearchButton() {
+    this.getFormSearchButton().then(button => ManagementPage.openSearchPage(button));
+    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
+  }
+
+  openAddContentPage(contentType) {
+    this.getAddButton().click()
+        .then(() => this.getAddOption(contentType).then(button => AddPage.openPage(button)));
+    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
+  }
+
+  // ---- old -----
+
 
   getTableRowAction(code) {
     return this.getTable()
                .find(`${htmlElements.button}#actionsKebab_${code}`);
   }
 
-  getTableRow(code) {
-    return this.getTableRowAction(code)
-               .closest(htmlElements.tr);
-  }
-
   getKebabMenu(code) {
     return new ManagementKebabMenu(this, code);
-  }
-
-  getPagination() {
-    return new Pagination(this);
-  }
-
-  doSearch(text = '') {
-    this.getSearchTextField().clear();
-    if (text !== '') {
-      this.getSearchTextField().type(text);
-    }
-    this.getSearchSubmitButton().click();
-  }
-
-  openAddContentPage(contentType) {
-    this.getAddButton().click();
-    this.getAddContentDropdownList()
-        .contains(contentType)
-        .click();
-    cy.wait(1000);
-    return new AdminPage(AddPage);
   }
 
   openEditContentPage() {
@@ -108,61 +149,6 @@ export default class ManagementPage extends AdminContent {
     return new AdminPage(AddPage);
   }
 
-  openKebabLastAddedContent() {
-    this.getContents()
-        .get(this.contentsTableDiv)
-        .find(this.contentsKebabMenu).eq(0)
-        .find(this.contentsKebabMenuButton)
-        .click();
-  }
-
-  unpublishLastAddedContent() {
-    this.openKebabLastAddedContent();
-    this.getContents()
-        .get(this.contentsTableDiv)
-        .find(this.contentsKebabMenuAction).eq(4)
-        .click();
-    cy.wait(1500);
-
-    this.parent.getDialog()
-        .confirm();
-    cy.wait(1000);
-
-    return new AdminPage(ManagementPage);
-  }
-
-  deleteLastAddedContent() {
-    this.openKebabLastAddedContent();
-    this.getContents()
-        .get(this.contentsTableDiv)
-        .find(this.contentsKebabMenuAction).eq(1)
-        .click();
-    cy.wait(1500);
-
-    this.parent.getDialog()
-        .confirm();
-    cy.wait(1000);
-
-    return new AdminPage(ManagementPage);
-  }
-
-  unpublishContent(code) {
-    this.getTableRowAction(code)
-        .click();
-    // TODO: find a way to avoid waiting for arbitrary time periods
-    cy.wait(500);
-
-    this.getTable()
-        .find(htmlElements.li)
-        .filter(':visible')
-        .eq(4)
-        .click();
-
-    this.parent
-        .getDialog()
-        .getConfirmButton()
-        .click();
-  }
 }
 
 class ManagementKebabMenu extends KebabMenu {
