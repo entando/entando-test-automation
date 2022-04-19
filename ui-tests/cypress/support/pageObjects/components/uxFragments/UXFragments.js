@@ -15,6 +15,14 @@ export default class UXFragmentsPage extends AppContent {
   spinner                    = `${htmlElements.div}.spinner.spinner-md`;
   paginationForm             = `${htmlElements.form}.content-view-pf-pagination`;
   paginationFormPageSelector = `${htmlElements.input}[type=text].pagination-pf-page`;
+  currentPageRange           = `${htmlElements.span}.pagination-pf-items-current`;
+
+  static openPage(button) {
+    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', "?*" ));
+    cy.get(button).click();
+    cy.wait('@fragmentsPageLoadingGET');
+  }
+
 
   getSearchForm() {
     return this.get()
@@ -52,6 +60,9 @@ export default class UXFragmentsPage extends AppContent {
         .find(`${htmlElements.button}#${code}-actions`)
         .closest(htmlElements.tr);
   }
+  getDisplayedFragments(){
+    return this
+  }
 
   getTableHeaders(){
     return this.getTable()
@@ -68,9 +79,53 @@ export default class UXFragmentsPage extends AppContent {
   getPaginationSelector(){
     return this.getPagination()
         .find(this.paginationFormPageSelector);
+  }
+  getNextPage(){
+    return this.getPagination()
+        .find(`${htmlElements.a}[title="Next page"]`);
+  }
+  navigateToNextPage(){
+    this.getNextPage().then(button =>UXFragmentsPage.openPage(button));
+    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
+  }
+
+  getCurrentPageRange() {
+    return this.getPagination()
+        .find(this.currentPageRange);
+  }
+  getPreviousPage(){
+    return this.getPagination()
+        .find(`${htmlElements.a}[title="Previous page"]`).should('be.visible');
+  }
+  navigateToPreviousPage(){
+    this.getPreviousPage().then(button =>UXFragmentsPage.openPage(button));
+    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
+  }
+
+  getFirstPage(){
+    return this.getPagination()
+        .find(`${htmlElements.a}[title="First page"]`).should('exist');
+
+  }
+  navigateToFirstPage(){
+    this.getFirstPage().then(button =>UXFragmentsPage.openPage(button));
+    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
+  }
+  getLastPage(){
+    return this.getPagination()
+        .find(`${htmlElements.a}[title="Last page"]`).should('exist')
+  }
+  navigateToLastPage(){
+    this.getLastPage().then(button => UXFragmentsPage.openPage(button));
+    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
 
   }
 
+
+  getPaginationRowDropdown(){
+    return this.getPagination()
+        .find(`${htmlElements.button}#pagination-row-dropdown`);
+  }
   getAddButton() {
     return this.get()
                .find(this.addBtn);
@@ -86,7 +141,7 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   openAddFragmentPage() {
-    this.getAddButton().click();
+    this.getAddButton().then(button => AddPage.openPage(button));
     return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 }
@@ -126,17 +181,17 @@ class FragmentsKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getEdit().click();
+    this.getEdit().then(button => AddPage.openPage(button));
     return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
   openClone(){
-    this.getClone().click();
+    this.getClone().then(button => AddPage.openPage(button));
     return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
   openDetails(){
-    this.getDetails().click();
+    this.getDetails().then(button => DetailsPage.openPage(button));
     return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
   }
 

@@ -31,7 +31,7 @@ export default class ComponentsMenu extends SubMenu {
   }
 
   openUXFragments() {
-    this.getUXFragments().click();
+    this.getUXFragments().then(button => UXFragmentsPage.openPage(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 

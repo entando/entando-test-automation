@@ -15,6 +15,10 @@ export default class AddPage extends AppContent {
   saveOption   = `${htmlElements.a}#regularSaveButton`;
   cancelBtn    = `${htmlElements.button}[class="pull-right btn btn-default"]`;
 
+  static openPage(button) {
+    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'addFragmentPageLoadingGET'));
+    cy.get(button).click();
+  }
 
   getCodeInput() {
     return this.get()
