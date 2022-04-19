@@ -390,4 +390,26 @@ describe('Page Templates', () => {
 
   });
 
+  describe('Breadcrumb navigation', () => {
+
+    it([Tag.FEATURE, 'ENG-3525'], 'When navigating out of add template page, no template is added', () => {
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().fillForm(sampleData);
+          page.getContent().openTemplatesUsingBreadCrumb();
+        })
+        .then(page => {
+          page.getContent().getTable().should('exist').and('be.visible')
+              .then(table => {
+                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
+                  .should('have.length', defaultTemplates.length);
+              });
+          page.getContent().getTableRows().find(`button#${sampleData.code}-actions`).should('not.exist');
+          page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length);
+        });
+    });
+
+  });
+
 });

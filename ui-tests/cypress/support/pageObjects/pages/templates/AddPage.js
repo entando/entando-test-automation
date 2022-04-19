@@ -189,4 +189,9 @@ export default class AddPage extends AppContent {
     return cy.wrap(new AppPage(TemplatesPage));
   }
 
+  openTemplatesUsingBreadCrumb() {
+    this.getBreadCrumb().children(htmlElements.li).eq(1).then(element => TemplatesPage.openPage(element));
+    return cy.wrap(new AppPage(TemplatesPage));
+  }
+
 }
