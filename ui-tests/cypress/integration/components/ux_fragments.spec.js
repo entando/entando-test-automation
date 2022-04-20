@@ -10,7 +10,7 @@ describe('UX Fragments', () => {
 
   afterEach(() => cy.kcUILogout());
 
-  describe.only([Tag.GTS], 'Fragments pages visualization', () => {
+  describe([Tag.GTS], 'Fragments pages visualization', () => {
 
     beforeEach(() => {
       fragment.code = `${generateRandomId()}`;
@@ -140,7 +140,7 @@ describe('UX Fragments', () => {
     });
 
   });
-    describe([Tag.GTS], 'Sanity Tests', () => {
+  describe([Tag.GTS], 'Sanity Tests', () => {
 
         beforeEach(() => {
             fragment.code = `${generateRandomId()}`;
@@ -330,102 +330,126 @@ describe('UX Fragments', () => {
         });
     });
 
+  describe([Tag.GTS], 'Error Validation Tests', () => {
+      beforeEach(() => {
+          fragment.code = `${generateRandomId()}`;
+          cy.wrap(null).as('fragmentToBeDeleted');
+      });
 
+      afterEach(() => {
+          cy.get('@fragmentToBeDeleted').then(fragmentToBeDeleted => {
+              if (fragmentToBeDeleted !== null) {
+                  cy.fragmentsController().then(controller => controller.deleteFragment(fragmentToBeDeleted.code));
+              }
+          });
+      });
+        it([Tag.ERROR, 'ENG-3522'],'Error is displayed when a code input is selected but not filled in fragment AddPage', () => {
+            openFragmentsPage()
+                .then(page => page.getContent().openAddFragmentPage())
+                .then(page => {
+                    page.getContent().getCodeInput().then(input => {
+                        page.getContent().focus(input);
+                        page.getContent().blur(input);
+                        page.getContent().getInputError(input)
+                            .should('exist').and('be.visible')
+                            .and('have.text', 'Field required');
+                        })
+                });
+        });
+        it([Tag.ERROR, 'ENG-3522'],'When Add a fragment without all the required values, save button is disabled', () => {
+            openFragmentsPage()
+                .then(page =>
+                    page.getContent().openAddFragmentPage());
 
+            cy.get('@currentPage')
+                .then(page => {
+                    page.getContent().getCodeInput().then(input => page.getContent().type(input, fragment.code));
+                    page.getContent().clickSaveBtn();
+                    page.getContent().getSaveOption().parent().should('have.class', 'disabled');
+                })
 
- /*
+        });
+        it([Tag.ERROR, 'ENG-3522'],'Add a fragment with an existing code is forbidden', () => {
+            addTestFragment()
+            openFragmentsPage()
+                .then(page =>
+                    page.getContent().openAddFragmentPage());
+            cy.get('@currentPage')
+                .then(page =>
+                    page.getContent().getCodeInput().then(input => page.getContent().type(input, fragment.code)))
+                .then(page => page.getContent().save())
+                .then(page => cy.validateToast(page, fragment.code, false))
+        });
+        it([Tag.ERROR, 'ENG-3522'],'Edit a fragment code is forbidden', () => {
+            addTestFragment();
+            openFragmentsPage()
+                .then(page =>
+                    page.getContent().getKebabMenu(fragment.code).open().openEdit())
+                .then(page => page.getContent().getCodeInput().should('be.disabled'))
+        });
+        it([Tag.ERROR, 'ENG-3522'],'Edit a fragment with no Gui Code is forbidden', () => {
+            addTestFragment();
+            openFragmentsPage()
+                .then(page =>
+                    page.getContent().getKebabMenu(fragment.code).open().openEdit())
+                .then(page =>
+                    page.getContent().getGuiCodeInput()
+                        .then(input => {
+                            page.getContent().clear(input);
+                        }))
+                .then(page => {
+                    page.getContent().clickSaveBtn();
+                    page.getContent().getSaveOption().parent().should('have.class', 'disabled');
+                })
+        });
+        it([Tag.ERROR, 'ENG-3522'],'Error is displayed when a code input is selected but not filled in cloning a fragment', () => {
+            addTestFragment();
+            openFragmentsPage()
+                .then(page =>
+                    page.getContent().getKebabMenu(fragment.code).open().openClone());
 
-    it('Add a new fragment using an existing code - not allowed', () => {
-      cy.fragmentsController()
-        .then(controller => controller.addFragment(fragment))
-        .then(() => cy.wrap(fragment).as('fragmentToBeDeleted'));
+            cy.get('@currentPage')
+                .then(page => {
+                    page.getContent().getCodeInput().then(input => {
+                        page.getContent().focus(input);
+                        page.getContent().blur(input);
+                        page.getContent().getInputError(input)
+                            .should('exist').and('be.visible')
+                            .and('have.text', 'Field required');
+                    })
+                });
+        });
+        it([Tag.ERROR, 'ENG-3522'],'Clone a fragment with no Gui Code is forbidden', () => {
+            addTestFragment();
+            openFragmentsPage()
+                .then(page =>
+                    page.getContent().getKebabMenu(fragment.code).open().openClone());
 
-      currentPage = openFragmentsPage();
+            cy.get('@currentPage')
+                .then(page => {
+                    page.getContent().getCodeInput().then(input => page.getContent().type(input, fragmentCloned.code));
+                })
+                .then(page => {
+                    page.getContent().clickSaveBtn();
+                    page.getContent().getSaveOption().parent().should('have.class', 'disabled');
+                })
+        });
+        it([Tag.ERROR, 'ENG-3522'],'Clone a fragment with an existing code is forbidden', () => {
+            addTestFragment();
+            openFragmentsPage()
+                .then(page =>
+                    page.getContent().getKebabMenu(fragment.code).open().openClone());
 
-      currentPage = currentPage.getContent().openAddFragmentPage();
-      cy.validateUrlPathname('/fragment/add');
-      currentPage.getContent().typeCode(fragment.code);
-      currentPage.getContent().typeGuiCode(fragment.guiCode);
-      currentPage.getContent().save();
-
-      cy.validateToast(currentPage, fragment.code, false);
-    });
-
-    it('Add a new fragment with an invalid code - not allowed', () => {
-      currentPage = openFragmentsPage();
-
-      currentPage = currentPage.getContent().openAddFragmentPage();
-      cy.validateUrlPathname('/fragment/add');
-      currentPage.getContent().typeCode(`${fragment.code}!@#$%^&*`);
-      currentPage.getContent().typeGuiCode(fragment.guiCode);
-      currentPage.getContent().clickSaveBtn();
-
-      currentPage.getContent().getSaveOption().closest('li').invoke('attr', 'class').should('contain', 'disabled');
-    });
-
-    it('Add a new fragment without filling in GUI code - not allowed', () => {
-      currentPage = openFragmentsPage();
-
-      currentPage = currentPage.getContent().openAddFragmentPage();
-      cy.validateUrlPathname('/fragment/add');
-      currentPage.getContent().typeCode(fragment.code);
-      currentPage.getContent().clickSaveBtn();
-
-      currentPage.getContent().getSaveOption().closest('li').invoke('attr', 'class').should('contain', 'disabled');
-    });
-
-    it('Edit fragment', () => {
-      cy.fragmentsController()
-        .then(controller => controller.addFragment(fragment))
-        .then(() => cy.wrap(fragment).as('fragmentToBeDeleted'));
-
-      currentPage = openFragmentsPage();
-
-      currentPage = currentPage.getContent().getKebabMenu(fragment.code).open().openEdit();
-      cy.validateUrlPathname(`/fragment/edit/${fragment.code}`);
-      currentPage.getContent().getCodeInput().should('be.disabled');
-      currentPage.getContent().typeGuiCode('_updated');
-
-      currentPage = currentPage.getContent().save();
-
-      cy.validateToast(currentPage);
-    });
-
-    it('Delete fragment', () => {
-      cy.fragmentsController()
-        .then(controller => controller.addFragment(fragment))
-        .then(() => cy.wrap(fragment).as('fragmentToBeDeleted'));
-
-      currentPage = openFragmentsPage();
-
-      currentPage.getContent().getKebabMenu(fragment.code).open().clickDelete();
-      currentPage.getDialog().confirm();
-
-      cy.validateToast(currentPage);
-
-      cy.wrap(null).as('fragmentToBeDeleted');
-    });
-
-    const fragment = {
-      guiCode: 'test'
-    };
-
+            cy.get('@currentPage')
+                .then(page => {
+                    page.getContent().getCodeInput().then(input => page.getContent().type(input, fragment.code));
+                    page.getContent().getGuiCodeInput().then(input => page.getContent().type(input,fragmentCloned.guiCode));
+                })
+                .then(page => page.getContent().save())
+                .then(page => cy.validateToast(page, fragment.code, false))
+        });
   });
 
-  describe(['ENG-2680'], 'Fragments Browsing', () => {
-
-    it('Pagination check when there are no results', () => {
-      currentPage = openFragmentsPage();
-      currentPage.getContent().getSearchCodeInput().type('z');
-      currentPage.getContent().getSearchSubmitButton().click();
-      currentPage.getContent().getSpinner().should('exist');
-      currentPage.getContent().getPagination()
-                 .getItemsCurrent().invoke('text').should('be.equal', '0-0');
-      currentPage.getContent().getPagination()
-                 .getItemsTotal().invoke('text').should('be.equal', '0');
-    });
-
-  });*/
 
   const openFragmentsPage = () => {
       return cy.get('@currentPage')
@@ -442,4 +466,5 @@ describe('UX Fragments', () => {
       cy.fragmentsController()
           .then(controller => controller.addFragment(fragment))
           .then(() => cy.wrap(fragment).as('fragmentToBeDeleted'));
+
 });

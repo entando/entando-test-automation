@@ -11,6 +11,8 @@ export default class UXFragmentsPage extends AppContent {
 
   searchForm                 = `${htmlElements.form}.FragmentSearchForm`;
   searchCodeInput            = `${htmlElements.input}#fragmentcode[name="code"]`;
+  widgetFilter               = `${htmlElements.select}[name="widgetType"]`;
+  pluginFilter               = `${htmlElements.select}[name="pluginCode"]`;
   addBtn                     = `${htmlElements.button}[type=button].FragmentListContent__add`;
   spinner                    = `${htmlElements.div}.spinner.spinner-md`;
   paginationForm             = `${htmlElements.form}.content-view-pf-pagination`;
@@ -32,6 +34,16 @@ export default class UXFragmentsPage extends AppContent {
   getSearchCodeInput() {
     return this.getSearchForm()
                .find(this.searchCodeInput);
+  }
+
+  getWidgetFilter(){
+    return this.getSearchForm()
+        .find(this.widgetFilter)
+  }
+
+  getPluginFilter(){
+    return this.getSearchForm()
+        .find(this.pluginFilter)
   }
 
   getSearchSubmitButton() {
