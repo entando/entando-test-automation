@@ -428,6 +428,21 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.FEATURE, 'ENG-3525'], 'When navigating out of details page, the template is not changed', () => {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openDetails())
+        .then(page => {
+          cy.validateUrlPathname(`/page-template/view/${sampleData.code}`);
+          page.getContent().openTemplatesUsingBreadCrumb();
+        })
+        .then(page => {
+          page.getContent().getTable().should('exist').and('be.visible');
+          page.getContent().getTableRow(sampleData.code).should('exist').children(htmlElements.td).eq(2).should('have.text', sampleData.descr);
+        });
+    });
+
   });
 
 });
