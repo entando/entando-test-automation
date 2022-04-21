@@ -328,6 +328,16 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.ERROR, 'ENG-3525'], 'When deselecting the code field without filling it, an error is displayed for the field', () => {
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().getCodeInput().parent().siblings(`${htmlElements.span}.help-block`).should('not.exist');
+          page.getContent().getCodeInput().focus().blur();
+          page.getContent().getCodeInput().parent().siblings(`${htmlElements.span}.help-block`).should('exist').and('be.visible');
+        });
+    });
+
     it([Tag.SANITY, 'ENG-3525'], 'Editing a template', function () {
       addPageTemplate(sampleData);
 
