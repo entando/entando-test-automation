@@ -189,6 +189,12 @@ export default class AddPage extends AppContent {
     return cy.wrap(new AppPage(TemplatesPage));
   }
 
+  submitFormAndContinue(code) {
+    this.getSaveDropdownButton().click();
+    this.getContinueSaveButton().then(button => AddPage.openEditClonePage(button, code));
+    return cy.get('@currentPage');
+  }
+
   openTemplatesUsingBreadCrumb() {
     this.getBreadCrumb().children(htmlElements.li).eq(1).then(element => TemplatesPage.openPage(element));
     return cy.wrap(new AppPage(TemplatesPage));
