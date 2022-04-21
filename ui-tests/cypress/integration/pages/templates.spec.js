@@ -310,6 +310,24 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.FEATURE, 'ENG-3525'], 'When selecting save and continue, the edit form is displayed and a successful toast notification is displayed', () => {
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().fillForm(sampleData);
+          page.getContent().submitFormAndContinue(sampleData.code);
+        })
+        .then(page => {
+          cy.wrap([sampleData.code]).as('templatesToBeDeleted');
+          cy.validateToast(page, sampleData.code);
+          cy.validateUrlPathname(`/page-template/edit/${sampleData.code}`);
+          page.getContent().getCodeInput().should('be.disabled').and('have.value', sampleData.code);
+          page.getContent().getNameInput().should('have.value', sampleData.descr);
+          page.getContent().getJsonConfigValue().then(value => expect(value.replaceAll('\n', '').replaceAll(' ', '')).to.equal(sampleData.configuration.replaceAll(' ', '')));
+          page.getContent().getTemplateValue().then(value => expect(value).to.equal(sampleData.template));
+        });
+    });
+
     it([Tag.SANITY, 'ENG-3525'], 'Editing a template', function () {
       addPageTemplate(sampleData);
 
