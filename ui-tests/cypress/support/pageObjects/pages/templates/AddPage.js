@@ -25,6 +25,13 @@ export default class AddPage extends AppContent {
     cy.wait('@templateLoadingGET');
   }
 
+  static editAndContinue(button, code) {
+    cy.pageTemplatesController().then(controller => controller.intercept({method: 'PUT'}, 'templateEditedPUT', `/${code}`));
+    if (button) cy.get(button).click();
+    else cy.realType('{enter}');
+    cy.wait('@templateEditedPUT');
+  }
+
   getFormArea() {
     return this.getContents()
                .find(htmlElements.form);
@@ -192,6 +199,12 @@ export default class AddPage extends AppContent {
   submitFormAndContinue(code) {
     this.getSaveDropdownButton().click();
     this.getContinueSaveButton().then(button => AddPage.openEditClonePage(button, code));
+    return cy.get('@currentPage');
+  }
+
+  submitEditFormAndContinue(code) {
+    this.getSaveDropdownButton().click();
+    this.getContinueSaveButton().then(button => AddPage.editAndContinue(button, code));
     return cy.get('@currentPage');
   }
 

@@ -347,6 +347,23 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.FEATURE, 'ENG-3525'], 'When selecting save and continue in the edit template page, a successful toast notification is displayed', function () {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openEdit())
+        .then(page => {
+          page.getContent().getNameInput().should('have.value', sampleData.descr);
+          page.getContent().typeName(this.editedDataDescr);
+          page.getContent().submitEditFormAndContinue(sampleData.code);
+        })
+        .then(page => {
+          cy.validateToast(page, sampleData.code);
+          cy.validateUrlPathname(`/page-template/edit/${sampleData.code}`);
+          page.getContent().getNameInput().should('have.value', this.editedDataDescr);
+        });
+    });
+
     it([Tag.SANITY, 'ENG-3525'], 'Cloning a template', function () {
       addPageTemplate(sampleData);
 
