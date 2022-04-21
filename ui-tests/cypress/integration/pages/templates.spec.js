@@ -338,6 +338,19 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.ERROR, 'ENG-3525'], 'When deselecting the name and JSON configuration fields without filling them, an error is displayed for the deselected field', () => {
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().getJsonConfigInput().parent().siblings(`${htmlElements.div}.help-block`).should('not.exist');
+          page.getContent().getNameInput().parent().siblings(`${htmlElements.span}.help-block`).should('not.exist');
+          page.getContent().clearJsonConfig();
+          page.getContent().getNameInput().focus().blur();
+          page.getContent().getJsonConfigInput().parent().siblings(`${htmlElements.div}.help-block`).should('exist').and('be.visible');
+          page.getContent().getNameInput().parent().siblings(`${htmlElements.span}.help-block`).should('exist').and('be.visible');
+        });
+    });
+
     it([Tag.SANITY, 'ENG-3525'], 'Editing a template', function () {
       addPageTemplate(sampleData);
 
