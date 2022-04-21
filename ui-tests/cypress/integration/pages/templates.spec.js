@@ -390,6 +390,25 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.FEATURE, 'ENG-3525'], 'When selecting save and continue in the clone template page, a successful toast notification is displayed', function () {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openClone())
+        .then(page => {
+          page.getContent().typeCode(this.editedDataCode);
+          page.getContent().typeName(this.editedDataDescr);
+          page.getContent().submitFormAndContinue(this.editedDataCode);
+        })
+        .then(page => {
+          cy.pushAlias('@templatesToBeDeleted', this.editedDataCode);
+          cy.validateToast(page, this.editedDataCode);
+          cy.validateUrlPathname(`/page-template/edit/${this.editedDataCode}`);
+          page.getContent().getNameInput().should('have.value', this.editedDataDescr);
+          page.getContent().getCodeInput().should('be.disabled').and('have.value', this.editedDataCode);
+        });
+    });
+
   });
 
   describe('Deletion of a template', () => {
