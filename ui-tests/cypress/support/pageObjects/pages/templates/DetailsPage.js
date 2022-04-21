@@ -1,3 +1,4 @@
+import AddPage        from "./AddPage";
 import AppPage        from "../../app/AppPage";
 import Content        from "../../app/Content";
 import TemplatesPage  from "./TemplatesPage";
@@ -35,6 +36,11 @@ export default class DetailsPage extends Content {
   openTemplatesUsingBreadCrumb() {
     this.getBreadCrumb().children(htmlElements.li).eq(1).then(element => TemplatesPage.openPage(element));
     return cy.wrap(new AppPage(TemplatesPage));
+  }
+
+  openEditTemplate(code) {
+    this.getEditButton().then(button => AddPage.openEditClonePage(button, code));
+    return cy.wrap(new AppPage(AddPage));
   }
 
 }

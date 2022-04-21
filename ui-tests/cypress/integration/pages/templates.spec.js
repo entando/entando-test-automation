@@ -157,6 +157,26 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.FEATURE, 'ENG-3525'], 'Navigating to edit template page from details', () => {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openDetails())
+        .then(page => page.getContent().openEditTemplate(sampleData.code))
+        .then(page => {
+          cy.validateUrlPathname(`/page-template/edit/${sampleData.code}`);
+          page.getContent().getCodeInput().should('exist').and('be.visible').and('have.value', sampleData.code);
+          page.getContent().getNameInput().should('exist').and('be.visible').and('have.value', sampleData.descr);
+          page.getContent().getCancelButton().should('exist').and('be.visible');
+          page.getContent().getSaveDropdownButton().should('exist').and('be.visible');
+          page.getContent().getJsonConfigInput().should('exist').and('be.visible');
+          page.getContent().getJsonConfigValue().then(value => expect(value.replaceAll('\n', '').replaceAll(' ', '')).to.equal(sampleData.configuration.replaceAll(' ', '')));
+          page.getContent().getTemplateInput().should('exist').and('be.visible');
+          page.getContent().getTemplateValue().then(value => expect(value).to.equal(sampleData.template));
+          page.getContent().getPreviewGrid().should('exist').and('be.visible');
+        });
+    });
+
   });
 
   describe('Templates list', () => {
