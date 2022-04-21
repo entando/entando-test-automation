@@ -46,6 +46,25 @@ declare namespace Cypress {
         initWindowOpenChecker(): void;
 
         /**
+         * Get the value stored in the provided alias and push the provided value into the array
+         * Returns the provided value
+         */
+        pushAlias(alias, value): Object;
+
+        /**
+         * Get the value stored in the provided alias and unshift the provided value into the array
+         * Returns the provided value
+         */
+        unshiftAlias(alias, value): Object;
+
+        /**
+         * Get the value stored in the provided alias and delete the provided value from the array;
+         * if the provided value is null (default), it stores an empty array in the alias
+         * Returns the provided value
+         */
+        deleteAlias(alias, value): Object;
+
+        /**
          * Perform the login to keycloak with the configured confidential client with grant type client_credentials and stores the response with alias tokens
          */
         kcAPILogin(): void;
