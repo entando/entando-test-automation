@@ -365,6 +365,17 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.ERROR, 'ENG-3525'], 'When creating a template not setting any frame in the JSON configuration, an error toast notification is displayed', () => {
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().fillForm({code: sampleData.code, descr: sampleData.descr, configuration: '{"frames": []}', template: sampleData.template});
+          page.getContent().getSaveDropdownButton().click();
+          page.getContent().getRegularSaveButton().click();
+          cy.validateUrlPathname('/page-template/add');
+          cy.validateToast(page, 'frame', false);
+        });
+    });
 
     it([Tag.SANITY, 'ENG-3525'], 'Editing a template', function () {
       addPageTemplate(sampleData);
