@@ -351,6 +351,21 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.ERROR, 'ENG-3525'], 'When trying to create a new template with an already existing code, an error toast notification is displayed', () => {
+      addPageTemplate(sampleData);
+
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().fillForm(sampleData);
+          page.getContent().getSaveDropdownButton().click();
+          page.getContent().getRegularSaveButton().click();
+          cy.validateUrlPathname('/page-template/add');
+          cy.validateToast(page, sampleData.code, false);
+        });
+    });
+
+
     it([Tag.SANITY, 'ENG-3525'], 'Editing a template', function () {
       addPageTemplate(sampleData);
 
