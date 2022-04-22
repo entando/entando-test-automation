@@ -377,6 +377,15 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.ERROR, 'ENG-3525'], 'When creating a template and a frame has the wrong index, an error is displayed for the field', () => {
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().fillForm({code: sampleData.code, descr: sampleData.descr, configuration: '{"frames": [{"pos": 1, "descr": "Logo", "mainFrame": false, "defaultWidget": {"code": "logo","properties": null}, "sketch": {"x1": 0, "y1": 0, "x2": 2, "y2": 0}}]}', template: sampleData.template});
+          page.getContent().getJsonConfigInput().parent().siblings(`${htmlElements.div}.help-block`).should('exist').and('be.visible').and('contain', 'index');
+        });
+    });
+
     it([Tag.SANITY, 'ENG-3525'], 'Editing a template', function () {
       addPageTemplate(sampleData);
 
