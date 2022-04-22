@@ -66,7 +66,7 @@ export default class AdministrationMenu extends SubMenu {
 
   openReloadConfiguration() {
     this.getReloadConfiguration().click();
-    return new AppPage(ReloadConfigurationPage);
+    return cy.wrap(new AppPage(ReloadConfigurationPage)).as('currentPage');
   }
 
 }
