@@ -398,6 +398,18 @@ describe('Page Templates', () => {
         });
     });
 
+    it([Tag.ERROR, 'ENG-3525'], 'When creating a template and a frame does not have coordinates, an error toast notification is displayed', () => {
+      openPageTemplateMgmtPage()
+        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().fillForm({code: sampleData.code, descr: sampleData.descr, configuration: '{"frames": [{"pos": 0, "descr": "Logo", "mainFrame": false, "defaultWidget": {"code": "logo","properties": null}}]}', template: sampleData.template});
+          page.getContent().getSaveDropdownButton().click();
+          page.getContent().getRegularSaveButton().click();
+          cy.validateUrlPathname('/page-template/add');
+          cy.validateToast(page, 'sketch', false);
+        });
+    });
+
     it([Tag.SANITY, 'ENG-3525'], 'Editing a template', function () {
       addPageTemplate(sampleData);
 
