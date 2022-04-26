@@ -190,7 +190,7 @@ describe('Sender Management Functionalities', () => {
   describe([Tag.FEATURE, 'ENG-3299'], 'Feature Test', () => {
 
     it([Tag.FEATURE, 'ENG-3299'], 'No Sender Exist ', () => {
-      DEFAULT_SENDERS.forEach(defaultSender =>
+      cy.fixture('data/senders').each(defaultSender =>
           cy.senderController().then(controller => controller.deleteSender(defaultSender.code)));
 
       cy.get('@currentPage')
@@ -198,11 +198,11 @@ describe('Sender Management Functionalities', () => {
         .then(page => {
           page.getContent().getSenderTable().should('be.visible');
           page.getContent().getSenderTable().children(htmlElements.tbody).should('not.be.visible');
-          DEFAULT_SENDERS.forEach(defaultSender =>
+          cy.fixture('data/senders').each(defaultSender =>
               page.getContent().getSenderTable().should('not.contain', defaultSender.code));
         });
 
-      DEFAULT_SENDERS.forEach(defaultSender =>
+      cy.fixture('data/senders').each(defaultSender =>
           cy.senderController().then(controller => controller.addSender(defaultSender.code, defaultSender.email)));
     });
 
@@ -281,17 +281,6 @@ describe('Sender Management Functionalities', () => {
     });
 
   });
-
-  const DEFAULT_SENDERS = [
-    {
-      code: 'CODE1',
-      email: 'EMAIL1@EMAIL.COM'
-    },
-    {
-      code: 'CODE2',
-      email: 'EMAIL2@EMAIL.COM'
-    }
-  ];
 
   const addTestSender = () =>
       cy.senderController()
