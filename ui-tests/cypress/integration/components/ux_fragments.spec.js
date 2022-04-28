@@ -19,7 +19,7 @@ describe('UX Fragments', () => {
     });
   });
 
-  describe([Tag.GTS], 'Fragments pages visualization', () => {
+  describe('Fragments pages visualization', () => {
 
     it([Tag.SMOKE, 'ENG-3522'], 'Ux FragmentsPage is displayed', () => {
       openFragmentsPage()
@@ -133,9 +133,9 @@ describe('UX Fragments', () => {
         });
     });
   });
-  describe([Tag.GTS], 'Sanity Tests', () => {
+  describe('Sanity Tests', () => {
 
-    describe([Tag.GTS], 'Actions', () => {
+    describe('Actions', () => {
       it([Tag.SANITY, 'ENG-3522'], 'Searching a fragment', () => {
         addTestFragment();
         openFragmentsPage()
@@ -250,7 +250,7 @@ describe('UX Fragments', () => {
       });
 
     });
-    describe([Tag.GTS], 'Pagination', () => {
+    describe('Pagination', () => {
       it([Tag.SANITY, 'ENG-3522'], 'Fragments list with proper pagination', () => {
         openFragmentsPage()
             .then(page => {
@@ -314,8 +314,8 @@ describe('UX Fragments', () => {
       });
     });
   });
-  describe([Tag.GTS], 'Feature Tests I', () => {
-    describe([Tag.GTS], 'Fragments Browsing', () => {
+  describe('Feature Tests I', () => {
+    describe('Fragments Browsing', () => {
 
       it([Tag.FEATURE, 'ENG-3522'], 'Search a fragment from his fragment code', () => {
         addTestFragment();
@@ -487,7 +487,7 @@ describe('UX Fragments', () => {
       });
 
     });
-    describe([Tag.GTS], 'Breadcrumb checks', () => {
+    describe('Breadcrumb checks', () => {
       it([Tag.FEATURE, 'ENG-3522'], 'Breadcrumb in add Page', () => {
         openFragmentsPage()
             .then(page => {
@@ -541,8 +541,8 @@ describe('UX Fragments', () => {
       });
     });
   });
-  describe([Tag.GTS], 'Feature Test II', () => {
-    describe([Tag.GTS], 'Pages Validations', () => {
+  describe('Feature Test II', () => {
+    describe('Pages Validations', () => {
       it([Tag.FEATURE, 'ENG-3522'], 'Edit page form', () => {
         addTestFragment();
         openFragmentsPage()
@@ -581,7 +581,7 @@ describe('UX Fragments', () => {
             });
       });
     });
-    describe([Tag.GTS], 'Save and Continue option', () => {
+    describe('Save and Continue option', () => {
       it([Tag.FEATURE, 'ENG-3522'], 'Add a fragment with Save and Continue option', () => {
         openFragmentsPage()
             .then(page =>
@@ -653,7 +653,7 @@ describe('UX Fragments', () => {
       });
     });
   });
-  describe([Tag.GTS], 'Error Validation Tests', () => {
+  describe('Error Validation Tests', () => {
 
     it([Tag.ERROR, 'ENG-3522'], 'Error is displayed when a code input is selected but not filled in fragment FragmentsPage', () => {
       openFragmentsPage()
