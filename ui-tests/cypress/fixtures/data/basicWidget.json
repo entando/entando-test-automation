@@ -1,0 +1,11 @@
+{
+  "code": "basicWidget",
+  "titles": {
+    "en": "Basic widget",
+    "it": "Widget base"
+  },
+  "group": "administrators",
+  "configUi": null,
+  "icon": "font-awesome:fa-arrow-right",
+  "customUi": "<h1>Just a basic widget</h1>"
+}

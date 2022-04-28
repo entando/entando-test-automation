@@ -15,7 +15,7 @@ export default class ComponentsMenu extends SubMenu {
                .children(htmlElements.li).eq(2);
   }
 
-  getMFE_Widgets() {
+  getMFEAndWidgets() {
     return this.getElements()
                .children(htmlElements.li).eq(0);
   }
@@ -25,9 +25,9 @@ export default class ComponentsMenu extends SubMenu {
                .children(htmlElements.li).eq(1);
   }
 
-  openMFE_Widgets() {
-    this.getMFE_Widgets().click();
-    return new AppPage(MFEWidgetsPage);
+  openMFEAndWidgets() {
+    this.getMFEAndWidgets().then(button => MFEWidgetsPage.openPage(button));
+    return cy.wrap(new AppPage(MFEWidgetsPage)).as('currentPage');
   }
 
   openUXFragments() {

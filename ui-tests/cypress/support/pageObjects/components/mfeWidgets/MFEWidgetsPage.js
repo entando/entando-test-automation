@@ -4,16 +4,19 @@ import AppContent from '../../app/AppContent';
 
 import AppPage       from '../../app/AppPage';
 import MFEWidgetForm from './MFEWidgetForm';
+import DeleteDialog  from '../../app/DeleteDialog';
+import BrowserPage   from '../../administration/fileBrowser/BrowserPage';
 
 export default class MFEWidgetsPage extends AppContent {
 
-  static WIDGET_ACTIONS = {
-    EDIT: 'WidgetListRow__menu-item-edit',
-    DELETE: 'WidgetListRow__menu-item-delete'
-  };
-
   maincontent = `${htmlElements.div}.container-fluid`;
   rowlayout   = `${htmlElements.div}.row`;
+
+  static openPage(button) {
+    cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'MFEAndWidgetsPageLoadingGET', '?*'));
+    cy.get(button).click();
+    cy.wait('@MFEAndWidgetsPageLoadingGET');
+  }
 
   getContents() {
     return this.get()
@@ -30,21 +33,18 @@ export default class MFEWidgetsPage extends AppContent {
                .find(`${htmlElements.button}#WidgetListRow-dropown-${code}`).closest(htmlElements.div);
   }
 
-  getVisibleMenuItemFromKebab(action) {
-    return this.getListArea()
-               .find(`${htmlElements.li}.${action} > a`).filter(':visible');
+  openEditFromKebabMenu(code) {
+    this.getKebabMenuOfWidget(code).click();
+    this.getListArea().find(`${htmlElements.li}.WidgetListRow__menu-item-edit > a`).filter(':visible').then(button => MFEWidgetForm.openPage(button, code));
+    return cy.wrap(new AppPage(MFEWidgetForm)).as('currentPage');
   }
 
-  openKebabMenuByWidgetCode(code, action) {
+  clickDeleteFromKebabMenu(code) {
     this.getKebabMenuOfWidget(code).click();
-    this.getVisibleMenuItemFromKebab(action).click();
-    switch (action) {
-      case MFEWidgetsPage.WIDGET_ACTIONS.EDIT:
-        return new AppPage(MFEWidgetForm);
-      case MFEWidgetsPage.WIDGET_ACTIONS.DELETE:
-      default:
-        return null;
-    }
+    this.getListArea().find(`${htmlElements.li}.WidgetListRow__menu-item-delete > a`).filter(':visible').click();
+    this.parent.getDialog().setBody(DeleteDialog);
+    this.parent.getDialog().getBody().setLoadOnConfirm(BrowserPage);
+    return cy.get('@currentPage');
   }
 
   getFooterArea() {
@@ -58,7 +58,8 @@ export default class MFEWidgetsPage extends AppContent {
   }
 
   openAddWidgetForm() {
-    this.getAddButton().click();
-    return new AppPage(MFEWidgetForm);
+    this.getAddButton().then(button => MFEWidgetForm.openPage(button));
+    return cy.wrap(new AppPage(MFEWidgetForm)).as('currentPage');
   }
+
 }

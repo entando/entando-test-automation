@@ -141,7 +141,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
   const openDesignerPage = () => {
     currentPage = new HomePage();
     currentPage = currentPage.getMenu().getPages().open();
-    return currentPage.openDesigner();
+    return currentPage.openDesignerOld();
   };
 
   const getGridFrame = (template, gridRow, gridCol) => {
