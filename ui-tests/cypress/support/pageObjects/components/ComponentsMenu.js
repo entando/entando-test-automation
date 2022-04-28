@@ -5,7 +5,7 @@ import {SubMenu} from '../app/MenuElement.js';
 import AppPage from '../app/AppPage.js';
 
 import MFEWidgetsPage  from './mfeWidgets/MFEWidgetsPage';
-import UXFragmentsPage from './uxFragments/UXFragments';
+import UXFragmentsPage from './uxFragments/UXFragmentsPage';
 
 export default class ComponentsMenu extends SubMenu {
 
