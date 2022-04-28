@@ -9,6 +9,26 @@ describe([Tag.SMOKE], 'Keycloack', () => {
   const realm    = Cypress.env('auth_realm');
   const pathName = `/${authBaseUrl[3]}/realms/${realm}/protocol/openid-connect/auth`;
 
+  it('Login via API client_credentials', () => {
+    cy.kcAPILogin();
+  });
+
+  it('Login/Logout via API authorization_code', () => {
+    cy.kcUILogin('login/admin');
+    cy.location().should((location) => {
+      expect(location.origin).to.eq(Cypress.config('baseUrl'));
+      expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
+    });
+
+    cy.kcUILogout();
+
+    cy.visit('/');
+    cy.location().should((location) => {
+      expect(location.origin).to.eq(origin);
+      expect(location.pathname).to.eq(pathName);
+    });
+  });
+
   it('Login/Logout via UI', () => {
     cy.visit('/');
     cy.location().should((location) => {
@@ -30,22 +50,6 @@ describe([Tag.SMOKE], 'Keycloack', () => {
           page.closeAppTour();
           page.getNavbar().openUserMenu().logout();
         });
-    cy.location().should((location) => {
-      expect(location.origin).to.eq(origin);
-      expect(location.pathname).to.eq(pathName);
-    });
-  });
-
-  it('Login/Logout via API', () => {
-    cy.kcUILogin('login/admin');
-    cy.location().should((location) => {
-      expect(location.origin).to.eq(Cypress.config('baseUrl'));
-      expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
-    });
-
-    cy.kcUILogout();
-
-    cy.visit('/');
     cy.location().should((location) => {
       expect(location.origin).to.eq(origin);
       expect(location.pathname).to.eq(pathName);
