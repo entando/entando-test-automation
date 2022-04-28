@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {sendersAPIURL} from './controllersEndPoints';
+import {sendersAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('senderController', () => {
   cy.get('@tokens').then(tokens => {

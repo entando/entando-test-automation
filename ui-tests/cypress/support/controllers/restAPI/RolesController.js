@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {rolesAPIURL} from './controllersEndPoints';
+import {rolesAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('rolesController', () => {
   cy.get('@tokens').then(tokens => {

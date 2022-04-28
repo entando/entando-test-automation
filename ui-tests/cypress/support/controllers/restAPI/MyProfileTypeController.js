@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {myProfileTypeAPIURL} from './controllersEndPoints';
+import {myProfileTypeAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('myProfileTypeController', () => {
   cy.get('@tokens').then(tokens => {

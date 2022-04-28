@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {SMTPServerAPIURL} from './controllersEndPoints';
+import {SMTPServerAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('smtpServerController', () => {
   cy.get('@tokens').then(tokens => {

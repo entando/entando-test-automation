@@ -17,7 +17,7 @@ export default class ReloadConfigurationPage extends AppContent {
   reload() {
     this.getReloadButton()
         .then(button => {
-          cy.intercept('POST', 'http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/api/reloadConfiguration').as('reloadConfigurationPOST');
+          cy.reloadConfigurationController().then(controller => controller.intercept({method: 'POST'}, 'reloadConfigurationPOST'));
           cy.get(button).click();
           cy.wait('@reloadConfigurationPOST');
         });

@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {usersAPIURL} from './controllersEndPoints';
+import {usersAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('usersController', () => {
   cy.get('@tokens').then(tokens => {
