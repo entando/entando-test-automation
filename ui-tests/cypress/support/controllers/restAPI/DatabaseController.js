@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {databaseAPIURL} from './controllersEndPoints';
+import {databaseAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('databaseController', () => {
   cy.get('@tokens').then(tokens => {

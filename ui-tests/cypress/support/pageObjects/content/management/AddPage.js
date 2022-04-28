@@ -33,16 +33,16 @@ export default class AddPage extends AdminContent {
 
   //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.intercept('http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/createNew.action?*').as('addContentPageLoadingGET');
+    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addContentPageLoadingGET', '/createNew.action?*'));
     cy.get(button).click();
     cy.wait('@addContentPageLoadingGET');
   }
 
   //FIXME AdminConsole is not built on REST APIs
   static reloadPage(button) {
-    cy.intercept('http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/entryContent.action').as('addContentPageLoadingGET');
+    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'addContentPageReloadingPOST', '/entryContent.action'));
     cy.get(button).click();
-    cy.wait('@addContentPageLoadingGET');
+    cy.wait('@addContentPageReloadingPOST');
   }
 
   getContents() {

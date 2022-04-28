@@ -16,21 +16,21 @@ export default class ManagementPage extends AdminContent {
 
   //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.intercept('http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/list.action').as('contentManagementPageLoadingGET');
+    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'contentManagementPageLoadingGET', '/list.action'));
     cy.get(button).click();
     cy.wait('@contentManagementPageLoadingGET');
   }
 
   //FIXME AdminConsole is not built on REST APIs
   static openSearchPage(button) {
-    cy.intercept('http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/search.action').as('contentManagementPageLoadingGET');
+    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'contentManagementSearchPOST', '/search.action'));
     cy.get(button).click();
-    cy.wait('@contentManagementPageLoadingGET');
+    cy.wait('@contentManagementSearchPOST');
   }
 
   //FIXME AdminConsole is not built on REST APIs
   static savePage(button) {
-    cy.intercept(' http://test-7-0-0-final-cypress.apps.ent64azure.com/entando-de-app/do/jacms/Content/results.action').as('contentManagementPageLoadingGET');
+    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'contentManagementPageLoadingGET', '/results.action'));
     cy.get(button).click();
     cy.wait('@contentManagementPageLoadingGET');
   }

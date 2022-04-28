@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {labelsAPIURL} from './controllersEndPoints';
+import {labelsAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('labelsController', () => {
   cy.get('@tokens').then(tokens => {

@@ -1,32 +1,34 @@
 /// <reference types='cypress-tags' />
 
-import AssetsController                from './restAPI/AssetsController';
-import CategoriesController            from './restAPI/CategoriesController';
-import ContentsController              from './restAPI/ContentsController';
-import ContentSettingsController       from './restAPI/ContentSettingsController';
-import ContentTemplatesController      from './restAPI/ContentTemplatesController';
-import ContentTypeAttributesController from './restAPI/ContentTypeAttributesController';
-import ContentTypesController          from './restAPI/ContentTypesController';
-import DatabaseController              from './restAPI/DatabaseController';
-import FileBrowserController           from './restAPI/FileBrowserController';
-import FragmentsController             from './restAPI/FragmentsController';
-import GroupsController                from './restAPI/GroupsController';
-import LabelsController                from './restAPI/LabelsController';
-import LanguagesController             from './restAPI/LanguagesController';
-import MyProfileTypeController         from './restAPI/MyProfileTypeController';
-import MyUserProfileController         from './restAPI/MyUserProfileController';
-import PagesController                 from './restAPI/PagesController';
-import PageTemplatesController         from './restAPI/PageTemplatesController';
-import PageWidgetsController           from './restAPI/PageWidgetsController';
-import PermissionsController           from './restAPI/PermissionsController';
-import ProfileTypesController          from './restAPI/ProfileTypesController';
-import RolesController                 from './restAPI/RolesController';
-import SenderController                from './restAPI/SenderController';
-import SeoPagesController              from './restAPI/SeoPagesController';
-import SMTPServerController            from './restAPI/SMTPServerController';
-import UserPreferencesController       from './restAPI/UserPreferencesController';
-import UsersController                 from './restAPI/UsersController';
-import WidgetsController               from './restAPI/WidgetsController';
+import AssetsController                from './controllers/restAPI/AssetsController';
+import CategoriesController            from './controllers/restAPI/CategoriesController';
+import ContentsController              from './controllers/restAPI/ContentsController';
+import ContentSettingsController       from './controllers/restAPI/ContentSettingsController';
+import ContentTemplatesController      from './controllers/restAPI/ContentTemplatesController';
+import ContentTypeAttributesController from './controllers/restAPI/ContentTypeAttributesController';
+import ContentTypesController          from './controllers/restAPI/ContentTypesController';
+import DatabaseController              from './controllers/restAPI/DatabaseController';
+import FileBrowserController           from './controllers/restAPI/FileBrowserController';
+import FragmentsController             from './controllers/restAPI/FragmentsController';
+import GroupsController                from './controllers/restAPI/GroupsController';
+import LabelsController                from './controllers/restAPI/LabelsController';
+import LanguagesController             from './controllers/restAPI/LanguagesController';
+import MyProfileTypeController         from './controllers/restAPI/MyProfileTypeController';
+import MyUserProfileController         from './controllers/restAPI/MyUserProfileController';
+import PagesController                 from './controllers/restAPI/PagesController';
+import PageTemplatesController         from './controllers/restAPI/PageTemplatesController';
+import PageWidgetsController           from './controllers/restAPI/PageWidgetsController';
+import PermissionsController           from './controllers/restAPI/PermissionsController';
+import ProfileTypesController          from './controllers/restAPI/ProfileTypesController';
+import RolesController                 from './controllers/restAPI/RolesController';
+import SenderController                from './controllers/restAPI/SenderController';
+import SeoPagesController              from './controllers/restAPI/SeoPagesController';
+import SMTPServerController            from './controllers/restAPI/SMTPServerController';
+import UserPreferencesController       from './controllers/restAPI/UserPreferencesController';
+import UsersController                 from './controllers/restAPI/UsersController';
+import WidgetsController               from './controllers/restAPI/WidgetsController';
+
+import ContentsAdminConsoleController  from './controllers/jacms/ContentsAdminConsoleController';
 
 export const enum Tag {
     WIP,
@@ -120,6 +122,11 @@ declare namespace Cypress {
          * Returns a new instance of a categories controller
          */
         categoriesController(): Chainable<CategoriesController>;
+
+        /**
+         * Returns a new instance of a contents admin console controller
+         */
+         contentsAdminConsoleController(): Chainable<ContentsAdminConsoleController>;
 
         /**
          * Returns a new instance of a contents controller

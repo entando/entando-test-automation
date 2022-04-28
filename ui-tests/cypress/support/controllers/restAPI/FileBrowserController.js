@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {fileBrowserAPIURL} from './controllersEndPoints';
+import {fileBrowserAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('fileBrowserController', () => {
   cy.get('@tokens').then(tokens => {

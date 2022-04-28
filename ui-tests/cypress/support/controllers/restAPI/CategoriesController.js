@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {categoriesAPIURL} from './controllersEndPoints';
+import {categoriesAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('categoriesController', () => {
   cy.get('@tokens').then(tokens => {

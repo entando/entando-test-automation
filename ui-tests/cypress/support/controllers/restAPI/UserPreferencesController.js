@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {userPreferencesAPIURL} from './controllersEndPoints';
+import {userPreferencesAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('userPreferencesController', () => {
   //FIXME only user can update their preferences

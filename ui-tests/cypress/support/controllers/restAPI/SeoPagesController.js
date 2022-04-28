@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {seoPagesAPIURL} from './controllersEndPoints';
+import {seoPagesAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('seoPagesController', () => {
   cy.get('@tokens').then(tokens => {

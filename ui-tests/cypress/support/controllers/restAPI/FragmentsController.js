@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {fragmentsAPIURL} from './controllersEndPoints';
+import {fragmentsAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('fragmentsController', () => {
   cy.get('@tokens').then(tokens => {

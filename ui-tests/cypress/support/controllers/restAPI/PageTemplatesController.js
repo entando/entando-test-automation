@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {pageModelsAPIURL} from './controllersEndPoints';
+import {pageModelsAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('pageTemplatesController', () => {
   cy.get('@tokens').then(tokens => {

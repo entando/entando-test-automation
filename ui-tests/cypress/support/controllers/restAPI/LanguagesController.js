@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {languagesAPIURL} from './controllersEndPoints';
+import {languagesAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('languagesController', () => {
   cy.get('@tokens').then(tokens => {

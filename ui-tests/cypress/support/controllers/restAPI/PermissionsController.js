@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {permissionsAPIURL} from './controllersEndPoints';
+import {permissionsAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('permissionsController', () => {
   cy.get('@tokens').then(tokens => {

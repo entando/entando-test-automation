@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {contentSettingsAPIURL} from './controllersEndPoints';
+import {contentSettingsAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('contentSettingsController', () => {
   cy.get('@tokens').then(tokens => {

@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {widgetsAPIURL} from './controllersEndPoints';
+import {widgetsAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('widgetsController', (widgetCode = null) => {
   cy.get('@tokens').then(tokens => {

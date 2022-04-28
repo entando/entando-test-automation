@@ -1,6 +1,6 @@
-import AbstractController from './abstractController';
+import AbstractController from '../abstractController';
 
-import {groupsAPIURL} from './controllersEndPoints';
+import {groupsAPIURL} from '../controllersEndPoints';
 
 Cypress.Commands.add('groupsController', () => {
   cy.get('@tokens').then(tokens => {
