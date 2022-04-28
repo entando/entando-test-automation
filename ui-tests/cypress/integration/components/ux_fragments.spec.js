@@ -29,9 +29,9 @@ describe('UX Fragments', () => {
             page.getContent().getTableHeaders().should('have.length', 4)
                 .then(elements => cy.validateListTexts(elements, ['Code', 'Widget type', 'Plugin', 'Actions']));
 
-            page.getContent().getPagination()
+            page.getContent().getPagination().get()
                 .should('exist').and('be.visible');
-            page.getContent().getPaginationSelector()
+            page.getContent().getPagination().getInput()
                 .should('have.value', 1);
 
             page.getContent().getSearchForm()
@@ -134,7 +134,6 @@ describe('UX Fragments', () => {
     });
   });
   describe('Sanity Tests', () => {
-
     describe('Actions', () => {
       it([Tag.SANITY, 'ENG-3522'], 'Searching a fragment', () => {
         addTestFragment();
@@ -255,52 +254,52 @@ describe('UX Fragments', () => {
         openFragmentsPage()
             .then(page => {
               page.getContent().getTableRows().should('exist').and('be.visible');
-              page.getContent().getPaginationRowDropdown().should('have.text', '10 ');
+              page.getContent().getPagination().getDropdownButton().should('have.text', '10 ');
               page.getContent().getTableRows().should('have.length', 10);
-              page.getContent().getPaginationSelector().should('have.value', 1);
+              page.getContent().getPagination().getInput().should('have.value', 1);
             });
       });
       it([Tag.SANITY, 'ENG-3522'], 'Next Page', () => {
         openFragmentsPage()
             .then(page =>
                 page.getContent().navigateToNextPage())
-            .then(page => page.getContent().getPaginationSelector().should('have.value', 2));
+            .then(page => page.getContent().getPagination().getInput().should('have.value', 2));
       });
       it([Tag.SANITY, 'ENG-3522'], 'Previous Page', () => {//TODO when input page field is fixed, than generalize with a navigateRandomPage
 
         openFragmentsPage()
             .then(page => page.getContent().navigateToLastPage())
             .then(page => page.getContent().navigateToPreviousPage())
-            .then(page => page.getContent().getPaginationSelector().should('have.value', 6));
+            .then(page => page.getContent().getPagination().getInput().should('have.value', 6));
         cy.get('@currentPage')
           .then(page => page.getContent().navigateToPreviousPage())
-          .then(page => page.getContent().getPaginationSelector().should('have.value', 5));
+          .then(page => page.getContent().getPagination().getInput().should('have.value', 5));
         cy.get('@currentPage')
           .then(page => page.getContent().navigateToPreviousPage())
-          .then(page => page.getContent().getPaginationSelector().should('have.value', 4));
+          .then(page => page.getContent().getPagination().getInput().should('have.value', 4));
         cy.get('@currentPage')
           .then(page => page.getContent().navigateToPreviousPage())
-          .then(page => page.getContent().getPaginationSelector().should('have.value', 3));
+          .then(page => page.getContent().getPagination().getInput().should('have.value', 3));
         cy.get('@currentPage')
           .then(page => page.getContent().navigateToPreviousPage())
-          .then(page => page.getContent().getPaginationSelector().should('have.value', 2));
+          .then(page => page.getContent().getPagination().getInput().should('have.value', 2));
         cy.get('@currentPage')
           .then(page => page.getContent().navigateToPreviousPage())
-          .then(page => page.getContent().getPaginationSelector().should('have.value', 1));
+          .then(page => page.getContent().getPagination().getInput().should('have.value', 1));
       });
       it([Tag.SANITY, 'ENG-3522'], 'First Page', () => {//TODO when input page field is fixed, than generalize with a navigateRandomPage
         openFragmentsPage()
             .then(page => page.getContent().navigateToLastPage())
-            .then(page => page.getContent().getPaginationSelector().should('have.value', 7));
+            .then(page => page.getContent().getPagination().getInput().should('have.value', 7));
         cy.get('@currentPage')
           .then(page => page.getContent().navigateToFirstPage())
-          .then(page => page.getContent().getPaginationSelector().should('have.value', 1));
+          .then(page => page.getContent().getPagination().getInput().should('have.value', 1));
       });
       it([Tag.SANITY, 'ENG-3522'], 'Last Page', () => {//TODO when input page field is fixed, than generalize with a navigateRandomPage
         openFragmentsPage()
 
             .then(page => page.getContent().navigateToLastPage())
-            .then(page => page.getContent().getPaginationSelector().should('have.value', 7));
+            .then(page => page.getContent().getPagination().getInput().should('have.value', 7));
       });
 
       //TOFIX there's a bug in input page field: it's impossible to change the value.
@@ -308,14 +307,14 @@ describe('UX Fragments', () => {
         const randomPage = Math.floor(Math.random() * 12) + 2;
         openFragmentsPage()
             .then(page => {
-              page.getContent().getPaginationSelector().then(input => page.getContent().type(input, randomPage));
-              page.getContent().getPaginationSelector().should('have.value', randomPage);
+              page.getContent().getPagination().getInput().then(input => page.getContent().type(input, randomPage));
+              page.getContent().getPagination().getInput().should('have.value', randomPage);
             });
       });
     });
   });
   describe('Feature Tests I', () => {
-    describe('Fragments Browsing', () => {
+    describe ('Fragments Browsing', () => {
 
       it([Tag.FEATURE, 'ENG-3522'], 'Search a fragment from his fragment code', () => {
         addTestFragment();
@@ -328,8 +327,8 @@ describe('UX Fragments', () => {
                     .each(row => cy.get(row).children(htmlElements.td).eq(0).should('contain', fragment.code.substring(3, 7))));
         cy.get('@currentPage')
           .then(page => {
-            page.getContent().getFragmentsCurrent().invoke('text').should('be.equal', '1-1');
-            page.getContent().getTotalFragments().invoke('text').should('be.equal', '1');
+            page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', '1-1');
+            page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', '1');
           });
       });
 
@@ -344,8 +343,8 @@ describe('UX Fragments', () => {
                     .each(row => cy.get(row).children(htmlElements.td).eq(2).should('have.text', 'Content')));
         cy.get('@currentPage')
           .then(page => {
-            page.getContent().getFragmentsCurrent().invoke('text').should('be.equal', '1-1');
-            page.getContent().getTotalFragments().invoke('text').should('be.equal', '1');
+            page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', '1-1');
+            page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', '1');
           });
       });
 
@@ -395,8 +394,8 @@ describe('UX Fragments', () => {
             });
         cy.get('@currentPage')
           .then(page => {
-            page.getContent().getFragmentsCurrent().invoke('text').should('be.equal', '1-2');
-            page.getContent().getTotalFragments().invoke('text').should('be.equal', '2');
+            page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', '1-2');
+            page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', '2');
           });
       });
       it([Tag.FEATURE, 'ENG-3522'], 'Search with fragment code and plugin filter', () => {
@@ -414,8 +413,8 @@ describe('UX Fragments', () => {
             });
         cy.get('@currentPage')
           .then(page => {
-            page.getContent().getFragmentsCurrent().invoke('text').should('be.equal', '1-10');
-            page.getContent().getTotalFragments().invoke('text').should('be.equal', '15');
+            page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', '1-10');
+            page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', '15');
           });
       });
       it([Tag.FEATURE, 'ENG-3522'], 'Search with widget and plugin filter', () => {
@@ -431,8 +430,8 @@ describe('UX Fragments', () => {
                     .each(row => cy.get(row).children(htmlElements.td).eq(4).should('contain', 'jacms')));
         cy.get('@currentPage')
           .then(page => {
-            page.getContent().getFragmentsCurrent().invoke('text').should('be.equal', '1-3');
-            page.getContent().getTotalFragments().invoke('text').should('be.equal', '3');
+            page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', '1-3');
+            page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', '3');
           });
       });
       it([Tag.FEATURE, 'ENG-3522'], 'Search with fragment code and filters', () => {
@@ -451,8 +450,8 @@ describe('UX Fragments', () => {
                     .each(row => cy.get(row).children(htmlElements.td).eq(4).should('contain', 'jacms')));
         cy.get('@currentPage')
           .then(page => {
-            page.getContent().getFragmentsCurrent().invoke('text').should('be.equal', '1-1');
-            page.getContent().getTotalFragments().invoke('text').should('be.equal', '1');
+            page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', '1-1');
+            page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', '1');
           });
       });
       it([Tag.FEATURE, 'ENG-3522'], 'No Results from a non-existing fragment', () => {
@@ -464,8 +463,8 @@ describe('UX Fragments', () => {
                 page.getContent().getTableRows().should('have.length', 0));
         cy.get('@currentPage')
           .then(page => {
-            page.getContent().getFragmentsCurrent().invoke('text').should('be.equal', '0-0');
-            page.getContent().getTotalFragments().invoke('text').should('be.equal', '0');
+            page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', '0-0');
+            page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', '0');
           });
       });
 
@@ -481,8 +480,8 @@ describe('UX Fragments', () => {
                 page.getContent().getTableRows().should('have.length', 0));
         cy.get('@currentPage')
           .then(page => {
-            page.getContent().getFragmentsCurrent().invoke('text').should('be.equal', '0-0');
-            page.getContent().getTotalFragments().invoke('text').should('be.equal', '0');
+            page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', '0-0');
+            page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', '0');
           });
       });
 
@@ -491,12 +490,12 @@ describe('UX Fragments', () => {
       it([Tag.FEATURE, 'ENG-3522'], 'Breadcrumb in add Page', () => {
         openFragmentsPage()
             .then(page => {
-              page.getContent().getTotalFragments().then(totalFragments => {
+              page.getContent().getPagination().getItemsTotal().then(totalFragments => {
                 page.getContent().openAddFragmentPage()
                     .then(page => page.getContent().openBreadCrumb())
                     .then(page => {
                       cy.validateUrlPathname('/fragment');
-                      page.getContent().getTotalFragments().should(newTotalFragments => {
+                      page.getContent().getPagination().getItemsTotal().should(newTotalFragments => {
                         expect(newTotalFragments.text()).eq(totalFragments.text());
                       });
                     });
@@ -507,13 +506,13 @@ describe('UX Fragments', () => {
         addTestFragment();
         openFragmentsPage()
             .then(page => {
-              page.getContent().getTotalFragments().then(totalFragments => {
+              page.getContent().getPagination().getItemsTotal().then(totalFragments => {
                 page.getContent().getKebabMenu(fragment.code).open().openEdit()
                     .then(page => {
                       page.getContent().openBreadCrumb()
                           .then(page => {
                             cy.validateUrlPathname('/fragment');
-                            page.getContent().getTotalFragments().should(newTotalFragments => {
+                            page.getContent().getPagination().getItemsTotal().should(newTotalFragments => {
                               expect(newTotalFragments.text()).eq(totalFragments.text());
                             });
                           });
@@ -525,13 +524,13 @@ describe('UX Fragments', () => {
         addTestFragment();
         openFragmentsPage()
             .then(page => {
-              page.getContent().getTotalFragments().then(totalFragments => {
+              page.getContent().getPagination().getItemsTotal().then(totalFragments => {
                 page.getContent().getKebabMenu(fragment.code).open().openClone()
                     .then(page => {
                       page.getContent().openBreadCrumb()
                           .then(page => {
                             cy.validateUrlPathname('/fragment');
-                            page.getContent().getTotalFragments().should(newTotalFragments => {
+                            page.getContent().getPagination().getItemsTotal().should(newTotalFragments => {
                               expect(newTotalFragments.text()).eq(totalFragments.text());
                             });
                           });
@@ -655,7 +654,7 @@ describe('UX Fragments', () => {
   });
   describe('Error Validation Tests', () => {
 
-    it([Tag.ERROR, 'ENG-3522'], 'Error is displayed when a code input is selected but not filled in fragment FragmentsPage', () => {
+    it([Tag.ERROR, 'ENG-3522'], 'Error is displayed when a code input is selected but not filled in AddPage', () => {
       openFragmentsPage()
           .then(page => page.getContent().openAddFragmentPage())
           .then(page => {

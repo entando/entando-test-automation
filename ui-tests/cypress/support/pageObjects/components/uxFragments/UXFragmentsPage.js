@@ -6,6 +6,7 @@ import FragmentsPage from './FragmentsPage';
 import KebabMenu     from '../../app/KebabMenu.js';
 import DeleteDialog  from '../../app/DeleteDialog.js';
 import DetailsPage   from '../../components/uxFragments/DetailsPage.js';
+import Pagination from "../../app/Pagination";
 
 export default class UXFragmentsPage extends AppContent {
 
@@ -15,10 +16,6 @@ export default class UXFragmentsPage extends AppContent {
   pluginFilter               = `${htmlElements.select}[name="pluginCode"]`;
   addBtn                     = `${htmlElements.button}[type=button].FragmentListContent__add`;
   spinner                    = `${htmlElements.div}.spinner.spinner-md`;
-  paginationForm             = `${htmlElements.form}.content-view-pf-pagination`;
-  paginationFormPageSelector = `${htmlElements.input}[type=text].pagination-pf-page`;
-  currentFragments           = `${htmlElements.span}.pagination-pf-items-current`;
-  totalFragments             = `${htmlElements.span}.pagination-pf-items-total`;
 
   static openPage(button) {
     cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
@@ -81,70 +78,29 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   getPagination() {
-    return this.get()
-               .find(this.paginationForm);
-  }
-
-  getPaginationSelector() {
-    return this.getPagination()
-               .find(this.paginationFormPageSelector);
-  }
-
-  getFragmentsCurrent() {
-    return this.getPagination()
-               .find(this.currentFragments);
-  }
-
-  getTotalFragments() {
-    return this.getPagination()
-               .find(this.totalFragments);
-  }
-
-  getNextPage() {
-    return this.getPagination()
-               .find(`${htmlElements.a}[title="Next page"]`);
+    return new Pagination(this);
   }
 
   navigateToNextPage() {
-    this.getNextPage().then(button => UXFragmentsPage.openPage(button));
+    this.getPagination().getNextButton().then(button => UXFragmentsPage.openPage(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
-  getPreviousPage() {
-    return this.getPagination()
-               .find(`${htmlElements.a}[title="Previous page"]`).should('be.visible');
-  }
 
   navigateToPreviousPage() {
-    this.getPreviousPage().then(button => UXFragmentsPage.openPage(button));
+    this.getPagination().getPreviousButton().then(button => UXFragmentsPage.openPage(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
-  }
-
-  getFirstPage() {
-    return this.getPagination()
-               .find(`${htmlElements.a}[title="First page"]`);
-
   }
 
   navigateToFirstPage() {
-    this.getFirstPage().then(button => UXFragmentsPage.openPage(button));
+    this.getPagination().getFirstPageButton().then(button => UXFragmentsPage.openPage(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
-  }
-
-  getLastPage() {
-    return this.getPagination()
-               .find(`${htmlElements.a}[title="Last page"]`);
   }
 
   navigateToLastPage() {
-    this.getLastPage().then(button => UXFragmentsPage.openPage(button));
+    this.getPagination().getLastPageButton().then(button => UXFragmentsPage.openPage(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
 
-  }
-
-  getPaginationRowDropdown() {
-    return this.getPagination()
-               .find(`${htmlElements.button}#pagination-row-dropdown`);
   }
 
   getAddButton() {
