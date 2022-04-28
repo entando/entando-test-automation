@@ -1,0 +1,14 @@
+{
+  "code": "demopage",
+  "charset": "utf-8",
+  "contentType": "text/html",
+  "displayedInMenu": true,
+  "joinGroups": null,
+  "seo": false,
+  "titles": {
+    "en": "Demo page"
+  },
+  "ownerGroup": "administrators",
+  "pageModel": "1-column",
+  "parentCode": "homepage"
+}

@@ -108,6 +108,26 @@ export default class DesignerPage extends AppContent {
     }
   };
 
+  static openPage(button, code = 'homepage') {
+    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
+
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupsPageLoadingGET', '/myGroups'));
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupsPageLoadingGET', '?*'));
+
+    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'pageModelsPageLoadingGET', '?*'));
+    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'pageModelPageLoadingGET', '/*'));
+
+    cy.seoPagesController().then(controller => controller.intercept({method: 'GET'}, 'seoPagesPageLoadingGET', `/${code}`));
+    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
+
+    // cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?*'));
+    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
+    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
+
+    cy.get(button).click();
+    cy.wait(['@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET']);
+  }
+
   getMainContainer() {
     return this.get()
                .children(this.grid)
@@ -252,7 +272,9 @@ export default class DesignerPage extends AppContent {
   }
 
   designPageFromSidebarPageTreeTable(code) {
-    this.clickSidebarPageTreeKebabMenu(code).clickDesignButton();
+    this.getSidebarPageTreeKebabMenu(code)
+        .get().closest(htmlElements.tr).then(button => DesignerPage.openPage(button, code));
+    return cy.get('@currentPage');
   }
 
   clickSidebarPageTreeKebabMenu(code) {
@@ -283,7 +305,17 @@ export default class DesignerPage extends AppContent {
   clickSidebarTab(tabPos) {
     this.getSidebarTabs()
         .children(htmlElements.li).eq(tabPos)
-        .click();
+        .then(button => {
+          if (tabPos === 1) {
+          cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepagePageLoadingGET', '/homepage?status=draft'));
+          cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepageChildrenPageLoadingGET', '?parentCode=homepage'));
+          cy.get(button).click();
+          cy.wait(['@homepagePageLoadingGET', '@homepageChildrenPageLoadingGET']);
+          } else {
+            cy.get(button).click();
+          }
+        });
+    return cy.get('@currentPage');
   }
 
   toggleSidebarWidgetSection(sectionPos) {
@@ -372,6 +404,11 @@ class GridFrameKebabMenu extends KebabMenu {
   }
 
   openEdit() {
+    this.getEdit().then(button => MFEWidgetForm.openPage(button, this.widgetCode));
+    return cy.wrap(new AppPage(MFEWidgetForm)).as('currentPage');
+  }
+
+  openEditOld() {
     this.getEdit().click();
     return new AppPage(MFEWidgetForm);
   }

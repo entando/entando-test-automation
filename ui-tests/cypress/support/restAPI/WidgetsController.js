@@ -2,7 +2,7 @@ import AbstractController from './abstractController';
 
 import {widgetsAPIURL} from './controllersEndPoints';
 
-Cypress.Commands.add('widgetsController', (widgetCode) => {
+Cypress.Commands.add('widgetsController', (widgetCode = null) => {
   cy.get('@tokens').then(tokens => {
     return new WidgetsController(widgetsAPIURL, tokens.access_token, widgetCode);
   });

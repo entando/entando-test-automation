@@ -167,7 +167,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
     it('Basic add with widget settings', () => {
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
@@ -204,12 +204,12 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT.code}`);
       currentPage.getContent().editFormFields({
@@ -229,7 +229,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code)
                                .open()
@@ -261,7 +261,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
         .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code)
                                 .open()
@@ -277,7 +277,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code)
@@ -327,7 +327,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 4, 0, CMS_WIDGETS.CONTENT_LIST.code);
@@ -361,11 +361,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
       currentPage.getContent().editFormFields({
@@ -385,7 +385,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
                                .open()
@@ -414,7 +414,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
                                .open()
@@ -430,7 +430,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
                                .open()
@@ -491,7 +491,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       currentPage = currentPage.getContent().submitForm();
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
 
       //closes the app tour again
       currentPage.closeAppTour();
@@ -528,10 +528,10 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
     // FIXME: when moving from admin console to app builder, the app tour starts again
     //        can't use API calls to clean the environment after the test
-    //        creating a new content from page designer doesn't automatically bring back to page designer like it used to 
+    //        creating a new content from page designer doesn't automatically bring back to page designer like it used to
     xit('add a new no published content with a content type and content template, fill in all mandatory fields, save the content, then save the widget configuration', () => {
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
@@ -542,13 +542,13 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
       //go back to page designer
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
 
       //closes the app tour again
       currentPage.closeAppTour();
 
       selectPageFromSidebar();
-      
+
       //drag the widget to the grid again
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
 
@@ -569,17 +569,17 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     //        creating a new content from page designer doesn't automatically bring back to page designer like it used to
     xit('add a new content with a content type and content template, fill in all mandatory fields, save and approve, then save the configuration', () => {
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 2, 3, 0, CMS_WIDGETS.CONTENT.code);
       cy.wait('@pageWidgetsLoaded');
       currentPage = currentPage.getContent().clickNewContentWith(NEW_CONTENT_TYPE.name);
 
       currentPage = currentPage.getContent().addContentFromContentWidgetConfig('En Title', 'It Title', 'Sample Description', true);
-      
+
       //go back to page designer
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
 
       //closes the app tour again
       currentPage.closeAppTour();
@@ -629,7 +629,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
     it('Add all existing published OOTB contents', () => {
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
@@ -687,7 +687,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       currentPage = currentPage.getContent().addContent('En Title 2', 'It Title 2', 'Another Content so its more than 1', true);
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
 
       //closes the app tour again
       currentPage.closeAppTour();
@@ -733,7 +733,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
     it('Basic add with widget settings', () => {
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
@@ -765,11 +765,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
       currentPage.getContent().editFormFields({
@@ -789,7 +789,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code)
                                .open()
@@ -819,7 +819,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code)
                                .open()
@@ -835,7 +835,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code)
                                .open()
@@ -876,7 +876,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
     it('Basic add', () => {
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
@@ -903,11 +903,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_FORM.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
       currentPage.getContent().editFormFields({
@@ -927,11 +927,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.SEARCH_RESULT.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
       currentPage.getContent().editFormFields({
@@ -951,7 +951,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_FORM.code)
                                .open()
@@ -967,7 +967,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.SEARCH_RESULT.code)
                                .open()
@@ -990,7 +990,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
     it('Basic add', () => {
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
@@ -1016,11 +1016,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_ARCHIVE.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
       currentPage.getContent().editFormFields({
@@ -1040,11 +1040,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.NEWS_LATEST.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
       currentPage.getContent().editFormFields({
@@ -1064,7 +1064,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_ARCHIVE.code)
                                .open()
@@ -1080,7 +1080,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.NEWS_LATEST.code)
                                .open()
@@ -1103,7 +1103,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
     it('Basic add', () => {
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
 
       currentPage.getContent().toggleSidebarWidgetSection(2);
@@ -1132,11 +1132,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LANGUAGE.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
       currentPage.getContent().editFormFields({
@@ -1156,11 +1156,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, PAGE_WIDGETS.LOGO.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
       currentPage.getContent().editFormFields({
@@ -1180,7 +1180,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LANGUAGE.code)
                                .open()
@@ -1196,7 +1196,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, PAGE_WIDGETS.LOGO.code)
                                .open()
@@ -1220,9 +1220,9 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
     it('Add the Logo widget in page (config), edit the logo widget (in kebab actions) changing, in the Custom UI, the default logo\'s image with a new image (.svg/.png/.jpg)', () => {
       cy.widgetsController()
         .then((controller => controller.intercept({method: 'PUT'}, 'editedLogoWidget', `/${PAGE_WIDGETS.LOGO.code}`)));
-      
+
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
       currentPage.getContent().toggleSidebarWidgetSection(2);
@@ -1232,7 +1232,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LOGO.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       currentPage.getContent().getCustomUiInput().should('not.be.empty');
       currentPage.getContent().getCustomUiInput().clear();
@@ -1266,7 +1266,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
 
     it('Basic add', () => {
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage.getContent().toggleSidebarWidgetSection(4);
 
@@ -1294,11 +1294,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.APIS.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
       currentPage.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
@@ -1319,11 +1319,11 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, SYSTEM_WIDGETS.SYS_MSGS.code)
                                .open()
-                               .openEdit();
+                               .openEditOld();
 
       cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
       currentPage.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
@@ -1344,7 +1344,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.APIS.code)
                                .open()
@@ -1360,7 +1360,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
 
       currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesigner();
+      currentPage = currentPage.openDesignerOld();
       selectPageFromSidebar();
       currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, SYSTEM_WIDGETS.SYS_MSGS.code)
                                .open()

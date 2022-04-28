@@ -232,7 +232,7 @@ declare namespace Cypress {
         /**
          * Returns a new instance of a widgets controller
          */
-        widgetsController(widgetCode): Chainable<WidgetsController>;
+        widgetsController(widgetCode?): Chainable<WidgetsController>;
     }
 
 }

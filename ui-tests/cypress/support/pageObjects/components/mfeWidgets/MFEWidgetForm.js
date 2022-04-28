@@ -32,6 +32,16 @@ export default class MFEWidgetForm extends AppContent {
   continueSaveButton    = `${htmlElements.a}#continueSaveButton`;
   formLabelSpan         = `${htmlElements.span}.FormLabel`;
 
+  static openPage(button, code = null) {
+    if (code) cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetPageLoadingGET', `/${code}`));
+    else cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupPermissionsPageLoadingGET', '/myGroupPermissions'));
+    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupsPageLoadingGET', '/myGroups'));
+    cy.get(button).click();
+    if (code) cy.wait(['@widgetPageLoadingGET', '@languagesPageLoadingGET', '@myGroupsPageLoadingGET']);
+    else cy.wait(['@myGroupPermissionsPageLoadingGET', '@languagesPageLoadingGET', '@myGroupsPageLoadingGET']);
+  }
+
   get isCloneMode() {
     return this.cloneMode;
   }
@@ -150,9 +160,7 @@ export default class MFEWidgetForm extends AppContent {
   editFormFields(payload) {
     const fields = Object.keys(payload);
     fields.forEach((field) => {
-      if (payload[field] === '') {
-        return;
-      }
+      if (payload[field] === '') return;
       switch (field) {
         case 'name':
           this.getTitleInput().clear();
@@ -193,12 +201,7 @@ export default class MFEWidgetForm extends AppContent {
     });
   }
 
-  fillWidgetForm(
-      name     = 'My Widget',
-      code     = 'my_widget',
-      customUi = '<h1>Just a basic widget</h1>',
-      group    = 'Administrators'
-  ) {
+  fillWidgetForm(name = 'My Widget', code = 'my_widget', customUi = '<h1>Just a basic widget</h1>', group = 'Administrators') {
     this.editFormFields({iconUpload: 'cypress/fixtures/icon/Entando.svg', name, code, group, customUi});
   }
 
@@ -213,14 +216,30 @@ export default class MFEWidgetForm extends AppContent {
         .next().children(this.formLabelSpan).innerText;
   }
 
-  submitForm() {
-    this.getSaveDropdownButton().click();
-    this.getRegularSaveButton().click();
-    return new AppPage(MFEWidgetsPage);
+  clickSave() {
+    this.getSaveDropdownButton()
+        .then(button => button.click())
+        .then(() => this.getRegularSaveButton().click());
+    return cy.get('@currentPage');
   }
 
-  submitContinueForm() {
+  submitForm() {
+    return this.getSaveDropdownButton()
+               .then(button => button.click())
+               .then(() => {
+                 this.getRegularSaveButton().then(button => MFEWidgetsPage.openPage(button));
+                 return cy.wrap(new AppPage(MFEWidgetsPage)).as('currentPage');
+               });
+  }
+
+  submitContinueForm(code) {
     this.getSaveDropdownButton().click();
-    this.getContinueSaveButton().click();
+    this.getContinueSaveButton()
+        .then(button => {
+          cy.widgetsController().then(controller => controller.intercept({method: 'PUT'}, 'widgetPageLoadingPUT', `/${code}`));
+          cy.get(button).click();
+          cy.wait('@widgetPageLoadingPUT');
+        });
+    return cy.get('@currentPage');
   }
 }
