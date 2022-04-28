@@ -3,7 +3,7 @@ import {htmlElements} from '../../WebElement.js';
 import AppContent from '../../app/AppContent.js';
 
 import AppPage         from '../../app/AppPage.js';
-import UXFragmentsPage from './UXFragments.js';
+import UXFragmentsPage from './UXFragmentsPage.js';
 
 export default class FragmentsPage extends AppContent {
 
