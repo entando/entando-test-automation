@@ -38,3 +38,4 @@ export const seoPagesAPIURL = `${seoURL}/pages`;
 const adminConsoleURL = Cypress.config('adminConsolePath');
 
 export const contentManagementURL = `${adminConsoleURL}/Content`;
+export const contentModelsURL     = `${adminConsoleURL}/ContentModel`;

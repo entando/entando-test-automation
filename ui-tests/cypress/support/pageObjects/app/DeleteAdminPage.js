@@ -7,6 +7,13 @@ export default class DeleteAdminPage extends AdminContent {
   closeButton  = `${htmlElements.a}`;
   cancelButton = `${htmlElements.button}[type="submit"]`;
 
+  //FIXME AdminConsole is not built on REST APIs
+  static openDeleteContentTemplatePage(button, code) {
+    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'deleteContentTemplatePageLoadingGET', `/trash.action?modelId=${code}`));
+    cy.get(button).click();
+    cy.wait('@deleteContentTemplatePageLoadingGET');
+  }
+
   getForm() {
     return this.getContents()
                .children(this.form);
@@ -27,14 +34,8 @@ export default class DeleteAdminPage extends AdminContent {
   }
 
   submit() {
-    this.getCancelButton().click();
+    this.getCancelButton().then(button => this.click(button));
     return cy.wrap(this.origin).as('currentPage');
   }
-
-  submitCancel() {
-    this.getCancelButton().click();
-    return this.origin;
-  }
-
 
 }
