@@ -17,6 +17,20 @@ export default class TemplateForm extends AdminContent {
   submitButton      = `${htmlElements.button}[type='submit'][class="btn btn-primary pull-right"]`;
   cancelButton      = `${htmlElements.button}[type='button'].AddContentTypeFormBody__cancel--btn.btn-default`;
 
+  //FIXME AdminConsole is not built on REST APIs
+  static openPage(button) {
+    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addContentTemplatePageLoadingGET', '/new.action'));
+    cy.get(button).click();
+    cy.wait('@addContentTemplatePageLoadingGET');
+  }
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openEdit(button, code) {
+    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editContentTemplatePageLoadingGET', `/edit.action?modelId=${code}`));
+    cy.get(button).click();
+    cy.wait('@editContentTemplatePageLoadingGET');
+  }
+
   getFormArea() {
     return this.get()
                .find(htmlElements.form);
@@ -35,7 +49,6 @@ export default class TemplateForm extends AdminContent {
   getContentTypeDropdown() {
     return this.getFormArea()
                .find(this.contentTypeInput);
-
   }
 
   getAssistButton() {
@@ -54,43 +67,16 @@ export default class TemplateForm extends AdminContent {
                .find(this.stylesheetInput);
   }
 
-  typeId(value) {
-    this.getIDInput().type(value);
-  }
-
-  typeName(value) {
-    this.getNameInput().type(value);
-  }
-
-  selectContentType(value) {
-    this.getContentTypeDropdown().select(value);
-  }
-
-  typeHTMLModel(value) {
-    this.getContentShapeInput().click().type(value);
-  }
-
-  typeStylesheet(value) {
-    this.getStylesheetInput().type(value);
-  }
-
-  clearId() {
-    this.getIDInput().clear();
-  }
-
-  clearName() {
-    this.getNameInput().clear();
-  }
-
   clearHTMLModel(text) {
     this.getContentShapeInput().click();
     for (let i = 0; i < text.length; i++) {
       cy.realPress(['Shift', 'ArrowLeft']);
     }
     cy.realPress(['Backspace']);
+    return cy.get('@currentPage');
   }
 
-  editFormFields(payload) {
+  fillFormFields(payload) {
     const fields = Object.keys(payload);
     fields.forEach((field) => {
       if (payload[field] === '') {
@@ -98,22 +84,19 @@ export default class TemplateForm extends AdminContent {
       }
       switch (field) {
         case 'id':
-          this.clearId();
-          this.typeId(payload[field]);
+          this.getIDInput().then(input => this.type(input, payload[field]));
           break;
         case 'descr':
-          this.clearName();
-          this.typeName(payload[field]);
+          this.getNameInput().then(input => this.type(input, payload[field]));
           break;
         case 'contentType':
-          this.selectContentType(payload[field]);
+          this.getContentTypeDropdown().then(input => this.select(input, payload[field]));
           break;
         case 'contentShape':
-          this.typeHTMLModel(payload[field]);
+          this.getContentShapeInput().then(input => this.type(input, payload[field], true));
           break;
         case 'stylesheet':
-          this.getStylesheetInput().clear();
-          this.typeStylesheet(payload[field]);
+          this.getStylesheetInput().then(input => this.type(input, payload[field]));
           break;
         default:
           break;
@@ -127,8 +110,8 @@ export default class TemplateForm extends AdminContent {
   }
 
   submitForm() {
-    this.getSaveButton().click();
-    return new AdminPage(TemplatesPage);
+    this.getSaveButton().then(button => this.click(button));
+    return cy.wrap(new AdminPage(TemplatesPage)).as('currentPage');
   }
 
 }

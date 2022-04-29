@@ -28,7 +28,8 @@ import UserPreferencesController       from './controllers/restAPI/UserPreferenc
 import UsersController                 from './controllers/restAPI/UsersController';
 import WidgetsController               from './controllers/restAPI/WidgetsController';
 
-import ContentsAdminConsoleController  from './controllers/jacms/ContentsAdminConsoleController';
+import ContentsAdminConsoleController         from './controllers/jacms/ContentsAdminConsoleController';
+import ContentTemplatesAdminConsoleController from './controllers/jacms/ContentTemplatesAdminConsoleController';
 
 export const enum Tag {
     WIP,
@@ -137,6 +138,11 @@ declare namespace Cypress {
          * Returns a new instance of a content settings controller
          */
         contentSettingsController(): Chainable<ContentSettingsController>;
+
+        /**
+         * Returns a new instance of a content templates controller
+         */
+        contentTemplatesAdminConsoleController(): Chainable<ContentTemplatesAdminConsoleController>;
 
         /**
          * Returns a new instance of a content templates controller

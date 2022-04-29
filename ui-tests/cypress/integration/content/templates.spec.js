@@ -1,135 +1,140 @@
-import HomePage                                    from '../../support/pageObjects/HomePage';
 import {htmlElements}                              from '../../support/pageObjects/WebElement';
 import {generateRandomId, generateRandomNumericId} from '../../support/utils';
+import sampleContentTemplate                       from "../../fixtures/data/sampleContentTemplate.json";
 
-const openContentTemplatesPage = () => {
-  let currentPage = new HomePage();
-  currentPage     = currentPage.getMenu().getContent().open();
-  return currentPage.openTemplates();
-};
+const openContentTemplatesPage = () =>  cy.get('@currentPage').then(page => page.getMenu().getContent().open().openTemplates());
 
-const addContentTemplate    = template => cy.contentTemplatesController().then(controller => controller.addContentTemplate(template));
+const addContentTemplate = template => cy.contentTemplatesController().then(controller => controller.addContentTemplate(template))
+                                                                      .then(() => cy.wrap(template.id).as('templateToBeDeleted'));
+
 const deleteContentTemplate = id => cy.contentTemplatesController().then(controller => controller.deleteContentTemplate(id));
 
-const postContentType   = (code, name) => cy.contentTypesController().then(controller => controller.addContentType(code, name));
+const postContentType = (code, name) => cy.contentTypesController().then(controller => controller.addContentType(code, name)
+                                                                   .then(() => cy.wrap(code).as('contentTypeToBeDeleted')));
+
 const deleteContentType = (code) => cy.contentTypesController().then(controller => controller.deleteContentType(code));
 
 describe([Tag.GTS], 'Content Templates', () => {
 
-  let currentPage;
-
-  let template = {
-    contentType: 'BNR',
-    contentTypeText: 'Banner',
-    contentShape: '<div>test</div>',
-    testType: 'BAU',
-    testName:'Test'
-  };
-
-  let templateToBeDeleted = false;
-
   beforeEach(() => {
-    template.id    = generateRandomNumericId();
-    template.descr = generateRandomId();
+    cy.wrap(null).as('pageToBeDeleted');
+    cy.wrap(null).as('contentToBeDeleted');
+    cy.wrap(null).as('templateToBeDeleted');
+    cy.wrap(null).as('contentTypeToBeDeleted');
+    sampleContentTemplate.id    = generateRandomNumericId();
+    sampleContentTemplate.descr = generateRandomId();
 
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
   });
 
   afterEach(() => {
-    if (templateToBeDeleted) {
-      deleteContentTemplate(template.id).then(() => templateToBeDeleted = false);
-    }
-
+    cy.get('@pageToBeDeleted').then(code => {
+      if (code) cy.pagesController().then(controller => controller.deletePage(code));
+    });
+    cy.get('@contentToBeDeleted').then(contentId => {
+      if (contentId) {
+        cy.contentsController().then(controller => {
+          controller.updateStatus(contentId, 'draft');
+          controller.deleteContent(contentId);
+        });
+      }
+    });
+    cy.get('@templateToBeDeleted').then(template => {
+      if (template) deleteContentTemplate(template);
+    });
+    cy.get('@contentTypeToBeDeleted').then(contentType => {
+      if (contentType) deleteContentType(contentType);
+    });
     cy.kcUILogout();
   });
 
   it('Add content template', () => {
-    currentPage = openContentTemplatesPage();
-
-    cy.log(`Add content template with id ${template.id}`);
-    currentPage = currentPage.getContent().clickAddButton();
-    currentPage.getContent().typeId(template.id);
-    currentPage.getContent().typeName(template.descr);
-    currentPage.getContent().selectContentType(template.contentTypeText);
-    currentPage.getContent().typeHTMLModel(template.contentShape);
-
-    currentPage = currentPage.getContent().submitForm();
-    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).then(($tds) => {
-      cy.wrap($tds).eq(0).should('contain.text', template.descr);
-      cy.wrap($tds).eq(1).should('contain.text', template.contentTypeText);
-      cy.wrap($tds).eq(2).should('contain.text', template.id);
-
-    });
-
-    templateToBeDeleted = true;
+    openContentTemplatesPage()
+      .then(page => {
+        cy.log(`Add content template with id ${sampleContentTemplate.id}`);
+        page.getContent(). openAddTemplatePage();
+      })
+      .then(page => {
+        page.getContent().fillFormFields(sampleContentTemplate);
+        page.getContent().submitForm();
+      })
+      .then(page => page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).then(($tds) => {
+        cy.wrap($tds).eq(0).should('contain.text', sampleContentTemplate.descr);
+        cy.wrap($tds).eq(1).should('contain.text', sampleContentTemplate.contentTypeText);
+        cy.wrap($tds).eq(2).should('contain.text', sampleContentTemplate.id);
+        cy.wrap(sampleContentTemplate.id).as('templateToBeDeleted');
+      }));
   });
 
   it('Edit content template', () => {
-    addContentTemplate(template);
-    templateToBeDeleted = true;
+    addContentTemplate(sampleContentTemplate);
 
-    currentPage = openContentTemplatesPage();
-
-    cy.log(`Edit content template with id ${template.id}`);
-    const newName = `${template.descr}-new`;
-    currentPage   = currentPage.getContent().getKebabMenu(template.id).open().openEdit();
-    currentPage.getContent().typeName(newName);
-
-    currentPage = currentPage.getContent().submitForm();
-    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(0).should('contain.text', template.descr);
+    openContentTemplatesPage()
+      .then(page => {
+        cy.log(`Edit content template with id ${sampleContentTemplate.id}`);
+        page.getContent().getKebabMenu(sampleContentTemplate.id).open().openEdit();
+      })
+      .then(page => {
+        page.getContent().getNameInput().then(input => page.getContent().type(input, `${sampleContentTemplate.descr}-new`));
+        page.getContent().submitForm();
+      })
+      .then(page => page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).eq(0).should('contain.text', `${sampleContentTemplate.descr}-new`));
   });
 
   it('Delete content template', () => {
-    addContentTemplate(template);
+    addContentTemplate(sampleContentTemplate);
 
-    currentPage = openContentTemplatesPage();
-
-    cy.log(`Delete content template with id ${template.id}`);
-    currentPage = currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
-    currentPage = currentPage.getContent().submitCancel();
-    currentPage.getContent().getTable().should('not.contain', template.id);
+    openContentTemplatesPage()
+      .then(page => {
+        cy.log(`Delete content template with id ${sampleContentTemplate.id}`);
+        page.getContent().getKebabMenu(sampleContentTemplate.id).open().clickDelete();
+      })
+      .then(page => page.getContent().submit())
+      .then(page => {
+        page.getContent().getTable().should('not.contain', sampleContentTemplate.id);
+        cy.wrap(null).as('templateToBeDeleted');
+      });
   });
 
   it('Search for content template', () => {
-    addContentTemplate(template);
-    templateToBeDeleted = true;
+    addContentTemplate(sampleContentTemplate);
 
-    currentPage = openContentTemplatesPage();
-
-    cy.log(`Search for content template with name ${template.descr}`);
-    currentPage.getContent().searchType(template.contentTypeText);
-    currentPage.getContent().clickSearch();
-
-    currentPage.getContent().getTableRow(template.id).find(htmlElements.td).eq(0).should('contain.text', template.descr);
+    openContentTemplatesPage()
+      .then(page => {
+        page.getContent().getSearchInput().then(input => page.getContent().select(input, sampleContentTemplate.contentTypeText));
+        page.getContent().clickSearch();
+        page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).eq(0).should('contain.text', sampleContentTemplate.descr);
+      });
   });
 
   it('Empty template type should be not available', () => {
+    postContentType(sampleContentTemplate.testType, sampleContentTemplate.testName);
 
-    postContentType(template.testType, template.testName);
-    currentPage = openContentTemplatesPage();
-    currentPage.getContent().searchType(template.testName);
-    currentPage.getContent().clickSearch();
-    cy.wait(1000);
-    currentPage.getContent().getForm().should('contain.text', 'There are no models available.')
-    deleteContentType(template.testType);
+    openContentTemplatesPage()
+      .then(page => {
+        page.getContent().getSearchInput().then(input => page.getContent().select(input, sampleContentTemplate.testName));
+        page.getContent().clickSearch();
+        page.getContent().getForm().should('contain.text', 'There are no models available.');
+      });
   });
 
-  //FIX ME wait for api to be fixed
-  xit('Delete content template referenced by a published content - not allowed', () => {
+  it('Delete content template referenced by a published content - not allowed', () => {
+
     const content = {
       description: 'test',
       mainGroup: 'administrators',
       typeCode: 'BNR',
-      attributes: [{code: 'title', values: {en: 'test', it: 'test'}}]
+      attributes: [{ code: 'title', values: { en: 'test', it: 'test' } }]
     };
-      const page = {
+
+    const page = {
       charset: 'utf-8',
       code: generateRandomId(),
       contentType: 'text/html',
       pageModel: '1-2-column',
       parentCode: 'homepage',
-      titles: {en: 'Test'},
+      titles: { en: 'Test' },
       ownerGroup: 'administrators'
     };
 
@@ -140,78 +145,72 @@ describe([Tag.GTS], 'Content Templates', () => {
         ownerGroup: page.ownerGroup,
         joinGroups: [],
         contentDescription: content.description,
-        modelId: template.id
+        modelId: sampleContentTemplate.id
       }
     };
 
-    let contentId;
-
-    addContentTemplate(template);
-    templateToBeDeleted = true;
+    addContentTemplate(sampleContentTemplate);
 
     cy.contentsController()
       .then(controller => controller.addContent(content))
       .then((response) => {
-        const {body: {payload}} = response;
-        contentId               = payload[0].id;
+        const { body: { payload } } = response;
+        cy.wrap(payload[0].id).as('contentToBeDeleted');
       });
-     cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
-     cy.seoPagesController().then(controller => controller.addNewPage(page));
-     cy.widgetsController(page.code)
-     .then(controller =>
-     controller.addWidget({
-     frameId: pageWidget.frameId,
-     code: pageWidget.code,
-     ownerGroup: pageWidget.config.ownerGroup,
-     joinGroups: pageWidget.config.joinGroups,
-     contentDescription: pageWidget.config.contentDescription,
-     modelId: pageWidget.config.modelId,
-     contentId: contentId
-     }));
-
-     currentPage = openContentTemplatesPage();
-
-     cy.log(`Delete referenced content template with id ${template.id}`);
-     currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
-     currentPage.getDialog().confirm();
-     cy.validateToast(currentPage, 'referenced', false);
-
-     cy.pagesController().then(controller => controller.deletePage(page.code));
-    cy.contentsController().then(controller => {
-      controller.updateStatus(contentId, 'draft');
-      controller.deleteContent(contentId);
+    cy.get('@contentToBeDeleted').then(contentId => {
+      cy.contentsController().then(controller => controller.updateStatus(contentId, 'published'));
+      cy.seoPagesController().then(controller => controller.addNewPage(page))
+                             .then(() => cy.wrap(page.code).as('pageToBeDeleted'));
+      cy.pageWidgetsController(page.code)
+        .then(controller =>
+          controller.addWidget(
+            pageWidget.frameId,
+            pageWidget.code,
+            {
+              ownerGroup: pageWidget.config.ownerGroup,
+              joinGroups: pageWidget.config.joinGroups,
+              contentDescription: pageWidget.config.contentDescription,
+              modelId: pageWidget.config.modelId,
+              contentId: contentId
+            }));
     });
+
+    openContentTemplatesPage()
+      .then(page => {
+        cy.log(`Delete referenced content template with id ${sampleContentTemplate.id}`);
+        page.getContent().getKebabMenu(sampleContentTemplate.id).open().clickDelete();
+      })
+      .then(page => page.getContent().getAlertMessage().should('exist').and('contain.text', 'used'));
   });
 
   it('Edit mandatory fields', () => {
-    currentPage = openContentTemplatesPage();
+    openContentTemplatesPage()
+      .then(page => page.getContent().openAddTemplatePage())
+      .then(page => {
+        page.getContent().fillFormFields(sampleContentTemplate);
+        page.getContent().getSaveButton().should('not.be.disabled');
 
-    currentPage = currentPage.getContent().clickAddButton();
-    currentPage.getContent().typeId(template.id);
-    currentPage.getContent().typeName(template.descr);
-    currentPage.getContent().selectContentType(template.contentTypeText);
-    currentPage.getContent().typeHTMLModel(template.contentShape);
-    currentPage.getContent().getSaveButton().should('not.be.disabled');
-
-    cy.log(`Verify that template id is mandatory`);
-    currentPage.getContent().clearId();
-    currentPage.getContent().submitForm();
-    currentPage.getContent().getAlertMessage().should('be.visible');
-    currentPage.getContent().getFormArea().should('contain', 'is mandatory');
-    currentPage.getContent().typeId(template.id);
-
-    cy.log(`Verify that template name is mandatory`);
-    currentPage.getContent().clearName();
-    currentPage.getContent().submitForm();
-    currentPage.getContent().getAlertMessage().should('be.visible');
-    currentPage.getContent().getFormArea().should('contain', 'is mandatory');
-    currentPage.getContent().typeName(template.descr);
-
-    cy.log(`Verify that template HTML model is mandatory`);
-    currentPage.getContent().clearHTMLModel(template.contentShape);
-    currentPage.getContent().submitForm();
-    currentPage.getContent().getAlertMessage().should('be.visible');
-    currentPage.getContent().getFormArea().should('contain', 'is mandatory');
-    currentPage.getContent().typeHTMLModel(template.contentShape);
+        cy.log(`Verify that template id is mandatory`);
+        page.getContent().getIDInput().then(input => page.getContent().clear(input));
+        page.getContent().getSaveButton().then(button => page.getContent().click(button));
+        page.getContent().getAlertMessage().should('be.visible');
+        page.getContent().getFormArea().should('contain', 'is mandatory');
+        page.getContent().getIDInput().then(input => page.getContent().type(input, sampleContentTemplate.id));
+        
+        cy.log(`Verify that template name is mandatory`);
+        page.getContent().getNameInput().then(input => page.getContent().clear(input));
+        page.getContent().getSaveButton().then(button => page.getContent().click(button));
+        page.getContent().getAlertMessage().should('be.visible');
+        page.getContent().getFormArea().should('contain', 'is mandatory');
+        page.getContent().getNameInput().then(input => page.getContent().type(input, sampleContentTemplate.descr));
+        
+        cy.log(`Verify that template HTML model is mandatory`);
+        page.getContent().clearHTMLModel(sampleContentTemplate.contentShape);
+        page.getContent().getSaveButton().then(button => page.getContent().click(button));
+        page.getContent().getAlertMessage().should('be.visible');
+        page.getContent().getFormArea().should('contain', 'is mandatory');
+        page.getContent().getContentShapeInput().then(input => page.getContent().type(input, sampleContentTemplate.contentShape, true));
+      });
   });
+
 });

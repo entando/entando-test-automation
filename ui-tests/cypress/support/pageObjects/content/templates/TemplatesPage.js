@@ -15,6 +15,13 @@ export default class TemplatesPage extends AdminContent {
   filterRow = `${htmlElements.form}[class="form-horizontal"]`;
   searchBtn = `${htmlElements.button}[class="btn btn-primary"]`;
 
+  //FIXME AdminConsole is not built on REST APIs
+  static openPage(button) {
+    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'contentTemplatesPageLoadingGET', '/list.action'));
+    cy.get(button).click();
+    cy.wait('@contentTemplatesPageLoadingGET');
+  }
+
   getMain() {
     return this.get()
                .children(this.main);
@@ -77,17 +84,18 @@ export default class TemplatesPage extends AdminContent {
                .find(this.addButton);
   }
 
-  searchType(value) {
-    this.getSearchInput().select(value);
-  }
-
   clickSearch() {
-    this.getSearchButton().click();
+    this.getSearchButton().then(button => {
+      cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'contentTemplatesSearchPOST', '/search.action'));
+      this.click(button);
+      cy.wait('@contentTemplatesSearchPOST');
+    });
+    return cy.get('@currentPage');
   }
 
-  clickAddButton() {
-    this.getAddButton().click();
-    return new AdminPage(TemplateForm);
+  openAddTemplatePage() {
+    this.getAddButton().then(button => TemplateForm.openPage(button));
+    return cy.wrap(new AdminPage(TemplateForm)).as('currentPage');
   }
 }
 
@@ -106,7 +114,6 @@ class TemplatesKebabMenu extends KebabMenu {
     return this;
   }
 
-
   getEdit() {
     return this.get()
                .contains(htmlElements.li, 'Edit');
@@ -115,21 +122,18 @@ class TemplatesKebabMenu extends KebabMenu {
   getDelete() {
     return this.get()
                .contains(htmlElements.li, 'Delete');
-
   }
 
   openEdit() {
-    this.getEdit().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AdminPage(TemplateForm);
+    this.getEdit().then(button => TemplateForm.openEdit(button, this.code));
+    return cy.wrap(new AdminPage(TemplateForm)).as('currentPage');
   }
 
   clickDelete() {
-    this.getDelete().click();
-    cy.wait(1000);
+    this.getDelete().then(button => DeleteAdminPage.openDeleteContentTemplatePage(button, this.code));
     const deletePage = new AdminPage(DeleteAdminPage);
     deletePage.getContent().setOrigin(this.parent.parent);
-    return deletePage;
+    return cy.wrap(deletePage).as('currentPage');
   }
 
 }
