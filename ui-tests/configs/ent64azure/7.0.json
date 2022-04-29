@@ -4,7 +4,7 @@
   "basePath": "/app-builder",
   "portalUIPath": "/entando-de-app/en",
   "restAPI": "http://entando7-0.apps.ent64azure.com/entando-de-app/api",
-  "adminConsolePath": "http://entando7-0.apps.ent64azure.com/entando-de-app/do/jacms",
+  "adminConsolePath": "http://entando7-0.apps.ent64azure.com/entando-de-app/do",
   "env": {
     "auth_base_url": "http://entando7-0.apps.ent64azure.com/auth",
     "auth_realm": "entando",

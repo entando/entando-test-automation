@@ -53,3 +53,4 @@ import './controllers/restAPI/WidgetsController';
 
 import './controllers/jacms/ContentsAdminConsoleController';
 import './controllers/jacms/ContentTemplatesAdminConsoleController';
+import './controllers/jacms/CategoriesAdminConsoleController';

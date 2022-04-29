@@ -6,7 +6,6 @@ describe([Tag.GTS], 'Categories', () => {
   const categoryCode = generateRandomId();
   const treePosition = 'Root';
   const rootCode     = 'home';
-  let currentPage;
 
   beforeEach(() => {
     cy.wrap(null).as('categoryToBeDeleted');
@@ -36,8 +35,11 @@ describe([Tag.GTS], 'Categories', () => {
     postTestCategory();
     openCategoriesPage()
         .then(page => page.getContent().openAddCategoryPage())
-        .then(page => page.getContent().addCategory(`AAA${titleEn}`, titleIt, categoryCode, treePosition))
-        .then(page => page.getContent().getAlertMessage().should('be.visible'));
+        .then(page => {
+          page.getContent().fillFields(`AAA${titleEn}`, titleIt, categoryCode, treePosition);
+          page.getContent().getSaveButton().click();
+          page.getContent().getAlertMessage().should('be.visible');
+        });
   });
 
   it('Edit a category should be possible', () => {
@@ -56,16 +58,15 @@ describe([Tag.GTS], 'Categories', () => {
         .then(page => {
           page.getContent().getCategoriesTree().contains('td', titleEn).should('contain.text', titleEn);
           page.getContent().getKebabMenu(titleEn).open().clickDelete();
+        })
+        .then(page => page.getContent().submit())
+        .then(page => {
+          page.getContent().getCategoriesTree().should('not.contain', titleEn);
+          cy.wrap(null).as('categoryToBeDeleted');
         });
-    cy.get('@currentPage')
-      .then(page => page.getContent().submit())
-      .then(page => page.getContent().getCategoriesTree().should('not.contain', titleEn));
-    cy.wrap(null).as('categoryToBeDeleted');
   });
 
-
-  //FIXME wait for api to be fixed
-  xdescribe('Category used in a content', () => {
+  describe('Category used in a content', () => {
 
     const content = {
       description: 'test',
@@ -81,34 +82,39 @@ describe([Tag.GTS], 'Categories', () => {
         .then(controller => controller.addContent(content))
         .then((response) => {
           const {body: {payload}} = response;
-          cy.wrap(payload[0].id).as('testContentId');
+          cy.wrap(payload[0].id).as('contentToBeDeleted');
         });
     });
 
     afterEach(() => {
-      cy.get('@testContentId').then(contentId => cy.contentsController().then(controller => controller.deleteContent(contentId)));
+      cy.get('@contentToBeDeleted').then(contentId => {
+        if (contentId) {
+          cy.contentsController().then(controller => controller.updateStatus(contentId, 'draft'));
+          cy.contentsController().then(controller => controller.deleteContent(contentId))
+        }
+      });
     });
 
     it('Update a category used in an unpublished content', () => {
       const newTitleEn = `${titleEn}-new`;
       const newTitleIt = `${titleIt}-new`;
-      currentPage      = openCategoriesPage();
-      currentPage      = currentPage.getContent().openEditCategoryPage(titleEn);
-      currentPage      = currentPage.getContent().editCategory(newTitleEn, newTitleIt);
-      currentPage.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible');
+
+      openCategoriesPage()
+          .then(page => page.getContent().getKebabMenu(titleEn).open().openEdit())
+          .then(page => page.getContent().editCategory(newTitleEn, newTitleIt))
+          .then(page => page.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible'));
     });
 
     it('Update a category used in a published content', () => {
-      cy.contentsController().then(controller => controller.updateStatus(this.testContentId, 'published'));
-
+      cy.get('@contentToBeDeleted').then(contentId => cy.contentsController().then(controller => controller.updateStatus(contentId, 'published')));
+      
       const newTitleEn = `${titleEn}-new`;
       const newTitleIt = `${titleIt}-new`;
-      currentPage      = openCategoriesPage();
-      currentPage      = currentPage.getContent().openEditCategoryPage(titleEn);
-      currentPage      = currentPage.getContent().editCategory(newTitleEn, newTitleIt);
-      currentPage.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible');
 
-      cy.contentsController().then(controller => controller.updateStatus(this.testContentId, 'draft'));
+      openCategoriesPage()
+          .then(page => page.getContent().getKebabMenu(titleEn).open().openEdit())
+          .then(page => page.getContent().editCategory(newTitleEn, newTitleIt))
+          .then(page => page.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible'));
     });
 
   });
