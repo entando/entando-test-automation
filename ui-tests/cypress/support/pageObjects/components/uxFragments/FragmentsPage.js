@@ -78,7 +78,7 @@ export default class FragmentsPage extends AppContent {
   }
 
   clickSaveOption() {
-    return this.getSaveOption();
+    return this.getSaveOption().click();
   }
 
   clickSaveAndContinueOption(){
@@ -87,7 +87,7 @@ export default class FragmentsPage extends AppContent {
 
   save() {
     this.clickSaveBtn();
-    this.clickSaveOption().then(button => UXFragmentsPage.openPage(button));
+    this.clickSaveOption();
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 

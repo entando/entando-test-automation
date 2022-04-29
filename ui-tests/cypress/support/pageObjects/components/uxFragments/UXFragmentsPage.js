@@ -19,6 +19,13 @@ export default class UXFragmentsPage extends AppContent {
 
   static openPage(button) {
     cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
+    cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?*'));
+    cy.get(button).click();
+    cy.wait(['@fragmentsPageLoadingGET','@fragmentsPageLoadingGET', '@widgetsPageLoadingGET']);
+  }
+
+  static openNavigate(button) {
+    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
     cy.get(button).click();
     cy.wait(['@fragmentsPageLoadingGET']);
   }
@@ -82,23 +89,23 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   navigateToNextPage() {
-    this.getPagination().getNextButton().then(button => UXFragmentsPage.openPage(button));
+    this.getPagination().getNextButton().then(button => UXFragmentsPage.openNavigate(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
 
   navigateToPreviousPage() {
-    this.getPagination().getPreviousButton().then(button => UXFragmentsPage.openPage(button));
+    this.getPagination().getPreviousButton().then(button => UXFragmentsPage.openNavigate(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
   navigateToFirstPage() {
-    this.getPagination().getFirstPageButton().then(button => UXFragmentsPage.openPage(button));
+    this.getPagination().getFirstPageButton().then(button => UXFragmentsPage.openNavigate(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
   navigateToLastPage() {
-    this.getPagination().getLastPageButton().then(button => UXFragmentsPage.openPage(button));
+    this.getPagination().getLastPageButton().then(button => UXFragmentsPage.openNavigate(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
 
   }
@@ -120,10 +127,6 @@ export default class UXFragmentsPage extends AppContent {
 
 class FragmentsKebabMenu extends KebabMenu {
 
-
-  getDropdown() {
-    return this.get().find(`${htmlElements.ul}[role="menu"]`);
-  }
 
   getEdit() {
     return this.get()
