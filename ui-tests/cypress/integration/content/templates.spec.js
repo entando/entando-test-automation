@@ -1,7 +1,6 @@
 import HomePage                                    from '../../support/pageObjects/HomePage';
 import {htmlElements}                              from '../../support/pageObjects/WebElement';
 import {generateRandomId, generateRandomNumericId} from '../../support/utils';
-import TemplatesPage                               from '../../support/pageObjects/pages/templates/TemplatesPage';
 
 const openContentTemplatesPage = () => {
   let currentPage = new HomePage();
@@ -88,7 +87,7 @@ describe([Tag.GTS], 'Content Templates', () => {
 
     cy.log(`Delete content template with id ${template.id}`);
     currentPage = currentPage.getContent().getKebabMenu(template.id).open().clickDelete();
-    currentPage = currentPage.getContent().submitCancel(TemplatesPage);
+    currentPage = currentPage.getContent().submitCancel();
     currentPage.getContent().getTable().should('not.contain', template.id);
   });
 

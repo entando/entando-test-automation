@@ -1,7 +1,5 @@
 import {generateRandomId} from '../../support/utils';
 
-import CategoriesPage from '../../support/pageObjects/content/categories/CategoriesPage';
-
 describe([Tag.GTS], 'Categories', () => {
   const titleIt      = generateRandomId();
   const titleEn      = generateRandomId();
@@ -60,7 +58,7 @@ describe([Tag.GTS], 'Categories', () => {
           page.getContent().getKebabMenu(titleEn).open().clickDelete();
         });
     cy.get('@currentPage')
-      .then(page => page.getContent().submitCancel(CategoriesPage))
+      .then(page => page.getContent().submit())
       .then(page => page.getContent().getCategoriesTree().should('not.contain', titleEn));
     cy.wrap(null).as('categoryToBeDeleted');
   });
