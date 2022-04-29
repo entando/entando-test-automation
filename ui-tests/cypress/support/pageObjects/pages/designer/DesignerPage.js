@@ -108,6 +108,7 @@ export default class DesignerPage extends AppContent {
     }
   };
 
+  //TODO understand when commented calls are performed
   static openPage(button, code = 'homepage') {
     cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
 
@@ -122,10 +123,10 @@ export default class DesignerPage extends AppContent {
 
     // cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?*'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
+    // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
 
     cy.get(button).click();
-    cy.wait(['@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET']);
+    cy.wait(['@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET' /*'@pagePublishedWidgetsPageLoadingGET'*/]);
   }
 
   getMainContainer() {
@@ -286,12 +287,15 @@ export default class DesignerPage extends AppContent {
     return new SidebarPageTreeKebabMenu(this, code);
   }
 
-  dragGridWidgetToFrame(oriGridRow, oriGridCol, newGridRow, newGridCol) {
+  dragGridWidgetToFrame(page, oriGridRow, oriGridCol, newGridRow, newGridCol) {
     this.getDesignerGridFrame(newGridRow, newGridCol).children(htmlElements.div)
         .then(frame =>
-            this.getDesignerGridFrame(oriGridRow, oriGridCol).children(htmlElements.div)
-                .drag(frame, {force: true, position: 'center'})
-        );
+            this.getDesignerGridFrame(oriGridRow, oriGridCol).children(htmlElements.div).then(widget => {
+              cy.pagesController().then((controller => controller.intercept({method: 'PUT'}, 'widgetAddedToPage', `/${page.code}/widgets/*`)));
+              cy.get(widget).drag(frame, {force: true, position: 'center'});
+              cy.wait('@widgetAddedToPage');
+            }));
+    return cy.get('@currentPage');
   }
 
   publishPageDesign() {
@@ -300,6 +304,7 @@ export default class DesignerPage extends AppContent {
         .children(htmlElements.div).eq(1)
         .children(htmlElements.button).eq(1)
         .click();
+    return cy.get('@currentPage');
   }
 
   clickSidebarTab(tabPos) {
@@ -307,12 +312,14 @@ export default class DesignerPage extends AppContent {
         .children(htmlElements.li).eq(tabPos)
         .then(button => {
           if (tabPos === 1) {
-          cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepagePageLoadingGET', '/homepage?status=draft'));
-          cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepageChildrenPageLoadingGET', '?parentCode=homepage'));
-          cy.get(button).click();
-          cy.wait(['@homepagePageLoadingGET', '@homepageChildrenPageLoadingGET']);
-          } else {
+            cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepagePageLoadingGET', '/homepage?status=draft'));
+            cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepageChildrenPageLoadingGET', '?parentCode=homepage'));
             cy.get(button).click();
+            cy.wait(['@homepagePageLoadingGET', '@homepageChildrenPageLoadingGET']);
+          } else {
+            //TODO no API call is performed to populate the widget list in the sidebar
+            cy.get(button).click();
+            cy.wait(1000);
           }
         });
     return cy.get('@currentPage');
@@ -322,13 +329,23 @@ export default class DesignerPage extends AppContent {
     this.getSidebarWidgetSection(sectionPos).click();
   }
 
-  dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol) {
+  dragWidgetToGrid(page, widgetSection, widgetPos, gridRow, gridCol) {
+    this.getDesignerGridFrame(gridRow, gridCol)
+        .then(frame => this.getSidebarWidgetSectionWidget(widgetSection, widgetPos).then(widget => {
+          cy.pagesController().then((controller => controller.intercept({method: 'PUT'}, 'widgetAddedToPage', `/${page.code}/widgets/*`)));
+          cy.get(widget).drag(frame, {position: 'center'});
+          cy.wait('@widgetAddedToPage');
+        }));
+    return cy.get('@currentPage');
+  }
+
+  dragWidgetToGridOld(widgetSection, widgetPos, gridRow, gridCol) {
     this.getDesignerGridFrame(gridRow, gridCol)
         .then(frame => this.getSidebarWidgetSectionWidget(widgetSection, widgetPos).drag(frame, {position: 'center'}));
   }
 
   dragConfigurableWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol, widgetCode) {
-    this.dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol);
+    this.dragWidgetToGridOld(widgetSection, widgetPos, gridRow, gridCol);
 
     const WidgetConfigPage = this.gatherWidgetConfigPage(widgetCode);
     return new AppPage(WidgetConfigPage);
