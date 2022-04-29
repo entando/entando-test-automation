@@ -880,10 +880,10 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       selectPageFromSidebar();
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().dragWidgetToGrid(0, 5, 2, 0);
+      currentPage.getContent().dragWidgetToGridOld(0, 5, 2, 0);
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-      currentPage.getContent().dragWidgetToGrid(0, 6, 3, 0);
+      currentPage.getContent().dragWidgetToGridOld(0, 6, 3, 0);
 
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--draft')
@@ -994,9 +994,9 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       selectPageFromSidebar();
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().dragWidgetToGrid(0, 0, 2, 0);
+      currentPage.getContent().dragWidgetToGridOld(0, 0, 2, 0);
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-      currentPage.getContent().dragWidgetToGrid(0, 1, 3, 0);
+      currentPage.getContent().dragWidgetToGridOld(0, 1, 3, 0);
 
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--draft')
@@ -1109,10 +1109,10 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       currentPage.getContent().toggleSidebarWidgetSection(2);
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().dragWidgetToGrid(2, 0, 2, 0);
+      currentPage.getContent().dragWidgetToGridOld(2, 0, 2, 0);
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-      currentPage.getContent().dragWidgetToGrid(2, 1, 3, 0);
+      currentPage.getContent().dragWidgetToGridOld(2, 1, 3, 0);
 
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--draft')
@@ -1226,7 +1226,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       selectPageFromSidebar();
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
       currentPage.getContent().toggleSidebarWidgetSection(2);
-      currentPage.getContent().dragWidgetToGrid(2, 1, 2, 0);
+      currentPage.getContent().dragWidgetToGridOld(2, 1, 2, 0);
 
       currentPage.getContent().publishPageDesign();
 
@@ -1271,10 +1271,10 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       currentPage.getContent().toggleSidebarWidgetSection(4);
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().dragWidgetToGrid(4, 0, 2, 0);
+      currentPage.getContent().dragWidgetToGridOld(4, 0, 2, 0);
 
       cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-      currentPage.getContent().dragWidgetToGrid(4, 4, 3, 0);
+      currentPage.getContent().dragWidgetToGridOld(4, 4, 3, 0);
 
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--draft')
