@@ -13,6 +13,8 @@ import FragmentsController             from './restAPI/FragmentsController';
 import GroupsController                from './restAPI/GroupsController';
 import LabelsController                from './restAPI/LabelsController';
 import LanguagesController             from './restAPI/LanguagesController';
+import MyProfileTypeController         from './restAPI/MyProfileTypeController';
+import MyUserProfileController         from './restAPI/MyUserProfileController';
 import PagesController                 from './restAPI/PagesController';
 import PageTemplatesController         from './restAPI/PageTemplatesController';
 import PageWidgetsController           from './restAPI/PageWidgetsController';
@@ -82,7 +84,7 @@ declare namespace Cypress {
         /**
          * Perform the logout associated with the cookie session
          */
-        kcLogout(): void
+        kcLogout(): void;
     }
 
     interface Chainable<Subject> {
@@ -173,6 +175,16 @@ declare namespace Cypress {
          * Returns a new instance of a languages controller
          */
         languagesController(): Chainable<LanguagesController>;
+
+        /**
+         * Returns a new instance of a myProfileType controller
+         */
+        myProfileTypeController(): Chainable<MyProfileTypeController>;
+
+        /**
+         * Returns a new instance of a myUserProfile controller
+         */
+        myUserProfileController(): Chainable<MyUserProfileController>;
 
         /**
          * Returns a new instance of a pages controller

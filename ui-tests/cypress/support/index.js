@@ -35,6 +35,8 @@ import './restAPI/FragmentsController';
 import './restAPI/GroupsController';
 import './restAPI/LabelsController';
 import './restAPI/LanguagesController';
+import './restAPI/MyProfileTypeController';
+import './restAPI/MyUserProfileController';
 import './restAPI/PagesController';
 import './restAPI/PageTemplatesController';
 import './restAPI/PageWidgetsController';

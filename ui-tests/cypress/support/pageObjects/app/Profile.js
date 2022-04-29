@@ -1,8 +1,9 @@
-import Content from './Content.js';
-
 import {htmlElements} from '../WebElement.js';
 
-export default class Profile extends Content {
+import AppContent from './AppContent';
+
+export default class Profile extends AppContent {
+
   tabs           = `${htmlElements.ul}.nav-tabs`;
   accountTab     = `${htmlElements.a}#my-profile-tabs-tab-account`;
   profileTab     = `${htmlElements.a}#my-profile-tabs-tab-profile`;
@@ -47,13 +48,13 @@ export default class Profile extends Content {
   defaultWidgetOwnerGroupSelect  = `${htmlElements.select}[name=defaultWidgetOwnerGroup]`;
   settingsSaveBtn                = `${htmlElements.button}[type=submit]`;
 
-  selectTab(tab) {
-    const tabs = {
-      'account': this.accountTab,
-      'profile': this.profileTab,
-      'preferences': this.preferencesTab
-    };
-    this.getContents().find(tabs[tab]).click();
+  static openPage(button) {
+    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupsPageLoadingGET', '/myGroups'));
+    cy.myProfileTypeController().then(controller => controller.intercept({method: 'GET'}, 'myProfileTypePageLoadingGET'));
+    cy.myUserProfileController().then(controller => controller.intercept({method: 'GET'}, 'myUserProfilePageLoadingGET'));
+    cy.get(button).click();
+    cy.wait(['@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@myProfileTypePageLoadingGET', '@myUserProfilePageLoadingGET']);
   }
 
   getTabContent() {
@@ -68,24 +69,39 @@ export default class Profile extends Content {
     return cy.get(this.accountModal);
   }
 
+  selectTab(tab) {
+    const tabs = {
+      'account': this.accountTab,
+      'profile': this.profileTab,
+      'preferences': this.preferencesTab
+    };
+    this.getContents().find(tabs[tab]).click();
+    return cy.get('@currentPage');
+  }
+
   clickChangePasswordButton() {
     this.getTabContent().find(this.changePasswordButton).click();
+    return cy.get('@currentPage');
   }
 
   typeCurrentPassword(value) {
     this.getAccountModal().find(this.oldPassword).type(value);
+    return cy.get('@currentPage');
   }
 
   typeNewPassword(value) {
     this.getAccountModal().find(this.newPassword).type(value);
+    return cy.get('@currentPage');
   }
 
   typeConfirmNewPassword(value) {
     this.getAccountModal().find(this.confirmPassword).type(value);
+    return cy.get('@currentPage');
   }
 
   clickChangePasswordSaveButton() {
     this.getAccountModal().find(this.accountModalSaveButton).click();
+    return cy.get('@currentPage');
   }
 
   clickChangePasswordCancelButton() {
@@ -98,10 +114,12 @@ export default class Profile extends Content {
 
   clickProfileEditButton() {
     this.getProfileEditButton().click();
+    return cy.get('@currentPage');
   }
 
   clickProfileSaveButton() {
     this.getTabContent().find(this.profileSaveButton).click();
+    return cy.get('@currentPage');
   }
 
   clickProfileCancelButton() {
@@ -110,14 +128,17 @@ export default class Profile extends Content {
 
   typeFullNameInput(value) {
     this.getTabContent().find(this.fullNameInput).clear().type(value);
+    return cy.get('@currentPage');
   }
 
   typeEmailInput(value) {
     this.getTabContent().find(this.emailInput).clear().type(value);
+    return cy.get('@currentPage');
   }
 
   clickUploadImageButton() {
     this.getTabContent().find(this.uploadImageButton).click();
+    return cy.get('@currentPage');
   }
 
   getProfileDropdown() {
@@ -130,10 +151,12 @@ export default class Profile extends Content {
 
   uploadProfileImage(...fileName) {
     this.getTabContent().find(this.profileImageInput).selectFile(fileName, {force: true});
+    return cy.get('@currentPage');
   }
 
   toggleWelcomeWizard() {
     this.getTabContent().find(this.wizardSwitch).click();
+    return cy.get('@currentPage');
   }
 
   toggleMissingTranslationWizard() {
@@ -142,28 +165,34 @@ export default class Profile extends Content {
 
   toggleLoadOnPageSelectSwitch() {
     this.getTabContent().find(this.loadOnPageSelectSwitch).click();
+    return cy.get('@currentPage');
   }
 
   selectDefaultPageOwner(value) {
     this.getTabContent().find(this.defaultPageOwnerSelect).select(value);
+    return cy.get('@currentPage');
   }
 
   selectDefaultPageJoinGroups(value) {
     this.getTabContent().find(this.defaultPageJoinGroupsSelect).select(value);
     this.getTabContent().find(this.defaultPageJoinGroupsSelect).parent().find(this.defaultPageJoinGroupsButton).click();
+    return cy.get('@currentPage');
   }
 
   selectDefaultContentOwnerGroup(value) {
     this.getTabContent().find(this.defaultContentOwnerGroupSelect).select(value);
+    return cy.get('@currentPage');
   }
 
   selectDefaultContentJoinGroups(value) {
     this.getTabContent().find(this.defaultContentJoinGroupSelect).select(value);
     this.getTabContent().find(this.defaultContentJoinGroupSelect).parent().find(this.defaultContentJoinGroupButton).click();
+    return cy.get('@currentPage');
   }
 
   selectWidgetOwnerGroup(value) {
     this.getTabContent().find(this.defaultWidgetOwnerGroupSelect).select(value);
+    return cy.get('@currentPage');
   }
 
   getSettingsSaveBtn() {
@@ -172,6 +201,7 @@ export default class Profile extends Content {
 
   clickSettingsSaveBtn() {
     this.getSettingsSaveBtn().click();
+    return cy.get('@currentPage');
   }
 
 }
