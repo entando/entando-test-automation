@@ -127,7 +127,9 @@ class TemplatesKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDelete().click();
     cy.wait(1000);
-    return new AdminPage(DeleteAdminPage);
+    const deletePage = new AdminPage(DeleteAdminPage);
+    deletePage.getContent().setOrigin(this.parent.parent);
+    return deletePage;
   }
 
 }

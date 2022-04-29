@@ -1,6 +1,5 @@
 import {htmlElements} from '../WebElement.js';
 import AdminContent   from './AdminContent';
-import AdminPage      from './AdminPage';
 
 export default class DeleteAdminPage extends AdminContent {
 
@@ -23,9 +22,18 @@ export default class DeleteAdminPage extends AdminContent {
                .find(`${htmlElements.button}[type="submit"]`);
   }
 
-  submitCancel(pageObject) {
+  setOrigin(originPage) {
+    this.origin = originPage;
+  }
+
+  submit() {
     this.getCancelButton().click();
-    return cy.wrap(new AdminPage(pageObject)).as('currentPage');
+    return cy.wrap(this.origin).as('currentPage');
+  }
+
+  submitCancel() {
+    this.getCancelButton().click();
+    return this.origin;
   }
 
 

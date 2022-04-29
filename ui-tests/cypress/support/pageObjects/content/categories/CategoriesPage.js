@@ -77,7 +77,9 @@ class CategoriesKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDelete().click();
     cy.wait(1000);
-    return cy.wrap(new AdminPage(DeleteAdminPage)).as('currentPage');
+    const deletePage = new AdminPage(DeleteAdminPage);
+    deletePage.getContent().setOrigin(this.parent.parent);
+    return cy.wrap(deletePage).as('currentPage');
   }
 
 }
