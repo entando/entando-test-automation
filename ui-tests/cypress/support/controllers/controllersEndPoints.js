@@ -35,7 +35,10 @@ export const SMTPServerAPIURL = `${emailSettingsURL}/SMTPServer`;
 const seoURL                = `${pluginsURL}/seo`;
 export const seoPagesAPIURL = `${seoURL}/pages`;
 
-const adminConsoleURL = Cypress.config('adminConsolePath');
+const adminConsoleURL    = Cypress.config('adminConsolePath');
 
-export const contentManagementURL = `${adminConsoleURL}/Content`;
-export const contentModelsURL     = `${adminConsoleURL}/ContentModel`;
+export const categoriesURL        = `${adminConsoleURL}/Category`;
+
+const cmsAdminConsoleURL          = `${adminConsoleURL}/jacms`;
+export const contentManagementURL = `${cmsAdminConsoleURL}/Content`;
+export const contentModelsURL     = `${cmsAdminConsoleURL}/ContentModel`;

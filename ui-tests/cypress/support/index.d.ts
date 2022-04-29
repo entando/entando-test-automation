@@ -28,6 +28,7 @@ import UserPreferencesController       from './controllers/restAPI/UserPreferenc
 import UsersController                 from './controllers/restAPI/UsersController';
 import WidgetsController               from './controllers/restAPI/WidgetsController';
 
+import CategoriesAdminConsoleController       from './controllers/jacms/CategoriesAdminConsoleController';
 import ContentsAdminConsoleController         from './controllers/jacms/ContentsAdminConsoleController';
 import ContentTemplatesAdminConsoleController from './controllers/jacms/ContentTemplatesAdminConsoleController';
 
@@ -118,6 +119,11 @@ declare namespace Cypress {
          * Returns a new instance of an assets controller
          */
         assetsController(): Chainable<AssetsController>;
+
+        /**
+         * Returns a new instance of a categories admin consolecontroller
+         */
+        categoriesAdminConsoleController(): Chainable<CategoriesAdminConsoleController>;
 
         /**
          * Returns a new instance of a categories controller
