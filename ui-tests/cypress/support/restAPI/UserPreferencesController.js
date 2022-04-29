@@ -3,7 +3,8 @@ import AbstractController from './abstractController';
 import {userPreferencesAPIURL} from './controllersEndPoints';
 
 Cypress.Commands.add('userPreferencesController', () => {
-  cy.get('@tokens').then(tokens => {
+  //FIXME only user can update their preferences
+  cy.get('@UITokens').then(tokens => {
     return new UserPreferencesController(userPreferencesAPIURL, tokens.access_token);
   });
 });

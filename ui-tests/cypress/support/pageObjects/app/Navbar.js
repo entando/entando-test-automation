@@ -85,8 +85,8 @@ class UserMenu extends WebElement {
   }
 
   openProfile() {
-    this.getProfile().click();
-    return new AppPage(Profile);
+    this.getProfile().then(button => Profile.openPage(button));
+    return cy.wrap(new AppPage(Profile)).as('currentPage');
   }
 
   logout() {
