@@ -314,7 +314,7 @@ describe('UX Fragments', () => {
     });
   });
   describe('Feature Tests I', () => {
-    describe ('Fragments Browsing', () => {
+    describe('Fragments Browsing', () => {
 
       it([Tag.FEATURE, 'ENG-3522'], 'Search a fragment from his fragment code', () => {
         addTestFragment();
