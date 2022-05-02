@@ -82,7 +82,7 @@ describe('UX Fragments', () => {
       addTestFragment();
       openFragmentsPage()
           .then(page =>
-              page.getContent().getKebabMenu(fragment.code).open().openEdit());
+              page.getContent().getKebabMenu(fragment.code).open().openEdit(fragment.code));
       cy.validateUrlPathname(`/fragment/edit/${fragment.code}`);
 
       cy.get('@currentPage')
@@ -101,7 +101,7 @@ describe('UX Fragments', () => {
       addTestFragment();
       openFragmentsPage()
           .then(page =>
-              page.getContent().getKebabMenu(fragment.code).open().openClone());
+              page.getContent().getKebabMenu(fragment.code).open().openClone(fragment.code));
       cy.validateUrlPathname(`/fragment/clone/${fragment.code}`);
 
       cy.get('@currentPage')
@@ -120,7 +120,7 @@ describe('UX Fragments', () => {
       addTestFragment();
       openFragmentsPage()
           .then(page =>
-              page.getContent().getKebabMenu(fragment.code).open().openDetails());
+              page.getContent().getKebabMenu(fragment.code).open().openDetails(fragment.code));
       cy.validateUrlPathname(`/fragment/view/${fragment.code}`);
 
       cy.get('@currentPage')
@@ -170,9 +170,9 @@ describe('UX Fragments', () => {
         addTestFragment();
         openFragmentsPage()
             .then(page =>
-                page.getContent().getKebabMenu(fragment.code).open().openEdit())
+                page.getContent().getKebabMenu(fragment.code).open().openEdit(fragment.code))
             .then(page => page.getContent().getGuiCodeInput().then(input => page.getContent().type(input, fragment.guiCode)))
-            .then(page => page.getContent().save())
+            .then(page => page.getContent().save(fragment.code))
             .then(page => {
               cy.validateToast(page);
               page.getContent().getTableRow(fragment.code).should('be.visible')
@@ -184,7 +184,7 @@ describe('UX Fragments', () => {
         addTestFragment();
         openFragmentsPage()
             .then(page => {
-              page.getContent().getKebabMenu(fragment.code).open().openClone();
+              page.getContent().getKebabMenu(fragment.code).open().openClone(fragment.code);
               cy.wrap(fragment).as('fragmentToBeDeleted');
             });
 
@@ -507,7 +507,7 @@ describe('UX Fragments', () => {
         openFragmentsPage()
             .then(page => {
               page.getContent().getPagination().getItemsTotal().then(totalFragments => {
-                page.getContent().getKebabMenu(fragment.code).open().openEdit()
+                page.getContent().getKebabMenu(fragment.code).open().openEdit(fragment.code)
                     .then(page => {
                       page.getContent().openBreadCrumb()
                           .then(page => {
@@ -525,7 +525,7 @@ describe('UX Fragments', () => {
         openFragmentsPage()
             .then(page => {
               page.getContent().getPagination().getItemsTotal().then(totalFragments => {
-                page.getContent().getKebabMenu(fragment.code).open().openClone()
+                page.getContent().getKebabMenu(fragment.code).open().openClone(fragment.code)
                     .then(page => {
                       page.getContent().openBreadCrumb()
                           .then(page => {
@@ -546,7 +546,7 @@ describe('UX Fragments', () => {
         addTestFragment();
         openFragmentsPage()
             .then(page =>
-                page.getContent().getKebabMenu(fragment.code).open().openEdit())
+                page.getContent().getKebabMenu(fragment.code).open().openEdit(fragment.code))
             .then(page => {
               page.getContent().getCodeInput().should('be.disabled').and('have.value', fragment.code);
               page.getContent().getGuiCodeInput().should('have.text', fragment.guiCode);
@@ -557,7 +557,7 @@ describe('UX Fragments', () => {
         addTestFragment();
         openFragmentsPage()
             .then(page =>
-                page.getContent().getKebabMenu(fragment.code).open().openClone())
+                page.getContent().getKebabMenu(fragment.code).open().openClone(fragment.code))
             .then(page => {
               page.getContent().getGuiCodeInput().should('have.text', fragment.guiCode);
             });
@@ -566,7 +566,7 @@ describe('UX Fragments', () => {
         addTestFragment();
         openFragmentsPage()
             .then(page =>
-                page.getContent().getKebabMenu(fragment.code).open().openDetails())
+                page.getContent().getKebabMenu(fragment.code).open().openDetails(fragment.code))
             .then(page => page.getContent().openEditBtn())
             .then(page => {
               page.getContent().getCodeInput().should('be.disabled').and('have.value', fragment.code);
@@ -606,11 +606,11 @@ describe('UX Fragments', () => {
         addTestFragment();
         openFragmentsPage()
             .then(page =>
-                page.getContent().getKebabMenu(fragment.code).open().openEdit())
+                page.getContent().getKebabMenu(fragment.code).open().openEdit(fragment.code))
             .then(page => page.getContent().getGuiCodeInput()
                               .then(input => page.getContent().type(input, fragment.guiCode)))
             .then(page => {
-              page.getContent().saveAndContinue();
+              page.getContent().saveAndContinue(fragment.code);
               cy.validateToast(page);
               page.getMenu().getComponents().open().openUXFragments();
             });
@@ -626,7 +626,7 @@ describe('UX Fragments', () => {
         addTestFragment();
         openFragmentsPage()
             .then(page => {
-              page.getContent().getKebabMenu(fragment.code).open().openClone();
+              page.getContent().getKebabMenu(fragment.code).open().openClone(fragment.code);
               cy.wrap(fragment).as('fragmentToBeDeleted');
             });
         cy.get('@currentPage')
@@ -687,21 +687,21 @@ describe('UX Fragments', () => {
       cy.get('@currentPage')
         .then(page =>
             page.getContent().getCodeInput().then(input => page.getContent().type(input, fragment.code)))
-        .then(page => page.getContent().save())
+        .then(page => page.getContent().clickSave())
         .then(page => cy.validateToast(page, fragment.code, false));
     });
     it([Tag.ERROR, 'ENG-3522'], 'Edit a fragment code is forbidden', () => {
       addTestFragment();
       openFragmentsPage()
           .then(page =>
-              page.getContent().getKebabMenu(fragment.code).open().openEdit())
+              page.getContent().getKebabMenu(fragment.code).open().openEdit(fragment.code))
           .then(page => page.getContent().getCodeInput().should('be.disabled'));
     });
     it([Tag.ERROR, 'ENG-3522'], 'Edit a fragment with no Gui Code is forbidden', () => {
       addTestFragment();
       openFragmentsPage()
           .then(page =>
-              page.getContent().getKebabMenu(fragment.code).open().openEdit())
+              page.getContent().getKebabMenu(fragment.code).open().openEdit(fragment.code))
           .then(page =>
               page.getContent().getGuiCodeInput()
                   .then(input => {
@@ -716,7 +716,7 @@ describe('UX Fragments', () => {
       addTestFragment();
       openFragmentsPage()
           .then(page =>
-              page.getContent().getKebabMenu(fragment.code).open().openClone());
+              page.getContent().getKebabMenu(fragment.code).open().openClone(fragment.code));
 
       cy.get('@currentPage')
         .then(page => {
@@ -733,7 +733,7 @@ describe('UX Fragments', () => {
       addTestFragment();
       openFragmentsPage()
           .then(page =>
-              page.getContent().getKebabMenu(fragment.code).open().openClone());
+              page.getContent().getKebabMenu(fragment.code).open().openClone(fragment.code));
 
       cy.get('@currentPage')
         .then(page => {
@@ -748,14 +748,14 @@ describe('UX Fragments', () => {
       addTestFragment();
       openFragmentsPage()
           .then(page =>
-              page.getContent().getKebabMenu(fragment.code).open().openClone());
+              page.getContent().getKebabMenu(fragment.code).open().openClone(fragment.code));
 
       cy.get('@currentPage')
         .then(page => {
           page.getContent().getCodeInput().then(input => page.getContent().type(input, fragment.code));
           page.getContent().getGuiCodeInput().then(input => page.getContent().type(input, fragmentCloned.guiCode));
         })
-        .then(page => page.getContent().save())
+        .then(page => page.getContent().clickSave())
         .then(page => cy.validateToast(page, fragment.code, false));
     });
   });
