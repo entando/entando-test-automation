@@ -6,28 +6,40 @@ import FragmentsPage from './FragmentsPage';
 import KebabMenu     from '../../app/KebabMenu.js';
 import DeleteDialog  from '../../app/DeleteDialog.js';
 import DetailsPage   from '../../components/uxFragments/DetailsPage.js';
-import Pagination from "../../app/Pagination";
+import Pagination    from '../../app/Pagination';
 
 export default class UXFragmentsPage extends AppContent {
 
-  searchForm                 = `${htmlElements.form}.FragmentSearchForm`;
-  searchCodeInput            = `${htmlElements.input}#fragmentcode[name="code"]`;
-  widgetFilter               = `${htmlElements.select}[name="widgetType"]`;
-  pluginFilter               = `${htmlElements.select}[name="pluginCode"]`;
-  addBtn                     = `${htmlElements.button}[type=button].FragmentListContent__add`;
-  spinner                    = `${htmlElements.div}.spinner.spinner-md`;
+  searchForm      = `${htmlElements.form}.FragmentSearchForm`;
+  searchCodeInput = `${htmlElements.input}#fragmentcode[name="code"]`;
+  widgetFilter    = `${htmlElements.select}[name="widgetType"]`;
+  pluginFilter    = `${htmlElements.select}[name="pluginCode"]`;
+  addBtn          = `${htmlElements.button}[type=button].FragmentListContent__add`;
+  spinner         = `${htmlElements.div}.spinner.spinner-md`;
 
   static openPage(button) {
     cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
     cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?*'));
     cy.get(button).click();
-    cy.wait(['@fragmentsPageLoadingGET','@fragmentsPageLoadingGET', '@widgetsPageLoadingGET']);
+    cy.wait(['@fragmentsPageLoadingGET', '@fragmentsPageLoadingGET', '@widgetsPageLoadingGET']);
   }
 
   static openNavigate(button) {
     cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
     cy.get(button).click();
     cy.wait(['@fragmentsPageLoadingGET']);
+  }
+
+  static openActionButton(button, code = null) {
+    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'actionsPageLoadingGET', `/${code}`));
+    cy.get(button).click();
+    cy.wait('@actionsPageLoadingGET');
+  }
+
+  static searchButton(button) {
+    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'resultsLoadingGET', '?sort*'));
+    cy.get(button).click();
+    cy.wait('@resultsLoadingGET');
   }
 
   getSearchForm() {
@@ -56,7 +68,7 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   clickSearchSubmitButton() {
-    this.getSearchSubmitButton().click();
+    this.getSearchSubmitButton().then(button => UXFragmentsPage.searchButton(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
@@ -120,7 +132,12 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   openAddFragmentPage() {
-    this.getAddButton().click();
+    this.getAddButton()
+        .then(button => {
+          cy.intercept('http://entando7-0.apps.ent64azure.com/entando-de-app/api/system/report').as('openAddPage');
+          cy.get(button).click();
+          cy.wait('@openAddPage');
+        });
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 }
@@ -150,18 +167,20 @@ class FragmentsKebabMenu extends KebabMenu {
                .find(`.FragmentListMenuAction__menu-item-delete`);
   }
 
-  openEdit() {
-    this.getEdit().click();
+  openEdit(code) {
+    this.getEdit().then(button => UXFragmentsPage.openActionButton(button, `${code}`));
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 
-  openClone() {
-    this.getClone().click();
+  openClone(code) {
+    this.getClone()
+        .then(button => UXFragmentsPage.openActionButton(button, `${code}`));
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 
-  openDetails() {
-    this.getDetails().click();
+  openDetails(code) {
+    this.getDetails()
+        .then(button => UXFragmentsPage.openActionButton(button, `${code}`));
     return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
   }
 

@@ -10,17 +10,29 @@ export default class FragmentsPage extends AppContent {
   codeInput             = `${htmlElements.input}[name="code"]`;
   guiCodeInput          = `${htmlElements.textarea}[name="guiCode"]`;
   guiCodeSelector       = `${htmlElements.a}[id="basic-tabs-tab-1"]`;
-  defaultGuiSelector    =`${htmlElements.a}[id="basic-tabs-tab-2"]`;
+  defaultGuiSelector    = `${htmlElements.a}[id="basic-tabs-tab-2"]`;
   saveBtn               = `${htmlElements.button}[type=button]#saveopts`;
   saveOption            = `${htmlElements.a}#regularSaveButton`;
   saveAndContinueOption = `${htmlElements.a}#continueSaveButton`;
   cancelBtn             = `${htmlElements.button}[class="pull-right btn btn-default"]`;
 
+  static saveButton(button, code = null) {
+    if (code) {
+      cy.fragmentsController().then(controller => controller.intercept({method: 'PUT'}, 'fragmentsPageLoadingPUT', `/${code}`));
+    } else {
+      cy.fragmentsController().then(controller => controller.intercept({method: 'POST'}, 'fragmentsPageLoadingPOST'));
+    }
+    cy.get(button).click();
+    if (code) cy.wait('@fragmentsPageLoadingPUT');
+    else cy.wait('@fragmentsPageLoadingPOST');
+  }
+
   getBreadCrumb() {
     return this.get()
-        .find(`.BreadcrumbItem`).eq(1);
+               .find(`.BreadcrumbItem`).eq(1);
   }
-  openBreadCrumb(){
+
+  openBreadCrumb() {
     this.getBreadCrumb().then(button => UXFragmentsPage.openPage(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
@@ -35,15 +47,15 @@ export default class FragmentsPage extends AppContent {
                .find(this.guiCodeInput);
   }
 
-  getGuiCodeSelector(){
+  getGuiCodeSelector() {
     return this.get()
-        .find(this.guiCodeSelector);
+               .find(this.guiCodeSelector);
 
   }
 
-  getDefaultGuiCodeSelector(){
+  getDefaultGuiCodeSelector() {
     return this.get()
-        .find(this.defaultGuiSelector);
+               .find(this.defaultGuiSelector);
   }
 
   getSaveBtn() {
@@ -55,39 +67,39 @@ export default class FragmentsPage extends AppContent {
     return this.get()
                .find(this.saveOption);
   }
-  getSaveAndContinueOption(){
+
+  getSaveAndContinueOption() {
     return this.get()
-        .find(this.saveAndContinueOption);
+               .find(this.saveAndContinueOption);
   }
 
-  getCancelBtn(){
+  getCancelBtn() {
     return this.get()
-        .find(this.cancelBtn);
+               .find(this.cancelBtn);
   }
-
 
   clickSaveBtn() {
+    this.getSaveBtn();
+    return cy.get('@currentPage');
+  }
+
+  clickSave() {
+    this.getSaveBtn()
+        .then(button => button.click())
+        .then(() => this.getSaveOption().click());
+    return cy.get('@currentPage');
+  }
+
+  save(code = null) {
     this.getSaveBtn().click();
-  }
-
-  clickSaveOption() {
-    return this.getSaveOption().click();
-  }
-
-  clickSaveAndContinueOption(){
-    this.getSaveAndContinueOption().click();
-  }
-
-  save() {
-    this.clickSaveBtn();
-    this.clickSaveOption();
+    this.getSaveOption().then(button => FragmentsPage.saveButton(button, code));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
-  saveAndContinue() {
-    this.clickSaveBtn();
-    return this.clickSaveAndContinueOption();
+  saveAndContinue(code = null) {
+    this.getSaveBtn().click();
+    this.getSaveAndContinueOption().then(button => FragmentsPage.saveButton(button, code));
+    return cy.get('@currentPage');
   }
-
 
 }
