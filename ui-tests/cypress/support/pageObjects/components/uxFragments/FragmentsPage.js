@@ -65,13 +65,6 @@ export default class FragmentsPage extends AppContent {
         .find(this.cancelBtn);
   }
 
-  typeCode(value) {
-    this.getCodeInput().type(value);
-  }
-
-  typeGuiCode(value) {
-    this.getGuiCodeInput().type(value);
-  }
 
   clickSaveBtn() {
     this.getSaveBtn().click();
