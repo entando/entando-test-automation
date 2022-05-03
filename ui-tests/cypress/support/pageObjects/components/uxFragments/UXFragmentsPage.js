@@ -119,7 +119,6 @@ export default class UXFragmentsPage extends AppContent {
   navigateToLastPage() {
     this.getPagination().getLastPageButton().then(button => UXFragmentsPage.openNavigate(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
-
   }
 
   getAddButton() {
@@ -159,7 +158,6 @@ class FragmentsKebabMenu extends KebabMenu {
   getDetails() {
     return this.get()
                .find(`.FragmentListMenuAction__menu-item-details`);
-
   }
 
   getDelete() {
