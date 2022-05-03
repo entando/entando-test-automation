@@ -16,16 +16,6 @@ export default class FragmentsPage extends AppContent {
   saveAndContinueOption = `${htmlElements.a}#continueSaveButton`;
   cancelBtn             = `${htmlElements.button}[class="pull-right btn btn-default"]`;
 
-  static saveButton(button, code = null) {
-    if (code) {
-      cy.fragmentsController().then(controller => controller.intercept({method: 'PUT'}, 'fragmentsPageLoadingPUT', `/${code}`));
-    } else {
-      cy.fragmentsController().then(controller => controller.intercept({method: 'POST'}, 'fragmentsPageLoadingPOST'));
-    }
-    cy.get(button).click();
-    if (code) cy.wait('@fragmentsPageLoadingPUT');
-    else cy.wait('@fragmentsPageLoadingPOST');
-  }
 
   getBreadCrumb() {
     return this.get()
@@ -78,11 +68,6 @@ export default class FragmentsPage extends AppContent {
                .find(this.cancelBtn);
   }
 
-  clickSaveBtn() {
-    this.getSaveBtn();
-    return cy.get('@currentPage');
-  }
-
   clickSave() {
     this.getSaveBtn()
         .then(button => button.click())
@@ -90,15 +75,25 @@ export default class FragmentsPage extends AppContent {
     return cy.get('@currentPage');
   }
 
-  save(code = null) {
+  save() {
     this.getSaveBtn().click();
-    this.getSaveOption().then(button => FragmentsPage.saveButton(button, code));
+    this.getSaveOption().then(button => UXFragmentsPage.openPage(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
   saveAndContinue(code = null) {
     this.getSaveBtn().click();
-    this.getSaveAndContinueOption().then(button => FragmentsPage.saveButton(button, code));
+    this.getSaveAndContinueOption()
+        .then(button => {
+          if (code) {
+            cy.fragmentsController().then(controller => controller.intercept({method: 'PUT'}, 'fragmentsPageLoadingPUT', `/${code}`));
+          } else {
+            cy.fragmentsController().then(controller => controller.intercept({method: 'POST'}, 'fragmentsPageLoadingPOST'));
+          }
+          cy.get(button).click();
+          if (code) cy.wait('@fragmentsPageLoadingPUT');
+          else cy.wait('@fragmentsPageLoadingPOST');
+        });
     return cy.get('@currentPage');
   }
 
