@@ -6,6 +6,11 @@ export default class VersioningPage extends AdminContent {
   searchForm      = `${htmlElements.form}[id="search"]`;
   searchDescInput = `${htmlElements.input}.form-control`;
 
+  static openPage(button) {
+    cy.get(button).click();
+    cy.wait(1000);
+  }
+
   getSearchForm() {
     return this.get()
                .find(this.searchForm);
@@ -19,6 +24,16 @@ export default class VersioningPage extends AdminContent {
   getSearchSubmitButton() {
     return this.getSearchForm()
                .find(`${htmlElements.button}.btn`);
+  }
+
+  submitSearch() {
+    this.getSearchSubmitButton()
+        .then(button => {
+          cy.intercept('http://entando7-0.apps.ent64azure.com/entando-de-app/do/jpversioning/Content/Versioning/search.action').as('submitSearch');
+          cy.get(button).click();
+          cy.wait('@submitSearch');
+        });
+    return cy.get('@currentPage');
   }
 
   getTable() {
