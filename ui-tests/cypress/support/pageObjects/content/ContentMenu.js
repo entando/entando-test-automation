@@ -75,8 +75,8 @@ export default class ContentMenu extends SubMenu {
   }
 
   openVersioning() {
-    this.getVersioning().click();
-    return new AdminPage(VersioningPage);
+    this.getVersioning().then(button => VersioningPage.openPage(button));
+    return cy.wrap(new AdminPage(VersioningPage)).as('currentPage');
   }
 
   openTypes() {

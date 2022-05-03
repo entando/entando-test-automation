@@ -1,13 +1,4 @@
-import HomePage from '../../support/pageObjects/HomePage';
-
-const openVersioningPage = () => {
-  let currentPage = new HomePage();
-  currentPage     = currentPage.getMenu().getContent().open();
-  return currentPage.openVersioning();
-};
-
-describe([Tag.GTS], 'Content Versioning', () => {
-  let currentPage;
+describe( 'Content Versioning', () => {
 
   beforeEach(() => {
     cy.kcAPILogin();
@@ -18,13 +9,17 @@ describe([Tag.GTS], 'Content Versioning', () => {
 
   describe('Content Version Browsing', () => {
     it('Pagination check when there are no results (ENG-2680)', () => {
-      currentPage = openVersioningPage();
-      currentPage.getContent().getSearchDescInput().type('z');
-      currentPage.getContent().getSearchSubmitButton().click();
-      cy.wait(1000);
-      currentPage.getContent().getSearchForm().should('contain.text', 'There aren\'t modified contents.');
+      openVersioningPage()
+          .then(page => page.getContent().getSearchDescInput().then(input => page.getContent().type(input, 'z')))
+          .then(page => page.getContent().submitSearch())
+          .then(page => page.getContent().getSearchForm().should('contain.text', 'There aren\'t modified contents.'));
     });
 
   });
 
 });
+
+const openVersioningPage = () => {
+  return cy.get('@currentPage')
+           .then(page => page.getMenu().getContent().open().openVersioning());
+};
