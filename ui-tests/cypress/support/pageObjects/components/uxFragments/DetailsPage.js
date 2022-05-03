@@ -1,7 +1,8 @@
-import {htmlElements} from '../../WebElement.js';
-import AppContent from '../../app/AppContent.js';
-import FragmentsPage from "./FragmentsPage";
-import AppPage from "../../app/AppPage";
+import {htmlElements}  from '../../WebElement.js';
+import AppContent      from '../../app/AppContent.js';
+import FragmentsPage   from "./FragmentsPage";
+import AppPage         from "../../app/AppPage";
+import UXFragmentsPage from './UXFragmentsPage';
 
 
 export default class DetailsPage extends AppContent {
@@ -22,8 +23,8 @@ export default class DetailsPage extends AppContent {
         return this.getMain()
             .find(this.editBtn);
     }
-    openEditBtn(){
-        this.getEditBtn().click();
+    openEditBtn(code){
+        this.getEditBtn().then(button => UXFragmentsPage.openActionButton(button, `${code}`));
         return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
     }
 
