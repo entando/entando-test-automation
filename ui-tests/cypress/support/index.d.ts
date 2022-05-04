@@ -28,9 +28,10 @@ import UserPreferencesController       from './controllers/restAPI/UserPreferenc
 import UsersController                 from './controllers/restAPI/UsersController';
 import WidgetsController               from './controllers/restAPI/WidgetsController';
 
-import CategoriesAdminConsoleController       from './controllers/jacms/CategoriesAdminConsoleController';
-import ContentsAdminConsoleController         from './controllers/jacms/ContentsAdminConsoleController';
-import ContentTemplatesAdminConsoleController from './controllers/jacms/ContentTemplatesAdminConsoleController';
+import CategoriesAdminConsoleController       from './controllers/cmsActions/CategoriesAdminConsoleController';
+import ContentsAdminConsoleController         from './controllers/cmsActions/ContentsAdminConsoleController';
+import ContentTemplatesAdminConsoleController from './controllers/cmsActions/ContentTemplatesAdminConsoleController';
+import VersioningAdminConsoleController       from './controllers/cmsActions/VersioningAdminConsoleController';
 
 export const enum Tag {
     WIP,
@@ -259,6 +260,11 @@ declare namespace Cypress {
          * Returns a new instance of a users controller
          */
         usersController(): Chainable<UsersController>;
+
+        /**
+         * Returns a new instance of a content versioning controller
+         */
+        versioningController(): Chainable<VersioningAdminConsoleController>;
 
         /**
          * Returns a new instance of a widgets controller
