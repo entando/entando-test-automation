@@ -7,8 +7,9 @@ export default class VersioningPage extends AdminContent {
   searchDescInput = `${htmlElements.input}.form-control`;
 
   static openPage(button) {
+    cy.intercept('http://entando7-0.apps.ent64azure.com/entando-de-app/do/jpversioning/Content/Versioning/list.action').as('contentVersioningPageLoadingGET');
     cy.get(button).click();
-    cy.wait(1000);
+    cy.wait('@contentVersioningPageLoadingGET');
   }
 
   getSearchForm() {
