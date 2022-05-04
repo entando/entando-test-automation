@@ -7,7 +7,9 @@ export default class VersioningPage extends AdminContent {
   searchDescInput = `${htmlElements.input}.form-control`;
 
   static openPage(button) {
-    cy.intercept('http://entando7-0.apps.ent64azure.com/entando-de-app/do/jpversioning/Content/Versioning/list.action').as('contentVersioningPageLoadingGET');
+    cy.versioningController()
+      .then(controller =>
+          controller.intercept({method: 'GET'}, 'contentVersioningPageLoadingGET', '/list.action'));
     cy.get(button).click();
     cy.wait('@contentVersioningPageLoadingGET');
   }
@@ -30,7 +32,9 @@ export default class VersioningPage extends AdminContent {
   submitSearch() {
     this.getSearchSubmitButton()
         .then(button => {
-          cy.intercept('http://entando7-0.apps.ent64azure.com/entando-de-app/do/jpversioning/Content/Versioning/search.action').as('submitSearch');
+          cy.versioningController()
+            .then(controller =>
+                controller.intercept({method: 'POST'}, 'submitSearch', '/search.action'));
           cy.get(button).click();
           cy.wait('@submitSearch');
         });
