@@ -4,69 +4,48 @@ import AppContent from '../../app/AppContent';
 
 import AppPage        from '../../app/AppPage';
 import ManagementPage from './ManagementPage';
-import DesignerPage   from '../designer/DesignerPage';
 
-export default class AddPage extends AppContent {
+export default class ClonePage extends AppContent {
 
-  titleInput          = `${htmlElements.input}[name="titles.{lang}"]`;
-  codeInput           = `${htmlElements.input}[name=code]`;
-  pageTreeSelector    = `${htmlElements.table}.PageTreeSelector`;
-  selectArea          = `${htmlElements.span}.PageTreeSelector__select-area`;
-  saveAndDesignButton = `${htmlElements.button}.PageForm__save-and-configure-btn`;
-  saveButton          = `${htmlElements.button}.PageForm__save-btn`;
+  static openPage(button, code) {
+    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
+    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
+    cy.get(button).click();
+    cy.wait(['@languagesPageLoadingGET', '@pagePageLoadingGET']);
+  }
 
   getTitleInput(lang) {
-    return this.getContents()
-               .find(this.titleInput.replace('{lang}', lang));
+    return this.getContents().find(`${htmlElements.input}[name="titles.${lang}"]`);
   }
 
   getCodeInput() {
-    return this.getContents()
-               .find(this.codeInput);
+    return this.getContents().find(`${htmlElements.input}[name=code]`);
   }
 
   getPageTreeSelectorTable() {
-    return this.getContents()
-               .find(this.pageTreeSelector);
+    return this.getContents().find(`${htmlElements.table}.PageTreeSelector`);
   }
 
   getSaveAndDesignButton() {
-    return this.getContents()
-               .find(this.saveAndDesignButton);
+    return this.getContents().find(`${htmlElements.button}.PageForm__save-and-configure-btn`);
   }
 
   getSaveButton() {
-    return this.getContents()
-               .find(this.saveButton);
-  }
-
-  typeTitle(value, lang = 'en') {
-    this.getTitleInput(lang).type(value);
-  }
-
-  typeCode(value) {
-    this.getCodeInput().type(value);
+    return this.getContents().find(`${htmlElements.button}.PageForm__save-btn`);
   }
 
   selectPagePlacement(pageOrder) {
     this.getPageTreeSelectorTable()
         .children(htmlElements.tbody)
         .children(htmlElements.tr).eq(pageOrder)
-        .find(this.selectArea)
+        .find(`${htmlElements.span}.PageTreeSelector__select-area`)
         .click();
-  }
-
-  clearCode() {
-    this.getCodeInput().clear();
-  }
-
-  clickSaveAndDesign() {
-    this.getSaveAndDesignButton().click();
-    return new AppPage(DesignerPage);
+    return cy.get('@currentPage');
   }
 
   clickSave() {
-    this.getSaveButton().click();
-    return new AppPage(ManagementPage);
+    this.getSaveButton().then(button => ManagementPage.openPage(button));
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
+
 }
