@@ -38,8 +38,8 @@ export default class PagesMenu extends SubMenu {
   }
 
   openManagement() {
-    this.getManagement().click();
-    return new AppPage(ManagementPage);
+    this.getManagement().then(button => ManagementPage.openPage(button));
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
   openDesigner() {
@@ -59,7 +59,7 @@ export default class PagesMenu extends SubMenu {
 
   openSettings() {
     this.getSettings().click();
-    return new AppPage(SettingsPage);
+    return cy.wrap(new AppPage(SettingsPage)).as('currentPage');
   }
 
 }
