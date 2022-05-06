@@ -131,12 +131,7 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   openAddFragmentPage() {
-    this.getAddButton()
-        .then(button => {
-          cy.intercept('http://entando7-0.apps.ent64azure.com/entando-de-app/api/system/report').as('openAddPage');
-          cy.get(button).click();
-          cy.wait('@openAddPage');
-        });
+    this.getAddButton().click();
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 }
