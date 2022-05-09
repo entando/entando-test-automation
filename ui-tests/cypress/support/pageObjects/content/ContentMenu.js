@@ -60,7 +60,7 @@ export default class ContentMenu extends SubMenu {
   }
 
   openAssets() {
-    this.getAssets().click();
+    this.getAssets().then(button => AssetsPage.openPage(button));
     return new AdminPage(AssetsPage);
   }
 
