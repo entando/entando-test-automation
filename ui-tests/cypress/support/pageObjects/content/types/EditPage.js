@@ -4,18 +4,31 @@ import AdminContent from '../../app/AdminContent.js';
 import KebabMenu    from '../../app/KebabMenu';
 
 import AdminPage    from '../../app/AdminPage.js';
-import DeleteDialog from '../../app/DeleteDialog';
 
 import TypesPage     from './TypesPage.js';
 import AttributePage from './attributes/AttributePage';
 
 export default class EditPage extends AdminContent {
 
-  codeInput           = `${htmlElements.input}[name=code]`;
-  nameInput           = `${htmlElements.input}[name=name]`;
-  saveButton          = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
-  attributeTypeSelect = `${htmlElements.select}[name=type]`;
-  addAttributeButton  = `${htmlElements.button}.ContentTypeForm__add`;
+  codeInput  = `${htmlElements.input}#entityTypeCode`;
+  nameInput  = `${htmlElements.input}#entityTypeDescription`;
+  saveButton = `${htmlElements.button}[name="entandoaction:saveEntityType"]`;
+  attributeTypeSelect = `${htmlElements.select}#attributeTypeCode`;
+  addAttributeButton  = `${htmlElements.button}[name="entandoaction:addAttribute"]`;
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openPage(button, code) {
+    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'editContentTypePageLoadingGET', `/initEditEntityType.action?entityManagerName=jacmsContentManager&entityTypeCode=${code}`));
+    cy.get(button).click();
+    cy.wait('@editContentTypePageLoadingGET');
+  }
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openPageFromAttribute(button) {
+    cy.contentTypesJacmsAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'editContentTypePageLoadingGET', '/entryEntityType.action'));
+    cy.get(button).click();
+    cy.wait('@editContentTypePageLoadingGET');
+  }
 
   getCodeInput() {
     return this.getContents()
@@ -49,9 +62,8 @@ export default class EditPage extends AdminContent {
   }
 
   getTableRow(code) {
-    return this.getKebabMenu(code)
-               .get()
-               .parents(htmlElements.tr);
+    return this.getTableRows()
+               .contains(htmlElements.tr, code);
   }
 
   getKebabMenu(code) {
@@ -63,39 +75,30 @@ export default class EditPage extends AdminContent {
                .find(this.saveButton);
   }
 
-  typeName(value) {
-    this.getNameInput().type(value);
-  }
-
-  clearName() {
-    this.getNameInput().clear();
-  }
-
-  selectAttribute(value) {
-    this.getAttributeTypeSelect().select(value);
-  }
-
   openAddAttributePage(attributeCode) {
-    this.selectAttribute(attributeCode);
-    this.getAddAttributeButton().click();
-    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AdminPage(AttributePage);
+    this.getAttributeTypeSelect().then(input => this.select(input, attributeCode));
+    this.getAddAttributeButton().then(button => AttributePage.openPage(button, attributeCode));
+    return cy.wrap(new AdminPage(AttributePage)).as('currentPage');
   }
 
   save() {
-    this.getSaveButton().click();
-    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AdminPage(TypesPage);
+    this.getSaveButton().then(button => TypesPage.openPage(button));
+    return cy.wrap(new AdminPage(TypesPage)).as('currentPage');
   }
 
 }
 
 class AttributeKebabMenu extends KebabMenu {
 
-  edit     = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-edit`;
-  moveUp   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-up`;
-  moveDown = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-down`;
-  delete   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-delete`;
+  edit     = `${htmlElements.button}[name="entandoaction:editAttribute?attributeName=${this.code}"]`;
+  moveUp   = `${htmlElements.button}[value="Move up"]`;
+  moveDown = `${htmlElements.button}[value="Move down"]`;
+  delete   = `${htmlElements.button}[title="Delete"]`;
+
+  get() {
+    return this.parent.getTableRow(this.code)
+               .find(`${htmlElements.div}.dropdown.dropdown-kebab-pf`);
+  }
 
   getEdit() {
     return this.get()
@@ -117,23 +120,9 @@ class AttributeKebabMenu extends KebabMenu {
                .find(this.delete);
   }
 
-  openEdit() {
-    this.getEdit().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AdminPage(AttributePage);
-  }
-
-  clickMoveUp() {
-    this.getMoveUp().click();
-  }
-
-  clickMoveDown() {
-    this.getMoveDown().click();
-  }
-
-  clickDelete() {
-    this.getDelete().click();
-    this.parent.parent.getDialog().setBody(DeleteDialog);
+  openEdit(code) {
+    this.getEdit().then(button => AttributePage.openPageFromEdit(button, code));
+    return cy.wrap(new AdminPage(AttributePage)).as('currentPage');
   }
 
 }

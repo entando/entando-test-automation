@@ -10,19 +10,45 @@ import CompositeAttributePage from './CompositeAttributePage';
 
 export default class AttributePage extends AdminContent {
 
-  codeInput           = `${htmlElements.input}[name=code]`;
-  nameInput           = `${htmlElements.input}[name="names.{lang}"]`;
-  nestedAttributeType = `${htmlElements.select}[name="nestedAttribute.type"]`;
-  continueButton      = `${htmlElements.button}.ContentTypeAttributeForm__continue-btn`;
+  codeInput           = `${htmlElements.input}#attributeName`;
+  nameInput           = `${htmlElements.input}#attributeDescription`;
+  nestedAttributeType = `${htmlElements.select}#listNestedType`;
+  continueButton      = `${htmlElements.button}.btn.btn-primary.pull-right`;
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openPage(button, code) {
+    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'attributePageLoadingGET', `/Attribute/addAttribute.action?attributeTypeCode=${code}`));
+    cy.get(button).click();
+    cy.wait('@attributePageLoadingGET');
+  }
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openPageFromEdit(button, code) {
+    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'attributePageLoadingGET', `/Attribute/editAttribute.action?attributeName=${code}`));
+    cy.get(button).click();
+    cy.wait('@attributePageLoadingGET');
+  }
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openPageFromComposite(button) {
+    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'POST' }, 'attributePageLoadingPOST', `/CompositeAttribute/saveCompositeAttribute.action`));
+    cy.get(button).click();
+    cy.wait('@attributePageLoadingPOST');
+  }
+
+  getContents() {
+    return this.get()
+               .find(`${htmlElements.form}[method="post"]`);
+  }
 
   getCodeInput() {
     return this.getContents()
                .find(this.codeInput);
   }
 
-  getNameInput(lang) {
+  getNameInput() {
     return this.getContents()
-               .find(this.nameInput.replace('{lang}', lang));
+               .find(this.nameInput);
   }
 
   getNestedAttributeType() {
@@ -35,38 +61,26 @@ export default class AttributePage extends AdminContent {
                .find(this.continueButton);
   }
 
-  typeCode(value) {
-    this.getCodeInput().type(value);
-  }
-
-  typeName(lang, value) {
-    this.getNameInput(lang).type(value);
-  }
-
-  clearName(lang) {
-    this.getNameInput(lang).clear();
-  }
-
-  selectNestedAttributeType(value) {
-    this.getNestedAttributeType().select(value);
-  }
-
   continue(attribute = '', isComposite = false) {
-    this.getContinueButton().click();
-    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    switch (attribute) {
-      case 'List':
-      case 'Monolist':
-        return new AdminPage(NestedAttributePage);
-      case 'Composite':
-        return new AdminPage(CompositeAttributePage);
-      default:
-        if (isComposite) {
-          return new AdminPage(CompositeAttributePage);
-        } else {
-          return new AdminPage(EditPage);
-        }
-    }
+    this.getContinueButton().then(button => {
+      switch (attribute) {
+        case 'List':
+        case 'Monolist':
+          NestedAttributePage.openPage(button);
+          return cy.wrap(new AdminPage(NestedAttributePage)).as('currentPage');
+        case 'Composite':
+          CompositeAttributePage.openPage(button);
+          return cy.wrap(new AdminPage(CompositeAttributePage)).as('currentPage');
+        default:
+          if (isComposite) {
+            CompositeAttributePage.openPage(button);
+            return cy.wrap(new AdminPage(CompositeAttributePage)).as('currentPage');
+          } else {
+            EditPage.openPageFromAttribute(button);
+            return cy.wrap(new AdminPage(EditPage)).as('currentPage');
+          }
+      }
+    });
   }
 
 }

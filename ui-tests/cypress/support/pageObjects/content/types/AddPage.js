@@ -4,13 +4,20 @@ import AdminContent from '../../app/AdminContent';
 
 import AdminPage from '../../app/AdminPage.js';
 
-import EditPage from './EditPage';
+import TypesPage from './TypesPage';
 
 export default class AddPage extends AdminContent {
 
-  codeInput  = `${htmlElements.input}[name=code]`;
-  nameInput  = `${htmlElements.input}[name=name]`;
-  saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
+  codeInput  = `${htmlElements.input}#entityTypeCode`;
+  nameInput  = `${htmlElements.input}#entityTypeDescription`;
+  saveButton = `${htmlElements.button}[name="entandoaction:saveEntityType"]`;
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openPage(button) {
+    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'addContentTypePageLoadingGET', '/initAddEntityType.action?entityManagerName=jacmsContentManager'));
+    cy.get(button).click();
+    cy.wait('@addContentTypePageLoadingGET');
+  }
 
   getCodeInput() {
     return this.getContents()
@@ -27,23 +34,14 @@ export default class AddPage extends AdminContent {
                .find(this.saveButton);
   }
 
-  typeName(value) {
-    return this.getNameInput().type(value);
-  }
-
-  typeCode(value) {
-    return this.getCodeInput().type(value);
-  }
-
   save() {
-    this.getSaveButton().click();
-    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AdminPage(EditPage);
+    this.getSaveButton().then(button => TypesPage.openPage(button));
+    return cy.wrap(new AdminPage(TypesPage)).as('currentPage');
   }
 
   addAndSaveContentType(code, name) {
-    this.typeCode(code);
-    this.typeName(name);
+    this.getCodeInput().then(input => this.type(input, code));
+    this.getNameInput().then(input => this.type(input, name));
     return this.save();
   }
 

@@ -8,20 +8,23 @@ import EditPage from '../EditPage';
 
 export default class NestedAttributePage extends AdminContent {
 
+  continueButton = `${htmlElements.button}[type="submit"][value="Submit"].btn.btn-primary.pull-right`;
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openPage(button) {
+    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'nestedAttributePageLoadingGET', `/ListAttribute/configureListElement.action`));
+    cy.get(button).click();
+    cy.wait('@nestedAttributePageLoadingGET');
+  }
+
   getContinueButton() {
     return this.getContents()
-               .children(htmlElements.div).eq(2)
-               .children(htmlElements.div)
-               .children(htmlElements.div)
-               .children(htmlElements.form)
-               .children(htmlElements.div).eq(1)
-               .find(htmlElements.button);
+               .find(this.continueButton);
   }
 
   continue() {
-    this.getContinueButton().click();
-    cy.wait(1000); //TODO find a better way to identify when the page loaded
-    return new AdminPage(EditPage);
+    this.getContinueButton().then(button => EditPage.openPageFromAttribute(button));
+    return cy.wrap(new AdminPage(EditPage)).as('currentPage');
   }
 
 }

@@ -37,7 +37,8 @@ export const seoPagesAPIURL = `${seoURL}/pages`;
 
 const adminConsoleURL    = Cypress.config('adminConsolePath');
 
-export const categoriesURL        = `${adminConsoleURL}/Category`;
+export const categoriesURL   = `${adminConsoleURL}/Category`;
+export const contentTypesURL = `${adminConsoleURL}/Entity`;
 
 const jpVersioningURL             = `${adminConsoleURL}/jpversioning`;
 const jpVersionContentURL         = `${jpVersioningURL}/Content`;
@@ -46,3 +47,4 @@ export const versioningURL        = `${jpVersionContentURL}/Versioning`;
 const cmsAdminConsoleURL          = `${adminConsoleURL}/jacms`;
 export const contentManagementURL = `${cmsAdminConsoleURL}/Content`;
 export const contentModelsURL     = `${cmsAdminConsoleURL}/ContentModel`;
+export const contentTypesJacmsURL = `${cmsAdminConsoleURL}/Entity`;

@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements, WebElement} from '../../../WebElement';
+import {htmlElements, WebElement} from '../../../WebElement';
 
 import AdminContent from '../../../app/AdminContent';
 
@@ -10,14 +10,20 @@ import NestedAttributePage from './NestedAttributePage';
 
 export default class CompositeAttributePage extends AdminContent {
 
-  attributeTable     = `${htmlElements.div}.AttributeListTableComposite`;
-  addAttributeButton = `${htmlElements.button}.ContentTypeForm__add`;
-  submitButton       = `${htmlElements.button}[type=submit]`;
+  addAttributeButton = `${htmlElements.button}[name="entandoaction:addAttributeElement"]`;
+  submitButton       = `${htmlElements.button}[type=submit][value="Submit"]`;
+  attributeSelect    = `${htmlElements.select}#attributeTypeCode`;
+
+  //FIXME AdminConsole is not built on REST APIs
+  static openPage(button) {
+    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'compositeAttributePageLoadingGET', `/CompositeAttribute/entryCompositeAttribute.action`));
+    cy.get(button).click();
+    cy.wait('@compositeAttributePageLoadingGET');
+  }
 
   getAttributeTypeSelect() {
     return this.getContents()
-               .find(this.attributeTable)
-               .find(htmlElements.select);
+               .find(this.attributeSelect);
   }
 
   getAddAttributeButton() {
@@ -30,13 +36,14 @@ export default class CompositeAttributePage extends AdminContent {
                .find(this.submitButton);
   }
 
-  selectAttribute(value) {
-    this.getAttributeTypeSelect().select(value);
-  }
-
   getAttributesTable() {
     return this.getContents()
                .find(htmlElements.table);
+  }
+
+  getTableRow(code) {
+    return this.getAttributesTable()
+               .contains(htmlElements.tr, code);
   }
 
   getKebabMenu(code) {
@@ -44,30 +51,31 @@ export default class CompositeAttributePage extends AdminContent {
   }
 
   openAddAttributePage(attributeCode) {
-    this.selectAttribute(attributeCode);
-    this.getAddAttributeButton().click();
-    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    return new AdminPage(AttributePage);
+    this.getAttributeTypeSelect().then(input => this.select(input, attributeCode));
+    this.getAddAttributeButton().then(button => AttributePage.openPageFromComposite(button));
+    return cy.wrap(new AdminPage(AttributePage)).as('currentPage');
   }
 
   continue(attribute = '') {
-    this.getSubmitButton().click();
-    cy.wait(1000); // TODO: find a way to avoid waiting for arbitrary time periods
-    switch (attribute) {
-      case 'Monolist':
-        return new AdminPage(NestedAttributePage);
-      default:
-        return new AdminPage(EditPage);
-    }
+    this.getSubmitButton().then(button => {
+      switch (attribute) {
+        case 'Monolist':
+          NestedAttributePage.openPage(button);
+          return cy.wrap(new AdminPage(NestedAttributePage)).as('currentPage');
+        default:
+          EditPage.openPageFromAttribute(button);
+          return cy.wrap(new AdminPage(EditPage)).as('currentPage');
+      }
+    })
   }
 
 }
 
 class AttributeKebabMenu extends WebElement {
 
-  moveUp   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-up`;
-  moveDown = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-move-down`;
-  delete   = `${htmlElements.li}.ContTypeAttributeListMenuAction__menu-item-delete`;
+  moveUp   = `${htmlElements.button}[value="Move up"]`;
+  moveDown = `${htmlElements.button}[value="Move down]`;
+  delete   = `${htmlElements.button}[value="Delete"][title="Delete"]`;
 
   constructor(parent, code) {
     super(parent);
@@ -75,9 +83,8 @@ class AttributeKebabMenu extends WebElement {
   }
 
   get() {
-    return this.parent.getAttributesTable()
-               .find(`${htmlElements.div}[${DATA_TESTID}=${this.code}-actions]`)
-               .children(htmlElements.div);
+    return this.parent.getTableRow(this.code)
+               .find(`${htmlElements.div}.dropdown.dropdown-kebab-pf`);
   }
 
   open() {
@@ -100,18 +107,6 @@ class AttributeKebabMenu extends WebElement {
   getDelete() {
     return this.get()
                .find(this.delete);
-  }
-
-  clickMoveUp() {
-    this.getMoveUp().click();
-  }
-
-  clickMoveDown() {
-    this.getMoveDown().click();
-  }
-
-  clickDelete() {
-    this.getDelete().click();
   }
 
 }
