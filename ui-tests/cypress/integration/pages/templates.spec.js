@@ -203,7 +203,7 @@ describe('Page Templates', () => {
               .then(table => {
                 cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
                   .then(rows => {
-                    page.getContent().getPagination().getDropdownButton().should('have.text', rows.length+' ');
+                    page.getContent().getPagination().getPageSizeDropdown().should('have.text', rows.length+' ');
                   });
               });
           page.getContent().getPagination().getInput().should('have.value', 1);
@@ -568,7 +568,7 @@ describe('Page Templates', () => {
 
     it([Tag.FEATURE, 'ENG-3525'], 'When navigating out of edit template page, the template is not changed', function () {
       addPageTemplate(sampleData);
-      
+
       openPageTemplateMgmtPage()
         .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openEdit())
         .then(page => {

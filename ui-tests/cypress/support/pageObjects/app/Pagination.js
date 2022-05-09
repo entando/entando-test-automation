@@ -1,36 +1,28 @@
 import {htmlElements, WebElement} from '../WebElement';
 
+import AppPage from './AppPage';
+
 export default class Pagination extends WebElement {
-  panel = null;
 
-  listPagination   = `${htmlElements.form}.table-view-pf-pagination`;
-  textItemsCurrent = `${htmlElements.span}.pagination-pf-items-current`;
-  textItemsTotal   = `${htmlElements.span}.pagination-pf-items-total`;
-  ulPrev           = `${htmlElements.ul}.pagination-pf-back`;
-  ulNext           = `${htmlElements.ul}.pagination-pf-forward`;
-  buttonPrev       = `${htmlElements.a}[title="Previous page"]`;
-  buttonNext       = `${htmlElements.a}[title="Next page"]`;
-  buttonFirst      = `${htmlElements.a}[title="First page"]`;
-  buttonLast       = `${htmlElements.a}[title="Last page"]`;
-  input            = `${htmlElements.input}.pagination-pf-page`;
-  dropdown         = `${htmlElements.button}#pagination-row-dropdown`;
-
-  constructor(parent) {
+  constructor(parent, paginationPage) {
     super(parent);
-    this.panel = this.parent.getContents()
-                     .find(this.listPagination);
+    this.paginationPage = paginationPage;
   }
 
   get() {
-    return this.panel;
+    return this.parent.getContents().find(`${htmlElements.form}.table-view-pf-pagination`);
   }
 
   getAreas() {
-    return this.panel.children(`${htmlElements.div}.form-group`);
+    return this.get().children(`${htmlElements.div}.form-group`);
   }
 
   getLeftArea() {
     return this.getAreas().eq(0);
+  }
+
+  getPageSizeDropdown() {
+    return this.getLeftArea().find(`${htmlElements.button}#pagination-row-dropdown`);
   }
 
   getRightArea() {
@@ -38,53 +30,64 @@ export default class Pagination extends WebElement {
   }
 
   getItemsCurrent() {
-    return this.getRightArea()
-               .find(this.textItemsCurrent);
+    return this.getRightArea().find(`${htmlElements.span}.pagination-pf-items-current`);
   }
 
   getItemsTotal() {
-    return this.getRightArea()
-               .find(this.textItemsTotal);
+    return this.getRightArea().find(`${htmlElements.span}.pagination-pf-items-total`);
   }
 
   getPreviousButtonsArea() {
-    return this.getRightArea()
-               .find(this.ulPrev);
-  }
-
-  getNextButtonsArea() {
-    return this.getRightArea()
-               .find(this.ulNext);
-  }
-
-  getPreviousButton() {
-    return this.getPreviousButtonsArea()
-               .find(this.buttonPrev);
-  }
-
-  getNextButton() {
-    return this.getNextButtonsArea()
-               .find(this.buttonNext);
+    return this.getRightArea().find(`${htmlElements.ul}.pagination-pf-back`);
   }
 
   getFirstPageButton() {
-    return this.getPreviousButtonsArea()
-               .find(this.buttonFirst);
+    return this.getPreviousButtonsArea().find(`${htmlElements.a}[title="First page"]`);
   }
 
-  getLastPageButton() {
-    return this.getNextButtonsArea()
-               .find(this.buttonLast);
+  getPreviousButton() {
+    return this.getPreviousButtonsArea().find(`${htmlElements.a}[title="Previous page"]`);
   }
 
   getInput() {
-    return this.getRightArea()
-               .find(this.input);
+    return this.getRightArea().find(`${htmlElements.input}.pagination-pf-page`);
   }
 
-  getDropdownButton() {
-    return this.getLeftArea()
-               .find(this.dropdown);
+  getNextButtonsArea() {
+    return this.getRightArea().find(`${htmlElements.ul}.pagination-pf-forward`);
+  }
+
+  getNextButton() {
+    return this.getNextButtonsArea().find(`${htmlElements.a}[title="Next page"]`);
+  }
+
+  getLastPageButton() {
+    return this.getNextButtonsArea().find(`${htmlElements.a}[title="Last page"]`);
+  }
+
+  navigateToFirstPage() {
+    this.getFirstPageButton().then(button => this.paginationPage.changePage(button));
+    return cy.wrap(new AppPage(this.paginationPage)).as('currentPage');
+  }
+
+  navigateToPreviousPage() {
+    this.getPreviousButton().then(button => this.paginationPage.changePage(button));
+    return cy.wrap(new AppPage(this.paginationPage)).as('currentPage');
+  }
+
+  navigateToPage(page) {
+    this.getInput().clear().then(() => this.paginationPage.goToPage(page));
+    return cy.wrap(new AppPage(this.paginationPage)).as('currentPage');
+  }
+
+  navigateToNextPage() {
+    this.getNextButton().then(button => this.paginationPage.changePage(button));
+    return cy.wrap(new AppPage(this.paginationPage)).as('currentPage');
+  }
+
+  navigateToLastPage() {
+    this.getLastPageButton().then(button => this.paginationPage.changePage(button));
+    return cy.wrap(new AppPage(this.paginationPage)).as('currentPage');
   }
 
 }

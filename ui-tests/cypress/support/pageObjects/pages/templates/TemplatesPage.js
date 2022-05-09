@@ -41,7 +41,7 @@ export default class TemplatesPage extends AppContent {
   }
 
   getPagination() {
-    return new Pagination(this);
+    return new Pagination(this, TemplatesPage);
   }
 
   getFootArea() {
