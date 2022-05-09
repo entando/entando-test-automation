@@ -255,7 +255,7 @@ describe('UX Fragments', () => {
         openFragmentsPage()
             .then(page => {
               page.getContent().getTableRows().should('exist').and('be.visible');
-              page.getContent().getPagination().getDropdownButton().should('have.text', '10 ');
+              page.getContent().getPagination().getPageSizeDropdown().should('have.text', '10 ');
               page.getContent().getTableRows().should('have.length', 10);
               page.getContent().getPagination().getInput().should('have.value', 1);
             });
@@ -263,43 +263,43 @@ describe('UX Fragments', () => {
       it([Tag.SANITY, 'ENG-3522'], 'Next Page', () => {
         openFragmentsPage()
             .then(page =>
-                page.getContent().navigateToNextPage())
+                page.getContent().getPagination().navigateToNextPage())
             .then(page => page.getContent().getPagination().getInput().should('have.value', 2));
       });
       it([Tag.SANITY, 'ENG-3522'], 'Previous Page', () => {//TODO when input page field is fixed, than generalize with a navigateRandomPage
 
         openFragmentsPage()
-            .then(page => page.getContent().navigateToLastPage())
-            .then(page => page.getContent().navigateToPreviousPage())
+            .then(page => page.getContent().getPagination().navigateToLastPage())
+            .then(page => page.getContent().getPagination().navigateToPreviousPage())
             .then(page => page.getContent().getPagination().getInput().should('have.value', 6));
         cy.get('@currentPage')
-          .then(page => page.getContent().navigateToPreviousPage())
+          .then(page => page.getContent().getPagination().navigateToPreviousPage())
           .then(page => page.getContent().getPagination().getInput().should('have.value', 5));
         cy.get('@currentPage')
-          .then(page => page.getContent().navigateToPreviousPage())
+          .then(page => page.getContent().getPagination().navigateToPreviousPage())
           .then(page => page.getContent().getPagination().getInput().should('have.value', 4));
         cy.get('@currentPage')
-          .then(page => page.getContent().navigateToPreviousPage())
+          .then(page => page.getContent().getPagination().navigateToPreviousPage())
           .then(page => page.getContent().getPagination().getInput().should('have.value', 3));
         cy.get('@currentPage')
-          .then(page => page.getContent().navigateToPreviousPage())
+          .then(page => page.getContent().getPagination().navigateToPreviousPage())
           .then(page => page.getContent().getPagination().getInput().should('have.value', 2));
         cy.get('@currentPage')
-          .then(page => page.getContent().navigateToPreviousPage())
+          .then(page => page.getContent().getPagination().navigateToPreviousPage())
           .then(page => page.getContent().getPagination().getInput().should('have.value', 1));
       });
       it([Tag.SANITY, 'ENG-3522'], 'First Page', () => {//TODO when input page field is fixed, than generalize with a navigateRandomPage
         openFragmentsPage()
-            .then(page => page.getContent().navigateToLastPage())
+            .then(page => page.getContent().getPagination().navigateToLastPage())
             .then(page => page.getContent().getPagination().getInput().should('have.value', 7));
         cy.get('@currentPage')
-          .then(page => page.getContent().navigateToFirstPage())
+          .then(page => page.getContent().getPagination().navigateToFirstPage())
           .then(page => page.getContent().getPagination().getInput().should('have.value', 1));
       });
       it([Tag.SANITY, 'ENG-3522'], 'Last Page', () => {//TODO when input page field is fixed, than generalize with a navigateRandomPage
         openFragmentsPage()
 
-            .then(page => page.getContent().navigateToLastPage())
+            .then(page => page.getContent().getPagination().navigateToLastPage())
             .then(page => page.getContent().getPagination().getInput().should('have.value', 7));
       });
 
@@ -307,7 +307,7 @@ describe('UX Fragments', () => {
         const randomPage = Math.floor(Math.random() * 12) + 2;
         openFragmentsPage()
             .then(page => {
-              page.getContent().getPagination().getInput().then(input => page.getContent().type(input, randomPage));
+              page.getContent().getPagination().navigateToPage(randomPage);
               page.getContent().getPagination().getInput().should('have.value', randomPage);
             });
       });

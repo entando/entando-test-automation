@@ -75,7 +75,7 @@ export default class TemplatesPage extends AdminContent {
   }
 
   getPagination() {
-    return new Pagination(this);
+    return new Pagination(this, TemplatesPage);
   }
 
   getAddButton() {

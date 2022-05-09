@@ -24,7 +24,13 @@ export default class UXFragmentsPage extends AppContent {
     cy.wait(['@fragmentsPageLoadingGET', '@fragmentsPageLoadingGET', '@widgetsPageLoadingGET']);
   }
 
-  static openNavigate(button) {
+  static goToPage(page) {
+    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
+    cy.realType(`${page}{enter}`);
+    cy.wait(['@fragmentsPageLoadingGET']);
+  }
+
+  static changePage(button) {
     cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
     cy.get(button).click();
     cy.wait(['@fragmentsPageLoadingGET']);
@@ -97,28 +103,7 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   getPagination() {
-    return new Pagination(this);
-  }
-
-  navigateToNextPage() {
-    this.getPagination().getNextButton().then(button => UXFragmentsPage.openNavigate(button));
-    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
-  }
-
-
-  navigateToPreviousPage() {
-    this.getPagination().getPreviousButton().then(button => UXFragmentsPage.openNavigate(button));
-    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
-  }
-
-  navigateToFirstPage() {
-    this.getPagination().getFirstPageButton().then(button => UXFragmentsPage.openNavigate(button));
-    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
-  }
-
-  navigateToLastPage() {
-    this.getPagination().getLastPageButton().then(button => UXFragmentsPage.openNavigate(button));
-    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
+    return new Pagination(this, UXFragmentsPage);
   }
 
   getAddButton() {
@@ -134,6 +119,7 @@ export default class UXFragmentsPage extends AppContent {
     this.getAddButton().click();
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
+
 }
 
 class FragmentsKebabMenu extends KebabMenu {

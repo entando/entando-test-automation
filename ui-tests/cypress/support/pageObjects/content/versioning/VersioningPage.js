@@ -53,7 +53,7 @@ export default class VersioningPage extends AdminContent {
   }
 
   getPagination() {
-    return new Pagination(this);
+    return new Pagination(this, VersioningPage);
   }
 
 }
