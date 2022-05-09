@@ -21,9 +21,20 @@ export default class DeleteAdminPage extends AdminContent {
     cy.wait('@deleteCategoryPageLoadingPOST');
   }
 
+  //FIXME AdminConsole is not built on REST APIs
+  static openDeleteContentTypePage(button, code) {
+    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'deleteContentTypePageLoadingGET', `/trashEntityType.action?entityManagerName=jacmsContentManager&entityTypeCode=${code}`));
+    cy.get(button).click();
+    cy.wait('@deleteContentTypePageLoadingGET');
+  }
+
   getForm() {
     return this.getContents()
                .children(this.form);
+  }
+
+  setForm(newForm) {
+    this.form = `${htmlElements.form}[id="${newForm}"]`;
   }
 
   getCloseButton() {

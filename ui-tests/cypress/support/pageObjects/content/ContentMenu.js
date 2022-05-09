@@ -80,8 +80,8 @@ export default class ContentMenu extends SubMenu {
   }
 
   openTypes() {
-    this.getTypes().click();
-    return new AdminPage(TypesPage);
+    this.getTypes().then(button => TypesPage.openPage(button));
+    return cy.wrap(new AdminPage(TypesPage)).as('currentPage');
   }
 
   openSettings() {

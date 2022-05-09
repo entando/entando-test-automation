@@ -28,10 +28,12 @@ import UserPreferencesController       from './controllers/restAPI/UserPreferenc
 import UsersController                 from './controllers/restAPI/UsersController';
 import WidgetsController               from './controllers/restAPI/WidgetsController';
 
-import CategoriesAdminConsoleController       from './controllers/cmsActions/CategoriesAdminConsoleController';
-import ContentsAdminConsoleController         from './controllers/cmsActions/ContentsAdminConsoleController';
-import ContentTemplatesAdminConsoleController from './controllers/cmsActions/ContentTemplatesAdminConsoleController';
-import VersioningAdminConsoleController       from './controllers/cmsActions/VersioningAdminConsoleController';
+import CategoriesAdminConsoleController        from './controllers/cmsActions/CategoriesAdminConsoleController';
+import ContentsAdminConsoleController          from './controllers/cmsActions/ContentsAdminConsoleController';
+import ContentTemplatesAdminConsoleController  from './controllers/cmsActions/ContentTemplatesAdminConsoleController';
+import VersioningAdminConsoleController        from './controllers/cmsActions/VersioningAdminConsoleController';
+import ContentTypesAdminConsoleController      from './controllers/cmsActions/ContentTypesAdminConsoleController';
+import ContentTypesJacmsAdminConsoleController from './controllers/cmsActions/ContentTypesJacmsAdminConsoleController';
 
 export const enum Tag {
     WIP,
@@ -162,9 +164,19 @@ declare namespace Cypress {
         contentTypeAttributesController(contentTypeCode): Chainable<ContentTypeAttributesController>;
 
         /**
+        * Returns a new instance of a content types admin console controller
+        */
+        contentTypesAdminConsoleController(): Chainable<ContentTypesAdminConsoleController>;
+
+        /**
          * Returns a new instance of a content types controller
          */
         contentTypesController(): Chainable<ContentTypesController>;
+
+        /**
+        * Returns a new instance of a content types jacms admin console controller
+        */
+        contentTypesJacmsAdminConsoleController(): Chainable<ContentTypesJacmsAdminConsoleController>;
 
         /**
          * Returns a new instance of a database controller
