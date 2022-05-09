@@ -52,6 +52,7 @@ import './controllers/restAPI/UserPreferencesController';
 import './controllers/restAPI/UsersController';
 import './controllers/restAPI/WidgetsController';
 
+import './controllers/cmsActions/AssetsAdminConsoleController';
 import './controllers/cmsActions/ContentsAdminConsoleController';
 import './controllers/cmsActions/ContentTemplatesAdminConsoleController';
 import './controllers/cmsActions/ContentTypesAdminConsoleController';
