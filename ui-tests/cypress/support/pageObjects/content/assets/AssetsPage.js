@@ -1,41 +1,76 @@
-import {htmlElements}  from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
-import AdminContent    from '../../app/AdminContent';
-import KebabMenu       from '../../app/KebabMenu.js';
-
-import DeleteDialog    from '../../app/DeleteDialog.js';
-import {DialogContent} from '../../app/Dialog.js';
+import AdminContent from '../../app/AdminContent';
+import KebabMenu    from '../../app/KebabMenu.js';
+import AdminPage       from '../../app/AdminPage';
+import AddPage         from './AddPage';
+import EditPage        from './EditPage';
+import DeletePage      from './DeletePage';
 
 export default class AssetsPage extends AdminContent {
 
-  fileInput                = `${htmlElements.input}[type=file]`;
-  assetsFilter             = `${htmlElements.div}.AssetsAdvancedFilter`;
-  assetsSearchText         = `${htmlElements.input}#keyword`;
+  addButton                = `${htmlElements.a}[title="Add"]`;
+  assetsFilter             = `${htmlElements.p}.panel-title`;
+  collapsePanel            = `${htmlElements.div}#collapseOne`;
+  assetsSearchText         = `${htmlElements.input}#fileName`;
   assetsFilterSearchButton = `${htmlElements.button}[type=submit]`;
-  assetsView               = `${htmlElements.div}.AssetsList__files-grid`;
-  assetsBody               = `${htmlElements.div}.AssetsList__body`;
-  resultInfo               = `${htmlElements.div}.AssetsList__filter-info`;
-  resultInfoItemCount      = `${htmlElements.span}.AssetsList__items-count`;
+  assetsView               = `${htmlElements.div}#list-view`;
+  assetsBody               = `${htmlElements.form}#search`;
+  resultInfo               = `${htmlElements.div}#list-view`;
+  resultInfoItemCount      = `${htmlElements.span}`;
 
-  getFileInput() {
+  static openPage(button) {
+    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'assetsPageLoadingGet', '/list.action?*'));
+    cy.get(button).click();
+    cy.wait('@assetsPageLoadingGet');
+  }
+
+  getAddButton() {
     return this.get()
-               .find(this.fileInput);
+               .find(this.addButton);
+  }
+
+  openAddAssets() {
+    this.getAddButton().then(button => AddPage.openPage(button));
+    return new AdminPage(AddPage);
   }
 
   getAssetsFilter() {
     return this.get()
-               .find(this.assetsFilter);
+               .find(this.assetsFilter)
+               .children(htmlElements.a);
+  }
+
+  openAdvancedFilter() {
+    return this.getAssetsFilter()
+               .then(button =>
+                   this.click(button));
+  }
+
+  getCollapsePanel() {
+    return this.get()
+               .find(this.collapsePanel);
   }
 
   getSearchTextfield() {
-    return this.getAssetsFilter()
+    return this.getCollapsePanel()
                .find(this.assetsSearchText);
   }
 
   getSearchButton() {
-    return this.getAssetsFilter()
-               .children(htmlElements.div).eq(3)
+    return this.get()
                .find(this.assetsFilterSearchButton);
+  }
+
+  submitSearch() {
+    return this.getSearchButton()
+               .then(button => {
+                 cy.assetsAdminConsoleController()
+                   .then(controller =>
+                       controller.intercept({method: 'POST'}, 'submitSearch', '/search.action'));
+                 this.click(button);
+                 cy.wait('@submitSearch');
+               });
   }
 
   getAssetsView() {
@@ -49,114 +84,80 @@ export default class AssetsPage extends AdminContent {
   }
 
   getFilterResultInfo() {
-    return this.getAssetsBody()
+    return this.get()
                .find(this.resultInfo);
   }
 
   getFilterResultItemCount() {
     return this.getFilterResultInfo()
+               .find(`#search > .pager`)
                .find(this.resultInfoItemCount);
   }
 
-  getTable() {
-    return this.getAssetsBody()
-               .find(htmlElements.table);
-  }
-
   getTableRows() {
-    return this.getTable()
-               .children(htmlElements.tbody)
-               .children(htmlElements.tr);
+    return this.getAssetsBody();
   }
 
   getKebabMenu(code) {
     return new AssetsKebabMenu(this, code);
   }
 
-  selectFiles(...fileName) {
-    this.getFileInput().selectFile(fileName, {force: true});
-    this.parent.getDialog().setBody(AddAssetDialog);
-  }
 }
 
 class AssetsKebabMenu extends KebabMenu {
 
   get() {
-    return this.parent.getTableRows()
-               .find(`#AssetsList__item-action-${this.code}`)
+    return this.parent.get()
+               .children()
+               .find(`${htmlElements.div}.tab-content`)
+               .find(`#list-view > #search`)
+               .find(`${htmlElements.div}.list-group-item`);
+
+  }
+
+  getActionsButtons() {
+    return this.get()
+               .children(`${htmlElements.div}.list-view-pf-actions`);
+  }
+
+  getDropdown() {
+    return this.getActionsButtons()
+               .children(`${htmlElements.div}.dropdown`)
+               .children(htmlElements.ul)
+               .children(htmlElements.li)
+               .find(`${htmlElements.a}[title="Edit: image1.JPG"]`)
                .closest(htmlElements.div);
   }
 
+  openDropdown() {
+    this.getDropdown()
+        .children(`${htmlElements.button}#dropdownKebabRight2`)
+        .click();
+    return this;
+  }
+
   getEdit() {
-    return this.get()
+    return this.getDropdown()
                .find(htmlElements.li)
                .eq(0);
   }
 
   getDelete() {
-    return this.get()
+    return this.getDropdown()
                .find(htmlElements.li)
-               .eq(3);
+               .eq(1);
   }
 
   openEdit() {
-    this.getEdit().click();
-    this.parent.parent.getDialog().setBody(EditAssetDialog);
+    this.getEdit().then(button => EditPage.openPage(button));
+    return cy.wrap(new AdminPage(EditPage)).as('currentPage');
   }
 
   clickDelete() {
-    this.getDelete().click();
-    this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.getDelete().then(button => DeletePage.openPage(button));
+    return cy.wrap(new AdminPage(DeletePage)).as('currentPage');
   }
 
 }
 
-class AddAssetDialog extends DialogContent {
 
-  getNameInput(idx = 0) {
-    return this.get()
-               .find(`${htmlElements.input}[name="files[${idx}].filename"]`);
-  }
-
-  getGroupSelect(idx = 0) {
-    return this.get()
-               .find(`${htmlElements.select}[name="files[${idx}].group"]`);
-  }
-
-  submit() {
-    this.get()
-        .find(`${htmlElements.button}[type=submit]`)
-        .click();
-  }
-}
-
-class EditAssetDialog extends DialogContent {
-
-
-  getDescriptionInput() {
-    return this.get()
-               .find(`${htmlElements.input}[name=description]`);
-  }
-
-  crop(xOffset, yOffset) {
-    this.get().find('.cropper-point.point-se').then(($cropperPoint) => {
-      const {x, y} = $cropperPoint[0].getBoundingClientRect();
-      cy.wrap($cropperPoint)
-        .trigger('mousedown', {which: 1})
-        .trigger('mousemove', {clientX: x + xOffset, clientY: y + yOffset})
-        .trigger('mouseup', {force: true});
-      this.apply();
-    });
-  }
-
-  rotate(direction) {
-    this.get()
-        .find(`[data-action=rotate${direction}]`)
-        .click();
-    this.apply();
-  }
-
-  apply() {
-    this.get().find('[data-action=save]').click();
-  }
-}
