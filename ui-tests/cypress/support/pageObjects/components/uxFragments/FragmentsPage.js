@@ -7,93 +7,75 @@ import UXFragmentsPage from './UXFragmentsPage.js';
 
 export default class FragmentsPage extends AppContent {
 
-  codeInput             = `${htmlElements.input}[name="code"]`;
-  guiCodeInput          = `${htmlElements.textarea}[name="guiCode"]`;
-  guiCodeSelector       = `${htmlElements.a}[id="basic-tabs-tab-1"]`;
-  defaultGuiSelector    = `${htmlElements.a}[id="basic-tabs-tab-2"]`;
-  saveBtn               = `${htmlElements.button}[type=button]#saveopts`;
-  saveOption            = `${htmlElements.a}#regularSaveButton`;
-  saveAndContinueOption = `${htmlElements.a}#continueSaveButton`;
-  cancelBtn             = `${htmlElements.button}[class="pull-right btn btn-default"]`;
-
-
-  getBreadCrumb() {
-    return this.get()
-               .find(`.BreadcrumbItem`).eq(1);
-  }
-
-  openBreadCrumb() {
-    this.getBreadCrumb().then(button => UXFragmentsPage.openPage(button));
-    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
+  static openPage(button, code) {
+    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'actionsPageLoadingGET', `/${code}`));
+    cy.get(button).click();
+    cy.wait('@actionsPageLoadingGET');
   }
 
   getCodeInput() {
-    return this.get()
-               .find(this.codeInput);
+    return this.get().find(`${htmlElements.input}[name="code"]`);
   }
 
   getGuiCodeInput() {
-    return this.get()
-               .find(this.guiCodeInput);
+    return this.get().find(`${htmlElements.textarea}[name="guiCode"]`);
   }
 
   getGuiCodeSelector() {
-    return this.get()
-               .find(this.guiCodeSelector);
+    return this.get().find(`${htmlElements.a}[id="basic-tabs-tab-1"]`);
 
   }
 
   getDefaultGuiCodeSelector() {
-    return this.get()
-               .find(this.defaultGuiSelector);
+    return this.get().find(`${htmlElements.a}[id="basic-tabs-tab-2"]`);
   }
 
-  getSaveBtn() {
-    return this.get()
-               .find(this.saveBtn);
+  getSaveButton() {
+    return this.get().find(`${htmlElements.button}[type=button]#saveopts`);
   }
 
   getSaveOption() {
-    return this.get()
-               .find(this.saveOption);
+    return this.get().find(`${htmlElements.a}#regularSaveButton`);
   }
 
   getSaveAndContinueOption() {
-    return this.get()
-               .find(this.saveAndContinueOption);
+    return this.get().find(`${htmlElements.a}#continueSaveButton`);
   }
 
-  getCancelBtn() {
-    return this.get()
-               .find(this.cancelBtn);
+  getCancelButton() {
+    return this.get().find(`${htmlElements.button}[class="pull-right btn btn-default"]`);
+  }
+
+  goToFragmentsViaBreadCrumb() {
+    this.getBreadCrumb().children(htmlElements.li).eq(1).then(button => UXFragmentsPage.openPage(button));
+    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
+  }
+
+  openSaveMenu() {
+    this.getSaveButton().click();
+    return cy.get('@currentPage');
   }
 
   clickSave() {
-    this.getSaveBtn()
-        .then(button => button.click())
-        .then(() => this.getSaveOption().click());
+    this.getSaveButton().click();
+    this.getSaveOption().click();
     return cy.get('@currentPage');
   }
 
   save() {
-    this.getSaveBtn().click();
+    this.getSaveButton().click();
     this.getSaveOption().then(button => UXFragmentsPage.openPage(button));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
   saveAndContinue(code = null) {
-    this.getSaveBtn().click();
-    this.getSaveAndContinueOption()
-        .then(button => {
-          if (code) {
-            cy.fragmentsController().then(controller => controller.intercept({method: 'PUT'}, 'fragmentsPageLoadingPUT', `/${code}`));
-          } else {
-            cy.fragmentsController().then(controller => controller.intercept({method: 'POST'}, 'fragmentsPageLoadingPOST'));
-          }
-          cy.get(button).click();
-          if (code) cy.wait('@fragmentsPageLoadingPUT');
-          else cy.wait('@fragmentsPageLoadingPOST');
-        });
+    this.getSaveButton().click();
+    this.getSaveAndContinueOption().then(button => {
+      if (code) cy.fragmentsController().then(controller => controller.intercept({method: 'PUT'}, 'fragmentsPageLoading', `/${code}`));
+      else cy.fragmentsController().then(controller => controller.intercept({method: 'POST'}, 'fragmentsPageLoading'));
+      cy.get(button).click();
+      cy.wait('@fragmentsPageLoading');
+    });
     return cy.get('@currentPage');
   }
 

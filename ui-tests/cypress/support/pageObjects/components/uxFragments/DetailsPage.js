@@ -1,52 +1,50 @@
-import {htmlElements}  from '../../WebElement.js';
-import AppContent      from '../../app/AppContent.js';
-import FragmentsPage   from "./FragmentsPage";
-import AppPage         from "../../app/AppPage";
-import UXFragmentsPage from './UXFragmentsPage';
+import {htmlElements} from '../../WebElement.js';
 
+import AppContent from '../../app/AppContent.js';
+
+import AppPage       from '../../app/AppPage';
+import FragmentsPage from './FragmentsPage';
 
 export default class DetailsPage extends AppContent {
 
-    detailFragmentTable = `${htmlElements.table}.table`;
-    editBtn             = `${htmlElements.button}[class="pull-right btn btn-primary"]`;
-    referencedSection   = `${htmlElements.div}[class="row"]`;
+  static openPage(button, code) {
+    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'actionsPageLoadingGET', `/${code}`));
+    cy.get(button).click();
+    cy.wait('@actionsPageLoadingGET');
+  }
 
-    getMain(){
-        return this.get()
-            .find(`.col-xs-12`)
-    }
-    getFragmentTable(){
-        return this.getMain()
-            .find(this.detailFragmentTable);
-    }
-    getEditBtn(){
-        return this.getMain()
-            .find(this.editBtn);
-    }
-    openEditBtn(code){
-        this.getEditBtn().then(button => UXFragmentsPage.openActionButton(button, `${code}`));
-        return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
-    }
+  getMain() {
+    return this.get().find(`.col-xs-12`);
+  }
 
-    getReferencedUxFragments(){
-        return this.getMain()
-            .children(this.referencedSection)
-            .eq(0);
+  getFragmentTable() {
+    return this.getMain().find(`${htmlElements.table}.table`);
+  }
 
-    }
-    getReferencedPageTemplates(){
-        return this.getMain()
-            .children(this.referencedSection)
-            .eq(1);
+  getEditButton() {
+    return this.getMain().find(`${htmlElements.button}[class="pull-right btn btn-primary"]`);
+  }
 
-    }
-    getReferencedWidgetTypes(){
-        return this.getMain()
-            .children(this.referencedSection)
-            .eq(2);
+  getReferencedSection() {
+    return this.getMain().children(`${htmlElements.div}[class="row"]`);
+  }
 
-    }
+  getReferencedUxFragments() {
+    return this.getReferencedSection().eq(0);
+  }
 
+  getReferencedPageTemplates() {
+    return this.getReferencedSection().eq(1);
 
+  }
+
+  getReferencedWidgetTypes() {
+    return this.getReferencedSection().eq(2);
+  }
+
+  openEdit(code) {
+    this.getEditButton().then(button => FragmentsPage.openPage(button, `${code}`));
+    return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
+  }
 
 }
