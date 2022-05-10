@@ -1,21 +1,16 @@
-import {DATA_ID, htmlElements} from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
-import AppContent    from '../../app/AppContent.js';
-import AppPage       from '../../app/AppPage.js';
+import AppContent from '../../app/AppContent.js';
+
+import AppPage      from '../../app/AppPage.js';
+import KebabMenu    from '../../app/KebabMenu.js';
+import Pagination   from '../../app/Pagination';
+import DeleteDialog from '../../app/DeleteDialog.js';
+
 import FragmentsPage from './FragmentsPage';
-import KebabMenu     from '../../app/KebabMenu.js';
-import DeleteDialog  from '../../app/DeleteDialog.js';
 import DetailsPage   from '../../components/uxFragments/DetailsPage.js';
-import Pagination    from '../../app/Pagination';
 
 export default class UXFragmentsPage extends AppContent {
-
-  searchForm      = `${htmlElements.form}.FragmentSearchForm`;
-  searchCodeInput = `${htmlElements.input}#fragmentcode[name="code"]`;
-  widgetFilter    = `${htmlElements.select}[name="widgetType"]`;
-  pluginFilter    = `${htmlElements.select}[name="pluginCode"]`;
-  addBtn          = `${htmlElements.button}[type=button].FragmentListContent__add`;
-  spinner         = `${htmlElements.div}.spinner.spinner-md`;
 
   static openPage(button) {
     cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
@@ -36,12 +31,6 @@ export default class UXFragmentsPage extends AppContent {
     cy.wait(['@fragmentsPageLoadingGET']);
   }
 
-  static openActionButton(button, code = null) {
-    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'actionsPageLoadingGET', `/${code}`));
-    cy.get(button).click();
-    cy.wait('@actionsPageLoadingGET');
-  }
-
   static searchButton(button) {
     cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'resultsLoadingGET', '?sort*'));
     cy.get(button).click();
@@ -49,28 +38,23 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   getSearchForm() {
-    return this.get()
-               .find(this.searchForm);
+    return this.get().find(`${htmlElements.form}.FragmentSearchForm`);
   }
 
   getSearchCodeInput() {
-    return this.getSearchForm()
-               .find(this.searchCodeInput);
+    return this.getSearchForm().find(`${htmlElements.input}#fragmentcode[name="code"]`);
   }
 
   getWidgetFilter() {
-    return this.getSearchForm()
-               .find(this.widgetFilter);
+    return this.getSearchForm().find(`${htmlElements.select}[name="widgetType"]`);
   }
 
   getPluginFilter() {
-    return this.getSearchForm()
-               .find(this.pluginFilter);
+    return this.getSearchForm().find(`${htmlElements.select}[name="pluginCode"]`);
   }
 
   getSearchSubmitButton() {
-    return this.getSearchForm()
-               .find(`${htmlElements.button}[type=submit]`);
+    return this.getSearchForm().find(`${htmlElements.button}[type=submit]`);
   }
 
   clickSearchSubmitButton() {
@@ -79,8 +63,14 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   getTable() {
-    return this.get()
-               .find(htmlElements.table);
+    return this.get().find(`${htmlElements.table}.FragmentListTable__table`);
+  }
+
+  getTableHeaders() {
+    return this.getTable()
+               .children(htmlElements.thead)
+               .children(htmlElements.tr)
+               .find(htmlElements.th);
   }
 
   getTableRows() {
@@ -95,20 +85,12 @@ export default class UXFragmentsPage extends AppContent {
                .closest(htmlElements.tr);
   }
 
-  getTableHeaders() {
-    return this.getTable()
-               .children(htmlElements.thead)
-               .children(htmlElements.tr)
-               .find(htmlElements.th);
-  }
-
   getPagination() {
     return new Pagination(this, UXFragmentsPage);
   }
 
   getAddButton() {
-    return this.get()
-               .find(this.addBtn);
+    return this.get().find(`${htmlElements.button}[type=button].FragmentListContent__add`);
   }
 
   getKebabMenu(code) {
@@ -124,42 +106,46 @@ export default class UXFragmentsPage extends AppContent {
 
 class FragmentsKebabMenu extends KebabMenu {
 
+  // FIXME/TODO cypress keeps highlighting the element as detached;
+  //  it might be due to the fact app-builder "sometimes" refresh the page to perform additional API calls
+  open() {
+    cy.wait(500);
+    this.get().children(htmlElements.button).then(button => cy.get(button).click());
+    return this;
+  }
 
   getEdit() {
-    return this.get()
-               .find(`[${DATA_ID}=edit-${this.code}]`)
-               .eq(0);
+    return this.getDropdown()
+               .children(`${htmlElements.li}.FragmentListMenuAction__menu-item-edit`);
   }
 
   getClone() {
-    return this.get()
-               .find(`[${DATA_ID}=clone-${this.code}]`);
+    return this.getDropdown()
+               .children(`${htmlElements.li}.FragmentListMenuAction__menu-item-clone`);
   }
 
   getDetails() {
-    return this.get()
-               .find(`.FragmentListMenuAction__menu-item-details`);
+    return this.getDropdown()
+               .children(`${htmlElements.li}.FragmentListMenuAction__menu-item-details`);
   }
 
   getDelete() {
-    return this.get()
-               .find(`.FragmentListMenuAction__menu-item-delete`);
+    return this.getDropdown()
+               .children(`${htmlElements.li}.FragmentListMenuAction__menu-item-delete`);
   }
 
   openEdit(code) {
-    this.getEdit().then(button => UXFragmentsPage.openActionButton(button, `${code}`));
+    this.getEdit().then(button => FragmentsPage.openPage(button, code));
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 
   openClone(code) {
-    this.getClone()
-        .then(button => UXFragmentsPage.openActionButton(button, `${code}`));
+    this.getClone().then(button => FragmentsPage.openPage(button, code));
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 
   openDetails(code) {
-    this.getDetails()
-        .then(button => UXFragmentsPage.openActionButton(button, `${code}`));
+    this.getDetails().then(button => DetailsPage.openPage(button, code));
     return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
   }
 

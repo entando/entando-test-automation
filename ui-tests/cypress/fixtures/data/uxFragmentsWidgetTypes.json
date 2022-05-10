@@ -1,0 +1,74 @@
+[
+  {
+    "code": "NWS_Archive",
+    "name": "News Archive"
+  },
+  {
+    "code": "NWS_Latest",
+    "name": "News Latest"
+  },
+  {
+    "code": "content_viewer",
+    "name": "Content"
+  },
+  {
+    "code": "content_viewer_list",
+    "name": "Content Search Query"
+  },
+  {
+    "code": "row_content_viewer_list",
+    "name": "Content List"
+  },
+  {
+    "code": "search_form",
+    "name": "Search Form"
+  },
+  {
+    "code": "search_result",
+    "name": "Search Results"
+  },
+  {
+    "code": "breadcrumb",
+    "name": "Breadcrumbs"
+  },
+  {
+    "code": "navigation-menu",
+    "name": "Navigation Menu"
+  },
+  {
+    "code": "sitemap",
+    "name": "Sitemap"
+  },
+  {
+    "code": "entando_apis",
+    "name": "APIs"
+  },
+  {
+    "code": "formAction",
+    "name": "Internal Servlet"
+  },
+  {
+    "code": "keycloak-login",
+    "name": "Login"
+  },
+  {
+    "code": "login_form",
+    "name": "Legacy Login Form"
+  },
+  {
+    "code": "messages_system",
+    "name": "System Messages"
+  },
+  {
+    "code": "jpseo_content_viewer",
+    "name": "Content SEO Meta-description"
+  },
+  {
+    "code": "language",
+    "name": "Language"
+  },
+  {
+    "code": "logo",
+    "name": "Logo"
+  }
+]
