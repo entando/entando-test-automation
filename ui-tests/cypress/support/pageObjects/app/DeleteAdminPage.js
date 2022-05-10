@@ -28,6 +28,12 @@ export default class DeleteAdminPage extends AdminContent {
     cy.wait('@deleteContentTypePageLoadingGET');
   }
 
+  static openDeleteAssetsPage(button){
+    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'deleteAssetsPageLoadingGET', `/trash.action?*`));
+    cy.get(button).click();
+    cy.wait('@deleteAssetsPageLoadingGET');
+  }
+
   getForm() {
     return this.getContents()
                .children(this.form);

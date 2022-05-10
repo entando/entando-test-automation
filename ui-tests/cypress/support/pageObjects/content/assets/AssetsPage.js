@@ -1,11 +1,12 @@
 import {htmlElements} from '../../WebElement.js';
 
-import AdminContent from '../../app/AdminContent';
-import KebabMenu    from '../../app/KebabMenu.js';
+import AdminContent    from '../../app/AdminContent';
+import KebabMenu       from '../../app/KebabMenu.js';
 import AdminPage       from '../../app/AdminPage';
 import AddPage         from './AddPage';
 import EditPage        from './EditPage';
 import DeletePage      from './DeletePage';
+import DeleteAdminPage from '../../app/DeleteAdminPage';
 
 export default class AssetsPage extends AdminContent {
 
@@ -153,9 +154,16 @@ class AssetsKebabMenu extends KebabMenu {
     return cy.wrap(new AdminPage(EditPage)).as('currentPage');
   }
 
-  clickDelete() {
-    this.getDelete().then(button => DeletePage.openPage(button));
-    return cy.wrap(new AdminPage(DeletePage)).as('currentPage');
+  clickDelete(isForbidden = null) {
+    if (isForbidden) {
+      this.getDelete().then(button => DeletePage.openPage(button));
+      return cy.wrap(new AdminPage(DeletePage)).as('currentPage');
+    }else {
+      this.getDelete().then(button => DeleteAdminPage.openDeleteAssetsPage(button));
+      const deletePage = new AdminPage(DeleteAdminPage);
+      deletePage.getContent().setOrigin(this.parent.parent);
+      return cy.wrap(deletePage).as('currentPage');
+    }
   }
 
 }
