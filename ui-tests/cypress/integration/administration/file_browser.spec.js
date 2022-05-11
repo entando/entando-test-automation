@@ -303,7 +303,7 @@ describe('File browser', () => {
           .then(page => page.getContent().openCreateTextFilePage())
           .then(page => page.getContent().getNameInput().then(input => page.getContent().type(input, file)))
           .then(page => page.getContent().getTextArea().then(textArea => page.getContent().type(textArea, loremIpsum())))
-          .then(page => page.getContent().save())
+          .then(page => page.getContent().cancel())
           .then(page => {
             cy.validateUrlPathname('/file-browser');
             page.getContent().getFilesTable().should('exist').and('be.visible');
