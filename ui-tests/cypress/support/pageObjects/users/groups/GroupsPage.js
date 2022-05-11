@@ -18,6 +18,12 @@ export default class GroupsPage extends AppContent {
   pageCol  = `${htmlElements.div}.col-md-12`;
   pageLink = `${htmlElements.a}`;
 
+  static openPage(button) {
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'userGroupsPageLoadingGET', '?sort=name&page=1&pageSize=10'));
+    cy.get(button).click();
+    cy.wait('@userGroupsPageLoadingGET');
+  }
+
   getGroupsTable() {
     return this.getContents()
                .find(this.table);
@@ -62,8 +68,8 @@ export default class GroupsPage extends AppContent {
   }
 
   openAddGroupPage() {
-    this.getAddButton().click();
-    return new AppPage(AddPage);
+    this.getAddButton().then(button => AddPage.openPage(button));
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
 }
@@ -86,17 +92,17 @@ class GroupsKebabMenu extends KebabMenu {
   }
 
   openDetails() {
-    this.getDetails().click();
-    return new AppPage(DetailsPage);
+    this.getDetails().then(button => DetailsPage.openPage(button, this.code));
+    return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
   }
 
   openEdit() {
-    this.getEdit().click();
-    return new AppPage(EditPage);
+    this.getEdit().then(button => EditPage.openPage(button, this.code));
+    return cy.wrap(new AppPage(EditPage)).as('currentPage');
   }
 
   clickDelete() {
-    this.getDelete().click();
+    this.getDelete().then(button => this.parent.click(button));
     this.parent.parent.getDialog().setBody(DeleteDialog);
   }
 

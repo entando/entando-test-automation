@@ -13,6 +13,12 @@ export default class EditPage extends AppContent {
   cancelButton = `${htmlElements.button}[type=button].btn-default`;
   saveButton   = `${htmlElements.button}[type=submit].btn-primary`;
 
+  static openPage(button, code) {
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'editGroupPageLoadingGET', `/${code}`));
+    cy.get(button).click();
+    cy.wait('@editGroupPageLoadingGET');
+  }
+
   getNameInput() {
     return this.getContents()
                .find(this.nameInput);
@@ -33,25 +39,14 @@ export default class EditPage extends AppContent {
                .find(this.saveButton);
   }
 
-  typeName(input) {
-    this.getNameInput().type(input);
-  }
-
-  clearName() {
-    this.getNameInput().clear();
-  }
-
   submitForm() {
-    this.getSaveButton().click();
+    this.getSaveButton().then(button => GroupsPage.openPage(button));
+    return cy.wrap(new AppPage(GroupsPage)).as('currentPage');
   }
 
   editGroup(name, append = false) {
-    if (!append) {
-      this.clearName();
-    }
-    this.typeName(name);
-    this.submitForm();
-    return new AppPage(GroupsPage);
+    this.getNameInput().then(input => this.type(input, name, append));
+    return this.submitForm();
   }
 
 }

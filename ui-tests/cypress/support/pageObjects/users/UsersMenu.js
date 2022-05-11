@@ -54,8 +54,8 @@ export default class UsersMenu extends SubMenu {
   }
 
   openGroups() {
-    this.getGroups().click();
-    return new AppPage(GroupsPage);
+    this.getGroups().then(button => GroupsPage.openPage(button));
+    return cy.wrap(new AppPage(GroupsPage)).as('currentPage');
   }
 
   openProfileTypes() {

@@ -13,6 +13,11 @@ export default class AddPage extends AppContent {
   cancelButton = `${htmlElements.button}[type=button].btn-default`;
   saveButton   = `${htmlElements.button}[type=submit].btn-primary`;
 
+  static openPage(button) {
+    cy.get(button).click();
+    cy.validateUrlPathname('/group/add');
+  }
+
   getNameInput() {
     return this.getContents()
                .find(this.nameInput);
@@ -33,30 +38,15 @@ export default class AddPage extends AppContent {
                .find(this.saveButton);
   }
 
-  typeName(input) {
-    this.getNameInput().type(input);
-  }
-
-  typeCode(input) {
-    this.getCodeInput().type(input);
-  }
-
-  clearCode() {
-    this.getCodeInput().clear();
-  }
-
   submitForm() {
-    this.getSaveButton().click();
+    this.getSaveButton().then(button => GroupsPage.openPage(button));
+    return cy.wrap(new AppPage(GroupsPage)).as('currentPage');
   }
 
   addGroup(name, code, append = false) {
-    this.typeName(name);
-    if (!append) {
-      this.clearCode();
-    }
-    this.typeCode(code);
-    this.submitForm();
-    return new AppPage(GroupsPage);
+    this.getNameInput().then(input => this.type(input, name));
+    this.getCodeInput().then(input => this.type(input, code, append));
+    return this.submitForm();
   }
 
 }
