@@ -2,27 +2,19 @@ import {generateRandomId} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
-import HomePage from '../../support/pageObjects/HomePage';
-
 describe([Tag.GTS], 'Groups', () => {
-
-  let currentPage;
-
-  let groupName;
-  let groupCode;
 
   beforeEach(() => {
     cy.wrap(null).as('groupToBeDeleted');
-
-    groupName = generateRandomId();
-    groupCode = groupName.toLowerCase();
+    cy.wrap(null).as('pageToBeDeleted')
+    cy.wrap(generateRandomId())
+      .then(groupName => {
+        cy.wrap(groupName).as('groupName');
+        cy.wrap(groupName.toLowerCase()).as('groupCode');
+      });
 
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
-
-    cy.groupsController().then(controller => controller.intercept({method: 'POST'}, 'addedGroup'));
-    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'loadedGroupsList', '?sort=name&page=1&pageSize=10'));
-    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'loadedGroupDetails', `/${groupCode}`));
   });
 
   afterEach(() => {
@@ -32,64 +24,60 @@ describe([Tag.GTS], 'Groups', () => {
     cy.kcUILogout();
   });
 
-  it('Add a new group', () => {
-    currentPage = openGroupsPage();
-
-    currentPage = currentPage.getContent().openAddGroupPage();
-    currentPage = currentPage.getContent().addGroup(groupName, groupCode);
-    cy.wait('@addedGroup').then(res => cy.wrap(res.response.body.payload.code).as('groupToBeDeleted'));
-    cy.wait('@loadedGroupsList');
-
-    currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
-               .then(cells => cy.validateListTexts(cells, [groupName, groupCode]));
+  it('Add a new group', function () {
+    openGroupsPage()
+      .then(page => page.getContent().openAddGroupPage())
+      .then(page => page.getContent().addGroup(this.groupName, this.groupCode))
+      .then(page => {
+        cy.wrap(this.groupCode).as('groupToBeDeleted');
+        page.getContent().getTableRow(this.groupCode).children(htmlElements.td)
+            .then(cells => cy.validateListTexts(cells, [this.groupName, this.groupCode]));
+      });
   });
 
-  it('Add a new group using an existing code - not allowed', () => {
-    addGroup(groupCode, groupName);
+  it('Add a new group using an existing code - not allowed', function () {
+    addGroup(this.groupCode, this.groupName);
 
-    currentPage = openGroupsPage();
-
-    currentPage = currentPage.getContent().openAddGroupPage();
-    currentPage.getContent().typeCode(groupCode);
-    currentPage.getContent().typeName(groupName);
-    currentPage.getContent().submitForm();
-
-    cy.validateToast(currentPage, groupCode, false);
+    openGroupsPage()
+      .then(page => page.getContent().openAddGroupPage())
+      .then(page => {
+        page.getContent().getCodeInput().then(input => page.getContent().type(input, this.groupCode));
+        page.getContent().getNameInput().then(input => page.getContent().type(input, this.groupName));
+        page.getContent(). getSaveButton().then(button => page.getContent().click(button));
+        cy.validateToast(page, this.groupCode, false);
+      });
   });
 
-  it('Update an existing group', () => {
-    const updatedGroupName = generateRandomId();
+  it('Update an existing group', function () {
+    addGroup(this.groupCode, this.groupName);
 
-    addGroup(groupCode, groupName);
-
-    currentPage = openGroupsPage();
-
-    currentPage = openEdit(groupCode, groupName);
-    currentPage = currentPage.getContent().editGroup(updatedGroupName);
-    cy.wait('@loadedGroupsList');
-
-    currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
-               .then(cells => cy.validateListTexts(cells, [updatedGroupName, groupCode]));
-
-    currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
-    currentPage.getContent().getDetailsInfo()
-               .within(info => {
-                 cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
-                 cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
-               });
+    cy.wrap(generateRandomId()).then(updatedGroupName => {
+      openEdit(this.groupCode, this.groupName)
+        .then(page => page.getContent().editGroup(updatedGroupName))
+        .then(page => {
+          page.getContent().getTableRow(this.groupCode).children(htmlElements.td)
+                           .then(cells => cy.validateListTexts(cells, [updatedGroupName, this.groupCode]))
+          page.getContent().getKebabMenu(this.groupCode).open().openDetails();
+        })
+        .then(page => page.getContent().getDetailsInfo()
+                          .within(info => {
+                            cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', this.groupCode);
+                            cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
+                          }));
+    });
   });
 
-  it('Delete an existing group', () => {
-    addGroup(groupCode, groupName);
+  it('Delete an existing group', function () {
+    addGroup(this.groupCode, this.groupName);
 
-    currentPage = openGroupsPage();
-
-    currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
-    currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
-
-    currentPage.getDialog().confirm();
-    currentPage.getContent().getTableRows().should('not.contain', groupCode);
-    cy.wrap(null).as('groupToBeDeleted');
+    openGroupsPage()
+      .then(page => {
+        page.getContent().getKebabMenu(this.groupCode).open().clickDelete();
+        page.getDialog().getBody().getStateInfo().should('contain', this.groupCode);
+        page.getDialog().confirm();
+        page.getContent().getTableRows().should('not.contain', this.groupCode);
+        cy.wrap(null).as('groupToBeDeleted');
+      });
   });
 
   describe('Groups - referenced by a page', () => {
@@ -102,88 +90,83 @@ describe([Tag.GTS], 'Groups', () => {
       titles: {en: 'Test'}
     };
 
-    beforeEach(() => {
-      addGroup(groupCode, groupName);
-      cy.seoPagesController().then(controller => controller.addNewPage({...page, ownerGroup: groupCode}));
+    beforeEach(function () {
+      addGroup(this.groupCode, this.groupName);
+      cy.seoPagesController().then(controller => {
+        controller.addNewPage({...page, ownerGroup: this.groupCode});
+        cy.wrap(page.code).as('pageToBeDeleted');
+      });
     });
 
     afterEach(() => {
-      cy.pagesController().then(controller => controller.setPageStatus(page.code, 'draft'));
-      cy.pagesController().then(controller => controller.deletePage(page.code));
+      cy.get('@pageToBeDeleted').then(pageCode => {
+        if (pageCode) {
+          cy.pagesController().then(controller => controller.setPageStatus(pageCode, 'draft'));
+          cy.pagesController().then(controller => controller.deletePage(pageCode));
+        }
+      });
     });
 
-    it('Update a group used by an unpublished page', () => {
-      const updatedGroupName = generateRandomId();
-
-      currentPage = openGroupsPage();
-
-      currentPage = openEdit(groupCode, groupName);
-      currentPage = currentPage.getContent().editGroup(updatedGroupName);
-      cy.wait('@loadedGroupsList');
-
-      currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
-                 .then(cells => cy.validateListTexts(cells, [updatedGroupName, groupCode]));
-
-      currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
-      currentPage.getContent().getDetailsInfo()
-                 .within(info => {
-                   cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
-                   cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
-                 });
+    it('Update a group used by an unpublished page', function () {
+      cy.wrap(generateRandomId()).then(updatedGroupName => {
+        openEdit(this.groupCode, this.groupName)
+          .then(page => page.getContent().editGroup(updatedGroupName))
+          .then(page => {
+            page.getContent().getTableRow(this.groupCode).children(htmlElements.td)
+                             .then(cells => cy.validateListTexts(cells, [updatedGroupName, this.groupCode]));
+            page.getContent().getKebabMenu(this.groupCode).open().openDetails();
+          })
+          .then(page => page.getContent().getDetailsInfo()
+                            .within(info => {
+                              cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', this.groupCode);
+                              cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
+                            }));
+      });
     });
 
-    it('Update a group used by a published page', () => {
-      cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
+    it('Update a group used by a published page', function () {
+      cy.pagesController().then(controller => controller.setPageStatus(this.pageToBeDeleted, 'published'));
 
-      const updatedGroupName = generateRandomId();
-
-      currentPage = openGroupsPage();
-
-      currentPage = openEdit(groupCode, groupName);
-      currentPage = currentPage.getContent().editGroup(updatedGroupName);
-      cy.wait('@loadedGroupsList');
-
-      currentPage.getContent().getTableRow(groupCode).children(htmlElements.td)
-                 .then(cells => cy.validateListTexts(cells, [updatedGroupName, groupCode]));
-
-      currentPage = currentPage.getContent().getKebabMenu(groupCode).open().openDetails();
-      currentPage.getContent().getDetailsInfo()
-                 .within(info => {
-                   cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', groupCode);
-                   cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
-                 });
+      cy.wrap(generateRandomId()).then(updatedGroupName => {
+        openEdit(this.groupCode, this.groupName)
+          .then(page => page.getContent().editGroup(updatedGroupName))
+          .then(page => {
+            page.getContent().getTableRow(this.groupCode).children(htmlElements.td)
+                             .then(cells => cy.validateListTexts(cells, [updatedGroupName, this.groupCode]));
+            page.getContent().getKebabMenu(this.groupCode).open().openDetails();
+          })
+          .then(page => page.getContent().getDetailsInfo()
+                            .within(info => {
+                              cy.get(info).children(htmlElements.div).eq(0).children(htmlElements.div).should('have.text', this.groupCode);
+                              cy.get(info).children(htmlElements.div).eq(1).children(htmlElements.div).should('have.text', updatedGroupName);
+                            }));
+      });
     });
 
-    it('Delete a group used by an unpublished page - not allowed', () => {
-      currentPage = openGroupsPage();
-
-      currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
-      currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
-      currentPage.getDialog().confirm();
-
-      cy.validateToast(currentPage, groupCode, false);
+    it('Delete a group used by an unpublished page - not allowed', function () {
+      openGroupsPage()
+        .then(page => {
+          page.getContent().getKebabMenu(this.groupCode).open().clickDelete();
+          page.getDialog().getBody().getStateInfo().should('contain', this.groupCode);
+          page.getDialog().confirm();
+          cy.validateToast(page, this.groupCode, false);
+        });
     });
 
-    it('Delete a group used by a published page - not allowed', () => {
-      cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
+    it('Delete a group used by a published page - not allowed', function () {
+      cy.pagesController().then(controller => controller.setPageStatus(this.pageToBeDeleted, 'published'));
 
-      currentPage = openGroupsPage();
-
-      currentPage.getContent().getKebabMenu(groupCode).open().clickDelete();
-      currentPage.getDialog().getBody().getStateInfo().should('contain', groupCode);
-      currentPage.getDialog().confirm();
-
-      cy.validateToast(currentPage, groupCode, false);
+      openGroupsPage()
+        .then(page => {
+          page.getContent().getKebabMenu(this.groupCode).open().clickDelete();
+          page.getDialog().getBody().getStateInfo().should('contain', this.groupCode);
+          page.getDialog().confirm();
+          cy.validateToast(page, this.groupCode, false);
+        });
     });
   });
 
-  const openGroupsPage = () => {
-    currentPage = new HomePage();
-    currentPage = currentPage.getMenu().getUsers().open();
-    currentPage = currentPage.openGroups();
-    cy.wait('@loadedGroupsList');
-    return currentPage;
-  };
+  const openGroupsPage = () => cy.get('@currentPage').then(page => page.getMenu().getUsers().open().openGroups());
 
   const addGroup = (code, name) => {
     cy.groupsController().then(controller => {
@@ -193,10 +176,12 @@ describe([Tag.GTS], 'Groups', () => {
   };
 
   const openEdit = (code, name) => {
-    currentPage = currentPage.getContent().getKebabMenu(code).open().openEdit();
-    cy.wait('@loadedGroupDetails');
-    currentPage.getContent().getNameInput().should('have.value', name);
-    return currentPage;
+    return openGroupsPage()
+      .then(page => page.getContent().getKebabMenu(code).open().openEdit())
+      .then(page => {
+        page.getContent().getNameInput().should('have.value', name);
+        cy.wrap(page).as('currentPage');
+      });
   };
 
 });
