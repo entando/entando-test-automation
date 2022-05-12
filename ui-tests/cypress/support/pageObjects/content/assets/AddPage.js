@@ -39,7 +39,7 @@ export default class AddPage extends AdminContent {
             .then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
             this.click(button)
            });
-         cy.wait('@interceptedPOST').then(interception => cy.wrap(interception.payload).as('assetToBeDeleted'))
-    return new AdminPage(AssetsPage);
+         cy.wait('@interceptedPOST')
+    return cy.wrap(new AdminPage(AssetsPage)).as('currentPage');
   }
 }
