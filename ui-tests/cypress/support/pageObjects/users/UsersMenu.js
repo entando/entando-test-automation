@@ -49,8 +49,8 @@ export default class UsersMenu extends SubMenu {
   }
 
   openRoles() {
-    this.getRoles().click();
-    return new AppPage(RolesPage);
+    this.getRoles().then(button => RolesPage.openPage(button));
+    return cy.wrap(new AppPage(RolesPage)).as('currentPage');
   }
 
   openGroups() {

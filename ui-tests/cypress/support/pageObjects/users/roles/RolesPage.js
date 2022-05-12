@@ -18,6 +18,12 @@ export default class RolesPage extends AppContent {
   pageCol  = `${htmlElements.div}.col-md-12`;
   pageLink = `${htmlElements.a}`;
 
+  static openPage(button) {
+    cy.rolesController().then(controller => controller.intercept({method: 'GET'}, 'rolesPageLoadingGET', '?page=1&pageSize=10'));
+    cy.get(button).click();
+    cy.wait('@rolesPageLoadingGET');
+  }
+
   getRolesTable() {
     return this.getContents()
                .children(htmlElements.div).eq(2)
@@ -65,8 +71,8 @@ export default class RolesPage extends AppContent {
   }
 
   openAddRolePage() {
-    this.getAddButton().click();
-    return new AppPage(AddPage);
+    this.getAddButton().then(button => AddPage.openPage(button));
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
 }
@@ -89,18 +95,19 @@ class RolesKebabMenu extends KebabMenu {
   }
 
   openDetails() {
-    this.getDetails().click();
-    return new AppPage(DetailsPage);
+    this.getDetails().then(button => DetailsPage.openPage(button, this.code));
+    return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
   }
 
   openEdit() {
-    this.getEdit().click();
-    return new AppPage(EditPage);
+    this.getEdit().then(button => EditPage.openPage(button, this.code));
+    return cy.wrap(new AppPage(EditPage)).as('currentPage');
   }
 
   clickDelete() {
-    this.getDelete().click();
+    this.getDelete().then(button => this.parent.click(button));
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    return cy.get('@currentPage');
   }
 
 }
