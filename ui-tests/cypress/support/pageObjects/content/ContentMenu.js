@@ -61,7 +61,7 @@ export default class ContentMenu extends SubMenu {
 
   openAssets() {
     this.getAssets().then(button => AssetsPage.openPage(button));
-    return new AdminPage(AssetsPage);
+    return cy.wrap(new AdminPage(AssetsPage)).as('currentPage');
   }
 
   openTemplates() {

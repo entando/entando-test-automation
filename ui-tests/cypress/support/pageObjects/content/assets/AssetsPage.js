@@ -33,7 +33,7 @@ export default class AssetsPage extends AdminContent {
 
   openAddAssets() {
     this.getAddButton().then(button => AddPage.openPage(button));
-    return new AdminPage(AddPage);
+    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
 
   getAssetsFilter() {
