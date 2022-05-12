@@ -17,12 +17,4 @@ export default class AuthorizationDialog extends DialogContent {
                .find(this.role);
   }
 
-  selectGroup(value) {
-    this.getGroup().select(value);
-  }
-
-  selectRole(value) {
-    this.getRole().select(value);
-  }
-
 }

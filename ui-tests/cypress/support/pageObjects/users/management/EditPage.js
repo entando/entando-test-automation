@@ -15,6 +15,12 @@ export default class EditPage extends AppContent {
   saveButton           = `${htmlElements.button}[type=submit].btn-primary`;
   cancelButton         = `${htmlElements.button}[type=button].btn-default`;
 
+  static openPage(button, code) {
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'editUserPageLoadingGET', `/${code}`));
+    cy.get(button).click();
+    cy.wait('@editUserPageLoadingGET');
+  }
+
   getUsernameInput() {
     return this.getContents()
                .find(this.usernameInput);
@@ -46,32 +52,16 @@ export default class EditPage extends AppContent {
                .find(this.saveButton);
   }
 
-  typePassword(input) {
-    this.getPasswordInput().type(input);
-  }
-
-  typePasswordConfirm(input) {
-    this.getPasswordConfirmInput().type(input);
-  }
-
-  changeStatus() {
-    this.getStatus()
-        .children(htmlElements.div)
-        .click();
-  }
-
   submitForm() {
-    this.getSaveButton().click();
+    this.getSaveButton().then(button => ManagementPage.openPage(button));
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
   editUser(password, changeStatus = false, passwordConfirm = password) {
-    this.typePassword(password);
-    this.typePasswordConfirm(passwordConfirm);
-    if (changeStatus) {
-      this.changeStatus();
-    }
-    this.submitForm();
-    return new AppPage(ManagementPage);
+    this.getPasswordInput().then(input => this.type(input, password));
+    this.getPasswordConfirmInput().then(input => this.type(input, passwordConfirm));
+    if (changeStatus) this.getStatus().children(htmlElements.div).then(button => this.click(button));
+    return this.submitForm();
   }
 
 }

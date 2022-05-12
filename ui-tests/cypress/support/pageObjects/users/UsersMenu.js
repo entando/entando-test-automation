@@ -44,8 +44,8 @@ export default class UsersMenu extends SubMenu {
   }
 
   openManagement() {
-    this.getManagement().click();
-    return new AppPage(ManagementPage);
+    this.getManagement().then(button => ManagementPage.openPage(button));
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
   openRoles() {
