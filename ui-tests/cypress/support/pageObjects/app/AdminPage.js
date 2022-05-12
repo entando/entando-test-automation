@@ -3,6 +3,7 @@ import {htmlElements} from '../WebElement.js';
 import AbstractPage from './AbstractPage';
 
 import AdminMenus from './AdminMenus';
+import {AdminDialog}   from './AdminDialog';
 
 export default class AdminPage extends AbstractPage {
 
@@ -13,11 +14,15 @@ export default class AdminPage extends AbstractPage {
     super();
     this.menus   = new AdminMenus(this);
     this.content = new content(this);
+    this.dialog  = new AdminDialog();
   }
 
   get() {
     return this.parent.get()
                .children(htmlElements.body);
+  }
+  getAdminDialog() {
+    return this.dialog;
   }
 
   getNavbar() {

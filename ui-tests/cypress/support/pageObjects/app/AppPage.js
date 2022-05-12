@@ -3,6 +3,7 @@ import {htmlElements} from '../WebElement.js';
 import AbstractPage from './AbstractPage';
 
 import AppMenus from './AppMenus';
+import {Dialog} from './Dialog';
 
 export default class AppPage extends AbstractPage {
 
@@ -15,6 +16,7 @@ export default class AppPage extends AbstractPage {
     super();
     this.menus   = new AppMenus(this);
     this.content = new content(this);
+    this.dialog  = new Dialog();
   }
 
   get() {
@@ -22,6 +24,9 @@ export default class AppPage extends AbstractPage {
                .children(htmlElements.body)
                .children(this.root)
                .children(this.page);
+  }
+  getDialog() {
+    return this.dialog;
   }
 
   getNavbar() {
