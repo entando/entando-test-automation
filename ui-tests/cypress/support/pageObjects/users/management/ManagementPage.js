@@ -22,6 +22,15 @@ export default class ManagementPage extends AppContent {
   table        = `${htmlElements.table}.UserListTable__table`;
   tableAlert   = `${htmlElements.div}.alert`;
 
+  static openPage(button, fromAddPage = false) {
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'usersManagementPageLoadingGET', '?page=1&pageSize=10'));
+    cy.get(button).click();
+    cy.wait('@usersManagementPageLoadingGET');
+    if (fromAddPage) {
+      cy.wait(['@usersManagementPageLoadingGET', '@usersManagementPageLoadingGET', '@usersManagementPageLoadingGET']);
+    }
+  }
+
   getSearchForm() {
     return this.getContents()
                .find(this.searchForm);
@@ -85,30 +94,21 @@ export default class ManagementPage extends AppContent {
                .children(htmlElements.button);
   }
 
-  typeSearch(input) {
-    this.getSearchInput().type(input);
-  }
-
-  clearSearch() {
-    this.getSearchInput().clear();
-  }
-
   submitSearch() {
-    this.getSearchButton().click();
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'userSearchGET', '?sort=*'));
+    this.getSearchButton().then(button => this.click(button));
+    cy.wait('@userSearchGET');
+    return cy.get('@currentPage');
   }
 
   searchUser(username, append = false) {
-    if (!append) {
-      this.clearSearch();
-    }
-    this.typeSearch(username);
-    this.submitSearch();
-    return new AppPage(ManagementPage);
+    this.getSearchInput().then(input => this.type(input, username, append));
+    return this.submitSearch();
   }
 
   openAddUserPage() {
-    this.getAddButton().click();
-    return new AppPage(AddPage);
+    this.getAddButton().then(button => AddPage.openPage(button));
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
 }
@@ -141,28 +141,30 @@ class UsersKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getEdit().click();
-    return new AppPage(EditPage);
+    this.getEdit().then(button => EditPage.openPage(button, this.code));
+    return cy.wrap(new AppPage(EditPage)).as('currentPage');
   }
 
   openManageAuth() {
-    this.getManageAuth().click();
-    return new AppPage(AuthorizationPage);
+    this.getManageAuth().then(button => AuthorizationPage.openPage(button, this.code));
+    return cy.wrap(new AppPage(AuthorizationPage)).as('currentPage');
   }
 
-  openEditProfile() {
-    this.getEditProfile().click();
-    return new AppPage(EditProfilePage);
+  openEditProfile(profileType) {
+    this.getEditProfile().then(button => EditProfilePage.openPage(button, profileType));
+    return cy.wrap(new AppPage(EditProfilePage)).as('currentPage');
   }
 
   openViewProfile() {
-    this.getViewProfile().click();
-    return new AppPage(ViewProfilePage);
+    this.getViewProfile().then(button => ViewProfilePage.openPage(button, this.code));
+    return cy.wrap(new AppPage(ViewProfilePage)).as('currentPage');
   }
 
-  clickDelete() {
-    this.getDelete().click();
+  clickDelete(loadOnConfirm = true) {
+    this.getDelete().then(button => this.parent.click(button));
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    if (loadOnConfirm) this.parent.parent.getDialog().getBody().setLoadOnConfirm(ManagementPage);
+    return cy.get('@currentPage');
   }
 
 }

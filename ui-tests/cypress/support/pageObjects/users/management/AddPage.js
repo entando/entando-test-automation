@@ -16,6 +16,12 @@ export default class AddPage extends AppContent {
   saveButton           = `${htmlElements.button}[type=submit].btn-primary`;
   otherButtons         = `${htmlElements.button}[type=button].UserForm__action-button`;
 
+  static openPage(button) {
+    cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'addPageLoadingGET', `?page=1&pageSize=0`));
+    cy.get(button).click();
+    cy.wait('@addPageLoadingGET');
+  }
+
   getUsernameInput() {
     return this.getContents()
                .find(this.usernameInput);
@@ -56,33 +62,22 @@ export default class AddPage extends AppContent {
                .find(this.saveButton);
   }
 
-  typeUsername(input) {
-    this.getUsernameInput().type(input);
-  }
-
-  typePassword(input) {
-    this.getPasswordInput().type(input);
-  }
-
-  typePasswordConfirm(input) {
-    this.getPasswordConfirmInput().type(input);
-  }
-
-  selectProfileType(value) {
-    this.getProfileTypeSelect().select(value);
+  fillForm(username, password, profileType, passwordConfirm = password) {
+    this.getUsernameInput().then(input => this.type(input, username));
+    this.getPasswordInput().then(input => this.type(input, password));
+    this.getPasswordConfirmInput().then(input => this.type(input, passwordConfirm));
+    this.getProfileTypeSelect().then(input => this.select(input, profileType));
+    return cy.get('@currentPage');
   }
 
   submitForm() {
-    this.getSaveButton().click();
+    this.getSaveButton().then(button => ManagementPage.openPage(button, true));
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
   addUser(username, password, profileType, passwordConfirm = password) {
-    this.typeUsername(username);
-    this.typePassword(password);
-    this.typePasswordConfirm(passwordConfirm);
-    this.selectProfileType(profileType);
-    this.submitForm();
-    return new AppPage(ManagementPage);
+    this.fillForm(username, password, profileType, passwordConfirm);
+    return this.submitForm();
   }
 
 }

@@ -14,6 +14,12 @@ export default class AuthorizationPage extends AppContent {
   tableAlert = `${htmlElements.div}.authority_UserAuthorityTable_Alert`;
   saveButton = `${htmlElements.button}[type=submit].btn-primary`;
 
+  static openPage(button, code) {
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'authorizationPageLoadingGET', `/${code}/authorities`));
+    cy.get(button).click();
+    cy.wait('@authorizationPageLoadingGET');
+  }
+
   getTitle() {
     return this.getContents()
                .children(htmlElements.div).eq(2)
@@ -53,13 +59,14 @@ export default class AuthorizationPage extends AppContent {
   }
 
   addAuthorization() {
-    this.getAddButton().click();
+    this.getAddButton().then(button => this.click(button));
     this.parent.getDialog().setBody(AuthorizationDialog);
+    return cy.get('@currentPage');
   }
 
   save() {
-    this.getSaveButton().click();
-    return new AppPage(ManagementPage);
+    this.getSaveButton().then(button => ManagementPage.openPage(button));
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
 }

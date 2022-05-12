@@ -11,6 +11,12 @@ export default class ViewProfilePage extends AppContent {
   table      = `${htmlElements.table}.table`;
   backButton = `${htmlElements.button}[type=button].btn-primary`;
 
+  static openPage(button, code) {
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'viewProfilePageLoadingGET', `/${code}`));
+    cy.get(button).click();
+    cy.wait('@viewProfilePageLoadingGET');
+  }
+
   getDetailsTable() {
     return this.getContents()
                .find(this.table);
@@ -28,8 +34,8 @@ export default class ViewProfilePage extends AppContent {
   }
 
   goBack() {
-    this.getBackButton().click();
-    return new AppPage(ManagementPage);
+    this.getBackButton().then(button => ManagementPage.openPage(button));
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
 }
