@@ -14,6 +14,13 @@ export default class EditPage extends AppContent {
   cancelButton = `${htmlElements.button}[type=button].btn-default`;
   saveButton   = `${htmlElements.button}[type=submit].btn-primary`;
 
+  static openPage(button, code) {
+    cy.rolesController().then(controller => controller.intercept({method: 'GET'}, 'editPageLoadingGET', `/${code}`));
+    cy.permissionsController().then(controller => controller.intercept({method: 'GET'}, 'permissionsLoadingGET', '?page=1&pageSize=0'));
+    cy.get(button).click();
+    cy.wait(['@editPageLoadingGET', '@permissionsLoadingGET']);
+  }
+
   getNameInput() {
     return this.getContents()
                .find(this.nameInput);
@@ -53,25 +60,14 @@ export default class EditPage extends AppContent {
                .find(this.saveButton);
   }
 
-  typeName(input) {
-    this.getNameInput().type(input);
-  }
-
-  clearName() {
-    this.getNameInput().clear();
-  }
-
   submitForm() {
-    this.getSaveButton().click();
+    this.getSaveButton().then(button => RolesPage.openPage(button));
+    return cy.wrap(new AppPage(RolesPage)).as('currentPage');
   }
 
   editRole(name, append = false) {
-    if (!append) {
-      this.clearName();
-    }
-    this.typeName(name);
-    this.submitForm();
-    return new AppPage(RolesPage);
+    this.getNameInput().then(input => this.type(input, name, append));
+    return this.submitForm();
   }
 
 }
