@@ -1,53 +1,55 @@
-import {htmlElements}  from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import AdminContent    from '../../app/AdminContent';
 import AssetsPage      from './AssetsPage';
-import AdminPage       from '../../app/AdminPage';
-import {DialogContent} from '../../app/Dialog';
+import AdminPage                           from '../../app/AdminPage';
+import {DialogAdminContent} from '../../app/AdminDialog';
 
 
 export default class EditPage extends AdminContent {
 
-  addButton     = `${htmlElements.input}#submit`;
-  inputDescription     = `${htmlElements.input}#descr_0`;
-  groupSelector = `${htmlElements.select}[id="mainGroup"]`;
-  dropdown =  `${htmlElements.div}.dropdown`;
+  addButton        = `${htmlElements.input}#submit`;
+  inputDescription = `${htmlElements.input}#descr_0`;
+  dropdown         = `${htmlElements.div}.dropdown`;
 
 
-      static openPage(button){
-    cy.assetsAdminConsoleController().then(controller => controller.intercept({method:'GET'}, 'editPageLoadingGet', '/edit.action?*'));
+  static openPage(button) {
+    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editPageLoadingGet', '/edit.action?*'));
     cy.get(button).click();
     cy.wait('@editPageLoadingGet');
   }
+
   submit() {
     this.get()
         .find(this.addButton)
         .then(button => {
           cy.assetsAdminConsoleController()
             .then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
-          this.click(button)
+          this.click(button);
         });
-    cy.wait('@interceptedPOST')
+    cy.wait('@interceptedPOST');
     return cy.wrap(new AdminPage(AssetsPage)).as('currentPage');
   }
-  getDropDown(){
-        return this.get()
-            .find(this.dropdown);
-  }
-  openDropDown(){
-         this.getDropDown()
-            .click();
-         return this;
+
+  getDropDown() {
+    return this.get()
+               .find(this.dropdown);
   }
 
-  getEdit(){
-  return this.get()
-      .find(`.edit-fields`);
-      }
+  openDropDown() {
+    this.getDropDown()
+        .click();
+    return this;
+  }
 
-  openEdit(){
+  getEdit() {
+    return this.get()
+               .find(`.edit-fields`);
+  }
+
+  openEdit() {
     this.getEdit().click();
-    this.parent.getDialog().setBody(EditAssetDialog);
+    this.parent.getAdminDialog().setBody(EditAssetDialog);
     return cy.get('@currentPage');
   }
 
@@ -58,29 +60,29 @@ export default class EditPage extends AdminContent {
 
 }
 
-class EditAssetDialog extends DialogContent {
-
+class EditAssetDialog extends DialogAdminContent {
 
 
   crop(xOffset, yOffset) {
-    this.get().find('.cropper-point.point-se').then(($cropperPoint) => {
-      const {x, y} = $cropperPoint[0].getBoundingClientRect();
-      cy.wrap($cropperPoint)
-        .trigger('mousedown', {which: 1})
-        .trigger('mousemove', {clientX: x + xOffset, clientY: y + yOffset})
-        .trigger('mouseup', {force: true});
-      this.apply();
-    });
+    this.get().find('.cropper-point.point-se')
+        .then(($cropperPoint) => {
+          const {x, y} = $cropperPoint[0].getBoundingClientRect();
+          cy.wrap($cropperPoint)
+            .trigger('mousedown', {which: 1})
+            .trigger('mousemove', {clientX: x + xOffset, clientY: y + yOffset})
+            .trigger('mouseup', {force: true});
+          this.apply();
+        });
   }
 
-  rotate(direction) {
+  rotate() {
     this.get()
-        .find(`[data-action=rotate${direction}]`)
+        .find(`${htmlElements.button}[data-option="-45"]`)
         .click();
     this.apply();
   }
 
   apply() {
-    this.get().find('[data-method=crop]').click();
+    this.get().find(`.btn[title="crop"]`).click();
   }
 }
