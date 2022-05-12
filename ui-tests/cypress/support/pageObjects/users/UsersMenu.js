@@ -59,8 +59,8 @@ export default class UsersMenu extends SubMenu {
   }
 
   openProfileTypes() {
-    this.getProfileTypes().click();
-    return new AppPage(ProfileTypesPage);
+    this.getProfileTypes().then(button => ProfileTypesPage.openPage(button));
+    return cy.wrap(new AppPage(ProfileTypesPage)).as('currentPage');
   }
 
   openRestrictions() {

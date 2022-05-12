@@ -12,6 +12,13 @@ export default class ProfileTypesPage extends AppContent {
 
   addButton = `${htmlElements.button}.ProfileType__add`;
 
+  static openPage(button) {
+    cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'profileTypesPageLoadingGET', `?sort=name&page=1&pageSize=10`));
+    cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'profileTypesStatusLoadingGET', 'Status'));
+    cy.get(button).click();
+    cy.wait(['@profileTypesPageLoadingGET', '@profileTypesStatusLoadingGET']);
+  }
+
   getTable() {
     return this.getContents()
                .find(htmlElements.table);
@@ -39,8 +46,8 @@ export default class ProfileTypesPage extends AppContent {
   }
 
   openAddProfileTypePage() {
-    this.getAddButton().click();
-    return new AppPage(AddPage);
+    this.getAddButton().then(button => AddPage.openPage(button));
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
 }
@@ -67,13 +74,14 @@ class ProfileTypesKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getEdit().click();
-    return new AppPage(EditPage);
+    this.getEdit().then(button => EditPage.openPage(button, this.code));
+    return cy.wrap(new AppPage(EditPage)).as('currentPage');
   }
 
   clickDelete() {
-    this.getDelete().click();
+    this.getDelete().then(button => this.parent.click(button));
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    return cy.get('@currentPage');
   }
 
 }

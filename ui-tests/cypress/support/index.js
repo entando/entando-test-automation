@@ -41,6 +41,7 @@ import './controllers/restAPI/PagesController';
 import './controllers/restAPI/PageTemplatesController';
 import './controllers/restAPI/PageWidgetsController';
 import './controllers/restAPI/PermissionsController';
+import './controllers/restAPI/ProfileTypeAttributesController';
 import './controllers/restAPI/ProfileTypesController';
 import './controllers/restAPI/ReloadConfigurationController';
 import './controllers/restAPI/RolesController';

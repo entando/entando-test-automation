@@ -19,6 +19,7 @@ import PagesController                 from './controllers/restAPI/PagesControll
 import PageTemplatesController         from './controllers/restAPI/PageTemplatesController';
 import PageWidgetsController           from './controllers/restAPI/PageWidgetsController';
 import PermissionsController           from './controllers/restAPI/PermissionsController';
+import ProfileTypeAttributesController from './controllers/restAPI/ProfileTypeAttributesController';
 import ProfileTypesController          from './controllers/restAPI/ProfileTypesController';
 import RolesController                 from './controllers/restAPI/RolesController';
 import SenderController                from './controllers/restAPI/SenderController';
@@ -237,6 +238,11 @@ declare namespace Cypress {
          * Returns a new instance of a permissions controller
          */
         permissionsController(): Chainable<PermissionsController>;
+
+        /**
+         * Returns a new instance of a profile type attributes controller
+         */
+        profileTypeAttributesController(): Chainable<ProfileTypeAttributesController>;
 
         /**
          * Returns a new instance of a profile types controller
