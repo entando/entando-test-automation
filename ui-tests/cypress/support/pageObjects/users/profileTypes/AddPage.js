@@ -12,6 +12,12 @@ export default class AddPage extends AppContent {
   nameInput  = `${htmlElements.input}[name=name]`;
   saveButton = `${htmlElements.button}.ProfileTypeForm__save-btn`;
 
+  static openPage(button) {
+    cy.profileTypeAttributesController().then(controller => controller.intercept({method: 'GET'}, 'addPageLoadingGET', '?page=1&pageSize=0'));
+    cy.get(button).click();
+    cy.wait('@addPageLoadingGET');
+  }
+
   getCodeInput() {
     return this.getContents()
                .find(this.codeInput);
@@ -27,23 +33,15 @@ export default class AddPage extends AppContent {
                .find(this.saveButton);
   }
 
-  typeName(value) {
-    this.getNameInput().type(value);
-  }
-
-  typeCode(value) {
-    this.getCodeInput().type(value);
-  }
-
-  save() {
-    this.getSaveButton().click();
-    return new AppPage(EditPage);
+  save(code) {
+    this.getSaveButton().then(button => EditPage.openPage(button, code));
+    return cy.wrap(new AppPage(EditPage)).as('currentPage');
   }
 
   addAndSaveProfileType(code, name) {
-    this.typeName(name);
-    this.typeCode(code);
-    return this.save();
+    this.getNameInput().then(input => this.type(input, name));
+    this.getCodeInput().then(input => this.type(input, code));
+    return this.save(code);
   }
 
 }
