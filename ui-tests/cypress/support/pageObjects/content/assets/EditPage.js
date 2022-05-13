@@ -1,8 +1,8 @@
 import {htmlElements} from '../../WebElement.js';
 
-import AdminContent    from '../../app/AdminContent';
-import AssetsPage      from './AssetsPage';
-import AdminPage                           from '../../app/AdminPage';
+import AdminContent         from '../../app/AdminContent';
+import AssetsPage           from './AssetsPage';
+import AdminPage            from '../../app/AdminPage';
 import {DialogAdminContent} from '../../app/AdminDialog';
 
 
@@ -23,8 +23,7 @@ export default class EditPage extends AdminContent {
     this.get()
         .find(this.addButton)
         .then(button => {
-          cy.assetsAdminConsoleController()
-            .then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
+          cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
           this.click(button);
         });
     cy.wait('@interceptedPOST');
@@ -47,6 +46,12 @@ export default class EditPage extends AdminContent {
                .find(`.edit-fields`);
   }
 
+  getTable() {
+    return this.get()
+               .find('[class="col-xs-12 no-padding" ]')
+               .find(htmlElements.table);
+  }
+
   openEdit() {
     this.getEdit().click();
     this.parent.getAdminDialog().setBody(EditAssetDialog);
@@ -56,6 +61,22 @@ export default class EditPage extends AdminContent {
   getDescriptionInput() {
     return this.get()
                .find(this.inputDescription);
+  }
+
+  getFileModifiedDate() {
+    return this.getTable()
+               .contains('File Modified Date')
+               .closest(htmlElements.tr)
+               .children()
+               .eq(1);
+  }
+
+  getImageHeight() {
+    return this.getTable()
+               .contains('Image Height')
+               .closest(htmlElements.tr)
+               .children()
+               .eq(1);
   }
 
 }
