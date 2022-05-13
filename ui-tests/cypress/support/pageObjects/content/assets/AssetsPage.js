@@ -158,7 +158,7 @@ class AssetsKebabMenu extends KebabMenu {
     if (isForbidden) {
       this.getDelete().then(button => DeletePage.openPage(button));
       return cy.wrap(new AdminPage(DeletePage)).as('currentPage');
-    }else {
+    } else {
       this.getDelete().then(button => DeleteAdminPage.openDeleteAssetsPage(button));
       const deletePage = new AdminPage(DeleteAdminPage);
       deletePage.getContent().setOrigin(this.parent.parent);
