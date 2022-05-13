@@ -24,7 +24,6 @@ describe('Assets', () => {
     it('Add asset', () => {
 
       openAssetsPage()
-
           .then(page => page.getContent().openAddAssets())
           .then(page => {
             page.getContent().selectFiles('cypress/fixtures/upload/image1.JPG');
@@ -64,7 +63,7 @@ describe('Assets', () => {
         openAssetsPage()
             .then(page => {
               cy.get('@assetToBeDeleted')
-                .then(assetToBeDeleted => page.getContent().getKebabMenu(assetToBeDeleted.id).openDropdown().clickDelete())
+                .then(() => page.getContent().getKebabMenu().openDropdown().clickDelete())
                 .then(page => page.getContent().submit())
                 .then(page => {
 
@@ -112,8 +111,8 @@ describe('Assets', () => {
 
         openAssetsPage().then(page => {
           cy.get('@assetToBeDeleted')
-            .then(assetToBeDeleted =>
-                page.getContent().getKebabMenu(assetToBeDeleted.id).openDropdown().clickDelete(isForbidden)
+            .then(() =>
+                page.getContent().getKebabMenu().openDropdown().clickDelete(isForbidden)
             )
             .then(page =>
                 page.getContent().getAlertText().should('have.text', 'Sorry. You cannot perform this action right now, you must first unlink the following cross-references.')
@@ -134,8 +133,8 @@ describe('Assets', () => {
         openAssetsPage()
             .then(page => {
               cy.get('@assetToBeDeleted')
-                .then(assetToBeDeleted => {
-                  page.getContent().getKebabMenu(assetToBeDeleted.id).openDropdown().openEdit();
+                .then(() => {
+                  page.getContent().getKebabMenu().openDropdown().openEdit();
                 })
                 .then(page => {
                   page.getContent().getDescriptionInput().clear().type('test');
@@ -152,42 +151,60 @@ describe('Assets', () => {
         openAssetsPage()
             .then(page => {
               cy.get('@assetToBeDeleted')
-                .then(assetToBeDeleted =>
-                    page.getContent().getKebabMenu(assetToBeDeleted.id).openDropdown().openEdit())
-                .then(page => {
-                  page.getContent().openDropDown().openEdit();
-                })
-                .then(page => {
-                  page.getAdminDialog().getBody().crop(-100, -100);
-                  page.getAdminDialog().close();
-                  page.getContent().submit();
-                })
-                page.getContent().getTableRows().then(rows =>
-                    cy.wrap(rows).children(htmlElements.div).should('contain.text', 'image1.JPG')
-                );
+                .then(() => {
+                  page.getContent().getKebabMenu().openDropdown().openEdit()
+                      .then(page => {
+                        page.getContent().getImageHeight().invoke('text').then(OriginalImageHeight => {
+                          cy.get('@currentPage')
+                            .then(page => {
+                              page.getContent().openDropDown().openEdit();
+                            })
+                            .then(page => {
+                              page.getAdminDialog().getBody().crop(-50, -50);
+                              page.getAdminDialog().close();
+                              page.getContent().submit();
+                            })
+                            .then(page =>
+                                page.getContent().getKebabMenu().openDropdown().openEdit())
+                            .then(page =>
+                                page.getContent().getImageHeight().invoke('text').then(CroppedImageHeight => {
+                                  expect(CroppedImageHeight).not.equal(OriginalImageHeight);
+                                })
+                            );
+                        });
+                      });
+                });
             });
+
       });
 
       it('Rotate image', () => {
         openAssetsPage()
             .then(page => {
               cy.get('@assetToBeDeleted')
-                .then(assetToBeDeleted => page.getContent().getKebabMenu(assetToBeDeleted.id).openDropdown().openEdit())
+                .then(() => page.getContent().getKebabMenu().openDropdown().openEdit())
                 .then(page => {
-                  page.getContent().openDropDown().openEdit();
-                })
-                .then(page => {
-                  page.getAdminDialog().getBody().rotate();
-                  page.getAdminDialog().close();
-                  page.getContent().submit();
-                })
-              page.getContent().getTableRows().then(rows =>
-                  cy.wrap(rows).children(htmlElements.div).should('contain.text', 'image1.JPG')
-              );
+                  page.getContent().getFileModifiedDate().invoke('text').then(OriginalModifiedDate => {
+                    cy.get('@currentPage')
+                      .then(page => {
+                        page.getContent().openDropDown().openEdit();
+                      })
+                      .then(page => {
+                        page.getAdminDialog().getBody().rotate();
+                        page.getAdminDialog().close();
+                        page.getContent().submit();
+                      })
+                      .then(page =>
+                          page.getContent().getKebabMenu().openDropdown().openEdit())
+                      .then(page =>
+                          page.getContent().getFileModifiedDate().invoke('text').then(LastModifiedDate => {
+                            expect(OriginalModifiedDate).not.equal(LastModifiedDate);
+                          })
+                      );
+                  });
+                });
             });
-
       });
-
     });
 
     describe(['ENG-2680'], 'Asset Browsing', () => {
@@ -203,7 +220,6 @@ describe('Assets', () => {
                   '    Page 0 - 0');
             });
       });
-
     });
 
   });
