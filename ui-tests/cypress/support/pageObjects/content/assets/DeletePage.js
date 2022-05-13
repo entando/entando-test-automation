@@ -1,24 +1,25 @@
-import {htmlElements}  from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
-import AdminContent    from '../../app/AdminContent';
+import AdminContent from '../../app/AdminContent';
 
 
 export default class DeletePage extends AdminContent {
 
 
-  static openPage(button){
-    cy.assetsAdminConsoleController().then(controller => controller.intercept({method:'GET'}, 'deletePageLoadingGet', '/trash.action?*'));
+  static openPage(button) {
+    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'deletePageLoadingGet', '/trash.action?*'));
     cy.get(button).click();
     cy.wait('@deletePageLoadingGet');
   }
 
-  getAlert(){
+  getAlert() {
     return this.get()
-        .find(`${htmlElements.div}.alert`);
+               .find(`${htmlElements.div}.alert`);
   }
-  getAlertText(){
+
+  getAlertText() {
     return this.getAlert()
-        .children(htmlElements.p)
+               .children(htmlElements.p);
   }
 
 

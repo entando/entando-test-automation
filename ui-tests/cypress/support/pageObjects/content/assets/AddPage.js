@@ -1,4 +1,4 @@
-import {htmlElements}  from '../../WebElement.js';
+import {htmlElements} from '../../WebElement.js';
 
 import AdminContent from '../../app/AdminContent';
 import AssetsPage   from './AssetsPage';
@@ -7,12 +7,12 @@ import AdminPage    from '../../app/AdminPage';
 
 export default class AddPage extends AdminContent {
 
-  addButton                = `${htmlElements.input}#submit`;
-  fileInput                = `${htmlElements.input}[type=file]`;
-  groupSelector            = `${htmlElements.select}[id="mainGroup"]`;
+  addButton     = `${htmlElements.input}#submit`;
+  fileInput     = `${htmlElements.input}[type=file]`;
+  groupSelector = `${htmlElements.select}[id="mainGroup"]`;
 
-  static openPage(button){
-    cy.assetsAdminConsoleController().then(controller => controller.intercept({method:'GET'}, 'addPageLoadingGet', '/new.action?*'));
+  static openPage(button) {
+    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addPageLoadingGet', '/new.action?*'));
     cy.get(button).click();
     cy.wait('@addPageLoadingGet');
   }
@@ -37,9 +37,9 @@ export default class AddPage extends AdminContent {
         .then(button => {
           cy.assetsAdminConsoleController()
             .then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
-            this.click(button)
-           });
-         cy.wait('@interceptedPOST')
+          this.click(button);
+        });
+    cy.wait('@interceptedPOST');
     return cy.wrap(new AdminPage(AssetsPage)).as('currentPage');
   }
 }
