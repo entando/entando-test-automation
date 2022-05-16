@@ -24,6 +24,7 @@ export default class AddPage extends AdminContent {
 
   selectFiles(...fileName) {
     this.getFileInput().eq(0).selectFile(fileName, {force: true});
+    return cy.get('@currentPage');
   }
 
   getGroupSelect() {
