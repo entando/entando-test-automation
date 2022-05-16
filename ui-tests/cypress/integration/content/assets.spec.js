@@ -61,18 +61,15 @@ describe('Assets', () => {
 
       it('Delete asset', () => {
         openAssetsPage()
+            .then(page => page.getContent().getKebabMenu().openDropdown().clickDelete())
+            .then(page => page.getContent().submit())
             .then(page => {
-              cy.get('@assetToBeDeleted')
-                .then(() => page.getContent().getKebabMenu().openDropdown().clickDelete())
-                .then(page => page.getContent().submit())
-                .then(page => {
-
-                  page.getContent().getTableRows().then(rows =>
-                      cy.wrap(rows).children(htmlElements.div).should('not.contain.text', 'image1.JPG')
-                  );
-                });
-              cy.wrap(null).as('assetToBeDeleted');
+              page.getContent().getTableRows().then(rows =>
+                  cy.wrap(rows).children(htmlElements.div).should('not.contain.text', 'image1.JPG')
+              );
             });
+        cy.wrap(null).as('assetToBeDeleted');
+
       });
 
       it('Delete asset referenced by a content - not allowed', () => {
@@ -109,19 +106,17 @@ describe('Assets', () => {
           .then(response => content.id = response.body.payload[0].id);
         cy.contentsController().then(controller => controller.updateStatus(content.id, 'published'));
 
-        openAssetsPage().then(page => {
-          cy.get('@assetToBeDeleted')
-            .then(() =>
+        openAssetsPage()
+            .then(page =>
                 page.getContent().getKebabMenu().openDropdown().clickDelete(isForbidden)
             )
             .then(page =>
                 page.getContent().getAlertText().should('have.text', 'Sorry. You cannot perform this action right now, you must first unlink the following cross-references.')
             );
 
-          cy.contentsController().then(controller => {
-            controller.updateStatus(content.id, 'draft');
-            controller.deleteContent(content.id);
-          });
+        cy.contentsController().then(controller => {
+          controller.updateStatus(content.id, 'draft');
+          controller.deleteContent(content.id);
         });
       });
 
@@ -131,78 +126,68 @@ describe('Assets', () => {
 
       it('Edit description', () => {
         openAssetsPage()
+            .then(page => page.getContent().getKebabMenu().openDropdown().openEdit())
             .then(page => {
-              cy.get('@assetToBeDeleted')
-                .then(() => {
-                  page.getContent().getKebabMenu().openDropdown().openEdit();
-                })
-                .then(page => {
-                  page.getContent().getDescriptionInput().clear().type('test');
-                  page.getContent().submit();
-                })
-                .then(page => {
-                  page.getContent().getTableRows().then(rows =>
-                      cy.wrap(rows).children(htmlElements.div).should('contain.text', 'test'));
-                });
+              page.getContent().getDescriptionInput().clear().type('test');
+              page.getContent().submit();
+            })
+            .then(page => {
+              page.getContent().getTableRows().then(rows =>
+                  cy.wrap(rows).children(htmlElements.div).should('contain.text', 'test'));
             });
+
       });
 
       it('Crop image', () => {
         openAssetsPage()
             .then(page => {
-              cy.get('@assetToBeDeleted')
-                .then(() => {
-                  page.getContent().getKebabMenu().openDropdown().openEdit()
-                      .then(page => {
-                        page.getContent().getImageHeight().invoke('text').then(OriginalImageHeight => {
-                          cy.get('@currentPage')
-                            .then(page => {
-                              page.getContent().openDropDown().openEdit();
+              page.getContent().getKebabMenu().openDropdown().openEdit()
+                  .then(page => {
+                    page.getContent().getImageHeight().invoke('text').then(OriginalImageHeight => {
+                      cy.get('@currentPage')
+                        .then(page => {
+                          page.getContent().openDropDown().openEdit();
+                        })
+                        .then(page => {
+                          page.getAdminDialog().getBody().crop(-50, -50);
+                          page.getAdminDialog().close();
+                          page.getContent().submit();
+                        })
+                        .then(page =>
+                            page.getContent().getKebabMenu().openDropdown().openEdit())
+                        .then(page =>
+                            page.getContent().getImageHeight().invoke('text').then(CroppedImageHeight => {
+                              expect(CroppedImageHeight).not.equal(OriginalImageHeight);
                             })
-                            .then(page => {
-                              page.getAdminDialog().getBody().crop(-50, -50);
-                              page.getAdminDialog().close();
-                              page.getContent().submit();
-                            })
-                            .then(page =>
-                                page.getContent().getKebabMenu().openDropdown().openEdit())
-                            .then(page =>
-                                page.getContent().getImageHeight().invoke('text').then(CroppedImageHeight => {
-                                  expect(CroppedImageHeight).not.equal(OriginalImageHeight);
-                                })
-                            );
-                        });
-                      });
-                });
+                        );
+                    });
+                  });
             });
-
       });
 
       it('Rotate image', () => {
         openAssetsPage()
+            .then(page =>
+                page.getContent().getKebabMenu().openDropdown().openEdit())
             .then(page => {
-              cy.get('@assetToBeDeleted')
-                .then(() => page.getContent().getKebabMenu().openDropdown().openEdit())
-                .then(page => {
-                  page.getContent().getFileModifiedDate().invoke('text').then(OriginalModifiedDate => {
-                    cy.get('@currentPage')
-                      .then(page => {
-                        page.getContent().openDropDown().openEdit();
+              page.getContent().getFileModifiedDate().invoke('text').then(OriginalModifiedDate => {
+                cy.get('@currentPage')
+                  .then(page => {
+                    page.getContent().openDropDown().openEdit();
+                  })
+                  .then(page => {
+                    page.getAdminDialog().getBody().rotate();
+                    page.getAdminDialog().close();
+                    page.getContent().submit();
+                  })
+                  .then(page =>
+                      page.getContent().getKebabMenu().openDropdown().openEdit())
+                  .then(page =>
+                      page.getContent().getFileModifiedDate().invoke('text').then(LastModifiedDate => {
+                        expect(OriginalModifiedDate).not.equal(LastModifiedDate);
                       })
-                      .then(page => {
-                        page.getAdminDialog().getBody().rotate();
-                        page.getAdminDialog().close();
-                        page.getContent().submit();
-                      })
-                      .then(page =>
-                          page.getContent().getKebabMenu().openDropdown().openEdit())
-                      .then(page =>
-                          page.getContent().getFileModifiedDate().invoke('text').then(LastModifiedDate => {
-                            expect(OriginalModifiedDate).not.equal(LastModifiedDate);
-                          })
-                      );
-                  });
-                });
+                  );
+              });
             });
       });
     });
