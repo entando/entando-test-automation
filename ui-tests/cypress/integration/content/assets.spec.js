@@ -31,7 +31,7 @@ describe('Assets', () => {
             page.getContent().submit();
           })
           .then(page => {
-            page.getContent().getTableRows().then(rows =>
+            page.getContent().getAssetsBody().then(rows =>
                 cy.wrap(rows).children(htmlElements.div).should('contain.text', 'image1.JPG')
             );
           })
@@ -64,7 +64,7 @@ describe('Assets', () => {
             .then(page => page.getContent().getKebabMenu().openDropdown().clickDelete())
             .then(page => page.getContent().submit())
             .then(page => {
-              page.getContent().getTableRows().then(rows =>
+              page.getContent().getAssetsBody().then(rows =>
                   cy.wrap(rows).children(htmlElements.div).should('not.contain.text', 'image1.JPG')
               );
             });
@@ -132,7 +132,7 @@ describe('Assets', () => {
               page.getContent().submit();
             })
             .then(page => {
-              page.getContent().getTableRows().then(rows =>
+              page.getContent().getAssetsBody().then(rows =>
                   cy.wrap(rows).children(htmlElements.div).should('contain.text', 'test'));
             });
 
