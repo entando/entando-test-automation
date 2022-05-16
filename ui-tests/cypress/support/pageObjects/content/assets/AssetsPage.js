@@ -95,10 +95,6 @@ export default class AssetsPage extends AdminContent {
                .find(this.resultInfoItemCount);
   }
 
-  getTableRows() {
-    return this.getAssetsBody();
-  }
-
   getKebabMenu(code) {
     return new AssetsKebabMenu(this, code);
   }
