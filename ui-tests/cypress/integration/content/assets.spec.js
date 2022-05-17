@@ -138,7 +138,7 @@ describe('Assets', () => {
 
       });
 
-      it.only('Crop image', () => {
+      it('Crop image', () => {
         openAssetsPage()
             .then(page => {
               page.getContent().getKebabMenu().openDropdown().openEdit()

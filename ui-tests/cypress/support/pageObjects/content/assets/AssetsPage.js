@@ -104,10 +104,7 @@ export default class AssetsPage extends AdminContent {
 class AssetsKebabMenu extends KebabMenu {
 
   get() {
-    return this.parent.get()
-               .children()
-               .find(`${htmlElements.div}.tab-content`)
-               .find(`#list-view > #search`)
+    return this.parent.getAssetsBody()
                .find(`${htmlElements.div}.list-group-item`);
 
   }
