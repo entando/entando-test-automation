@@ -138,7 +138,7 @@ describe('Assets', () => {
 
       });
 
-      it('Crop image', () => {
+      it.only('Crop image', () => {
         openAssetsPage()
             .then(page => {
               page.getContent().getKebabMenu().openDropdown().openEdit()
@@ -149,8 +149,8 @@ describe('Assets', () => {
                           page.getContent().openDropDown().openEdit();
                         })
                         .then(page => {
-                          page.getAdminDialog().getBody().crop(-50, -50);
-                          page.getAdminDialog().close();
+                          page.getDialog().getBody().crop(-50, -50);
+                          page.getDialog().close();
                           page.getContent().submit();
                         })
                         .then(page =>
@@ -176,8 +176,8 @@ describe('Assets', () => {
                     page.getContent().openDropDown().openEdit();
                   })
                   .then(page => {
-                    page.getAdminDialog().getBody().rotate();
-                    page.getAdminDialog().close();
+                    page.getDialog().getBody().rotate();
+                    page.getDialog().close();
                     page.getContent().submit();
                   })
                   .then(page =>
