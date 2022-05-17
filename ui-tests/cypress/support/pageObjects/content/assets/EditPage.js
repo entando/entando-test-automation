@@ -54,7 +54,7 @@ export default class EditPage extends AdminContent {
 
   openEdit() {
     this.getEdit().click();
-    this.parent.getAdminDialog().setBody(EditAssetDialog);
+    this.parent.getDialog().setBody(EditAssetDialog);
     return cy.get('@currentPage');
   }
 

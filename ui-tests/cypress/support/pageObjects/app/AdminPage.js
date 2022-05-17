@@ -21,7 +21,7 @@ export default class AdminPage extends AbstractPage {
     return this.parent.get()
                .children(htmlElements.body);
   }
-  getAdminDialog() {
+  getDialog() {
     return this.dialog;
   }
 
