@@ -3,7 +3,7 @@ import {htmlElements} from '../../WebElement.js';
 import AdminContent from '../../app/AdminContent';
 
 
-export default class DeletePage extends AdminContent {
+export default class CrossReferencePage extends AdminContent {
 
 
   static openPage(button) {

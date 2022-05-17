@@ -4,9 +4,9 @@ import AdminContent    from '../../app/AdminContent';
 import KebabMenu       from '../../app/KebabMenu.js';
 import AdminPage       from '../../app/AdminPage';
 import AddPage         from './AddPage';
-import EditPage        from './EditPage';
-import DeletePage      from './DeletePage';
-import DeleteAdminPage from '../../app/DeleteAdminPage';
+import EditPage           from './EditPage';
+import CrossReferencePage from './CrossReferencePage';
+import DeleteAdminPage    from '../../app/DeleteAdminPage';
 
 export default class AssetsPage extends AdminContent {
 
@@ -149,8 +149,8 @@ class AssetsKebabMenu extends KebabMenu {
 
   clickDelete(isForbidden = null) {
     if (isForbidden) {
-      this.getDelete().then(button => DeletePage.openPage(button));
-      return cy.wrap(new AdminPage(DeletePage)).as('currentPage');
+      this.getDelete().then(button => CrossReferencePage.openPage(button));
+      return cy.wrap(new AdminPage(CrossReferencePage)).as('currentPage');
     } else {
       this.getDelete().then(button => DeleteAdminPage.openDeleteAssetsPage(button));
       const deletePage = new AdminPage(DeleteAdminPage);
