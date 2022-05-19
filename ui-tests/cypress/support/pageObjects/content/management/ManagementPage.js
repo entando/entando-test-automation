@@ -172,7 +172,7 @@ class ManagementKebabMenu extends KebabMenu {
   getEdit() {
     return this.get()
                .find(htmlElements.li)
-               .contains(`Edit`);
+               .eq(0);
   }
 
   getDelete() {
