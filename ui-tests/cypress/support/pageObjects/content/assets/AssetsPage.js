@@ -119,7 +119,7 @@ class AssetsKebabMenu extends KebabMenu {
                .children(`${htmlElements.div}.dropdown`)
                .children(htmlElements.ul)
                .children(htmlElements.li)
-               .find(`${htmlElements.a}[title="Edit: image1.JPG"]`)
+               .find(`${htmlElements.a}[title="Edit: ${this.code}"]`)
                .closest(htmlElements.div);
   }
 

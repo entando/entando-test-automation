@@ -61,7 +61,7 @@ describe('Assets', () => {
 
       it('Delete asset', () => {
         openAssetsPage()
-            .then(page => page.getContent().getKebabMenu().openDropdown().clickDelete())
+            .then(page => page.getContent().getKebabMenu(testFileInfo.name).openDropdown().clickDelete())
             .then(page => page.getContent().submit())
             .then(page => {
               page.getContent().getAssetsBody().then(rows =>
@@ -108,7 +108,7 @@ describe('Assets', () => {
 
         openAssetsPage()
             .then(page =>
-                page.getContent().getKebabMenu().openDropdown().clickDelete(isForbidden)
+                page.getContent().getKebabMenu(testFileInfo.name).openDropdown().clickDelete(isForbidden)
             )
             .then(page =>
                 page.getContent().getAlertText().should('have.text', 'Sorry. You cannot perform this action right now, you must first unlink the following cross-references.')
@@ -126,7 +126,7 @@ describe('Assets', () => {
 
       it('Edit description', () => {
         openAssetsPage()
-            .then(page => page.getContent().getKebabMenu().openDropdown().openEdit())
+            .then(page => page.getContent().getKebabMenu(testFileInfo.name).openDropdown().openEdit())
             .then(page => {
               page.getContent().getDescriptionInput().clear().type('test');
               page.getContent().submit();
@@ -141,7 +141,7 @@ describe('Assets', () => {
       it('Crop image', () => {
         openAssetsPage()
             .then(page => {
-              page.getContent().getKebabMenu().openDropdown().openEdit()
+              page.getContent().getKebabMenu(testFileInfo.name).openDropdown().openEdit()
                   .then(page => {
                     page.getContent().getImageHeight().invoke('text').then(OriginalImageHeight => {
                       cy.get('@currentPage')
@@ -154,7 +154,7 @@ describe('Assets', () => {
                           page.getContent().submit();
                         })
                         .then(page =>
-                            page.getContent().getKebabMenu().openDropdown().openEdit())
+                            page.getContent().getKebabMenu(testFileInfo.name).openDropdown().openEdit())
                         .then(page =>
                             page.getContent().getImageHeight().invoke('text').then(CroppedImageHeight => {
                               expect(CroppedImageHeight).not.equal(OriginalImageHeight);
@@ -168,7 +168,7 @@ describe('Assets', () => {
       it('Rotate image', () => {
         openAssetsPage()
             .then(page =>
-                page.getContent().getKebabMenu().openDropdown().openEdit())
+                page.getContent().getKebabMenu(testFileInfo.name).openDropdown().openEdit())
             .then(page => {
               page.getContent().getFileModifiedDate().invoke('text').then(OriginalModifiedDate => {
                 cy.get('@currentPage')
@@ -181,7 +181,7 @@ describe('Assets', () => {
                     page.getContent().submit();
                   })
                   .then(page =>
-                      page.getContent().getKebabMenu().openDropdown().openEdit())
+                      page.getContent().getKebabMenu(testFileInfo.name).openDropdown().openEdit())
                   .then(page =>
                       page.getContent().getFileModifiedDate().invoke('text').then(LastModifiedDate => {
                         expect(OriginalModifiedDate).not.equal(LastModifiedDate);
