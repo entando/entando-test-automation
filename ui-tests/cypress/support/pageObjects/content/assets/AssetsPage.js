@@ -1,9 +1,9 @@
 import {htmlElements} from '../../WebElement.js';
 
-import AdminContent    from '../../app/AdminContent';
-import KebabMenu       from '../../app/KebabMenu.js';
-import AdminPage       from '../../app/AdminPage';
-import AddPage         from './AddPage';
+import AdminContent       from '../../app/AdminContent';
+import KebabMenu          from '../../app/KebabMenu.js';
+import AdminPage          from '../../app/AdminPage';
+import AddPage            from './AddPage';
 import EditPage           from './EditPage';
 import CrossReferencePage from './CrossReferencePage';
 import DeleteAdminPage    from '../../app/DeleteAdminPage';
@@ -43,9 +43,10 @@ export default class AssetsPage extends AdminContent {
   }
 
   openAdvancedFilter() {
-    return this.getAssetsFilter()
-               .then(button =>
-                   this.click(button));
+    this.getAssetsFilter()
+        .then(button =>
+            this.click(button));
+    return cy.get('@currentPage');
   }
 
   getCollapsePanel() {
