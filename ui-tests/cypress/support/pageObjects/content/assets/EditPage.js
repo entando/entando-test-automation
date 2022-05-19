@@ -92,7 +92,7 @@ class EditAssetDialog extends DialogAdminContent {
             .trigger('mousedown', {which: 1})
             .trigger('mousemove', {clientX: x + xOffset, clientY: y + yOffset})
             .trigger('mouseup', {force: true});
-          this.apply();
+          return this.apply();
         });
   }
 
@@ -100,10 +100,11 @@ class EditAssetDialog extends DialogAdminContent {
     this.get()
         .find(`${htmlElements.button}[data-option="-45"]`)
         .click();
-    this.apply();
+    return this.apply();
   }
 
   apply() {
     this.get().find(`.btn[title="crop"]`).click();
+    return cy.get('@currentPage');
   }
 }
