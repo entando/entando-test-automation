@@ -2,10 +2,10 @@ import {htmlElements} from '../../WebElement.js';
 
 import AdminContent from '../../app/AdminContent';
 
-import AddPage      from './AddPage';
-import AdminPage    from '../../app/AdminPage';
-import KebabMenu    from '../../app/KebabMenu.js';
-import DeleteDialog from '../../app/DeleteDialog.js';
+import AddPage         from './AddPage';
+import AdminPage       from '../../app/AdminPage';
+import KebabMenu         from '../../app/KebabMenu.js';
+import RemoveContentPage from './RemoveContentPage';
 
 export default class ManagementPage extends AdminContent {
 
@@ -59,6 +59,18 @@ export default class ManagementPage extends AdminContent {
   getFormSearchButton() {
     return this.getSearchForm()
                .find(`${htmlElements.button}[type=submit]`);
+  }
+
+  getContentCheckBox(content){
+    return this.getTableRow(content).children().find(`${htmlElements.input}#content_${content}`)
+  }
+  getDelete() {
+    return this.get()
+               .find(`.btn-toolbar > .pull-right > .btn`);
+  }
+  clickDelete(){
+    this.getDelete().then(button => RemoveContentPage.openDeleteContentsPage(button));
+    return cy.wrap(new AdminPage(RemoveContentPage)).as('currentPage');
   }
 
   getAddButton() {
@@ -175,20 +187,8 @@ class ManagementKebabMenu extends KebabMenu {
                .eq(0);
   }
 
-  getDelete() {
-    return this.get()
-               .find(htmlElements.li)
-               .eq(1);
-  }
-
   openEdit() {
     this.getEdit().then(button => AddPage.editPage(button, this.code));
     return cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
-
-  clickDelete() {
-    this.getDelete().click();
-    this.parent.parent.getDialog().setBody(DeleteDialog);
-  }
-
 }
