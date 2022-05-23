@@ -106,39 +106,33 @@ class AssetsKebabMenu extends KebabMenu {
 
   get() {
     return this.parent.getAssetsBody()
-               .find(`${htmlElements.div}.list-group-item`);
-
+               .find(`${htmlElements.div}.list-group-item`)
+               .children(`${htmlElements.div}.list-view-pf-actions`)
+               .children(htmlElements.div);
   }
 
-  getActionsButtons() {
-    return this.get()
-               .children(`${htmlElements.div}.list-view-pf-actions`);
-  }
-
-  getDropdown() {
-    return this.getActionsButtons()
-               .children(`${htmlElements.div}.dropdown`)
-               .children(htmlElements.ul)
+  getActionsButton() {
+    return this.getDropdown()
                .children(htmlElements.li)
                .find(`${htmlElements.a}[title="Edit: ${this.code}"]`)
                .closest(htmlElements.div);
   }
 
   openDropdown() {
-    this.getDropdown()
+    this.getActionsButton()
         .children(`${htmlElements.button}#dropdownKebabRight2`)
         .click();
     return this;
   }
 
   getEdit() {
-    return this.getDropdown()
+    return this.getActionsButton()
                .find(htmlElements.li)
                .eq(0);
   }
 
   getDelete() {
-    return this.getDropdown()
+    return this.getActionsButton()
                .find(htmlElements.li)
                .eq(1);
   }
