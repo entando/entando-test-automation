@@ -53,9 +53,9 @@ import './controllers/restAPI/UsersController';
 import './controllers/restAPI/WidgetsController';
 
 import './controllers/cmsActions/AssetsAdminConsoleController';
+import './controllers/cmsActions/CategoriesAdminConsoleController';
 import './controllers/cmsActions/ContentsAdminConsoleController';
 import './controllers/cmsActions/ContentTemplatesAdminConsoleController';
 import './controllers/cmsActions/ContentTypesAdminConsoleController';
 import './controllers/cmsActions/ContentTypesJacmsAdminConsoleController';
-import './controllers/cmsActions/CategoriesAdminConsoleController';
 import './controllers/cmsActions/VersioningAdminConsoleController';

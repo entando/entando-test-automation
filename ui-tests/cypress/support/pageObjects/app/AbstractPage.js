@@ -1,4 +1,5 @@
 import {WebElement} from '../WebElement';
+
 import AppTour      from './AppTour';
 
 export default class AbstractPage extends WebElement {

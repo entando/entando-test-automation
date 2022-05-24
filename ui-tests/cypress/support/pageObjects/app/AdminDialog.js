@@ -1,6 +1,5 @@
 import {htmlElements, WebElement} from '../WebElement.js';
 
-
 export class AdminDialog extends WebElement {
 
   dialog      = `${htmlElements.div}[role=dialog]`;

@@ -28,6 +28,7 @@ export default class DeleteAdminPage extends AdminContent {
     cy.wait('@deleteContentTypePageLoadingGET');
   }
 
+  //FIXME AdminConsole is not built on REST APIs
   static openDeleteAssetsPage(button){
     cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'deleteAssetsPageLoadingGET', `/trash.action?*`));
     cy.get(button).click();

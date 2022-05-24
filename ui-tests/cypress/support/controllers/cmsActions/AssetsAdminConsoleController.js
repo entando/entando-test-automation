@@ -1,5 +1,5 @@
-import AbstractController                from '../abstractController';
-import {assetsURL} from '../controllersEndPoints';
+import AbstractController from '../abstractController';
+import {assetsURL}        from '../controllersEndPoints';
 
 Cypress.Commands.add('assetsAdminConsoleController', () => {
   cy.get('@tokens').then(tokens => {
