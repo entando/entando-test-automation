@@ -1,7 +1,9 @@
 import {htmlElements} from '../../WebElement.js';
 
-import AdminContent       from '../../app/AdminContent';
-import KebabMenu          from '../../app/KebabMenu.js';
+import AdminContent from '../../app/AdminContent';
+
+import KebabMenu from '../../app/KebabMenu.js';
+
 import AdminPage          from '../../app/AdminPage';
 import AddPage            from './AddPage';
 import EditPage           from './EditPage';
@@ -27,8 +29,7 @@ export default class AssetsPage extends AdminContent {
   }
 
   getAddButton() {
-    return this.get()
-               .find(this.addButton);
+    return this.get().find(this.addButton);
   }
 
   openAddAssets() {
@@ -43,36 +44,29 @@ export default class AssetsPage extends AdminContent {
   }
 
   openAdvancedFilter() {
-    this.getAssetsFilter()
-        .then(button =>
-            this.click(button));
+    this.getAssetsFilter().click();
     return cy.get('@currentPage');
   }
 
   getCollapsePanel() {
-    return this.get()
-               .find(this.collapsePanel);
+    return this.get().find(this.collapsePanel);
   }
 
   getSearchTextfield() {
-    return this.getCollapsePanel()
-               .find(this.assetsSearchText);
+    return this.getCollapsePanel().find(this.assetsSearchText);
   }
 
   getSearchButton() {
-    return this.get()
-               .find(this.assetsFilterSearchButton);
+    return this.get().find(this.assetsFilterSearchButton);
   }
 
   submitSearch() {
-    return this.getSearchButton()
-               .then(button => {
-                 cy.assetsAdminConsoleController()
-                   .then(controller =>
-                       controller.intercept({method: 'POST'}, 'submitSearch', '/search.action'));
-                 this.click(button);
-                 cy.wait('@submitSearch');
-               });
+    this.getSearchButton().then(button => {
+      cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'submitSearch', '/search.action'));
+      this.click(button);
+      cy.wait('@submitSearch');
+    });
+    return cy.get('@currentPage');
   }
 
   getAssetsView() {
@@ -86,8 +80,7 @@ export default class AssetsPage extends AdminContent {
   }
 
   getFilterResultInfo() {
-    return this.get()
-               .find(this.resultInfo);
+    return this.get().find(this.resultInfo);
   }
 
   getFilterResultItemCount() {
@@ -155,5 +148,3 @@ class AssetsKebabMenu extends KebabMenu {
   }
 
 }
-
-

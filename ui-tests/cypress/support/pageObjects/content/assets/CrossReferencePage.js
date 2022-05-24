@@ -2,9 +2,7 @@ import {htmlElements} from '../../WebElement.js';
 
 import AdminContent from '../../app/AdminContent';
 
-
 export default class CrossReferencePage extends AdminContent {
-
 
   static openPage(button) {
     cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'deletePageLoadingGet', '/trash.action?*'));
@@ -21,6 +19,5 @@ export default class CrossReferencePage extends AdminContent {
     return this.getAlert()
                .children(htmlElements.p);
   }
-
 
 }

@@ -1,17 +1,16 @@
 import {htmlElements} from '../../WebElement.js';
 
-import AdminContent         from '../../app/AdminContent';
+import AdminContent from '../../app/AdminContent';
+
 import AssetsPage           from './AssetsPage';
 import AdminPage            from '../../app/AdminPage';
 import {DialogAdminContent} from '../../app/AdminDialog';
-
 
 export default class EditPage extends AdminContent {
 
   addButton        = `${htmlElements.input}#submit`;
   inputDescription = `${htmlElements.input}#descr_0`;
   dropdown         = `${htmlElements.div}.dropdown`;
-
 
   static openPage(button) {
     cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editPageLoadingGet', '/edit.action?*'));
@@ -20,13 +19,11 @@ export default class EditPage extends AdminContent {
   }
 
   submit() {
-    this.get()
-        .find(this.addButton)
-        .then(button => {
-          cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
-          this.click(button);
-        });
-    cy.wait('@interceptedPOST');
+    this.get().find(this.addButton).then(button => {
+      cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
+      this.click(button);
+      cy.wait('@interceptedPOST');
+    });
     return cy.wrap(new AdminPage(AssetsPage)).as('currentPage');
   }
 
@@ -83,23 +80,19 @@ export default class EditPage extends AdminContent {
 
 class EditAssetDialog extends DialogAdminContent {
 
-
   crop(xOffset, yOffset) {
-    this.get().find('.cropper-point.point-se')
-        .then(($cropperPoint) => {
-          const {x, y} = $cropperPoint[0].getBoundingClientRect();
-          cy.wrap($cropperPoint)
-            .trigger('mousedown', {which: 1})
-            .trigger('mousemove', {clientX: x + xOffset, clientY: y + yOffset})
-            .trigger('mouseup', {force: true});
-          return this.apply();
-        });
+    this.get().find('.cropper-point.point-se').then(cropPoints => {
+      const {x, y} = cropPoints[0].getBoundingClientRect();
+      cy.wrap(cropPoints)
+        .trigger('mousedown', {which: 1})
+        .trigger('mousemove', {clientX: x + xOffset, clientY: y + yOffset})
+        .trigger('mouseup', {force: true});
+    });
+    return this.apply();
   }
 
   rotate() {
-    this.get()
-        .find(`${htmlElements.button}[data-option="-45"]`)
-        .click();
+    this.get().find(`${htmlElements.button}[data-option="-45"]`).click();
     return this.apply();
   }
 
@@ -107,4 +100,5 @@ class EditAssetDialog extends DialogAdminContent {
     this.get().find(`.btn[title="crop"]`).click();
     return cy.get('@currentPage');
   }
+
 }

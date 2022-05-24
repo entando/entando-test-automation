@@ -4,7 +4,6 @@ import AdminContent from '../../app/AdminContent';
 import AssetsPage   from './AssetsPage';
 import AdminPage    from '../../app/AdminPage';
 
-
 export default class AddPage extends AdminContent {
 
   addButton     = `${htmlElements.input}#submit`;
@@ -36,11 +35,11 @@ export default class AddPage extends AdminContent {
     this.get()
         .find(this.addButton)
         .then(button => {
-          cy.assetsAdminConsoleController()
-            .then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
+          cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
           this.click(button);
+          cy.wait('@interceptedPOST');
         });
-    cy.wait('@interceptedPOST');
     return cy.wrap(new AdminPage(AssetsPage)).as('currentPage');
   }
+
 }
