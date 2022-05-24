@@ -44,7 +44,8 @@ export default class AddPage extends AdminContent {
     cy.get(button).click();
     cy.wait('@addContentPageReloadingPOST');
   }
- //FIXME AdminConsole is not built on REST APIs
+
+  //FIXME AdminConsole is not built on REST APIs
   static editPage(button, code) {
     cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editContentPageReloadingGET', `/edit.action?contentId=${code}`));
     cy.get(button).click({force: true});
@@ -324,3 +325,4 @@ export default class AddPage extends AdminContent {
   }
 
 }
+
