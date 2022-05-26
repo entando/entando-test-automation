@@ -67,21 +67,21 @@ export default class ManagementPage extends AdminContent {
 
   getDelete() {
     return this.get()
-               .find(`.btn-toolbar > .pull-right > .btn`);
+               .find(`${htmlElements.button}.btn-danger`);
   }
 
   clickDelete() {
-    this.getDelete().then(button => ResultsPage.openDeleteContentsPage(button));
+    this.getDelete().then(button => ResultsPage.openConfirmActionPage(button));
     return cy.wrap(new AdminPage(ResultsPage)).as('currentPage');
   }
 
   getUnPublish() {
     return this.get()
-               .find(`.toolbar-pf-actions > :nth-child(2) > .col-xs-7 > .btn-toolbar > :nth-child(1) > .btn-default`);
+               .find(`${htmlElements.button}[title="Suspend the content"]`);
   }
 
   clickUnPublish() {
-    this.getUnPublish().then(button => ResultsPage.openUnPublishContentsPage(button));
+    this.getUnPublish().then(button => ResultsPage.openConfirmActionPage(button));
     return cy.wrap(new AdminPage(ResultsPage)).as('currentPage');
   }
 
@@ -130,7 +130,6 @@ export default class ManagementPage extends AdminContent {
                .children(htmlElements.tr);
   }
 
-  //FIXME we should have the code generated during the creation of the content
   getTableRow(name) {
     return this.getTableRows()
                .contains(htmlElements.td, name)
@@ -181,14 +180,6 @@ class ManagementKebabMenu extends KebabMenu {
     return this.parent.getActionsRow(this.code)
                .children(htmlElements.div);
   }
-
-  openDropdown() {
-    this.get()
-        .children(htmlElements.button)
-        .click({force: true});
-    return this;
-  }
-
 
   getEdit() {
     return this.get()
