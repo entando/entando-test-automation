@@ -1,3 +1,5 @@
+import {htmlElements} from '../../../WebElement';
+
 import AttributeFormField from '../AttributeFormField';
 
 export default class CheckboxAttribute extends AttributeFormField {
@@ -7,7 +9,7 @@ export default class CheckboxAttribute extends AttributeFormField {
 
   getInputArea() {
     return this.getContents()
-               .find('div.bootstrap-switch.wrapper');
+               .find(`${htmlElements.div}.bootstrap-switch`);
   }
 
   isInputChecked() {

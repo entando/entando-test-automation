@@ -1,35 +1,36 @@
 import {htmlElements} from '../../../WebElement';
 
-import {DialogContent} from '../../../app/Dialog';
-
 import AttributeFormField from '../AttributeFormField';
 
-export class LinkDialog extends DialogContent {
+import AdminContent from '../../../app/AdminContent';
+import AdminPage from '../../../app/AdminPage';
+
+export class LinkDialog extends AdminContent {
+
   typeSelected  = 1;
   pageTreeTable = `${htmlElements.table}.PageTreeSelector`;
   expandAll     = `${htmlElements.div}.PageTreeSelector__button--expand`;
-  contentSearch = `${htmlElements.div}.ContentSearch`;
-  contentsBody  = `${htmlElements.div}.Contents__body`;
-  contentTable  = `${htmlElements.table}.Contents__table-element`;
+  content       = `${htmlElements.form}#entandoSearch`;
+  contentTable  = `${htmlElements.table}#contentListTable`;
 
-  getTabArea() {
-    return this.get().find('ul[role="tablist"]');
+  get() {
+    return this.parent.get();
   }
 
-  getTabBlock() {
-    return this.get().find('div.tab-content');
+  getTabArea() {
+    return this.get().find(`${htmlElements.ul}#tab-togglers`);
   }
 
   getTabURL() {
-    return this.getTabBlock().find('#LinkConfigModal-Tabs-pane-url');
+    return this.get().find(`${htmlElements.form}#configUrlLink`);
   }
 
   getTabPage() {
-    return this.getTabBlock().find('#LinkConfigModal-Tabs-pane-page');
+    return this.get().find(`#LinkConfigModal-Tabs-pane-page`);
   }
 
   getTabContent() {
-    return this.getTabBlock().find('#LinkConfigModal-Tabs-pane-content');
+    return this.get().find(`${htmlElements.div}#content-link`);
   }
 
   getTabBlockByTypeSelected() {
@@ -46,12 +47,12 @@ export class LinkDialog extends DialogContent {
 
   clickTabByDestType(destType) {
     this.typeSelected = destType;
-    return this.getTabArea().children('li').eq(destType - 1)
+    return this.getTabArea().children(htmlElements.li).eq(destType - 1)
                .children(htmlElements.a).click();
   }
 
   setUrlValue(value) {
-    this.getTabURL().find('input[name="url"]').type(value);
+    this.getTabURL().find(`${htmlElements.input}[name="url"]`).type(value);
   }
 
   getPageTreeTable() {
@@ -74,15 +75,15 @@ export class LinkDialog extends DialogContent {
   }
 
   getContentSearchArea() {
-    return this.getTabContent().find(this.contentSearch);
+    return this.getTabContent().find(this.content).eq(0);
   }
 
   getContentTable() {
-    return this.getTabContent().find(this.contentsBody).find(this.contentTable);
+    return this.getTabContent().find(this.content).eq(1).find(this.contentTable);
   }
 
   getContentRowRadio(contentId) {
-    return this.getContentTable().find(`input#content${contentId}`);
+    return this.getContentTable().find(`${htmlElements.input}#contentId_${contentId}`);
   }
 
   setContentValue(contentId) {
@@ -90,15 +91,15 @@ export class LinkDialog extends DialogContent {
   }
 
   setAttributeRelValue(value) {
-    this.getTabBlockByTypeSelected().find('input[name="attributes.rel"]').type(value);
+    this.getTabBlockByTypeSelected().find(`${htmlElements.input}#linkAttributeRel`).type(value);
   }
 
   setAttributesTargetValue(value) {
-    this.getTabBlockByTypeSelected().find('input[name="attributes.target"]').type(value);
+    this.getTabBlockByTypeSelected().find(`${htmlElements.input}#linkAttributeTarget`).type(value);
   }
 
   setAttributeshrefLangValue(value) {
-    this.getTabBlockByTypeSelected().find('input[name="attributes.hreflang"]').type(value);
+    this.getTabBlockByTypeSelected().find(`${htmlElements.input}#linkAttributeHRefLang`).type(value);
   }
 
   confirm() {
@@ -108,8 +109,9 @@ export class LinkDialog extends DialogContent {
 }
 
 export default class LinkAttribute extends AttributeFormField {
-  constructor(parent, attributeIndex, lang = 'en') {
+  constructor(parent, attributeIndex, lang = 'en', composite = false) {
     super(parent, 'Link', attributeIndex, lang);
+    this.composite = composite;
   }
 
   getAddButton() {
@@ -117,44 +119,47 @@ export default class LinkAttribute extends AttributeFormField {
   }
 
   getTextInput() {
-    return this.getContents().find(`input[name="${this.prefix}.values.${this.lang}"]`);
+    const textInput = (this.composite ? `Composite:Link:${this.lang}_Composite_Link` : `Link:${this.lang}_Link`)
+    return this.getContents().find(`${htmlElements.input}[name="${textInput}"]`);
   }
 
   getEditButton() {
-    return this.getContents().find('div.panel-body').children('div.text-right').children('button.btn-default');
+    return this.getContents().find(`${htmlElements.div}.panel-body`).children(`${htmlElements.div}.text-right`).children(`${htmlElements.button}.btn-default`);
   }
 
   getDeleteButton() {
-    return this.getContents().find('div.panel-body').children('div.text-right').children('button.btn-danger');
+    return this.getContents().find(`${htmlElements.div}.panel-body`).children(`${htmlElements.div}.text-right`).children(`${htmlElements.button}.btn-danger`);
   }
 
   setLinkInfo(link) {
-    this.setDialogBodyWithClass(LinkDialog);
-    const {destType, rel, target, hreflang} = link;
-    this.getDialogBodyOfAttribute().clickTabByDestType(destType);
+    cy.wrap(new AdminPage(LinkDialog)).then(page => {
+      const { destType, rel, target, hrefLang } = link;
+      page.getContent().clickTabByDestType(destType);
 
-    switch (destType) {
-      case 1:
-      default:
-        this.getDialogBodyOfAttribute().setUrlValue(link.urlDest);
-        break;
-      case 2:
-        this.getDialogBodyOfAttribute().setPageValue(link.pageDest);
-        break;
-      case 3:
-        this.getDialogBodyOfAttribute().setContentValue(link.contentDest);
-        break;
-    }
-    if (link.rel) {
-      this.getDialogBodyOfAttribute().setAttributeRelValue(rel);
-    }
-    if (link.target) {
-      this.getDialogBodyOfAttribute().setAttributesTargetValue(target);
-    }
-    if (link.hreflang) {
-      this.getDialogBodyOfAttribute().setAttributeshrefLangValue(hreflang);
-    }
-    this.getDialogBodyOfAttribute().confirm();
+      switch (destType) {
+        case 1:
+        default:
+          page.getContent().setUrlValue(link.urlDest);
+          break;
+        case 2:
+          page.getContent().setPageValue(link.pageDest);
+          break;
+        case 3:
+          page.getContent().setContentValue(link.contentDest);
+          break;
+      }
+      if (link.rel) {
+        page.getContent().setAttributeRelValue(rel);
+      }
+      if (link.target) {
+        page.getContent().setAttributesTargetValue(target);
+      }
+      if (link.hrefLang) {
+        page.getContent().setAttributeshrefLangValue(hrefLang);
+      }
+      page.getContent().confirm();
+    });
+
   }
 
   setValue({link, value}) {
@@ -170,6 +175,6 @@ export default class LinkAttribute extends AttributeFormField {
       this.getEditButton().click();
       this.setLinkInfo(link);
     }
-    this.getTextInput().clear().type(value);
+    this.getTextInput().then(input => this.parent.type(input, value));
   }
 }

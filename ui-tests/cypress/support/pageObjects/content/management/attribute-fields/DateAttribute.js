@@ -1,14 +1,14 @@
+import {htmlElements} from '../../../WebElement';
+
 import AttributeFormField from '../AttributeFormField';
 
 export default class DateAttribute extends AttributeFormField {
-  pickerInput       = 'div.RenderDatePickerInput__container';
-  inputArea         = 'div.react-datepicker-wrapper';
-  calendarPopper    = 'div.react-datepicker-popper';
-  monthButtons      = 'button[type=button].react-datepicker__navigation.react-datepicker__navigation';
-  calendarContainer = 'div.react-datepicker__month-container';
-  calendarHeader    = 'div.react-datepicker__header';
-  currentMonth      = 'div.react-datepicker__current-month';
-  dayPick           = 'div[role="listbox"].react-datepicker__month';
+  inputArea         = `${htmlElements.div}.input-group.datepicker.date`;
+  calendarPopper    = `${htmlElements.div}.datepicker.datepicker-dropdown`;
+  calendarContainer = `${htmlElements.div}.react-datepicker__month-container`;
+  calendarHeader    = `${htmlElements.div}.datepicker-days`;
+  currentMonth      = `${htmlElements.th}.datepicker-switch`;
+  dayPick           = `${htmlElements.tbody}`;
 
   constructor(parent, attributeIndex, lang = 'en', addTimestamp = false) {
     super(parent, addTimestamp ? 'Timestamp' : 'Date', attributeIndex, lang);
@@ -21,25 +21,20 @@ export default class DateAttribute extends AttributeFormField {
     return this.get().find('.form-group');
   }
 
-  getComponentArea() {
-    return this.getContents()
-               .find(this.pickerInput);
-  }
-
   getInputArea() {
-    return this.getComponentArea().find(this.inputArea);
+    return this.getContents().find(this.inputArea);
   }
 
   getCalendarArea() {
-    return this.getComponentArea().find(this.calendarPopper);
+    return this.parent.parent.get().find(this.calendarPopper);
   }
 
   getPreviousMonthButton() {
-    return this.getCalendarArea().find(`${this.monthButtons}--previous`);
+    return this.getCalendarArea().children(`${htmlElements.div}.datepicker-days`).find(`${htmlElements.th}.prev`);
   }
 
   getNextMonthButton() {
-    return this.getCalendarArea().find(`${this.monthButtons}--next`);
+    return this.getCalendarArea().children(`${htmlElements.div}.datepicker-days`).find(`${htmlElements.th}.next`);
   }
 
   getCalendarHeader() {
@@ -86,7 +81,6 @@ export default class DateAttribute extends AttributeFormField {
         }
       }
       this.getDayPickArea().contains(new RegExp(`^${dateValue.getDate()}$`)).click();
-      this.getInputArea().find('input').blur();
     });
   }
 

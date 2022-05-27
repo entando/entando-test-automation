@@ -38,8 +38,9 @@ export default class Content extends WebElement {
              .find(`${htmlElements.span}.help-block`);
   }
 
-  click(input) {
-    cy.get(input).click();
+  click(input, force = false) {
+    if (!force) cy.get(input).click();
+    else cy.get(input).click({force: true});
     return cy.get('@currentPage');
   }
 

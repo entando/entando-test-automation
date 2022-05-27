@@ -1,0 +1,230 @@
+[
+   {
+      "type":"Monotext",
+      "value":"Le quick brown fox",
+      "editedValue":"the edited slow fox",
+      "processor":"simple"
+   },
+   {
+      "type":"Email",
+      "value":"cypress@entando.com",
+      "editedValue":"cypress.edited@entando.com",
+      "processor":"simple"
+   },
+   {
+      "type":"Number",
+      "value":"42",
+      "editedValue":"43",
+      "validationRules":{
+         "rangeStartNumber":"1",
+         "rangeEndNumber":"9"
+      },
+      "processor":"simple"
+   },
+   {
+      "type":"Boolean",
+      "value":true,
+      "editedValue":false,
+      "processor":"simple"
+   },
+   {
+      "type":"CheckBox",
+      "value":true,
+      "editedValue":false,
+      "processor":"simple"
+   },
+   {
+      "type":"ThreeState",
+      "value":false,
+      "editedValue":null,
+      "processor":"simple"
+   },
+   {
+      "type":"Date",
+      "value":"2022-01-01 00:00:00",
+      "editedValue":"2022-01-02 00:00:00",
+      "validationRules":{
+         "rangeStartDate":"2021-01-01 00:00:00",
+         "rangeEndDate":"2021-12-31 23:59:59"
+      },
+      "processor":"simple"
+   },
+   {
+      "type":"Timestamp",
+      "value":"2022-01-01 00:00:00",
+      "editedValue":"2022-01-02 00:00:00",
+      "processor":"simple"
+   },
+   {
+      "type":"Enumerator",
+      "value":"b",
+      "properties":{
+         "enumeratorStaticItems":"a,b,c",
+         "enumeratorStaticItemsSeparator":","
+      },
+      "editedValue":"c",
+      "processor":"simple"
+   },
+   {
+      "type":"EnumeratorMap",
+      "value":"y",
+      "properties":{
+         "enumeratorStaticItems":"x=1,y=2,z=3",
+         "enumeratorStaticItemsSeparator":","
+      },
+      "editedValue":"z",
+      "processor":"simple"
+   },
+   {
+      "type":"Text",
+      "value":{
+         "en":"Demo",
+         "it":"Demo It"
+      },
+      "editedValue":{
+         "en":"Demo edited",
+         "it":"Demo It edited"
+      },
+      "processor":"multilang"
+   },
+   {
+      "type":"Longtext",
+      "value":{
+         "en":"Demo Long",
+         "it":"Demo Long It"
+      },
+      "editedValue":{
+         "en":"Demo long edited en",
+         "it":"Demo long edited It"
+      },
+      "processor":"multilang"
+   },
+   {
+      "type":"Hypertext",
+      "value":{
+         "en":"Hypertext it is",
+         "it":"Hypertext e"
+      },
+      "editedValue":{
+         "en":"Hypertext it is edited",
+         "it":"Hypertext e edited"
+      },
+      "processor":"multilang"
+   },
+   {
+      "type":"Link",
+      "value":{
+         "link":{
+            "urlDest":"https://entando.com",
+            "hrefLang":"en",
+            "destType":1,
+            "target":"_blank"
+         },
+         "values":{
+            "en":"Entando en",
+            "it":"Entando it"
+         }
+      },
+      "postValue":{
+         "link":{
+            "urlDest":"https://entando.com",
+            "hreflang":"en",
+            "destType":1,
+            "target":"_blank"
+         },
+         "values":{
+            "en":"Entando en",
+            "it":"Entando it"
+         }
+      },
+      "editedValue":{
+         "link":{
+            "destType":1,
+            "urlDest":"https://entando.com",
+            "target":"_blank",
+            "hreflang":"en"
+         },
+         "values":{
+            "en":"Entando en edited",
+            "it":"Entando it edited"
+         }
+      },
+      "processor":"link"
+   },
+   {
+      "type":"Attach",
+      "value":{
+         "en":{
+            "upload":{
+               "file":"cypress/fixtures/upload/blank.pdf"
+            },
+            "metadata":{
+               "name":"blank.pdf"
+            }
+         },
+         "it":{
+            "upload":{
+               "file":"cypress/fixtures/upload/blank.pdf"
+            },
+            "metadata":{
+               "name":"blank.pdf"
+            }
+         }
+      },
+      "editedValue":{
+         "en":{
+            "metadata":{
+               "name":"blanko.pdf"
+            }
+         },
+         "it":{
+            "metadata":{
+               "name":"blankow.pdf"
+            }
+         }
+      },
+      "processor":"attach"
+   },
+   {
+      "type":"Image",
+      "value":{
+         "en":{
+            "upload":"entando_at_plan.jpg",
+            "metadata":{
+               "legend":"TPlan",
+               "alt":"Entando at Plan",
+               "description":"At Plan",
+               "actionButton": "entandoAtPlan"
+            }
+         },
+         "it":{
+            "upload":"entando_at_plan.jpg",
+            "metadata":{
+               "legend":"IPlan",
+               "alt":"Entando al piano",
+               "description":"It Plan"
+            }
+         }
+      },
+      "editedValue":{
+         "en":{
+            "upload":"entando_at_work.jpg",
+            "metadata":{
+               "legend":"legend",
+               "alt":"_popup",
+               "description":"desc edited",
+               "actionButton": "entandoAtWork"
+            }
+         },
+         "it":{
+            "upload":"entando_at_work.jpg",
+            "metadata":{
+               "legend":"lengend it",
+               "alt":"_popup",
+               "description":"desc edited"
+            }
+         }
+      },
+      "processor":"image"
+   }
+]
