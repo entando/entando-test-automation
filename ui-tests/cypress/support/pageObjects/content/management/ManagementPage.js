@@ -56,35 +56,6 @@ export default class ManagementPage extends AdminContent {
                .find(`${htmlElements.input}#contentIdToken`);
   }
 
-  getFormSearchButton() {
-    return this.getSearchForm()
-               .find(`${htmlElements.button}[type=submit]`);
-  }
-
-  getContentCheckBox(content) {
-    return this.getTableRow(content).children().find(`${htmlElements.input}#content_${content}`);
-  }
-
-  getDelete() {
-    return this.get()
-               .find(`${htmlElements.button}.btn-danger`);
-  }
-
-  clickDelete() {
-    this.getDelete().then(button => ResultsPage.openConfirmActionPage(button));
-    return cy.wrap(new AdminPage(ResultsPage)).as('currentPage');
-  }
-
-  getUnPublish() {
-    return this.get()
-               .find(`${htmlElements.button}[title="Suspend the content"]`);
-  }
-
-  clickUnPublish() {
-    this.getUnPublish().then(button => ResultsPage.openConfirmActionPage(button));
-    return cy.wrap(new AdminPage(ResultsPage)).as('currentPage');
-  }
-
   getAddButton() {
     return this.getContents()
                .children(htmlElements.div).eq(1)
@@ -106,10 +77,29 @@ export default class ManagementPage extends AdminContent {
                .contains(typeName);
   }
 
+  getFormSearchButton() {
+    return this.getSearchForm()
+               .find(`${htmlElements.button}[type=submit]`);
+  }
+
+  getContentCheckBox(content) {
+    return this.getTableRow(content).children().find(`${htmlElements.input}#content_${content}`);
+  }
+
+  getDelete() {
+    return this.get()
+               .find(`${htmlElements.button}.btn-danger`);
+  }
+
   getContentsForm() {
     return this.getContents()
                .children(htmlElements.div).eq(2)
                .children(`${htmlElements.form}#search`);
+  }
+
+  getUnPublish() {
+    return this.get()
+               .find(`${htmlElements.button}[title="Suspend the content"]`);
   }
 
   getTableWrapper() {
@@ -141,9 +131,19 @@ export default class ManagementPage extends AdminContent {
                .find('.table-view-pf-actions');
   }
 
+  clickDelete() {
+    this.getDelete().then(button => ResultsPage.openConfirmActionPage(button));
+    return cy.wrap(new AdminPage(ResultsPage)).as('currentPage');
+  }
+
   clickFormSearchButton() {
     this.getFormSearchButton().then(button => ManagementPage.openSearchPage(button));
     return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
+  }
+
+  clickUnPublish() {
+    this.getUnPublish().then(button => ResultsPage.openConfirmActionPage(button));
+    return cy.wrap(new AdminPage(ResultsPage)).as('currentPage');
   }
 
   openAddContentPage(contentType) {
@@ -151,9 +151,6 @@ export default class ManagementPage extends AdminContent {
         .then(() => this.getAddOption(contentType).then(button => AddPage.openPage(button)));
     return cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
-
-  // ---- old -----
-
 
   getKebabMenu(code) {
     return new ManagementKebabMenu(this, code);
