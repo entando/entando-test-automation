@@ -86,7 +86,7 @@ describe([Tag.GTS], 'Contents', () => {
                 page.getContent().clickUnPublish();
               }))
           .then(page => page.getContent().submit())
-          .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible'));
+          .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible').and('contain', `${content.description}`));
       cy.wrap(null).as('contentToBeDeleted');
       removePublishedPage();
     });
@@ -118,11 +118,12 @@ describe([Tag.GTS], 'Contents', () => {
                 page.getContent().clickDelete();
               })
               .then(page => page.getContent().submit())
-              .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible'));
+              .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible').and('contain', `${testContent.description}`));
             cy.wrap(null).as('contentToBeDeleted');
           });
       removePublishedContent();
     });
+
   });
 
   const DEFAULT_GROUP        = 'Free Access';
