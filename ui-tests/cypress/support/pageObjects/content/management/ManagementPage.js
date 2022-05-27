@@ -130,9 +130,9 @@ export default class ManagementPage extends AdminContent {
                .children(htmlElements.tr);
   }
 
-  getTableRow(name) {
+  getTableRow(code) {
     return this.getTableRows()
-               .contains(htmlElements.td, name)
+               .contains(htmlElements.td, code)
                .parents(htmlElements.tr);
   }
 
