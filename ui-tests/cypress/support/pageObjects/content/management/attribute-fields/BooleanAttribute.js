@@ -1,3 +1,5 @@
+import {htmlElements} from '../../../WebElement';
+
 import AttributeFormField from '../AttributeFormField';
 
 export default class BooleanAttribute extends AttributeFormField {
@@ -7,17 +9,17 @@ export default class BooleanAttribute extends AttributeFormField {
 
   getInputArea() {
     return this.getContents()
-               .find('[role="toolbar"]');
+               .find('[data-toggle="buttons"]');
   }
 
   getYesSwitch() {
     return this.getInputArea()
-               .find('label').eq(0);
+               .children(htmlElements.label).eq(0);
   }
 
   getNoSwitch() {
     return this.getInputArea()
-               .find('label').eq(1);
+               .children(htmlElements.label).eq(1);
   }
 
   setValue(value) {

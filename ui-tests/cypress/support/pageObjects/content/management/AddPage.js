@@ -45,6 +45,12 @@ export default class AddPage extends AdminContent {
     cy.wait('@addContentPageReloadingPOST');
   }
 
+  static editPage(button, code) {
+    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editContentPageReloadingGET', `/edit.action?contentId=${code}`));
+    cy.get(button).click({force: true});
+    cy.wait('@editContentPageReloadingGET');
+  }
+
   getContents() {
     return this.get()
                .children(`${htmlElements.div}#main`);
@@ -99,7 +105,7 @@ export default class AddPage extends AdminContent {
   }
 
   getContentAttributesLanguageTab(lang) {
-    return this.getContentAttributesLanguageTabs().find(`${htmlElements.a}[href=#${lang}_tab]`);
+    return this.getContentAttributesLanguageTabs().find(`${htmlElements.a}[href="#${lang}_tab"]`);
   }
 
   getContentAttributesContent() {
@@ -211,23 +217,22 @@ export default class AddPage extends AdminContent {
     if (confirmTranslation) {
       this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
     }
-    return new AdminPage(ManagementPage);
+    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
   }
 
   submitApproveForm(confirmTranslation = false) {
-    this.getSaveApproveAction().click();
+    this.getSaveApproveAction().then(button => ManagementPage.savePage(button));
     if (confirmTranslation) {
       this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
     }
-    return new AdminPage(ManagementPage);
+    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
   }
 
   fillBeginContent(description, group = 'Free Access', append = false) {
-    this.getOwnerGroupSelect().select(group);
-    this.getOwnerGroupSetGroupButton().click();
-    if (!append) this.clearDescription();
-    this.typeDescription(description);
-    return this;
+    this.getOwnerGroupSelect().then(input => this.select(input, group));
+    this.getOwnerGroupSetGroupButton().then(button => this.click(button));
+    this.getContentDescriptionInput().then(input => this.type(input, description, append));
+    return cy.get('@currentPage');
   }
 
   fillBasicContentFields({description, titleEn, titleIt, group}, append = false) {
@@ -275,18 +280,19 @@ export default class AddPage extends AdminContent {
     }
   }
 
-  fillAttributes(attributeValues, options) {
+  fillAttributes(attributeValues, options, assetId = null) {
     const {lang, editMode} = {lang: 'en', editMode: false, ...options};
     this.getContentAttributesLanguageTab(lang).click();
     attributeValues.forEach(({type, value, nestedType}, idx) => {
       const field = this.getAttributeByTypeIndex(type, idx, lang);
       if (field === null) return;
       if (['List', 'Monolist'].includes(type)) field.setAttributeType(nestedType);
-      field.expand();
+      if ('Hypertext'.includes(type)) field.getInput().click();
       if (editMode) field.editValue(value);
-      else field.setValue(value);
+      else if (assetId) field.setValue(value, assetId);
+           else field.setValue(value);
     });
-    return this;
+    cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
 
   addContentFromContentWidgetConfig(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
@@ -297,7 +303,7 @@ export default class AddPage extends AdminContent {
       this.submitForm();
     }
 
-    return new AdminPage(ContentWidgetConfigPage);
+    return cy.wrap(new AdminPage(ContentWidgetConfigPage)).as('currentPage');
   }
 
   addContent(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
@@ -314,8 +320,7 @@ export default class AddPage extends AdminContent {
       this.clearDescription();
     }
     this.typeDescription(description);
-    this.submitForm();
-    return new AdminPage(ManagementPage);
+    return this.submitForm();
   }
 
 }

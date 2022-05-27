@@ -1,115 +1,112 @@
 import {htmlElements} from '../../../WebElement';
 
-import {DialogContent} from '../../../app/Dialog';
-
 import AttributeFormField from '../AttributeFormField';
 
-export class AssetSelector extends DialogContent {
-  getAssetsBody() {
-    return this.get()
-               .find('div.AssetsList__body');
+import AddContentPage     from '../AddPage';
+import AddPage            from '../../assets/AddPage';
+import AdminPage          from '../../../app/AdminPage';
+import AssetsPage         from '../../assets/AssetsPage';
+import KebabMenu          from '../../../app/KebabMenu';
+
+class ContentAssetsKebabMenu extends KebabMenu {
+
+  get() {
+    return this.parent.get()
+               .find(`${htmlElements.div}.list-group-item`)
+               .children(`${htmlElements.div}.list-view-pf-actions`)
+               .children(htmlElements.div);
   }
 
-  getAssetListTable() {
-    return this.getAssetsBody()
-               .find('table.AssetsList__table');
+  openDropdown() {
+    this.getActionsButton()
+        .children(`${htmlElements.button}#dropdownKebabRight2`)
+        .click();
+    return this;
   }
 
-  getUseButtonFromAssetTitle(assetTitle) {
-    return this.getAssetListTable()
-               .contains(assetTitle)
-               .closest(htmlElements.tr)
-               .children('td:last-of-type')
-               .children('button');
+  getActionsButton() {
+    return this.getDropdown()
+               .children(htmlElements.li)
+               .children(`${htmlElements.a}[href*="/entando-de-app/do/jacms/Content/Resource/joinResource.action?resourceId=${this.code}"]`)
+               .closest(htmlElements.div);
   }
+
+  getUse() {
+    return this.getActionsButton()
+               .find(htmlElements.li);
+  }
+
+  clickUse() {
+    this.getUse().click();
+    return cy.wrap(new AdminPage(AddContentPage));
+  }
+
 }
 
-export class AssetUploader extends DialogContent {
-  fileContainer = 'div.UploadAssetModal__file-container';
-  fileBody      = 'div.UploadAssetModal__file';
-  fileButtons   = 'div.UploadAssetModal__upload-modal-buttons';
+class ContentAssetsPage extends AssetsPage {
 
-  getFormBody() {
-    return this.get()
-               .children('form');
+  getKebabMenu(code) {
+    return new ContentAssetsKebabMenu(this, code);
   }
 
-  getFormFieldArea() {
-    return this.getFormBody()
-               .children(this.fileContainer)
-               .children(this.fileBody);
-  }
-
-  getFileNameField() {
-    return this.getFormFieldArea()
-               .find('input[name="files[0].filename"][type="text"]');
-  }
-
-  getGroupField() {
-    return this.getFormFieldArea()
-               .find('select[name="files[0].group"]');
-  }
-
-  getSubmitButton() {
-    return this.getFormBody()
-               .children(this.fileButtons)
-               .children('button[type=submit]');
-  }
-
-  submit() {
-    return this.getSubmitButton().click();
-  }
 }
 
 export default class AssetAttribute extends AttributeFormField {
-  inputInfo    = 'input.AssetAttributeField__input--inner[type="text"]';
-  uploadButton = 'input[type=file][multiple]';
+  inputInfo    = `${htmlElements.input}[type="text"]`;
+  uploadButton = `${htmlElements.button}[type=submit]`;
+  
 
-  constructor(parent, attributeIndex, assetType = 'Image', lang = 'en') {
+  constructor(parent, attributeIndex, assetType = 'Image', lang = 'en', composite = false) {
     super(parent, assetType, attributeIndex, lang);
+    this.inputName = (composite ? `Composite:${assetType}:${lang}_Composite_${assetType}` : `${assetType}:${lang}_${assetType}`);
   }
 
   getBrowseButton() {
-    return this.getContents().find('button').eq(0);
+    return this.getContents().find(htmlElements.button).eq(0);
   }
 
   getUploadButton() {
     return this.getContents().find(this.uploadButton);
   }
 
+  openAssetPage() {
+    this.getUploadButton().click();
+    return cy.wrap(new AdminPage(ContentAssetsPage));
+  }
+
   getSelectedInfoArea() {
     return this.getContents()
-               .find('div.AssetAttributeField__selected-info');
+               .find(`${htmlElements.div}.panel-body`);
   }
 
   getInfoNameInput() {
     return this.getSelectedInfoArea()
-               .find(`${this.inputInfo}[name="name"]`);
+               .find(`${this.inputInfo}[name="${this.inputName}"]`);
   }
 
   getInfoLegendInput() {
     return this.getSelectedInfoArea()
-               .find(`${this.inputInfo}[name="legend"]`);
+               .find(`${this.inputInfo}[name="${this.inputName}_metadata_legend"]`);
   }
 
   getInfoAltInput() {
     return this.getSelectedInfoArea()
-               .find(`${this.inputInfo}[name="alt"]`);
+               .find(`${this.inputInfo}[name="${this.inputName}_metadata_alt"]`);
   }
 
   getInfoDescInput() {
     return this.getSelectedInfoArea()
-               .find(`${this.inputInfo}[name="description"]`);
+               .find(`${this.inputInfo}[name="${this.inputName}_metadata_description"]`);
   }
 
   getInfoTitleInput() {
     return this.getSelectedInfoArea()
-               .find(`${this.inputInfo}[name="title"]`);
+               .find(`${this.inputInfo}[name="${this.inputName}_metadata_title"]`);
   }
 
   getDeleteButton() {
     return this.getSelectedInfoArea()
-               .find('button.btn-danger');
+               .find(`${htmlElements.button}.btn-danger`);
   }
 
   fillMetadata(metadata, editMode = false) {
@@ -146,25 +143,31 @@ export default class AssetAttribute extends AttributeFormField {
     }
   }
 
-  setValue({upload, metadata}) {
+  setValue({upload, metadata}, assetId = null) {
     const uploadMode = typeof upload !== 'string';
     if (this.lang === 'en') {
       if (!uploadMode) {
-        this.getBrowseButton().click();
-        cy.wait(3500);
-        this.setDialogBodyWithClass(AssetSelector);
-        this.getDialogBodyOfAttribute().getUseButtonFromAssetTitle(upload).click();
+        const actionMenuId = (assetId ? assetId : metadata.actionButton);
+        this.openAssetPage()
+            .then(page => page.getContent().getKebabMenu(actionMenuId).openDropdown().clickUse());
       } else {
-        this.getUploadButton().selectFile(upload.file, {force: true});
-        cy.wait(500);
-        this.setDialogBodyWithClass(AssetUploader);
-        this.getDialogBodyOfAttribute().submit();
+        this.openAssetPage()
+            .then(page => {
+              page.getContent().getAddButton().click();
+              cy.wrap(new AdminPage(AddPage));
+            })
+            .then(page => {
+              page.getContent().selectFiles(upload.file);
+              page.getContent().get().find(`${htmlElements.input}#submit`).click();
+              cy.wait(2000);
+            });
       }
     }
     cy.wait(500);
     if (metadata) {
       this.fillMetadata(metadata, true);
     }
+    return cy.get('@currentPage');
   }
 
   editValue(value) {

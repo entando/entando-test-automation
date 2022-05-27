@@ -2,21 +2,24 @@ import AttributeFormField from '../AttributeFormField';
 
 export default class TextAttribute extends AttributeFormField {
 
-  constructor(parent, attributeIndex, attributeType = 'Text', lang = 'en') {
+  constructor(parent, attributeIndex, attributeType = 'Text', lang = 'en', composite = false) {
     super(parent, attributeType, attributeIndex, lang);
     this.element = attributeType === 'Longtext' ? 'textarea' : 'input';
+    this.composite = composite;
   }
 
   getInputName() {
     switch (this.attributeType) {
       case 'Monotext':
+        return (this.composite ? 'Composite:Monotext:Composite_Monotext' : 'Monotext:Monotext');
       case 'Email':
+        return (this.composite ? 'Composite:Email:Composite_Email' : 'Email:Email');
       case 'Number':
-        return `${this.prefix}.value`;
+        return (this.composite ? 'Composite:Number:Composite_Number' : 'Number:Number');
       case 'Text':
+        return (this.composite ? `Composite:Text:${this.lang}_Composite_Text` : `Text:${this.lang}_Text`);
       case 'Longtext':
-      default:
-        return `${this.prefix}.values.${this.lang}`;
+        return (this.composite ? `Composite:Longtext:${this.lang}_Composite_Longtext` : `Longtext:${this.lang}_Longtext`);
     }
   }
 
@@ -41,7 +44,10 @@ export default class TextAttribute extends AttributeFormField {
     if (!text) {
       return;
     }
-    this.getInput().type(text).blur();
+    this.getInput().then(input => {
+      this.parent.type(input, text);
+      this.parent.blur(input);
+    });
   }
 
   editValue(text) {

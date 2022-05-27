@@ -113,6 +113,11 @@ export default class ManagementPage extends AdminContent {
                .parents(htmlElements.tr);
   }
 
+  getActionsRow(code){
+    return this.getTableRow(code)
+               .find('.table-view-pf-actions');
+  }
+
   clickFormSearchButton() {
     this.getFormSearchButton().then(button => ManagementPage.openSearchPage(button));
     return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
@@ -127,10 +132,7 @@ export default class ManagementPage extends AdminContent {
   // ---- old -----
 
 
-  getTableRowAction(code) {
-    return this.getTable()
-               .find(`${htmlElements.button}#actionsKebab_${code}`);
-  }
+
 
   getKebabMenu(code) {
     return new ManagementKebabMenu(this, code);
@@ -155,14 +157,22 @@ class ManagementKebabMenu extends KebabMenu {
 
   get() {
     return this.parent
-               .getTableRowAction(this.code)
-               .closest(htmlElements.div);
+               .getActionsRow(this.code)
+               .children(htmlElements.div);
   }
+
+  openDropdown(){
+    this.get()
+        .children(htmlElements.button)
+        .click({force: true});
+    return this;
+  }
+
 
   getEdit() {
     return this.get()
                .find(htmlElements.li)
-               .eq(0);
+               .contains(`Edit`);
   }
 
   getDelete() {
@@ -172,9 +182,8 @@ class ManagementKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getEdit().click();
-    cy.wait(1000);
-    return new AdminPage(AddPage);
+    this.getEdit().then(button => AddPage.editPage(button, this.code));
+    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
 
   clickDelete() {

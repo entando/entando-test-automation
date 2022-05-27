@@ -1,6 +1,7 @@
-import {WebElement} from '../../../WebElement';
+import {htmlElements, WebElement} from '../../../WebElement';
 
-import AttributeFormField  from '../AttributeFormField';
+import AttributeFormField from '../AttributeFormField';
+
 import AssetAttribute      from './AssetAttribute';
 import BooleanAttribute    from './BooleanAttribute';
 import CheckboxAttribute   from './CheckboxAttribute';
@@ -29,16 +30,16 @@ export class ListAttributeItem extends WebElement {
   }
 
   getCollapsePanelHead() {
-    return this.get().find('div.panel-heading');
+    return this.get().find(`${htmlElements.div}.panel-heading`);
   }
 
   getCollapseToggler() {
-    return this.getCollapsePanelHead().find('span.icon');
+    return this.getCollapsePanelHead().find(`${htmlElements.span}.icon`);
   }
 
   getSubAttributeItemDelete() {
     return this.getCollapsePanelHead()
-               .find(`button[title="Delete ${this.index + 1}"].btn-danger`);
+               .find(`${htmlElements.button}[title="Delete ${this.index + 1}"].btn-danger`);
   }
 
   toggleSubAttributeCollapse() {
@@ -71,7 +72,7 @@ export class ListAttributeItem extends WebElement {
 }
 
 export default class ListAttribute extends AttributeFormField {
-  listBody       = 'div.RenderListField__body';
+  listBody       = `${htmlElements.div}.RenderListField__body`;
   attributeItems = [];
   nestedType     = '';
 
@@ -81,8 +82,8 @@ export default class ListAttribute extends AttributeFormField {
 
   getCollapseMain() {
     return this.getLangPane()
-               .children('div').eq(this.index + (this.lang === 'en' ? 1 : 0))
-               .children('div.ContentFormFieldCollapse');
+               .children(htmlElements.div).eq(this.index + (this.lang === 'en' ? 1 : 0))
+               .children(`${htmlElements.div}.ContentFormFieldCollapse`);
   }
 
   getAttributesArea() {
@@ -90,11 +91,11 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   getTopControlArea() {
-    return this.getAttributesArea().children('div.form-group');
+    return this.getAttributesArea().children(`${htmlElements.div}.form-group`);
   }
 
   getAddListitemButton() {
-    return this.getTopControlArea().find('button[title="Add"]');
+    return this.getTopControlArea().find(`${htmlElements.button}[title="Add"]`);
   }
 
   getSubAttributeCollapseAt(idx) {
@@ -103,7 +104,7 @@ export default class ListAttribute extends AttributeFormField {
 
   getSubAttributeChildrenAt(idx) {
     return this.getSubAttributeCollapseAt(idx)
-               .find('div.ReactCollapse--content').children('div.panel-body');
+               .find(`${htmlElements.div}.ReactCollapse--content`).children(`${htmlElements.div}.panel-body`);
   }
 
   setAttributeType(type) {

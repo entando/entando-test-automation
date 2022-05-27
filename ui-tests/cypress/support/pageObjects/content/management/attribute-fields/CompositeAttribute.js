@@ -1,3 +1,5 @@
+import {htmlElements} from '../../../WebElement';
+
 import AttributeFormField from '../AttributeFormField';
 
 import AssetAttribute      from './AssetAttribute';
@@ -12,7 +14,7 @@ import ThreeStateAttribute from './ThreeStateAttribute';
 import TimestampAttribute  from './TimestampAttribute';
 
 export default class CompositeAttribute extends AttributeFormField {
-  panelBody = 'div.panel-body';
+  panelBody = `${htmlElements.div}.panel-body`;
 
   constructor(parent, attributeIndex, lang = 'en') {
     super(parent, 'Composite', attributeIndex, lang);
@@ -35,7 +37,7 @@ export default class CompositeAttribute extends AttributeFormField {
         case 'Monotext':
         case 'Email':
         case 'Number': {
-          field = new TextAttribute(this.parent, idx, type, this.lang);
+          field = new TextAttribute(this.parent, idx, type, this.lang, true);
           break;
         }
         case 'Boolean': {
@@ -60,20 +62,20 @@ export default class CompositeAttribute extends AttributeFormField {
           break;
         }
         case 'Hypertext': {
-          field = new HypertextAttribute(this.parent, idx, this.lang);
+          field = new HypertextAttribute(this.parent, idx, this.lang, true);
           break;
         }
         case 'Link': {
-          field = new LinkAttribute(this.parent, idx, this.lang);
+          field = new LinkAttribute(this.parent, idx, this.lang, true);
           break;
         }
         case 'Timestamp': {
-          field = new TimestampAttribute(this.parent, idx);
+          field = new TimestampAttribute(this.parent, idx, true);
           break;
         }
         case 'Attach':
         case 'Image': {
-          field = new AssetAttribute(this.parent, idx, type, this.lang);
+          field = new AssetAttribute(this.parent, idx, type, this.lang, true);
           break;
         }
       }

@@ -1,3 +1,5 @@
+import {htmlElements} from '../../../WebElement';
+
 import BooleanAttribute from './BooleanAttribute';
 
 export default class ThreeStateAttribute extends BooleanAttribute {
@@ -7,16 +9,16 @@ export default class ThreeStateAttribute extends BooleanAttribute {
 
   getBothSwitch() {
     return this.getInputArea()
-               .find('label').eq(2);
+               .children(htmlElements.label).eq(2);
   }
 
   setValue(value) {
     if (value === true) {
-      this.getYesSwitch().click();
+      this.getYesSwitch().then(button => this.parent.click(button, true));
     } else if (value === false) {
-      this.getNoSwitch().click();
+      this.getNoSwitch().then(button => this.parent.click(button, true));
     } else {
-      this.getBothSwitch().click();
+      this.getBothSwitch().then(button => this.parent.click(button, true));
     }
   }
 

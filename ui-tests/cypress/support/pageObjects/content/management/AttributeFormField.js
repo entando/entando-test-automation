@@ -1,4 +1,4 @@
-import {WebElement} from '../../WebElement';
+import {htmlElements, WebElement} from '../../WebElement';
 
 export default class AttributeFormField extends WebElement {
   constructor(pageParent, attributeType, index, lang = 'en') {
@@ -15,18 +15,12 @@ export default class AttributeFormField extends WebElement {
 
   getLangPane() {
     return this.parent.get()
-               .find(`#content-attributes-tabs-pane-${this.lang}`);
-  }
-
-  getCollapseMain() {
-    return this.getLangPane()
-               .children('div.ContentFormFieldCollapse').then(el => Array.isArray(el) ? el[this.index] : el);
+               .find(`${htmlElements.div}#${this.lang}_tab`);
   }
 
   getTopContents() {
-    return this.getCollapseMain().children('div.ReactCollapse--collapse')
-               .children('div.ReactCollapse--content')
-               .children('div.ContentFormFieldCollapse__body');
+    return this.getLangPane()
+               .children(htmlElements.div);
   }
 
   get() {
@@ -40,47 +34,17 @@ export default class AttributeFormField extends WebElement {
     return this.get();
   }
 
-  get prefix() {
-    if (!this.parentAttribute) {
-      return `attributes[${this.index}]`;
-    }
-    const {prefix, attributeType} = this.parentAttribute;
-    switch (attributeType) {
-      default:
-        return `attributes[${this.index}]`;
-      case 'Composite':
-        return `${prefix}.compositeelements[${this.index}]`;
-      case 'List':
-        return `${prefix}.listelements.${this.lang}[${this.index}]`;
-      case 'Monolist':
-        return `${prefix}.elements[${this.index}]`;
-    }
-
-  }
-
   isCollapsed() {
     return this.getCollapseMain().invoke('hasClass', 'closed');
   }
 
   getToggleTitle() {
-    return this.getCollapseMain().children('div[role="button"].SectionTitle');
+    return this.getCollapseMain().children(`${htmlElements.div}[role="button"].SectionTitle`);
   }
 
   toggleCollapse() {
     this.getToggleTitle().click();
     return this;
-  }
-
-  getDialogOfAttribute() {
-    return this.parent.parent.getDialog();
-  }
-
-  getDialogBodyOfAttribute() {
-    return this.getDialogOfAttribute().getBody();
-  }
-
-  setDialogBodyWithClass(component) {
-    this.parent.parent.getDialog().setBody(component);
   }
 
   collapse() {

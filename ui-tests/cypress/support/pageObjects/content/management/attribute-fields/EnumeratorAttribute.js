@@ -1,3 +1,5 @@
+import {htmlElements} from '../../../WebElement';
+
 import AttributeFormField from '../AttributeFormField';
 
 export default class EnumeratorAttribute extends AttributeFormField {
@@ -7,7 +9,7 @@ export default class EnumeratorAttribute extends AttributeFormField {
 
   getInputArea() {
     return this.getContents()
-               .find('select');
+               .find(htmlElements.select);
   }
 
   setValue(value) {

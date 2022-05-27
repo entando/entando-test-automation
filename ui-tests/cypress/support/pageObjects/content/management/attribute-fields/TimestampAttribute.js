@@ -1,25 +1,29 @@
+import {htmlElements} from '../../../WebElement';
+
 import DateAttribute from './DateAttribute';
 
 export default class TimestampAttribute extends DateAttribute {
-  constructor(parent, attributeIndex) {
+  constructor(parent, attributeIndex, composite = false) {
     super(parent, attributeIndex, 'en', true);
+    this.composite = composite;
   }
 
   getComponentArea() {
     return this.getContents()
-               .find('div.col-xs-10');
+               .find(`${htmlElements.div}.col-sm-10`);
   }
 
   getTimeElementBy(metric = 'seconds') {
-    return this.getContents().find(`select[name="${this.prefix}.value.${metric}"]`);
+    const selector = (this.composite ? `Composite:Timestamp:Composite_Timestamp_${metric}` : `Timestamp:Timestamp_${metric}`);
+    return this.getContents().find(`${htmlElements.select}[name="${selector}"]`);
   }
 
   setValue(value) {
     super.setValue(value);
     const [hours, minutes, seconds] = value.split(' ')[1].split(':');
-    this.getTimeElementBy('hours').select(hours);
-    this.getTimeElementBy('minutes').select(minutes);
-    this.getTimeElementBy('seconds').select(seconds);
+    this.getTimeElementBy('hour').select(hours);
+    this.getTimeElementBy('minute').select(minutes);
+    this.getTimeElementBy('second').select(seconds);
   }
 
   editValue(value) {

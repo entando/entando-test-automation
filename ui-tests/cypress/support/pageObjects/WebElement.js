@@ -32,7 +32,8 @@ export const htmlElements = {
   fieldset: 'fieldset',
   legend: 'legend',
   textarea: 'textarea',
-  img: 'img'
+  img: 'img',
+  iframe: 'iframe'
 };
 
 export class WebElement {
