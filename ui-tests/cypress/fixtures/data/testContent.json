@@ -1,0 +1,13 @@
+{
+    "typeCode": "BNR",
+    "mainGroup": "Free Access",
+    "attributes": [
+      {
+        "code": "title",
+        "values": {
+          "en": "testEn",
+          "it": "testIt"
+        }
+      }
+    ]
+ }

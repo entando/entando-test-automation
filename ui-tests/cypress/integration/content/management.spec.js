@@ -60,7 +60,11 @@ describe([Tag.GTS], 'Contents', () => {
   });
 
   describe('Operations on unPublished content', () => {
-    beforeEach(() => addTestContent(testContent).as('contentToBeDeleted'));
+    beforeEach(() =>
+        cy.fixture('data/testContent.json').then(testContent => {
+        testContent.description = generateRandomId();
+        addTestContent(testContent).as('contentToBeDeleted')
+    }))
 
     it('Edit content', () => {
       openContentMgmtPage()
@@ -93,10 +97,12 @@ describe([Tag.GTS], 'Contents', () => {
 
   describe('Operations on published content', () => {
 
-    beforeEach(() => addPublishedContent(testContent));
     afterEach(() => removePublishedContent());
 
     it('Delete published content - not allowed', () => {
+      cy.fixture('data/testContent.json').then(testContent => {
+        testContent.description = generateRandomId();
+        addPublishedContent(testContent);
 
       openContentMgmtPage()
           .then(page => {
@@ -107,13 +113,14 @@ describe([Tag.GTS], 'Contents', () => {
               .then(page => page.getContent().submit())
               .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible').and('contain', `${testContent.description}`));
           });
+       })
     });
   });
 
   describe('Operations on referenced content', () => {
 
-    beforeEach(() => testSetUp());
-    afterEach(() => testTearDown());
+    beforeEach(() => publishedPageSetUp());
+    afterEach(() => publishedPageTearDown());
 
     it('Update status of content referenced by a published page', () => {
       openContentMgmtPage()
@@ -130,20 +137,6 @@ describe([Tag.GTS], 'Contents', () => {
 
   const DEFAULT_GROUP        = 'Free Access';
   const DEFAULT_CONTENT_TYPE = 'Banner';
-  const testContent          = {
-    typeCode: 'BNR',
-    description: generateRandomId(),
-    mainGroup: 'Free Access',
-    attributes: [
-      {
-        code: 'title',
-        values: {
-          en: generateRandomId(),
-          it: generateRandomId()
-        }
-      }
-    ]
-  };
   const contentTypeCode      = generateRandomTypeCode();
   const contentTypeName      = generateRandomId();
 
@@ -238,7 +231,7 @@ describe([Tag.GTS], 'Contents', () => {
         cy.contentTypesController().then(controller => controller.deleteContentType(contentTypeCode)));
   };
 
-  const testSetUp = () => {
+  const publishedPageSetUp = () => {
     addPage();
     addContentType();
     addPublishedContent({...content, typeCode: contentTypeCode});
@@ -246,7 +239,7 @@ describe([Tag.GTS], 'Contents', () => {
     setPageStatusOnPublished();
   };
 
-  const testTearDown = () => {
+  const publishedPageTearDown = () => {
     removeWidget();
     removePublishedPage();
     removeContentType();
