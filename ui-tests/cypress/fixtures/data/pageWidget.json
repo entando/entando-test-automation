@@ -1,0 +1,9 @@
+{
+  "frameId": "4",
+  "code": "content_viewer",
+  "config": {
+    "ownerGroup": "administrators",
+    "joinGroups": [],
+    "contentDescription": "test"
+  }
+}

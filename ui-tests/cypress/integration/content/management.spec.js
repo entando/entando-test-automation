@@ -62,9 +62,9 @@ describe([Tag.GTS], 'Contents', () => {
   describe('Operations on unPublished content', () => {
     beforeEach(() =>
         cy.fixture('data/testContent.json').then(testContent => {
-        testContent.description = generateRandomId();
-        addTestContent(testContent).as('contentToBeDeleted')
-    }))
+          testContent.description = generateRandomId();
+          addTestContent(testContent).as('contentToBeDeleted');
+        }));
 
     it('Edit content', () => {
       openContentMgmtPage()
@@ -104,23 +104,23 @@ describe([Tag.GTS], 'Contents', () => {
         testContent.description = generateRandomId();
         addPublishedContent(testContent);
 
-      openContentMgmtPage()
-          .then(page => {
-            cy.get('@publishedContentToBeDeleted').then(content => {
-                page.getContent().getContentCheckBox(content).check({force: true});
-                page.getContent().clickDelete();
-              })
-              .then(page => page.getContent().submit())
-              .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible').and('contain', `${testContent.description}`));
-          });
-       })
+        openContentMgmtPage()
+            .then(page => {
+              cy.get('@publishedContentToBeDeleted').then(content => {
+                  page.getContent().getContentCheckBox(content).check({force: true});
+                  page.getContent().clickDelete();
+                })
+                .then(page => page.getContent().submit())
+                .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible').and('contain', `${testContent.description}`));
+            });
+      });
     });
   });
 
   describe('Operations on referenced content', () => {
 
-    beforeEach(() => publishedPageSetUp());
-    afterEach(() => publishedPageTearDown());
+    beforeEach(() => addContentReferences());
+    afterEach(() => removeContentReferences());
 
     it('Update status of content referenced by a published page', () => {
       openContentMgmtPage()
@@ -139,33 +139,13 @@ describe([Tag.GTS], 'Contents', () => {
   const DEFAULT_CONTENT_TYPE = 'Banner';
   const contentTypeCode      = generateRandomTypeCode();
   const contentTypeName      = generateRandomId();
-
-  const page = {
-    charset: 'utf-8',
-    code: 'test',
-    contentType: 'text/html',
-    pageModel: '1-2-column',
-    parentCode: 'homepage',
-    titles: {en: 'Test'},
-    ownerGroup: 'administrators'
-  };
-
-  const content = {
+  const content              = {
     description: 'test',
     mainGroup: 'administrators'
   };
+  const updatedDescription   = `${generateRandomId()}`;
 
-  const pageWidget = {
-    frameId: 4,
-    code: 'content_viewer',
-    config: {
-      ownerGroup: page.ownerGroup,
-      joinGroups: [],
-      contentDescription: content.description
-    }
-  };
 
-  const updatedDescription  = `${generateRandomId()}`;
   const openContentMgmtPage = () => cy.get('@currentPage').then(page => page.getMenu().getContent().open().openManagement());
 
   const addTestContent = (content, typeCode) => {
@@ -186,8 +166,11 @@ describe([Tag.GTS], 'Contents', () => {
     });
   };
   const addPage                  = () => {
-    return cy.seoPagesController().then(controller => controller.addNewPage(page))
-             .then(response => cy.wrap(response.body.payload).as('pageToBeDeleted'));
+    return cy.fixture('data/demoPage.json').then(demoPage => {
+      demoPage.code = generateRandomId();
+      cy.seoPagesController().then(controller => controller.addNewPage(demoPage))
+        .then(response => cy.wrap(response.body.payload).as('pageToBeDeleted'));
+    });
   };
   const setPageStatusOnPublished = () => {
     return cy.get('@pageToBeDeleted').then(page =>
@@ -203,23 +186,27 @@ describe([Tag.GTS], 'Contents', () => {
     });
   };
   const addWidget                = () => {
-    return cy.get('@pageToBeDeleted').then(page => {
-      cy.get('@publishedContentToBeDeleted').then(contentId => {
-        cy.pageWidgetsController(page.code)
-          .then(controller => controller
-              .addWidget(0,
-                  'search_form',
-                  {
-                    ...pageWidget.config,
-                    contentId: contentId
-                  }
-              )
-          );
+    return cy.fixture('data/pageWidget.json').then(pageWidget => {
+      cy.get('@pageToBeDeleted').then(page => {
+        cy.get('@publishedContentToBeDeleted').then(contentId => {
+          cy.pageWidgetsController(page.code)
+            .then(controller => controller
+                .addWidget(0,
+                    'search_form',
+                    {
+                      ...pageWidget.config,
+                      contentId: contentId
+                    }
+                )
+            );
+        });
       });
     });
   };
   const removeWidget             = () => {
-    return cy.pageWidgetsController(page.code).then(controller => controller.deleteWidget(0));
+    return cy.get('@pageToBeDeleted').then(page => {
+      cy.pageWidgetsController(page.code).then(controller => controller.deleteWidget(0));
+    });
   };
   const addContentType           = () => {
     return cy.contentTypesController().then(controller => controller.addContentType(contentTypeCode, contentTypeName))
@@ -231,7 +218,7 @@ describe([Tag.GTS], 'Contents', () => {
         cy.contentTypesController().then(controller => controller.deleteContentType(contentTypeCode)));
   };
 
-  const publishedPageSetUp = () => {
+  const addContentReferences = () => {
     addPage();
     addContentType();
     addPublishedContent({...content, typeCode: contentTypeCode});
@@ -239,7 +226,7 @@ describe([Tag.GTS], 'Contents', () => {
     setPageStatusOnPublished();
   };
 
-  const publishedPageTearDown = () => {
+  const removeContentReferences = () => {
     removeWidget();
     removePublishedPage();
     removeContentType();
