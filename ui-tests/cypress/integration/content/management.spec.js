@@ -215,7 +215,7 @@ describe([Tag.GTS], 'Contents', () => {
   const removeContentType        = () => {
 
     return cy.get('@contentTypeToBeDelete').then(contentTypeCode =>
-        cy.contentTypesController().then(controller => controller.deleteContentType(contentTypeCode)));
+        cy.contentTypesController().then(controller => controller.deleteContentType(contentTypeCode.code)));
   };
 
   const addContentReferences = () => {
@@ -229,7 +229,7 @@ describe([Tag.GTS], 'Contents', () => {
   const removeContentReferences = () => {
     removeWidget();
     removePublishedPage();
-    removeContentType();
     removePublishedContent();
+    removeContentType();
   };
 });
