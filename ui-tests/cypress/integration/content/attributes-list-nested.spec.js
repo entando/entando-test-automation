@@ -1,4 +1,4 @@
-import HomePage from '../../support/pageObjects/HomePage';
+import { htmlElements } from "../../support/pageObjects/WebElement";
 
 const CONTENT_TYPE_WITH_LIST = {
   code: 'NES',
@@ -19,41 +19,42 @@ const listFormat = {
 };
 
 describe([Tag.GTS], 'Nested a in List Attribute', () => {
-  let currentPage;
 
   const navigateToContentForm = (mode = 'create') => {
-    currentPage = currentPage.getMenu().getContent().open();
-    currentPage = currentPage.openManagement();
-    switch (mode) {
-      case 'create':
-      default:
-        currentPage = currentPage.getContent().openAddContentPage(CONTENT_TYPE_WITH_LIST.name);
-        break;
-      case 'edit':
-        currentPage = currentPage.getContent().openEditContentPage();
-        break;
-    }
+    return cy.get('@currentPage')
+             .then(page => page.getMenu().getContent().open().openManagement())
+             .then(page => {
+               switch (mode) {
+                 case 'create':
+                 default:
+                   page.getContent().openAddContentPage(CONTENT_TYPE_WITH_LIST.name);
+                   break;
+                 case 'edit':
+                   cy.get('@contentToBeDeleted').then(code => page.getContent().getKebabMenu(code).open(true).openEdit());
+               }
+             });
   };
 
   const fillAttributeWithValue = (attribute, value, editMode = false) => {
-    currentPage.getContent().fillAttributes([{
-                 type: 'List',
-                 nestedType: attribute,
-                 value: value.en
-               }], {editMode})
-               .fillAttributes([{
-                 type: 'List',
-                 nestedType: attribute,
-                 value: value.it
-               }], {lang: 'it', editMode});
+    return cy.get('@currentPage')
+      .then(page => page.getContent().fillAttributes([{
+        type: 'List',
+        nestedType: attribute,
+        value: value.en
+      }], {editMode}))
+      .then(page => page.getContent().fillAttributes([{
+        type: 'List',
+        nestedType: attribute,
+        value: value.it
+      }], {lang: 'it', editMode}));
   };
 
-  const formatCompareAttributeValues = (actualValue) => {
-    const {listelements: {en, it}} = actualValue;
-    return {
-      en: en.map(({value}) => value),
-      it: it.map(({value}) => value)
+  const formatCompareAttributeValues = (attribute) => {
+    const actualValue = {
+      en: attribute.listelements.en.map(element => element.value),
+      it: attribute.listelements.it.map(element => element.value)
     };
+    return actualValue;
   };
 
   const addAttributeToContentType = (attribute, extraProps = {}, extraListProps = {}) => {
@@ -63,25 +64,29 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         nestedAttribute: {type: attribute, code: attribute, ...extraProps},
         ...extraListProps
       }));
-    cy.wrap(listFormat.code).as('attributeToDelete');
+    cy.wrap(listFormat.code).as('attributeToBeDeleted');
+  };
+
+  const checkAndSavePublishedContentId = () => {
+    cy.contentsController()
+      .then(controller => controller.getContentList())
+      .then(response => cy.wrap(response.body.payload.filter(content => content.typeCode === CONTENT_TYPE_WITH_LIST.code)[0].id).as('contentToBeDeleted'));
   };
 
   const basicCreateContentAttributes = (attribute, testValues, addAttributeProps) => {
     addAttributeToContentType(attribute, addAttributeProps);
-    navigateToContentForm();
-    currentPage.getContent()
-               .fillBeginContent(CONTENT_WITH_LIST.description);
-    fillAttributeWithValue(attribute, testValues);
-    currentPage = currentPage.getContent().submitApproveForm();
-    cy.wrap(1).as('recentContentsToUnpublish');
-    cy.wrap(1).as('recentContentsToDelete');
-    return cy.contentsController()
-             .then(controller => controller.getContentList())
-             .then((response) => {
-               const {body: {payload}}    = response;
-               const {attributes: [attr]} = payload[0];
-               return formatCompareAttributeValues(attr);
-             });
+    return navigateToContentForm()
+      .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+      .then(() => fillAttributeWithValue(attribute, testValues))
+      .then(page => page.getContent().submitApproveForm())
+      .then(() => checkAndSavePublishedContentId())
+      .then(() => cy.get('@contentToBeDeleted').then(contentId => {
+        cy.contentsController().then(controller => {
+          controller.getContent(contentId).then(response => {
+            return formatCompareAttributeValues(response.body.payload.attributes[0]);
+          });
+        });
+      }));
   };
 
   const basicEditContentAttributes = (attribute, testValues, editedValues, addAttributeProps) => {
@@ -97,24 +102,22 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
               it: testValues.it.map(value => ({code: 'List', value}))
             }
           }]
-        }).then((response) => (
-            controller.updateStatus(response.body.payload.id, 'published')
-        ));
+        }).then(response => {
+          controller.updateStatus(response.body.payload[0].id, 'published');
+          cy.wrap(response.body.payload[0].id).as('contentToBeDeleted');
+        });
       });
-    cy.wrap(1).as('recentContentsToDelete');
 
-    navigateToContentForm('edit');
-    fillAttributeWithValue(attribute, editedValues, true);
-    currentPage = currentPage.getContent().submitApproveForm();
-    cy.wrap(1).as('recentContentsToUnpublish');
-
-    return cy.contentsController()
-             .then(controller => controller.getContentList())
-             .then((response) => {
-               const {body: {payload}}    = response;
-               const {attributes: [attr]} = payload[0];
-               return formatCompareAttributeValues(attr);
-             });
+    return navigateToContentForm('edit')
+      .then(() => fillAttributeWithValue(attribute, editedValues, true))
+      .then(page => page.getContent().submitApproveForm())
+      .then(() => cy.get('@contentToBeDeleted').then(contentId =>
+        cy.contentsController().then(controller =>
+          controller.getContent(contentId).then(response =>
+            formatCompareAttributeValues(response.body.payload.attributes[0])
+          )
+        )
+      ));
   };
 
   before(() => {
@@ -124,46 +127,25 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
   });
 
   beforeEach(() => {
-    cy.wrap(null).as('attributeToDelete');
-    cy.wrap(null).as('recentContentsToUnpublish');
-    cy.wrap(null).as('recentContentsToDelete');
+    cy.wrap(null).as('attributeToBeDeleted');
+    cy.wrap(null).as('contentToBeDeleted');
 
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
-    currentPage = new HomePage();
   });
 
   afterEach(() => {
-    cy.get('@recentContentsToUnpublish').then((contentCounts) => {
-      if (contentCounts !== null && contentCounts > 0) {
-        cy.contentsController()
-          .then((controller) => {
-            controller.getContentList()
-                      .then((response) => {
-                        response.body.payload
-                                .slice(0, contentCounts).map(content => content.id)
-                                .forEach(contentId => controller.updateStatus(contentId, 'draft'));
-                      });
-          });
+    cy.get('@contentToBeDeleted').then(contentId => {
+      if (contentId) {
+        cy.contentsController().then(controller =>
+          controller.updateStatus(contentId, 'draft')
+                    .then(() => controller.deleteContent(contentId)))
       }
     });
-    cy.get('@recentContentsToDelete').then((contentCounts) => {
-      if (contentCounts !== null && contentCounts > 0) {
-        cy.contentsController()
-          .then((controller) => {
-            controller.getContentList()
-                      .then((response) => {
-                        response.body.payload
-                                .slice(0, contentCounts).map(content => content.id)
-                                .forEach(contentId => controller.deleteContent(contentId));
-                      });
-          });
-      }
-    });
-    cy.get('@attributeToDelete').then((attributeToDelete) => {
-      if (attributeToDelete !== null) {
+    cy.get('@attributeToBeDeleted').then((attributeToBeDeleted) => {
+      if (attributeToBeDeleted) {
         cy.contentTypeAttributesController(CONTENT_TYPE_WITH_LIST.code)
-          .then(controller => controller.deleteAttribute(attributeToDelete));
+          .then(controller => controller.deleteAttribute(attributeToBeDeleted));
       }
     });
 
@@ -172,6 +154,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
   after(() => {
     cy.kcAPILogin();
+    //FIXME/TODO needed as autosave might create unwanted contents
+    cy.contentsController()
+      .then(controller => controller.getContentList()).then(response =>
+        response.body.payload.filter(content => content.typeCode === CONTENT_TYPE_WITH_LIST.code).forEach(content =>
+          cy.contentsController().then(controller => controller.updateStatus(content.id, 'draft').then(() =>
+            controller.deleteContent(content.id)))));
     cy.contentTypesController()
       .then(controller => controller.deleteContentType(CONTENT_TYPE_WITH_LIST.code));
   });
@@ -199,17 +187,19 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
     it('Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: ['Hi there']
-                 }])
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().getSaveApproveAction().then(input => page.getContent().click(input)))
+        .then(page => {
+          page.getContent().getAlertMessage().should('exist').and('contain.text', 'Mandatory');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: ['Hi there']
+          }]);
+        })
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
 
     it('Verify every list element can\'t be empty', () => {
@@ -218,31 +208,39 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         it: ['', 'Ciao']
       };
       addAttributeToContentType(attribute);
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.en
-                 }])
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.it
-                 }], {lang: 'it'});
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent().getEnLanguageTab().click();
-      let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
-      fieldarea.setAttributeType(attribute);
-      let listitem = fieldarea.generateInstanceListItem(2);
-      listitem.field.setValue('Brown');
-      currentPage.getContent().getItLanguageTab().click();
-      fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0, 'it');
-      fieldarea.setAttributeType(attribute);
-      listitem = fieldarea.generateInstanceListItem(0);
-      listitem.field.setValue('Bella');
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.en
+        }]))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.it
+        }], {lang: 'it'}))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => page.getContent().getContentAttributesLanguageTab('en').then(button => page.getContent().click(button)))
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0);
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(2);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          listitem.field.setValue('Brown');
+          page.getContent().getContentAttributesLanguageTab('it').then(button => page.getContent().click(button));
+        })
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0, 'it');
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          listitem.field.setValue('Bella');
+          page.getContent().submitApproveForm();
+        })
+        .then(() => checkAndSavePublishedContentId());
     });
 
     it('Try to set custom validation (regex) and check it in content validation', () => {
@@ -255,58 +253,55 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         it: ['ccc']
       };
       addAttributeToContentType(attribute, {validationRules: {regex: '^[aAbBcC]*$'}});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.en
-                 }])
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.it
-                 }], {lang: 'it'});
-
-      currentPage.getContent().getEnLanguageTab().click();
-
-      let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
-      fieldarea.setAttributeType(attribute);
-      let listitem = fieldarea.generateInstanceListItem(0);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-      listitem.field.getHelpBlock().should('be.visible');
-
-      listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-      listitem.field.getHelpBlock().should('be.visible');
-
-      currentPage.getContent().getItLanguageTab().click();
-
-      fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0, 'it');
-      fieldarea.setAttributeType(attribute);
-      listitem = fieldarea.generateInstanceListItem(0);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-      listitem.field.getHelpBlock().should('be.visible');
-
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: correctValues.en
-                 }], {editMode: true})
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: correctValues.it
-                 }], {lang: 'it', editMode: true});
-
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.en
+        }]))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.it
+        }], {lang: 'it'}))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => page.getContent().getContentAttributesLanguageTab('en').then(button => page.getContent().click(button)))
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0);
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          page.getContent().getContentAttributesLanguageTab('it').then(button => page.getContent().click(button))
+        })
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0, 'it');
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: correctValues.en
+          }], {editMode: true});
+        })
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: correctValues.it
+        }], {lang: 'it', editMode: true}))
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
+    
   });
 
+  //FIXME: the email attribute input doesn't appear
   describe('Email', () => {
     const attribute  = 'Email';
     const testValues = {
@@ -330,17 +325,19 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
     it('Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: ['bo@aofa.co']
-                 }])
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => {
+          page.getContent().getAlertMessage().should('exist').and('contain.text', 'Mandatory');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: ['bo@aofa.co']
+          }]);
+        })
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
 
     it('Verify every list element can\'t be empty', () => {
@@ -349,31 +346,39 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         it: ['abc@xyz.com', '']
       };
       addAttributeToContentType(attribute);
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.en
-                 }])
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.it
-                 }], {lang: 'it'});
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent().getEnLanguageTab().click();
-      let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
-      fieldarea.setAttributeType(attribute);
-      let listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.setValue('mama@papa.com');
-      currentPage.getContent().getItLanguageTab().click();
-      fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0, 'it');
-      fieldarea.setAttributeType(attribute);
-      listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.setValue('jeff@gogo.com');
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.en
+        }]))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.it
+        }], {lang: 'it'}))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => page.getContent().getContentAttributesLanguageTab('en').then(button => page.getContent().click(button)))
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0);
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          listitem.field.setValue('mama@papa.com');
+          page.getContent().getContentAttributesLanguageTab('it').then(button => page.getContent().click(button));
+        })
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0, 'it');
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          listitem.field.setValue('jeff@gogo.com');
+          page.getContent().submitApproveForm();
+        })
+        .then(() => checkAndSavePublishedContentId());
     });
 
     it('Check email address structure in content validation', () => {
@@ -386,55 +391,50 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         it: ['ccc@ddd.com']
       };
       addAttributeToContentType(attribute);
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.en
-                 }])
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.it
-                 }], {lang: 'it'});
-
-      currentPage.getContent().getEnLanguageTab().click();
-
-      let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
-      fieldarea.setAttributeType(attribute);
-      let listitem = fieldarea.generateInstanceListItem(0);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-      listitem.field.getHelpBlock().should('be.visible');
-
-      listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-      listitem.field.getHelpBlock().should('be.visible');
-
-      currentPage.getContent().getItLanguageTab().click();
-
-      fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0, 'it');
-      fieldarea.setAttributeType(attribute);
-      listitem = fieldarea.generateInstanceListItem(0);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-      listitem.field.getHelpBlock().should('be.visible');
-
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: correctValues.en
-                 }], {editMode: true})
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: correctValues.it
-                 }], {lang: 'it', editMode: true});
-
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.en
+        }]))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.it
+        }], {lang: 'it'}))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => page.getContent().getContentAttributesLanguageTab('en').then(button => page.getContent().click(button)))
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0);
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          page.getContent().getContentAttributesLanguageTab('it').then(button => page.getContent().click(button))
+        })
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0, 'it');
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: correctValues.en
+          }], {editMode: true});
+        })
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: correctValues.it
+        }], {lang: 'it', editMode: true}))
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
   });
 
@@ -461,17 +461,19 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
     it('Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: ['43']
-                 }])
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => {
+          page.getContent().getAlertMessage().should('exist').and('contain.text', 'Mandatory');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: ['43']
+          }]);
+        })
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
 
     it('Verify every list element can\'t be empty', () => {
@@ -480,31 +482,39 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         it: ['23', '']
       };
       addAttributeToContentType(attribute);
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.en
-                 }])
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.it
-                 }], {lang: 'it'});
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent().getEnLanguageTab().click();
-      let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
-      fieldarea.setAttributeType(attribute);
-      let listitem = fieldarea.generateInstanceListItem(0);
-      listitem.field.setValue('11');
-      currentPage.getContent().getItLanguageTab().click();
-      fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0, 'it');
-      fieldarea.setAttributeType(attribute);
-      listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.setValue('350');
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.en
+        }]))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.it
+        }], {lang: 'it'}))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => page.getContent().getContentAttributesLanguageTab('en').then(button => page.getContent().click(button)))
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0);
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          listitem.field.setValue('11');
+          page.getContent().getContentAttributesLanguageTab('it').then(button => page.getContent().click(button));
+        })
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0, 'it');
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().parent().invoke('hasClass', 'panel-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          listitem.field.setValue('350');
+          page.getContent().submitApproveForm();
+        })
+        .then(() => checkAndSavePublishedContentId());
     });
 
     it('Try to set custom validation (range) and check it in content validation', () => {
@@ -524,55 +534,50 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           attribute,
           {validationRules: {rangeStartNumber: range.start, rangeEndNumber: range.end}}
       );
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.en
-                 }])
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.it
-                 }], {lang: 'it'});
-
-      currentPage.getContent().getEnLanguageTab().click();
-
-      let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
-      fieldarea.setAttributeType(attribute);
-      let listitem = fieldarea.generateInstanceListItem(0);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-      listitem.field.getHelpBlock().should('be.visible');
-
-      listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-      listitem.field.getHelpBlock().should('be.visible');
-
-      currentPage.getContent().getItLanguageTab().click();
-
-      fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0, 'it');
-      fieldarea.setAttributeType(attribute);
-      listitem = fieldarea.generateInstanceListItem(0);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-      listitem.field.getHelpBlock().should('be.visible');
-
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: correctValues.en
-                 }], {editMode: true})
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: correctValues.it
-                 }], {lang: 'it', editMode: true});
-
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.en
+        }]))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.it
+        }], {lang: 'it'}))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => page.getContent().getContentAttributesLanguageTab('en').then(button => page.getContent().click(button)))
+        .then(page => {
+          let fieldarea =page.getContent().getAttributeByTypeIndex('List', 0);
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          page.getContent().getContentAttributesLanguageTab('it').then(button => page.getContent().click(button));
+        })
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0, 'it');
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          listitem.field.getHelpBlock().should('be.visible');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: correctValues.en
+          }], {editMode: true});
+        })
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: correctValues.it
+        }], {lang: 'it', editMode: true}))
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
   });
 
@@ -599,17 +604,19 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
     it('Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: ['2021-07-12 00:00:00']
-                 }])
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => {
+          page.getContent().getAlertMessage().should('exist').and('contain.text', 'Mandatory');
+          page.getContent().fillAttributes([{
+              type: 'List',
+              nestedType: attribute,
+              value: ['2021-07-12 00:00:00']
+            }]);
+        })
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
 
     it('Try to set custom validation (range) and check it in content validation', () => {
@@ -626,51 +633,47 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         it: ['2021-09-15 00:00:00']
       };
       addAttributeToContentType(attribute, {validationRules});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.en
-                 }])
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.it
-                 }], {lang: 'it'});
-
-      let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0, 'it');
-      fieldarea.setAttributeType(attribute);
-      let listitem = fieldarea.generateInstanceListItem(0);
-
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-
-      currentPage.getContent().getEnLanguageTab().click();
-
-      fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
-      fieldarea.setAttributeType(attribute);
-      listitem = fieldarea.generateInstanceListItem(0);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-
-      listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.getContents().children('div').invoke('hasClass', 'has-error').should('be.true');
-
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: correctValues.en
-                 }], {editMode: true})
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: correctValues.it
-                 }], {lang: 'it', editMode: true});
-
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.en
+        }]))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.it
+        }], {lang: 'it'}))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => page.getContent().getContentAttributesLanguageTab('en').then(button => page.getContent().click(button)))
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0);
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          page.getContent().getContentAttributesLanguageTab('it').then(button => page.getContent().click(button));
+        })
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0, 'it');
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(0);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: correctValues.en
+          }], { editMode: true });
+        })
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: correctValues.it
+        }], {lang: 'it', editMode: true}))
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
   });
 
@@ -701,17 +704,19 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
     it('Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, enumProps, {mandatory: true});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: ['a']
-                 }])
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => {
+          page.getContent().getAlertMessage().should('exist').and('contain.text', 'Mandatory');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: ['a']
+          }]);
+        })
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
 
     it('Verify every list element can\'t be empty', () => {
@@ -720,31 +725,37 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         it: ['a', '']
       };
       addAttributeToContentType(attribute, enumProps);
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.en
-                 }])
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.it
-                 }], {lang: 'it'});
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent().getEnLanguageTab().click();
-      let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
-      fieldarea.setAttributeType(attribute);
-      let listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.setValue('a');
-      currentPage.getContent().getItLanguageTab().click();
-      fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0, 'it');
-      fieldarea.setAttributeType(attribute);
-      listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.setValue('b');
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.en
+        }]))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.it
+        }], {lang: 'it'}))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => page.getContent().getContentAttributesLanguageTab('en').then(button => page.getContent().click(button)))
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0);
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          listitem.field.setValue('a');
+          page.getContent().getContentAttributesLanguageTab('it').then(button => page.getContent().click(button))
+        })
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0, 'it');
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          listitem.field.setValue('b');
+          page.getContent().submitApproveForm();
+        })
+        .then(() => checkAndSavePublishedContentId());
     });
   });
 
@@ -775,17 +786,19 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
     it('Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, enumProps, {mandatory: true});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: ['x']
-                 }])
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => {
+          page.getContent().getAlertMessage().should('exist').and('contain.text', 'Mandatory');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: ['x']
+          }]);
+        })
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
 
     it('Verify every list element can\'t be empty', () => {
@@ -794,31 +807,37 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         it: ['x', '']
       };
       addAttributeToContentType(attribute, enumProps);
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.en
-                 }])
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: wrongValues.it
-                 }], {lang: 'it'});
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent().getEnLanguageTab().click();
-      let fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0);
-      fieldarea.setAttributeType(attribute);
-      let listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.setValue('x');
-      currentPage.getContent().getItLanguageTab().click();
-      fieldarea = currentPage.getContent().getAttributeByTypeIndex('List', 0, 'it');
-      fieldarea.setAttributeType(attribute);
-      listitem = fieldarea.generateInstanceListItem(1);
-      listitem.field.setValue('y');
-      currentPage.getContent().getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.en
+        }]))
+        .then(page => page.getContent().fillAttributes([{
+          type: 'List',
+          nestedType: attribute,
+          value: wrongValues.it
+        }], {lang: 'it'}))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => page.getContent().getContentAttributesLanguageTab('en').then(button => page.getContent().click(button)))
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0);
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          listitem.field.setValue('x');
+          page.getContent().getContentAttributesLanguageTab('it').then(button => page.getContent().click(button));
+        })
+        .then(page => {
+          let fieldarea = page.getContent().getAttributeByTypeIndex('List', 0, 'it');
+          fieldarea.setAttributeType(attribute);
+          let listitem = fieldarea.generateInstanceListItem(1);
+          listitem.field.getContents().children(htmlElements.p).invoke('hasClass', 'text-danger').should('be.true');
+          listitem.field.setValue('y');
+          page.getContent().submitApproveForm();
+        })
+        .then(() => checkAndSavePublishedContentId());
     });
   });
 
@@ -845,17 +864,19 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
     it('Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: [false]
-                 }])
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => {
+          page.getContent().getAlertMessage().should('exist').and('contain.text', 'Mandatory');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: [false]
+          }]);
+        })
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
   });
 
@@ -882,17 +903,19 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
     it('Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: [true]
-                 }])
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+        .then(page => {
+          page.getContent().getAlertMessage().should('exist').and('contain.text', 'Mandatory');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: [true]
+          }]);
+        })
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
   });
 
@@ -919,17 +942,20 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
 
     it('Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
-      navigateToContentForm();
-      currentPage.getContent()
-                 .fillBeginContent(CONTENT_WITH_LIST.description)
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.true');
-      currentPage.getContent()
-                 .fillAttributes([{
-                   type: 'List',
-                   nestedType: attribute,
-                   value: [null]
-                 }])
-                 .getSaveApproveAction().invoke('hasClass', 'disabled').should('be.false');
+      navigateToContentForm()
+        .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
+        .then(page => page.getContent().getSaveApproveAction().then(input => page.getContent().click(input)))
+        .then(page => {
+          page.getContent().getAlertMessage().should('exist').and('contain.text', 'Mandatory');
+          page.getContent().fillAttributes([{
+            type: 'List',
+            nestedType: attribute,
+            value: [null]
+          }]);
+        })
+        .then(page => page.getContent().submitApproveForm())
+        .then(() => checkAndSavePublishedContentId());
     });
+
   });
 });

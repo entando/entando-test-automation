@@ -11,11 +11,11 @@ export default class TextAttribute extends AttributeFormField {
   getInputName() {
     switch (this.attributeType) {
       case 'Monotext':
-        return (this.composite ? 'Composite:Monotext:Composite_Monotext' : 'Monotext:Monotext');
+        return (this.composite ? 'Composite:Monotext:Composite_Monotext' : (this.parentAttribute ? `List:Monotext:${this.lang}_List_${this.index}` : 'Monotext:Monotext'));
       case 'Email':
-        return (this.composite ? 'Composite:Email:Composite_Email' : 'Email:Email');
+        return (this.composite ? 'Composite:Email:Composite_Email' : (this.parentAttribute ? `List:Email:${this.lang}_List_${this.index}` : 'Email:Email'));
       case 'Number':
-        return (this.composite ? 'Composite:Number:Composite_Number' : 'Number:Number');
+        return (this.composite ? 'Composite:Number:Composite_Number' : (this.parentAttribute ? `List:Number:${this.lang}_List_${this.index}` : 'Number:Number'));
       case 'Text':
         return (this.composite ? `Composite:Text:${this.lang}_Composite_Text` : `Text:${this.lang}_Text`);
       case 'Longtext':
@@ -32,7 +32,7 @@ export default class TextAttribute extends AttributeFormField {
 
   getHelpBlock() {
     return this.getContents()
-               .find('.help-block');
+               .find('.text-danger');
   }
 
   getInput() {

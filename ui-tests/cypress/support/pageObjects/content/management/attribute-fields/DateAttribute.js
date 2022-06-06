@@ -26,7 +26,7 @@ export default class DateAttribute extends AttributeFormField {
   }
 
   getCalendarArea() {
-    return this.parent.parent.get().find(this.calendarPopper);
+    return this.parent.parent.parent.get().find(this.calendarPopper);
   }
 
   getPreviousMonthButton() {

@@ -25,7 +25,7 @@ export default class ContentsController extends AbstractController {
         direction: 'DESC',
         mode: 'full',
         page: 1,
-        pageSize: 5
+        pageSize: 20
       }
     });
   }
