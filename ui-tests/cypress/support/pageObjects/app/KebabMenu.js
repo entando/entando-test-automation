@@ -18,10 +18,10 @@ export default class KebabMenu extends WebElement {
                .children(`${htmlElements.ul}.dropdown-menu`);
   }
 
-  open() {
+  open(force = false) {
     this.get()
         .children(htmlElements.button)
-        .click();
+        .click({force: force});
     return this;
   }
 
