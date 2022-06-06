@@ -801,7 +801,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
   const openContentManagement = () => cy.get('@currentPage').then(page => page.getMenu().getContent().open().openManagement());
   const openAddPage           = () => openContentManagement().then(page => page.getContent().openAddContentPage(CONTENT_TYPE.name));
-  const openEditPage          = (code) => openContentManagement().then(page => page.getContent().getKebabMenu(code).openDropdown().openEdit());
+  const openEditPage          = (code) => openContentManagement().then(page => page.getContent().getKebabMenu(code).open(true).openEdit());
 
   const getContent                   = (contentId) => {
     return cy.contentsController()
