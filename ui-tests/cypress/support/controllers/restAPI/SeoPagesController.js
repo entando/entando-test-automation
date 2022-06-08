@@ -17,4 +17,13 @@ export default class SeoPagesController extends AbstractController {
     });
   }
 
+  setPageJoinGroups(page, newJoinGroups) {
+    page.joinGroups = newJoinGroups;
+    return this.request({
+      url: `${this.apiURL}/${page.code}`,
+      method: 'PUT',
+      body: page
+    });
+  }
+
 }
