@@ -6,6 +6,7 @@ import DesignerPage from './DesignerPage';
 import AppPage      from '../../app/AppPage';
 
 export default class WidgetConfigPage extends AppContent {
+
   panel      = `${htmlElements.div}.PageConfigPage__panel-body`;
   saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
 
@@ -29,8 +30,9 @@ export default class WidgetConfigPage extends AppContent {
     this.parent.getDialog().setBody(component);
   }
 
-  confirmConfig() {
-    this.getSaveButton().click();
-    return new AppPage(DesignerPage);
+  confirmConfig(code) {
+    this.getSaveButton().then(button => DesignerPage.openPage(button, code));
+    return cy.wrap(new AppPage(DesignerPage)).as('currentPage');
   }
+
 }

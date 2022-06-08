@@ -123,10 +123,10 @@ export default class DesignerPage extends AppContent {
 
     // cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?*'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
-    // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
+    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
 
     cy.get(button).click();
-    cy.wait(['@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET' /*'@pagePublishedWidgetsPageLoadingGET'*/]);
+    cy.wait(['@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET']);
   }
 
   getMainContainer() {
@@ -298,12 +298,16 @@ export default class DesignerPage extends AppContent {
     return cy.get('@currentPage');
   }
 
-  publishPageDesign() {
+  publishPageDesign(code) {
     this.getBottomToolbar()
         .children(htmlElements.div)
         .children(htmlElements.div).eq(1)
         .children(htmlElements.button).eq(1)
-        .click();
+        .then(button => {
+          cy.pagesController().then((controller => controller.intercept({method: 'PUT'}, 'pageStatusChanged', `/${code}/status`)));
+          cy.get(button).click();
+          cy.wait('@pageStatusChanged');
+        });
     return cy.get('@currentPage');
   }
 
@@ -344,26 +348,29 @@ export default class DesignerPage extends AppContent {
         .then(frame => this.getSidebarWidgetSectionWidget(widgetSection, widgetPos).drag(frame, {position: 'center'}));
   }
 
-  dragConfigurableWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol, widgetCode) {
+  dragConfigurableWidgetToGrid(pageCode, widgetSection, widgetPos, gridRow, gridCol, widgetCode) {
     this.dragWidgetToGridOld(widgetSection, widgetPos, gridRow, gridCol);
 
-    const WidgetConfigPage = this.gatherWidgetConfigPage(widgetCode);
-    return new AppPage(WidgetConfigPage);
+    const WidgetConfigPage = this.gatherWidgetConfigPage(pageCode, widgetCode);
+    return cy.wrap(new AppPage(WidgetConfigPage)).as('currentPage');
   }
 
   selectPageFromSidebarPageTreeTable(code) {
     this.getSidebarPageTreeTableRow(code).click();
   }
 
-  gatherWidgetConfigPage(widgetCode) {
+  gatherWidgetConfigPage(pageCode, widgetCode) {
     const {CMS_WIDGETS} = DesignerPage;
     switch (widgetCode) {
       case CMS_WIDGETS.CONTENT_LIST.code:
+        ContentListWidgetConfigPage.openPage(pageCode);
         return ContentListWidgetConfigPage;
       case CMS_WIDGETS.CONTENT_QUERY.code:
+        ContentQueryWidgetConfigPage.openPage(pageCode);
         return ContentQueryWidgetConfigPage;
       case CMS_WIDGETS.CONTENT.code:
       default:
+        ContentWidgetConfigPage.openPage(pageCode);
         return ContentWidgetConfigPage;
     }
   }
@@ -416,8 +423,8 @@ class GridFrameKebabMenu extends KebabMenu {
   }
 
   openDetails() {
-    this.getDetails().click();
-    return new AppPage(DetailsPage);
+    this.getDetails().then(button => DetailsPage.openPage(button));
+    return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
   }
 
   openEdit() {
@@ -431,13 +438,13 @@ class GridFrameKebabMenu extends KebabMenu {
   }
 
   openSettings() {
-    this.getSettings().click();
-    return new AppPage(this.parent.gatherWidgetConfigPage(this.widgetCode));
+    this.getSettings().then(button => ContentWidgetConfigPage.openDesignerWidgets(button, this.widgetCode));
+    return cy.wrap(new AppPage(ContentWidgetConfigPage)).as('currentPage');
   }
 
   openSaveAs() {
-    this.getSaveAs().click();
-    return new AppPage(MFEWidgetForm);
+    this.getSaveAs().then(button => MFEWidgetForm.openPage(button, this.widgetCode));
+    return cy.wrap(new AppPage(MFEWidgetForm)).as('currentPage');
   }
 
   clickDelete() {

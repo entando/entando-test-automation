@@ -101,8 +101,8 @@ export default class MFEWidgetForm extends AppContent {
   }
 
   submitCloneWidget() {
-    this.getSaveReplaceButton().click();
-    return new AppPage(DesignerPage);
+    this.getSaveReplaceButton().then(button => DesignerPage.openPage(button));
+    return cy.wrap(new AppPage(DesignerPage)).as('currentPage');
   }
 
   getTitleInput(lang = 'en') {
@@ -133,6 +133,11 @@ export default class MFEWidgetForm extends AppContent {
   getConfigTabConfiguration() {
     return this.getConfigTabs()
                .find(htmlElements.li).eq(1);
+  }
+
+  clickConfigTabConfiguration(){
+    this.getConfigTabConfiguration().click();
+    return cy.get('@currentPage');
   }
 
   getConfigTabConfigUI() {
