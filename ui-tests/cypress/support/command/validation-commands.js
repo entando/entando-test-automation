@@ -6,8 +6,9 @@ Cypress.Commands.add('validateListTexts', (list, values) => {
   }
 });
 
-Cypress.Commands.add('validateUrlPathname', pathname => {
-  cy.location('pathname').should('eq', Cypress.config('basePath') + pathname);
+Cypress.Commands.add('validateUrlPathname', (pathname, options = {portalUI: false}) => {
+  const path = options.portalUI ? 'portalUIPath' : 'basePath';
+  cy.location('pathname').should('eq', Cypress.config(path) + pathname);
 });
 
 Cypress.Commands.add('validateToast', (page, text = null, isOk = true) => {

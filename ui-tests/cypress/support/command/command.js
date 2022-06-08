@@ -3,11 +3,7 @@ require('cy-verify-downloads').addCustomCommand();
 import HomePage from '../pageObjects/HomePage';
 
 Cypress.Commands.overwrite('visit', (originalFn, url, options = {portalUI: false}) => {
-  if (options.portalUI === true) {
-    url = Cypress.config('portalUIPath') + url;
-  } else {
-    url = Cypress.config('basePath') + url;
-  }
+  url = options.portalUI ? Cypress.config('portalUIPath') + url : Cypress.config('basePath') + url;
   return originalFn(url, options);
 });
 
