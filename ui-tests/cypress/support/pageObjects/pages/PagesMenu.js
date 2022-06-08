@@ -47,11 +47,6 @@ export default class PagesMenu extends SubMenu {
     return cy.wrap(new AppPage(DesignerPage)).as('currentPage');
   }
 
-  openDesignerOld() {
-    this.getDesigner().click();
-    return new AppPage(DesignerPage);
-  }
-
   openTemplates() {
     this.getTemplates().then(button => TemplatesPage.openPage(button));
     return cy.wrap(new AppPage(TemplatesPage)).as('currentPage');
