@@ -4,35 +4,35 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lintStaged": "path=$(git rev-parse --show-toplevel) && LIST=`git diff --name-only --cached --diff-filter=d \"$@\" | grep .*\\.js$ | sed \"s,^,$path/,\"`; if [ \"$LIST\" ]; then eslint $LIST --fix; fi",
     "cypress:smoke": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=SMOKE npx cypress run",
     "cypress:sanity": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=SANITY npx cypress run",
     "cypress:feature": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=FEATURE npx cypress run",
     "cypress:error": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=ERROR npx cypress run",
     "cypress:edge": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=EDGE npx cypress run",
-    "cypress:acceptance": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=ACCEPTANCE npx cypress run",
-    "browse-test": "./node_modules/cypress/bin/cypress open",
-    "lint": "eslint ./",
-    "lintStaged": "path=$(git rev-parse --show-toplevel) && LIST=`git diff --name-only --cached --diff-filter=d \"$@\" | grep .*\\.js$ | sed \"s,^,$path/,\"`; if [ \"$LIST\" ]; then eslint $LIST --fix; fi"
+    "cypress:acceptance": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=ACCEPTANCE npx cypress run"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@4tw/cypress-drag-drop": "^1.6.0",
-    "@bahmutov/cypress-extends": "^1.1.0",
-    "babel-eslint": "^10.1.0",
-    "cy-verify-downloads": "0.0.7",
+    "typescript": "^4.5.5",
     "cypress": "^9.5.0",
+    "@bahmutov/cypress-extends": "^1.1.0",
     "cypress-mochawesome-reporter": "^2.3.0",
+    "cypress-tags": "^0.3.0",
+    "@4tw/cypress-drag-drop": "^1.6.0",
+    "cy-verify-downloads": "0.0.7",
     "cypress-pipe": "^2.0.0",
     "cypress-real-events": "^1.5.1",
-    "cypress-tags": "^0.3.0",
-    "eslint": "^7.30.0",
-    "eslint-plugin-cypress": "^2.11.3",
-    "husky": "^1.3.1",
     "lorem-ipsum": "^2.0.4",
     "randexp": "^0.5.3",
-    "typescript": "^4.5.5",
     "uuid": "^8.3.2"
+  },
+  "devDependencies": {
+    "husky": "^1.3.1",
+    "eslint": "^7.30.0",
+    "babel-eslint": "^10.1.0",
+    "eslint-plugin-cypress": "^2.11.3"
   },
   "husky": {
     "hooks": {
