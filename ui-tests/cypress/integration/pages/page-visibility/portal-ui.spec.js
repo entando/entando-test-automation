@@ -72,13 +72,16 @@ describe('Page visibility in Portal UI', () => {
 
                     afterEach(() => cy.kcUILogout());
 
-                    if (ownerGroup === groupPermission || (ownerGroup === 'free' || groupPermission === 'administrators')) {
+                    if (ownerGroup === groupPermission) {
                         it([Tag.SMOKE, 'ENG-3798'], `A user with "${groupPermission}" permission SHOULD be able to view a page with "${ownerGroup}" owner group and no join group`, () => {
                             checkPermission();
                         });
                     } else {
-                        it([Tag.SANITY, 'ENG-3798'], `A user with "${groupPermission}" permission SHOULD NOT be able to view a page with "${ownerGroup}" owner group and no join group`, () => {
-                            checkPermission(false);
+                        const permission = (ownerGroup === 'free' || groupPermission === 'administrators');
+                        const visibility = permission ? ' ' : ' NOT '
+                        
+                        it([Tag.SANITY, 'ENG-3798'], `A user with "${groupPermission}" permission SHOULD${visibility}be able to view a page with "${ownerGroup}" owner group and no join group`, () => {
+                            checkPermission(permission);
                         });
                     }
 
