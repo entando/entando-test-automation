@@ -19,7 +19,7 @@
     "cypress": "^10.2.0",
     "cypress-mochawesome-reporter": "^3.1.0",
     "cypress-tags": "^0.3.0",
-    "@4tw/cypress-drag-drop": "^1.6.0",
+    "@4tw/cypress-drag-drop": "^1.8.1",
     "cy-verify-downloads": "0.0.7",
     "cypress-pipe": "^2.0.0",
     "cypress-real-events": "^1.5.1",

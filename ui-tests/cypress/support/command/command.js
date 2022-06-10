@@ -1,3 +1,4 @@
+require('@4tw/cypress-drag-drop');
 require('cy-verify-downloads').addCustomCommand();
 
 import addContext from 'mochawesome/addContext';

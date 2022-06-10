@@ -292,7 +292,7 @@ export default class DesignerPage extends AppContent {
         .then(frame =>
             this.getDesignerGridFrame(oriGridRow, oriGridCol).children(htmlElements.div).then(widget => {
               cy.pagesController().then((controller => controller.intercept({method: 'PUT'}, 'widgetAddedToPage', `/${page.code}/widgets/*`)));
-              cy.get(widget).drag(frame, {force: true, position: 'center'});
+              cy.get(widget).drag(frame, {position: 'center'});
               cy.wait('@widgetAddedToPage');
             }));
     return cy.get('@currentPage');
