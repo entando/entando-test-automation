@@ -1,5 +1,4 @@
 {
-  "extends": "../cypress.json",
   "baseUrl": "http://localhost:3000",
   "restAPI": "http://localhost:8080/entando-de-app/api",
   "env": {

@@ -1,5 +1,4 @@
 {
-  "extends": "../../cypress.json",
   "baseUrl": "http://entando7-0.apps.ent64azure.com",
   "basePath": "/app-builder",
   "portalUIPath": "/entando-de-app/en",
