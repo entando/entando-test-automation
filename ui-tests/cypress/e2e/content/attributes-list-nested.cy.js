@@ -298,7 +298,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(page => page.getContent().submitApproveForm())
         .then(() => checkAndSavePublishedContentId());
     });
-    
+
   });
 
   //FIXME: the email attribute input doesn't appear
