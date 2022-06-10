@@ -1,0 +1,9 @@
+#!/usr/bin/env sh
+
+path=$(git rev-parse --show-toplevel)
+LIST=`git diff --name-only --cached --diff-filter=d "$@" | grep .*\.js$ | sed "s,^,$path/,"`
+
+. "$(dirname -- "$0")/_/husky.sh"
+
+cd ui-tests
+if [ "$LIST" ]; then ./node_modules/.bin/eslint $LIST --fix; fi
