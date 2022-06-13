@@ -21,7 +21,6 @@
     "cypress-tags": "^0.3.0",
     "@4tw/cypress-drag-drop": "^1.8.1",
     "cy-verify-downloads": "0.1.8",
-    "cypress-pipe": "^2.0.0",
     "cypress-real-events": "^1.5.1",
     "lorem-ipsum": "^2.0.4",
     "randexp": "^0.5.3",

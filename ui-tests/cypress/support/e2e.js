@@ -13,7 +13,6 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-import 'cypress-pipe';
 import 'cypress-real-events/support';
 import 'cypress-mochawesome-reporter/register';
 
