@@ -1,5 +1,7 @@
 require('cy-verify-downloads').addCustomCommand();
 
+import addContext from 'mochawesome/addContext';
+
 import HomePage from '../pageObjects/HomePage';
 
 Cypress.Commands.overwrite('visit', (originalFn, url, options = {portalUI: false}) => {
@@ -39,6 +41,10 @@ Cypress.Commands.add('initWindowOpenChecker', () => {
       cy.visit(url);
     });
   });
+});
+
+Cypress.Commands.add('addToReport', (context) => {
+  cy.once('test:after:run', (test, runnable) => addContext({test}, context(test, runnable)));
 });
 
 Cypress.Commands.add('kcAPILogin', () => {

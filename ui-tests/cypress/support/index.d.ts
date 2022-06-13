@@ -57,6 +57,11 @@ declare namespace Cypress {
         initWindowOpenChecker(): void;
 
         /**
+         * Add context to mochawesome report
+         */
+        addToReport(context): void;
+
+        /**
          * Get the value stored in the provided alias and push the provided value into the array
          * Returns the provided value
          */
