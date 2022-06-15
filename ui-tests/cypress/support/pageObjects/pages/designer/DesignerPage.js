@@ -110,7 +110,7 @@ export default class DesignerPage extends AppContent {
 
   //TODO understand when commented calls are performed
   static openPage(button, code = 'homepage') {
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
+    //cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
 
     cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupsPageLoadingGET', '/myGroups'));
     cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupsPageLoadingGET', '?*'));
@@ -126,7 +126,7 @@ export default class DesignerPage extends AppContent {
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
 
     cy.get(button).click();
-    cy.wait(['@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET']);
+    cy.wait([/*'@languagesPageLoadingGET',*/ '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET']);
   }
 
   getMainContainer() {
@@ -331,6 +331,7 @@ export default class DesignerPage extends AppContent {
 
   toggleSidebarWidgetSection(sectionPos) {
     this.getSidebarWidgetSection(sectionPos).click();
+    return cy.get('@currentPage');
   }
 
   dragWidgetToGrid(page, widgetSection, widgetPos, gridRow, gridCol) {
@@ -422,6 +423,21 @@ class GridFrameKebabMenu extends KebabMenu {
                .find(this.delete);
   }
 
+  gatherWidgetSettings(widgetCode) {
+    const {CMS_WIDGETS} = DesignerPage;
+    switch (widgetCode) {
+      case CMS_WIDGETS.CONTENT_LIST.code:
+        ContentListWidgetConfigPage.settings();
+        return ContentListWidgetConfigPage;
+      case CMS_WIDGETS.CONTENT_QUERY.code:
+        ContentQueryWidgetConfigPage.settings();
+        return ContentQueryWidgetConfigPage;
+      case CMS_WIDGETS.CONTENT.code:
+      default:
+        ContentWidgetConfigPage.settings();
+        return ContentWidgetConfigPage;
+    }
+  }
   openDetails() {
     this.getDetails().then(button => DetailsPage.openPage(button));
     return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
@@ -432,14 +448,10 @@ class GridFrameKebabMenu extends KebabMenu {
     return cy.wrap(new AppPage(MFEWidgetForm)).as('currentPage');
   }
 
-  openEditOld() {
-    this.getEdit().click();
-    return new AppPage(MFEWidgetForm);
-  }
-
-  openSettings() {
-    this.getSettings().then(button => ContentWidgetConfigPage.openDesignerWidgets(button, this.widgetCode));
-    return cy.wrap(new AppPage(ContentWidgetConfigPage)).as('currentPage');
+  openSettings(widgetCode) {
+    this.getSettings().click();
+    const WidgetConfigPage = this.gatherWidgetSettings(widgetCode);
+    return cy.wrap(new AppPage(WidgetConfigPage)).as('currentPage');
   }
 
   openSaveAs() {
