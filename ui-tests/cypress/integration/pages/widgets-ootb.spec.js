@@ -1,13 +1,12 @@
 import {generateRandomId} from '../../support/utils';
-import HomePage           from '../../support/pageObjects/HomePage';
 import DesignerPage       from '../../support/pageObjects/pages/designer/DesignerPage';
 import {htmlElements}     from '../../support/pageObjects/WebElement';
-//import AppPage            from '../../support/pageObjects/app/AppPage';
 
 const {CMS_WIDGETS, SYSTEM_WIDGETS, PAGE_WIDGETS} = DesignerPage;
 
 const SAMPLE_DUPE_WIDGET_CODE = 'mio_widget';
 
+//TODO remove The_Page and Page_Name when "CMS Content Widget - Extended" describe is fixed
 const PAGE_NAME = generateRandomId();
 const THE_PAGE  = {
   charset: 'utf-8',
@@ -25,7 +24,19 @@ const THE_PAGE  = {
 };
 
 describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
+
+  //TODO remove currentPage and selectPageFromSidebar when "CMS Content Widget - Extended" describe is fixed
   let currentPage;
+  const selectPageFromSidebar = (pageCode = THE_PAGE.code) => {
+    const currentPageContent = currentPage.getContent();
+    currentPageContent.clickSidebarTab(1);
+    cy.wait('@sidebarLoaded');
+    cy.get(`${htmlElements.div}#toolbar-tab-pane-1`).should('be.visible');
+    currentPageContent.designPageFromSidebarPageTreeTable(pageCode);
+    cy.wait('@pageWidgetsLoaded');
+    currentPageContent.clickSidebarTab(0);
+    cy.get(`${htmlElements.div}#toolbar-tab-pane-0`).should('be.visible');
+  };
 
   before(() => {
     cy.kcAPILogin();
@@ -41,23 +52,10 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
   beforeEach(() => {
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
-    // cy.contentsController()
-    //   .then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST'));
-    // cy.pagesController()
-    //   .then((controller => controller.intercept({method: 'GET'}, 'sidebarLoaded', '/homepage/widgets?status=published')));
-    // cy.pagesController()
-    //   .then((controller => controller.intercept({method: 'GET'}, 'pageWidgetsLoaded', `/${THE_PAGE.code}/widgets?status=published`)));
-    // cy.pagesController()
-    //   .then((controller => controller.intercept({method: 'PUT'}, 'pageStatusChanged', `/${THE_PAGE.code}/status`)));
-    // cy.usersController()
-    //   .then((controller => controller.intercept({method: 'GET'}, 'usersLoaded', '?page=1&pageSize=0')));
-    // cy.contentsController()
-    //   .then((controller => controller.intercept({method: 'GET'}, 'contentsLoaded', '?sort=lastModified&direction=DESC&status=published&forLinkingWithOwnerGroup=administrators&mode=list&page=1&pageSize=**')));
     cy.wrap([]).as('widgetsToBeRemovedFromPage');
     cy.wrap(null).as('widgetToBeDeleted');
     cy.wrap(null).as('widgetToBeReverted');
     cy.wrap([]).as('contentsToBeDeleted');
-    currentPage = new HomePage();
   });
 
   afterEach(function () {
@@ -87,28 +85,6 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                                         .then(() => controller.deletePage(page.code))));
   });
 
-  const selectPageFromSidebar = (pageCode = THE_PAGE.code) => {
-    const currentPageContent = currentPage.getContent();
-    currentPageContent.clickSidebarTab(1);
-    cy.wait('@sidebarLoaded');
-    cy.get(`${htmlElements.div}#toolbar-tab-pane-1`).should('be.visible');
-    currentPageContent.designPageFromSidebarPageTreeTable(pageCode);
-    cy.wait('@pageWidgetsLoaded');
-    currentPageContent.clickSidebarTab(0);
-    cy.get(`${htmlElements.div}#toolbar-tab-pane-0`).should('be.visible');
-  };
-
-  /*const confirmWidgetConfig = () => {
-    const click = $el => $el.click();
-
-    currentPage.getContent().getSaveButton().should('be.visible')
-      .pipe(click)
-      .should($el => {
-        expect($el).to.not.exist
-      });
-    return new AppPage(DesignerPage);
-  }*/
-
   describe('CMS Content Widget', () => {
 
     const WIDGET_FRAME = {
@@ -124,15 +100,6 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       modelId: 'default'
     };
 
-    /*const CONTENT_TYPE = {
-      name: '2 columns',
-      code: 'TCL'
-    };*/
-
-    beforeEach(() => {
-      // cy.contentTypesController()
-      //   .then((controller => controller.intercept({method: 'GET'}, 'contentTypeLoaded', `/${CONTENT_TYPE.code}`)));
-    });
 
     it('Basic add with widget settings', function () {
       cy.wrap(this.pageToBeDeleted).then(demoPage =>
@@ -147,7 +114,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
             .then(page => page.getContent().clickAddContentButton())
             .then(page => {
               page.getDialog().getBody().getTableRows().should('have.length', 5);
-              page.getDialog().getBody().getCheckboxFromTitle(WIDGET_CONFIG.contentDescription).click();
+              page.getDialog().getBody().checkBoxFromTitle(WIDGET_CONFIG.contentDescription);
               page.getDialog().confirm();
             })
             .then(page => page.getContent().confirmConfig(demoPage.code))
@@ -201,12 +168,12 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
           .then(page => page.getContent().clickSidebarTab(1))
           .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
           .then(page => page.getContent().clickSidebarTab(0))
-          .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code).open().openSettings())
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code).open().openSettings( CMS_WIDGETS.CONTENT.code))
           .then(page => page.getContent().clickChangeContentButton())
           .then(page => {
-              page.getDialog().getBody().getCheckboxFromTitle('Sample Banner').check({force: true})
-              page.getDialog().confirm()
-              })
+            page.getDialog().getBody().getCheckboxFromTitle('Sample Banner').check({force: true});
+            page.getDialog().confirm();
+          })
           .then(page => page.getContent().confirmConfig(demoPage.code))
           .then(page => {
             page.getContent().getPageStatusIcon()
@@ -223,7 +190,7 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       });
     });
 
-    it('Open Widget Details from the widget dropped', function (){
+    it('Open Widget Details from the widget dropped', function () {
       cy.wrap(this.pageToBeDeleted).then(demoPage => {
         cy.pageWidgetsController(demoPage.code)
           .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT.code, WIDGET_CONFIG))
@@ -235,12 +202,12 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
           .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
           .then(page => page.getContent().clickSidebarTab(0))
           .then(page =>
-              page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code).open().openDetails())
-           cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT.code}`);
+              page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT.code}`);
       });
     });
 
-    it('Save As Widget', function (){
+    it('Save As Widget', function () {
       cy.wrap(this.pageToBeDeleted).then(demoPage => {
         cy.pageWidgetsController(demoPage.code)
           .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT.code, WIDGET_CONFIG))
@@ -252,18 +219,18 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
           .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
           .then(page => page.getContent().clickSidebarTab(0))
           .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT.code).open().openSaveAs())
-          .then( page => {
-                      cy.validateUrlPathname(`/page/${demoPage.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
-                      page.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
-                      page.getContent().getConfigTabConfiguration().should('exist');
-                      page.getContent().clickConfigTabConfiguration();
+          .then(page => {
+            cy.validateUrlPathname(`/page/${demoPage.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT.code}/viewerConfig`);
+            page.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
+            page.getContent().getConfigTabConfiguration().should('exist');
+            page.getContent().clickConfigTabConfiguration();
           })
-            .then(page =>{
-                page.getContent().getFormBody().contains('Change content').should('exist');
-                page.getContent().submitCloneWidget()
-                cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToBeDeleted');
-                cy.validateUrlPathname(`/page/configuration/${demoPage.code}`);
-            })
+          .then(page => {
+            page.getContent().getFormBody().contains('Change content').should('exist');
+            page.getContent().submitCloneWidget();
+            cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToBeDeleted');
+            cy.validateUrlPathname(`/page/configuration/${demoPage.code}`);
+          });
         cy.get('@currentPage')
           .then(page => {
             page.getContent().getPageStatusIcon()
@@ -276,9 +243,9 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
                 .should('have.class', 'PageStatusIcon--published')
                 .and('have.attr', 'title').should('eq', 'Published');
           });
-    });
+      });
 
-  });
+    });
   });
 
   describe('CMS Content List Widget', () => {
@@ -297,137 +264,887 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       frameNum: 7
     };
 
-    it('Basic add with widget settings', () => {
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-
-      currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 4, 0, CMS_WIDGETS.CONTENT_LIST.code);
-
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
-      cy.wait(['@pageWidgetsLoaded', '@contentsLoaded', '@contentsLoaded']);
-      currentPage.getContent().getContentListTableRowWithTitle('Sample - About Us').should('exist');
-      currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us').click();
-      currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Banner').click();
-
-      currentPage.getContent().getModelIdDropdownByIndex(0).select('2-column-content');
-      currentPage.getContent().getModelIdDropdownByIndex(1).select('Banner - Text, Image, CTA');
-      currentPage = currentPage.getContent().confirmConfig();
-      cy.wait('@pageWidgetsLoaded');
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-    });
-
-    it('Basic edit with widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
+    it('Basic add with widget settings', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`).then(() => page))
+          .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 4, 4, 0, CMS_WIDGETS.CONTENT_LIST.code))
+          .then(page => cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${demoPage.code}/frame/${WIDGET_FRAME.frameNum}`).then(() => page))
+        cy.wait(1000)
+        cy.get('@currentPage')
+          .then(page => {
+                page.getContent().getContentListTableRowWithTitle('Sample - About Us').should('exist');
+                page.getContent().clickAddButtonFromTableRowWithTitle('Sample - About Us');
+              })
+          .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Sample Banner'))
+          .then(page => page.getContent().getModelIdDropdownByIndex(0).then(select => page.getContent().select(select, '2-column-content')))
+          .then(page => page.getContent().getModelIdDropdownByIndex(1).then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
+          .then(page => page.getContent().confirmConfig(demoPage.code))
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').and('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').and('eq', 'Published');
+          });
       });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: CMS_WIDGETS.CONTENT_LIST.code, group: 'free'}).as('widgetToRevert');
 
-      cy.validateUrlPathname('/widget');
     });
 
-    it('Editing widget in Settings (widget config)', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
-                               .open()
-                               .openSettings();
-      cy.wait(['@contentsLoaded', '@contentsLoaded']);
-
-      currentPage.getContent().getAddButtonFromTableRowWithTitle('A Modern Platform for Modern UX').click();
-      currentPage.getContent().getModelIdDropdownByIndex(0).select('TCL - Search Results');
-      currentPage = currentPage.getContent().confirmConfig();
-
-      cy.wait('@pageWidgetsLoaded');
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
+    it('Basic edit with widget', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_LIST.code}`);
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: CMS_WIDGETS.CONTENT_LIST.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
     });
 
-    it('Open Widget Details from the widget dropped', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
+    it('Editing widget in Settings (widget config)', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code).open().openSettings(CMS_WIDGETS.CONTENT_LIST.code));
+        cy.wait(1000);
+        cy.get('@currentPage')
+          .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('A Modern Platform for Modern UX'))
+          .then(page => page.getContent().getModelIdDropdownByIndex(2).select('Banner - Search Results'));
+        cy.get('@currentPage')
+          .then(page => page.getContent().confirmConfig(demoPage.code));
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+      });
 
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
     });
 
-    it('Save As Widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code)
-                               .open()
-                               .openSaveAs();
-
-      cy.validateUrlPathname(`/page/${THE_PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
-      currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
-      currentPage.getContent().getConfigTabConfiguration().should('exist');
-      currentPage.getContent().getConfigTabConfiguration().click();
-      currentPage.getContent().getFormBody().contains('Content list').should('exist');
-      currentPage = currentPage.getContent().submitCloneWidget();
-      cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToDelete');
-
-      cy.validateUrlPathname(`/page/configuration/${THE_PAGE.code}`);
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
+    it('Open Widget Details from the widget dropped', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_LIST.code}`);
+      });
     });
+
+    it('Save As Widget', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_LIST.code, WIDGET_CONFIG))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(4, 0, CMS_WIDGETS.CONTENT_LIST.code).open().openSaveAs())
+          .then(page => {
+            cy.validateUrlPathname(`/page/${demoPage.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_LIST.code}/rowListViewerConfig`);
+            page.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
+            page.getContent().getConfigTabConfiguration().should('exist');
+            page.getContent().clickConfigTabConfiguration();
+          })
+          .then(page => {
+            page.getContent().getFormBody().contains('Content List').should('exist');
+            page.getContent().submitCloneWidget();
+            cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToBeDeleted');
+            cy.validateUrlPathname(`/page/configuration/${demoPage.code}`);
+          });
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+      });
+    });
+  });
+
+  describe('CMS Content Search Query Widget', () => {
+
+    const WIDGET_FRAME = {
+      frameName: 'Frame 3',
+      frameNum: 6
+    };
+
+    const WIDGET_CONFIG = {
+      contentType: 'BNR',
+      maxElemForItem: '10'
+    };
+
+    it('Basic add with widget settings', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`).then(() => page))
+          .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 3, 3, 0, CMS_WIDGETS.CONTENT_QUERY.code));
+        cy.get('@currentPage')
+          .then(page => {
+            cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${demoPage.code}/frame/${WIDGET_FRAME.frameNum}`);
+            page.getContent().getContentTypeField().then(select => page.getContent().select(select, 'Banner'));
+            page.getContent().getPublishSettingsAccordButton().click();
+            page.getContent().getMaxTotalElemDropdown().then(select => page.getContent().select(select, '10'));
+          })
+          .then(page => page.getContent().confirmConfig(demoPage.code))
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+        cy.wrap(WIDGET_FRAME.frameNum).as('widgetToBeRemovedFromPage');
+      });
+    });
+
+    it('Basic edit with widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: CMS_WIDGETS.CONTENT_QUERY.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
+    });
+
+    it('Editing widget in Settings (widget config)', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code).open().openSettings(CMS_WIDGETS.CONTENT_QUERY.code));//todo trovare un modo migliore per differenziare l'apertura dei pageObjects
+        cy.wait(1000);
+        cy.get('@currentPage')
+          .then(page => {
+            cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${demoPage.code}/frame/${WIDGET_FRAME.frameNum}`);
+            page.getContent().getPublishSettingsAccordButton().click();
+            page.getContent().getMaxElemForItemDropdown().then(select => page.getContent().select(select, '6'));
+            page.getContent().getMaxTotalElemDropdown().then(select => page.getContent().select(select, '10'));
+          })
+          .then(page => page.getContent().confirmConfig(demoPage.code));
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+      });
+    });
+
+    it('Open Widget Details from the widget dropped', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_QUERY.code}`);
+      });
+    });
+
+    it('Save As Widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code).open().openSaveAs())
+          .then(page => {
+            cy.validateUrlPathname(`/page/${demoPage.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_QUERY.code}/listViewerConfig`);
+            page.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
+            page.getContent().getConfigTabConfiguration().should('exist');
+            page.getContent().clickConfigTabConfiguration();
+          })
+          .then(page => {
+            page.getContent().getFormBody().contains(/^Publishing settings$/i).should('exist');
+            page.getContent().submitCloneWidget();
+            cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToBeDeleted');
+            cy.validateUrlPathname(`/page/configuration/${demoPage.code}`);
+          });
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+      });
+    });
+
+  });
+
+  describe('CMS Search Form and Search Results Widgets', () => {
+
+    const WIDGET_FRAME_1 = {
+      frameName: 'Frame 2',
+      frameNum: 5
+    };
+
+    const WIDGET_FRAME_2 = {
+      frameName: 'Frame 3',
+      frameNum: 6
+    };
+
+    it('Basic add', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`).then(() => page))
+          .then(page => page.getContent().dragWidgetToGridOld(0, 5, 2, 0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`).then(() => page));
+        cy.get('@currentPage')
+          .then(page => page.getContent().dragWidgetToGridOld(0, 6, 3, 0));
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+        cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetsToBeRemovedFromPage');
+      });
+    });
+
+    it('Basic edit with CMS Search Form widget', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.SEARCH_FORM.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_1.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_FORM.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: CMS_WIDGETS.SEARCH_FORM.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
+    });
+
+    it('Basic edit with CMS Search Result widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.SEARCH_RESULT.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_1.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.SEARCH_RESULT.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: CMS_WIDGETS.SEARCH_RESULT.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
+    });
+
+    it('Open Widget Details from the dropped CMS Search Form widget', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.SEARCH_FORM.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_1.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_FORM.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_FORM.code}`);
+      });
+    });
+
+    it('Open Widget Details from the dropped CMS Search Results widget', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.SEARCH_RESULT.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_2.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.SEARCH_RESULT.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_RESULT.code}`);
+      });
+    });
+  });
+
+  describe('CMS News Archive and News Latest Widgets', () => {
+
+    const WIDGET_FRAME_1 = {
+      frameName: 'Frame 2',
+      frameNum: 5
+    };
+
+    const WIDGET_FRAME_2 = {
+      frameName: 'Frame 3',
+      frameNum: 6
+    };
+
+    it('Basic add', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`).then(() => page))
+          .then(page => page.getContent().dragWidgetToGridOld(0, 0, 2, 0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`).then(() => page));
+        cy.get('@currentPage')
+          .then(page => page.getContent().dragWidgetToGridOld(0, 1, 3, 0));
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+      });
+    });
+
+    it('Basic edit with News Archive widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.NEWS_ARCHIVE.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_1.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_ARCHIVE.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: CMS_WIDGETS.NEWS_ARCHIVE.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
+    });
+
+    it('Basic edit with News Latest widget', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.NEWS_LATEST.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_2.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.NEWS_LATEST.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: CMS_WIDGETS.NEWS_LATEST.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
+
+    });
+
+
+    it('Open Widget Details from the dropped CMS News Archive widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.NEWS_ARCHIVE.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_1.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_ARCHIVE.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
+      });
+
+    });
+
+
+    it('Open Widget Details from the dropped CMS News Latest widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.NEWS_LATEST.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_2.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.NEWS_LATEST.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_LATEST.code}`);
+      });
+
+    });
+  });
+
+  describe('Page Widgets - Language and Logo', () => {
+
+    const WIDGET_FRAME_1 = {
+      frameName: 'Frame 2',
+      frameNum: 5
+    };
+
+    const WIDGET_FRAME_2 = {
+      frameName: 'Frame 3',
+      frameNum: 6
+    };
+
+    it('Basic add', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().toggleSidebarWidgetSection(2))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`).then(() => page))
+          .then(page => page.getContent().dragWidgetToGridOld(2, 0, 2, 0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`).then(() => page));
+        cy.get('@currentPage')
+          .then(page => page.getContent().dragWidgetToGridOld(2, 1, 3, 0));
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+        cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetsToBeRemovedFromPage');
+      });
+    });
+
+    it('Basic edit with Language widget', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, PAGE_WIDGETS.LANGUAGE.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_1.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LANGUAGE.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: PAGE_WIDGETS.LANGUAGE.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
+    });
+
+    it('Basic edit with Logo widget', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, PAGE_WIDGETS.LOGO.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_2.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, PAGE_WIDGETS.LOGO.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: PAGE_WIDGETS.LOGO.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
+    });
+
+    it('Open Widget Details from the dropped Language widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, PAGE_WIDGETS.LANGUAGE.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_1.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LANGUAGE.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${PAGE_WIDGETS.LANGUAGE.code}`);
+      });
+    });
+
+    it('Open Widget Details from the dropped Logo widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, PAGE_WIDGETS.LOGO.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_2.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(3, 0, PAGE_WIDGETS.LOGO.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${PAGE_WIDGETS.LOGO.code}`);
+      });
+    });
+
+
+    describe('Page Widgets - Logo - Extended', () => {
+      const WIDGET_FRAME_1 = {
+        frameName: 'Frame 2',
+        frameNum: 5
+      };
+      const CUSTOM_UI      = '<#assign wp=JspTaglibs["/aps-core"]>{enter}{enter}\
+     <@wp.info key="systemParam" paramName="applicationBaseURL" var="appUrl" />{enter}\
+     <img src="${{}appUrl{}}resources/static/img/Entando_light.svg" aria-label="Entando" alt="Logo" role="logo" />';
+
+      const CURRENT_LOGO = 'Entando_light.svg';
+      const CHANGE_LOGO  = 'entando-logo_badge.png';
+
+      it('Add the Logo widget in page (config), edit the logo widget (in kebab actions) changing, in the Custom UI, the default logo\'s image with a new image (.svg/.png/.jpg)', function () {
+
+        cy.wrap(this.pageToBeDeleted).then(demoPage => {
+          cy.get('@currentPage')
+            .then(page => page.getMenu().getPages().open().openDesigner())
+            .then(page => page.getContent().clickSidebarTab(1))
+            .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+            .then(page => page.getContent().clickSidebarTab(0))
+            .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`).then(() => page))
+            .then(page => page.getContent().toggleSidebarWidgetSection(2))
+            .then(page => page.getContent().dragWidgetToGridOld(2, 1, 0, 0));
+          cy.get('@currentPage')
+            .then(page => page.getContent().publishPageDesign(demoPage.code))
+            .then(page => page.getContent().getDesignerGridFrameKebabMenu(0, 0, PAGE_WIDGETS.LOGO.code).open().openEdit())
+            .then(page => {
+              page.getContent().getCustomUiInput().should('not.be.empty');
+              page.getContent().getCustomUiInput().clear();
+              page.getContent().getCustomUiInput().type(CUSTOM_UI.replace(CURRENT_LOGO, CHANGE_LOGO));
+            });
+          cy.get('@currentPage')
+            .then(page => page.getContent().submitForm());
+          cy.wait(2000);
+          cy.visit(`/${demoPage.code}.page`, {portalUI: true});
+          cy.get(`${htmlElements.img}[role="logo"]`).should('have.attr', 'src')
+            .should('not.include', CURRENT_LOGO)
+            .and('include', CHANGE_LOGO);
+
+          cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToBeRemovedFromPage');
+          cy.wrap({
+            code: PAGE_WIDGETS.LOGO.code,
+            customUi: CUSTOM_UI.replaceAll('{enter}', '\n').replaceAll('{}', '')
+          }).as('widgetToBeReverted');
+        });
+      });
+    });
+  });
+
+  describe('System Widgets - APIs and System Messages', () => {
+
+    const WIDGET_FRAME_1 = {
+      frameName: 'Frame 2',
+      frameNum: 5
+    };
+
+    const WIDGET_FRAME_2 = {
+      frameName: 'Frame 3',
+      frameNum: 6
+    };
+
+    it('Basic add', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().toggleSidebarWidgetSection(4))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`).then(() => page))
+          .then(page => page.getContent().dragWidgetToGridOld(4, 0, 2, 0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`).then(() => page));
+        cy.get('@currentPage')
+          .then(page => page.getContent().dragWidgetToGridOld(4, 4, 3, 0));
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+        cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetsToBeRemovedFromPage');
+      });
+    });
+
+    it('Basic edit with APIs widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, SYSTEM_WIDGETS.APIS.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_1.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.APIS.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
+            page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
+          });
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: SYSTEM_WIDGETS.APIS.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
+    });
+
+    it('Basic edit with News Latest widget', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, SYSTEM_WIDGETS.SYS_MSGS.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_2.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => page.getContent().getDesignerGridFrameKebabMenu(3, 0, SYSTEM_WIDGETS.SYS_MSGS.code).open().openEdit())
+          .then(page => {
+            cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
+            page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
+          });
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().editFormFields({group: 'Administrator'});
+            page.getContent().submitForm();
+          })
+          .then(() => {
+            cy.wrap({code: SYSTEM_WIDGETS.SYS_MSGS.code, group: 'free'}).as('widgetToBeReverted');
+            cy.validateUrlPathname('/widget');
+          });
+      });
+    });
+
+    it('Open Widget Details from the dropped APIs widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, SYSTEM_WIDGETS.APIS.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_1.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.APIS.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.APIS.code}`);
+      });
+    });
+
+    it('Open Widget Details from the dropped System Messages widget', function () {
+
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.pageWidgetsController(demoPage.code)
+          .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, SYSTEM_WIDGETS.SYS_MSGS.code))
+          .then(() => cy.unshiftAlias('@widgetsToBeRemovedFromPage', WIDGET_FRAME_2.frameNum));
+        cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page =>
+              page.getContent().getDesignerGridFrameKebabMenu(3, 0, SYSTEM_WIDGETS.SYS_MSGS.code).open().openDetails());
+        cy.validateUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
+      });
+    });
+
   });
 
   describe('CMS Content Widget - Extended', () => {
@@ -441,11 +1158,6 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       code: 'BNR',
       name: 'Banner'
     };
-
-    beforeEach(() => {
-      cy.contentTypesController()
-        .then((controller => controller.intercept({method: 'GET'}, 'contentTypeLoaded', `/${NEW_CONTENT_TYPE.code}`)));
-    });
 
     // FIXME: when moving from admin console to app builder, the app tour starts again
     //        can't use API calls to clean the environment after the test
@@ -601,59 +1313,102 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       code: 'BNR'
     };
 
-    it('Add all existing published OOTB contents', () => {
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
+    it('Add all existing published OOTB contents', function () {
 
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-      currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 4, 3, 0, CMS_WIDGETS.CONTENT_LIST.code);
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`).then(() => page))
+          .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 4, 3, 0, CMS_WIDGETS.CONTENT_LIST.code))
+          .then(page => cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${demoPage.code}/frame/${WIDGET_FRAME.frameNum}`).then(() => page));
+        cy.wait(1000);
+        cy.get('@currentPage')
+          .then(page => page.getContent().getContentListTableBody().children(htmlElements.div).children(htmlElements.div).should('not.have.class', 'spinner'));
+        cy.get('@currentPage')
+          .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Sample - About Us'))
+          .then(page => page.getContent().getModelIdDropdownByIndex(0).should('exist'));
+        cy.get('@currentPage')
+          .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Why You Need a Micro Frontend Platform for Kubernetes'))
+          .then(page => page.getContent().getModelIdDropdownByIndex(1).should('exist'));
+        cy.get('@currentPage')
+          .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Entando and JHipster: How It Works'))
+          .then(page => page.getContent().getModelIdDropdownByIndex(2).should('exist'));
+        cy.get('@currentPage')
+          .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Sample Banner'))
+          .then(page => page.getContent().getModelIdDropdownByIndex(3).should('exist'));
+        cy.get('@currentPage')
+          .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('A Modern Platform for Modern UX'))
+          .then(page => page.getContent().getModelIdDropdownByIndex(4).should('exist'));
 
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
-      cy.wait('@pageWidgetsLoaded');
-      cy.wait(['@contentsLoaded', '@contentsLoaded']);
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getModelIdDropdownByIndex(0).then(select => page.getContent().select(select, '2-column-content'))
+                .then(page => page.getContent().getModelIdDropdownByIndex(1).then(select => page.getContent().select(select, 'News - Detail')))
+                .then(page => page.getContent().getModelIdDropdownByIndex(2).then(select => page.getContent().select(select, 'News - Detail')))
+                .then(page => page.getContent().getModelIdDropdownByIndex(3).then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
+                .then(page => page.getContent().getModelIdDropdownByIndex(4).then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
+                .then(page => page.getContent().confirmConfig(demoPage.code));
+          });
 
-      currentPage.getContent().getContentListTableBody().children(htmlElements.div).children(htmlElements.div).should('not.have.class', 'spinner');
-      currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample - About Us')
-                 .then(button => cy.wrap(button).click());
-      currentPage.getContent().getModelIdDropdownByIndex(0).should('exist');
-      currentPage.getContent().getAddButtonFromTableRowWithTitle('Why You Need a Micro Frontend Platform for Kubernetes')
-                 .then(button => cy.wrap(button).click());
-      currentPage.getContent().getModelIdDropdownByIndex(1).should('exist');
-      currentPage.getContent().getAddButtonFromTableRowWithTitle('Entando and JHipster: How It Works')
-                 .then(button => cy.wrap(button).click());
-      currentPage.getContent().getModelIdDropdownByIndex(2).should('exist');
-      currentPage.getContent().getAddButtonFromTableRowWithTitle('Sample Banner')
-                 .then(button => cy.wrap(button).click());
-      currentPage.getContent().getModelIdDropdownByIndex(3).should('exist');
-      currentPage.getContent().getAddButtonFromTableRowWithTitle('A Modern Platform for Modern UX')
-                 .then(button => cy.wrap(button).click());
-      currentPage.getContent().getModelIdDropdownByIndex(4).should('exist');
-      currentPage.getContent().getModelIdDropdownByIndex(0).select('2-column-content');
-      currentPage.getContent().getModelIdDropdownByIndex(1).select('News - Detail');
-      currentPage.getContent().getModelIdDropdownByIndex(2).select('News - Detail');
-      currentPage.getContent().getModelIdDropdownByIndex(3).select('Banner - Text, Image, CTA');
-      currentPage.getContent().getModelIdDropdownByIndex(4).select('Banner - Text, Image, CTA');
-
-      currentPage = currentPage.getContent().confirmConfig();
-      cy.wait('@pageWidgetsLoaded');
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
+        cy.get('@currentPage')
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+      });
     });
 
     // FIXME: when moving from admin console to app builder, the app tour starts again
     //        can't use API calls to clean the environment after the test
-    xit('Add new existing published contents', () => {
+    xit('Add new existing published contents', function() {
 
-      currentPage = currentPage.getMenu().getContent().open();
-      currentPage = currentPage.openManagement();
+      cy.get('@currentPage')
+        .then(page => page.getMenu().getContent().open().openManagement())
+          .then(page => page.getContent().openAddContentPage(CONTENT_TYPE.name))
+          .then(page => page.getContent().addContent('En Title', 'It Title', 'Sample Description', true))
+          .then(page => page.getContent().openAddContentPage(CONTENT_TYPE.name))
+          .then(page => page.getContent().addContent('En Title 2', 'It Title 2', 'Another Content so its more than 1', true))
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
+        cy.get('@currentPage')
+          .then(page => page.getMenu().getPages().open().openDesigner())
+          .then(page => page.getContent().clickSidebarTab(1))
+          .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
+          .then(page => page.getContent().clickSidebarTab(0))
+          .then(page => cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`).then(() => page))
+          .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 4, 4, 0, CMS_WIDGETS.CONTENT_LIST.code))
+          .then(page => cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_LIST.code}/page/${demoPage.code}/frame/${WIDGET_FRAME_2.frameNum}`).then(() => page));
+        cy.wait(1000);
+        cy.get('@currentPage')
+          .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Another Content so its more than 1'))
+          .then(page => page.getContent().getModelIdDropdownByIndex(0).then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
+          .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Sample Description'))
+          .then(page => page.getContent().getModelIdDropdownByIndex(1).then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
+          .then(page => page.getContent().confirmConfig(demoPage.code))
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--draft')
+                .and('have.attr', 'title').should('eq', 'Published, with pending changes');
+            page.getContent().publishPageDesign(demoPage.code);
+          })
+          .then(page => {
+            page.getContent().getPageStatusIcon()
+                .should('have.class', 'PageStatusIcon--published')
+                .and('have.attr', 'title').should('eq', 'Published');
+          });
+        cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToBeRemovedFromPage');
+      })
+
+      /* //OLD version
 
       currentPage = currentPage.getContent().openAddContentPage(CONTENT_TYPE.name);
       currentPage = currentPage.getContent().addContent('En Title', 'It Title', 'Sample Description', true);
@@ -689,662 +1444,8 @@ describe([Tag.GTS], 'Widgets Out-Of-The-Box Testing', () => {
       currentPage.getContent().getPageStatusIcon()
                  .should('have.class', 'PageStatusIcon--published')
                  .and('have.attr', 'title').should('eq', 'Published');
-      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
+      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');*/
     });
-  });
-
-  describe('CMS Content Search Query Widget', () => {
-
-    const WIDGET_FRAME = {
-      frameName: 'Frame 3',
-      frameNum: 6
-    };
-
-    const WIDGET_CONFIG = {
-      contentType: 'BNR',
-      maxElemForItem: '10'
-    };
-
-    it('Basic add with widget settings', () => {
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME.frameName}`);
-      currentPage = currentPage.getContent().dragConfigurableWidgetToGrid(0, 3, 3, 0, CMS_WIDGETS.CONTENT_QUERY.code);
-
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
-      cy.wait('@pageWidgetsLoaded');
-      currentPage.getContent().getContentTypeField().select('Banner');
-      currentPage.getContent().getPublishSettingsAccordButton().click();
-      currentPage.getContent().getMaxElemForItemDropdown().select('10');
-      currentPage = currentPage.getContent().confirmConfig();
-      cy.wait('@pageWidgetsLoaded');
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-    });
-
-    it('Basic edit with widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.CONTENT_QUERY.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
-      });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: CMS_WIDGETS.CONTENT_QUERY.code, group: 'free'}).as('widgetToRevert');
-
-      cy.validateUrlPathname('/widget');
-    });
-
-    it('Editing widget in Settings (widget config)', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code)
-                               .open()
-                               .openSettings();
-
-      cy.validateUrlPathname(`/widget/config/${CMS_WIDGETS.CONTENT_QUERY.code}/page/${THE_PAGE.code}/frame/${WIDGET_FRAME.frameNum}`);
-      currentPage.getContent().getPublishSettingsAccordButton().click();
-      currentPage.getContent().getMaxElemForItemDropdown().select('6');
-      currentPage.getContent().getMaxTotalElemDropdown().select('10');
-      currentPage = currentPage.getContent().confirmConfig();
-      cy.wait('@pageWidgetsLoaded');
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
-    });
-
-    it('Open Widget Details from the widget dropped', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.CONTENT_QUERY.code}`);
-    });
-
-    it('Save As Widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME.frameNum, CMS_WIDGETS.CONTENT_QUERY.code, WIDGET_CONFIG));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.CONTENT_QUERY.code)
-                               .open()
-                               .openSaveAs();
-
-      cy.validateUrlPathname(`/page/${THE_PAGE.code}/clone/${WIDGET_FRAME.frameNum}/widget/${CMS_WIDGETS.CONTENT_QUERY.code}/listViewerConfig`);
-      currentPage.getContent().fillWidgetForm('Mio Widget', SAMPLE_DUPE_WIDGET_CODE, '', 'Free Access');
-      currentPage.getContent().getConfigTabConfiguration().should('exist');
-      currentPage.getContent().getConfigTabConfiguration().click();
-      currentPage.getContent().getFormBody().contains(/^Publishing settings$/i).should('exist');
-      currentPage = currentPage.getContent().submitCloneWidget();
-      cy.wrap(SAMPLE_DUPE_WIDGET_CODE).as('widgetToDelete');
-
-      cy.validateUrlPathname(`/page/configuration/${THE_PAGE.code}`);
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
-    });
-
-  });
-
-  describe('CMS Search Form and Search Results Widgets', () => {
-
-    const WIDGET_FRAME_1 = {
-      frameName: 'Frame 2',
-      frameNum: 5
-    };
-
-    const WIDGET_FRAME_2 = {
-      frameName: 'Frame 3',
-      frameNum: 6
-    };
-
-    it('Basic add', () => {
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().dragWidgetToGridOld(0, 5, 2, 0);
-
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-      currentPage.getContent().dragWidgetToGridOld(0, 6, 3, 0);
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
-      cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
-    });
-
-    it('Basic edit with CMS Search Form widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.SEARCH_FORM.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_FORM.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_FORM.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
-      });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: CMS_WIDGETS.SEARCH_FORM.code, group: 'free'}).as('widgetToRevert');
-
-      cy.validateUrlPathname('/widget');
-    });
-
-    it('Basic edit with CMS Search Result widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.SEARCH_RESULT.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.SEARCH_RESULT.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.SEARCH_RESULT.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
-      });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: CMS_WIDGETS.SEARCH_RESULT.code, group: 'free'}).as('widgetToRevert');
-
-      cy.validateUrlPathname('/widget');
-    });
-
-    it('Open Widget Details from the dropped CMS Search Form widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.SEARCH_FORM.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.SEARCH_FORM.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_FORM.code}`);
-    });
-
-    it('Open Widget Details from the dropped CMS Search Results widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.SEARCH_RESULT.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.SEARCH_RESULT.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.SEARCH_RESULT.code}`);
-    });
-  });
-
-  describe('CMS News Archive and News Latest Widgets', () => {
-
-    const WIDGET_FRAME_1 = {
-      frameName: 'Frame 2',
-      frameNum: 5
-    };
-
-    const WIDGET_FRAME_2 = {
-      frameName: 'Frame 3',
-      frameNum: 6
-    };
-
-    it('Basic add', () => {
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().dragWidgetToGridOld(0, 0, 2, 0);
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-      currentPage.getContent().dragWidgetToGridOld(0, 1, 3, 0);
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
-      cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
-    });
-
-    it('Basic edit with News Archive widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.NEWS_ARCHIVE.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_ARCHIVE.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
-      });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: CMS_WIDGETS.NEWS_ARCHIVE.code, group: 'free'}).as('widgetToRevert');
-
-      cy.validateUrlPathname('/widget');
-    });
-
-    it('Basic edit with News Latest widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.NEWS_LATEST.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.NEWS_LATEST.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${CMS_WIDGETS.NEWS_LATEST.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
-      });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: CMS_WIDGETS.NEWS_LATEST.code, group: 'free'}).as('widgetToRevert');
-
-      cy.validateUrlPathname('/widget');
-    });
-
-    it('Open Widget Details from the dropped CMS News Archive widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, CMS_WIDGETS.NEWS_ARCHIVE.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, CMS_WIDGETS.NEWS_ARCHIVE.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_ARCHIVE.code}`);
-    });
-
-    it('Open Widget Details from the dropped CMS News Latest widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, CMS_WIDGETS.NEWS_LATEST.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, CMS_WIDGETS.NEWS_LATEST.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${CMS_WIDGETS.NEWS_LATEST.code}`);
-    });
-  });
-
-  describe('Page Widgets - Language and Logo', () => {
-
-    const WIDGET_FRAME_1 = {
-      frameName: 'Frame 2',
-      frameNum: 5
-    };
-
-    const WIDGET_FRAME_2 = {
-      frameName: 'Frame 3',
-      frameNum: 6
-    };
-
-    it('Basic add', () => {
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-
-      currentPage.getContent().toggleSidebarWidgetSection(2);
-
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().dragWidgetToGridOld(2, 0, 2, 0);
-
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-      currentPage.getContent().dragWidgetToGridOld(2, 1, 3, 0);
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
-      cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
-    });
-
-    it('Basic edit with Language widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, PAGE_WIDGETS.LANGUAGE.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LANGUAGE.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LANGUAGE.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
-      });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: PAGE_WIDGETS.LANGUAGE.code, group: 'free'}).as('widgetToRevert');
-
-      cy.validateUrlPathname('/widget');
-    });
-
-    it('Basic edit with Logo widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, PAGE_WIDGETS.LOGO.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, PAGE_WIDGETS.LOGO.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${PAGE_WIDGETS.LOGO.code}`);
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
-      });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: PAGE_WIDGETS.LOGO.code, group: 'free'}).as('widgetToRevert');
-
-      cy.validateUrlPathname('/widget');
-    });
-
-    it('Open Widget Details from the dropped Language widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, PAGE_WIDGETS.LANGUAGE.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LANGUAGE.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${PAGE_WIDGETS.LANGUAGE.code}`);
-    });
-
-    it('Open Widget Details from the dropped Logo widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, PAGE_WIDGETS.LOGO.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, PAGE_WIDGETS.LOGO.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${PAGE_WIDGETS.LOGO.code}`);
-    });
-  });
-
-  describe('Page Widgets - Logo - Extended', () => {
-    const WIDGET_FRAME_1 = {
-      frameName: 'Frame 2',
-      frameNum: 5
-    };
-    const CUSTOM_UI      = '<#assign wp=JspTaglibs["/aps-core"]>{enter}{enter}\
-<@wp.info key="systemParam" paramName="applicationBaseURL" var="appUrl" />{enter}\
-<img src="${{}appUrl{}}resources/static/img/Entando_light.svg" aria-label="Entando" alt="Logo" role="logo" />';
-
-    const CURRENT_LOGO = 'Entando_light.svg';
-    const CHANGE_LOGO  = 'entando-logo_badge.png';
-
-    it('Add the Logo widget in page (config), edit the logo widget (in kebab actions) changing, in the Custom UI, the default logo\'s image with a new image (.svg/.png/.jpg)', () => {
-      cy.widgetsController()
-        .then((controller => controller.intercept({method: 'PUT'}, 'editedLogoWidget', `/${PAGE_WIDGETS.LOGO.code}`)));
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().toggleSidebarWidgetSection(2);
-      currentPage.getContent().dragWidgetToGridOld(2, 1, 2, 0);
-
-      currentPage.getContent().publishPageDesign();
-
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, PAGE_WIDGETS.LOGO.code)
-                               .open()
-                               .openEditOld();
-
-      currentPage.getContent().getCustomUiInput().should('not.be.empty');
-      currentPage.getContent().getCustomUiInput().clear();
-      currentPage.getContent().getCustomUiInput().type(CUSTOM_UI.replace(CURRENT_LOGO, CHANGE_LOGO));
-
-      currentPage = currentPage.getContent().submitForm();
-
-      cy.wait('@editedLogoWidget');
-
-      cy.visit(`/${THE_PAGE.code}.page`, {portalUI: true});
-      cy.get(`${htmlElements.img}[role=logo]`).should('have.attr', 'src')
-        .should('not.include', CURRENT_LOGO)
-        .and('include', CHANGE_LOGO);
-
-      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-      cy.wrap({
-        code: PAGE_WIDGETS.LOGO.code,
-        customUi: CUSTOM_UI.replaceAll('{enter}', '\n').replaceAll('{}', '')
-      }).as('widgetToRevert');
-    });
-  });
-
-  describe('System Widgets - APIs and System Messages', () => {
-
-    const WIDGET_FRAME_1 = {
-      frameName: 'Frame 2',
-      frameNum: 5
-    };
-
-    const WIDGET_FRAME_2 = {
-      frameName: 'Frame 3',
-      frameNum: 6
-    };
-
-    it('Basic add', () => {
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage.getContent().toggleSidebarWidgetSection(4);
-
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME_1.frameName}`);
-      currentPage.getContent().dragWidgetToGridOld(4, 0, 2, 0);
-
-      cy.log(`Add the widget to the page in ${WIDGET_FRAME_2.frameName}`);
-      currentPage.getContent().dragWidgetToGridOld(4, 4, 3, 0);
-
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--draft')
-                 .and('have.attr', 'title').should('eq', 'Published, with pending changes');
-      currentPage.getContent().publishPageDesign();
-      currentPage.getContent().getPageStatusIcon()
-                 .should('have.class', 'PageStatusIcon--published')
-                 .and('have.attr', 'title').should('eq', 'Published');
-      cy.wrap([WIDGET_FRAME_1.frameNum, WIDGET_FRAME_2.frameNum]).as('widgetToRemoveFromPage');
-    });
-
-    it('Basic edit with APIs widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, SYSTEM_WIDGETS.APIS.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.APIS.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.APIS.code}`);
-      currentPage.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
-      });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: SYSTEM_WIDGETS.APIS.code, group: 'free'}).as('widgetToRevert');
-
-      cy.validateUrlPathname('/widget');
-    });
-
-    it('Basic edit with News Latest widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, SYSTEM_WIDGETS.SYS_MSGS.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, SYSTEM_WIDGETS.SYS_MSGS.code)
-                               .open()
-                               .openEditOld();
-
-      cy.validateUrlPathname(`/widget/edit/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
-      currentPage.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
-      currentPage.getContent().editFormFields({
-        group: 'Administrator'
-      });
-      currentPage = currentPage.getContent().submitForm();
-      cy.wrap({code: SYSTEM_WIDGETS.SYS_MSGS.code, group: 'free'}).as('widgetToRevert');
-
-      cy.validateUrlPathname('/widget');
-    });
-
-    it('Open Widget Details from the dropped APIs widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_1.frameNum, SYSTEM_WIDGETS.APIS.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_1.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(2, 0, SYSTEM_WIDGETS.APIS.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.APIS.code}`);
-    });
-
-    it('Open Widget Details from the dropped System Messages widget', () => {
-      cy.pageWidgetsController(THE_PAGE.code)
-        .then(controller => controller.addWidget(WIDGET_FRAME_2.frameNum, SYSTEM_WIDGETS.SYS_MSGS.code));
-      cy.pagesController()
-        .then(controller => controller.setPageStatus(THE_PAGE.code, 'published'));
-      cy.wrap(WIDGET_FRAME_2.frameNum).as('widgetToRemoveFromPage');
-
-      currentPage = currentPage.getMenu().getPages().open();
-      currentPage = currentPage.openDesignerOld();
-      selectPageFromSidebar();
-      currentPage = currentPage.getContent().getDesignerGridFrameKebabMenu(3, 0, SYSTEM_WIDGETS.SYS_MSGS.code)
-                               .open()
-                               .openDetails();
-      cy.validateUrlPathname(`/widget/detail/${SYSTEM_WIDGETS.SYS_MSGS.code}`);
-    });
-
   });
 
 });
