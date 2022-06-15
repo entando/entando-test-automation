@@ -21,6 +21,10 @@ export class ContentListSelectModal extends DialogContent {
                .children('td').eq(0)
                .children('input[type=checkbox]');
   }
+  checkBoxFromTitle(contentTitle){
+    this.getCheckboxFromTitle(contentTitle).check({force: true});
+    return cy.get('@currentPage');
+  }
 }
 
 export default class ContentWidgetConfigPage extends WidgetConfigPage {
@@ -44,6 +48,12 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
     cy.get(button).click();
     cy.wait('@widgetPageLoadingGET');
   }
+
+  static settings(){
+    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentLoadingGET', `/?*`));
+    cy.wait('@contentLoadingGET');
+  }
+
   getAddButtonsArea() {
     return this.getInnerPanel().find(this.addButtonArea);
   }

@@ -22,6 +22,10 @@ export default class ContentQueryWidgetConfigPage extends WidgetConfigPage {
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
     cy.wait(['@categoriesPageLoadingGET', '@contentTypesPageLoadingGET', '@homeCategoriesPageLoadingGET', '@languagesPageLoadingGET', '@searchPagesPageLoadingGET', '@pagePageLoadingGET', '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET']);
   }
+  static settings(){
+    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentLoadingGET', `/?*`));
+    cy.wait('@contentLoadingGET');
+  }
 
   getContentTypeField() {
     return this.getMainContainer().find('[name="contentType"]');
