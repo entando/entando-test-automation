@@ -9,22 +9,21 @@ describe([Tag.GTS], 'Content Types', () => {
   beforeEach(() => {
     cy.kcAPILogin();
     cy.kcUILogin('login/admin');
-    cy.wrap(null).as('contentTypeToBeDeleted');
   });
 
-  afterEach(() => {
-    cy.get('@contentTypeToBeDeleted').then(code => {
-      if (code) deleteContentType(code);
-    })
-    cy.kcUILogout()
-  });
+  afterEach(() => cy.kcUILogout());
 
   describe('Unreferenced', () => {
 
     beforeEach(() => {
+      cy.wrap(null).as('contentTypeToBeDeleted');
       contentType.code = generateRandomTypeCode();
       contentType.name = generateRandomId();
     });
+
+    afterEach(() => cy.get('@contentTypeToBeDeleted').then(code => {
+      if (code) deleteContentType(code);
+    }));
 
     it('should have the functionality to add a new content type', () => {
       openContentTypesPage()
@@ -78,6 +77,7 @@ describe([Tag.GTS], 'Content Types', () => {
   describe('Referenced by published content', () => {
 
     beforeEach(() => {
+      cy.wrap(null).as('contentTypeToBeDeleted');
       contentType.code = generateRandomTypeCode();
       contentType.name = generateRandomId();
 
@@ -101,6 +101,9 @@ describe([Tag.GTS], 'Content Types', () => {
       cy.get('@contentToBeDeleted').then(contentId => {
         if (contentId) cy.contentsController().then(controller => controller.deleteContent(contentId));
       });
+      cy.get('@contentTypeToBeDeleted').then(code => {
+        if (code) deleteContentType(code);
+      })
     });
 
     it('should not allow deleting a content type', () => {
@@ -509,7 +512,7 @@ describe([Tag.GTS], 'Content Types', () => {
           })
       })
     };
-    
+
     const editArrayAttribute = (attributeType, nestedAttributeType, contentTypeCode, attributeCode) => {
       cy.wrap(generateRandomId()).then(updatedAttributeName => {
         cy.wrap({ code: attributeCode, type: attributeType, nestedAttribute: { type: nestedAttributeType, code: attributeCode } }).then(newAttribute => {
