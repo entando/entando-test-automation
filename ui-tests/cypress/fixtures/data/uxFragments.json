@@ -1,0 +1,258 @@
+{
+  "breadcrumb": {
+    "widgetType": "breadcrumb",
+    "plugin": ""
+  },
+  "default_pagerBlock": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "default_pagerFormBlock_is": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "default_pagerInfo_is": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "entandoapi_is_resource_detail": {
+    "widgetType": "entando_apis",
+    "plugin": ""
+  },
+  "entandoapi_is_resource_detail_include": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "entandoapi_is_resource_list": {
+    "widgetType": "entando_apis",
+    "plugin": ""
+  },
+  "entandoapi_is_service_detail": {
+    "widgetType": "entando_apis",
+    "plugin": ""
+  },
+  "entandoapi_is_service_list": {
+    "widgetType": "entando_apis",
+    "plugin": ""
+  },
+  "entando_ootb_carbon_include": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "internal_servlet_generic_error": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "internal_servlet_user_not_allowed": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "jacms_content_viewer": {
+    "widgetType": "content_viewer",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list": {
+    "widgetType": "content_viewer_list",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_ent_Boolean": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_ent_Bool_io": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_ent_CheckBox": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_ent_Date": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_ent_Enumer": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_ent_EnumerMap": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_ent_Number": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_ent_Text": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_ent_ThreeSt": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_met_category": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilter_met_fulltext": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_content_viewer_list_userfilters": {
+    "widgetType": "",
+    "plugin": "jacms"
+  },
+  "jacms_row_content_viewer_list": {
+    "widgetType": "row_content_viewer_list",
+    "plugin": "jacms"
+  },
+  "jpseo_content_viewer": {
+    "widgetType": "jpseo_content_viewer",
+    "plugin": "jpseo"
+  },
+  "jpseo_model_meta_info": {
+    "widgetType": "",
+    "plugin": "jpseo"
+  },
+  "keycloak_auth": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "keycloak_auth_with_redirect": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "keycloak-login": {
+    "widgetType": "keycloak-login",
+    "plugin": ""
+  },
+  "language": {
+    "widgetType": "language",
+    "plugin": ""
+  },
+  "login_form": {
+    "widgetType": "login_form",
+    "plugin": ""
+  },
+  "logo": {
+    "widgetType": "logo",
+    "plugin": ""
+  },
+  "messages_system": {
+    "widgetType": "messages_system",
+    "plugin": ""
+  },
+  "navigation-menu": {
+    "widgetType": "navigation-menu",
+    "plugin": ""
+  },
+  "search_form": {
+    "widgetType": "search_form",
+    "plugin": "jacms"
+  },
+  "search_result": {
+    "widgetType": "search_result",
+    "plugin": "jacms"
+  },
+  "sitemap": {
+    "widgetType": "sitemap",
+    "plugin": ""
+  },
+  "sitemap_menu_include": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_editCurrentUser_password": {
+    "widgetType": "userprofile_editCurrentUser_password",
+    "plugin": ""
+  },
+  "userprofile_editCurrentUser_profile": {
+    "widgetType": "userprofile_editCurrentUser_profile",
+    "plugin": ""
+  },
+  "userprofile_is_currentWithoutProfile": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_entryCurrentProfile": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-AllList-addElementButton": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front_AllList_operationModule": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front_AttributeInfo": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front_attributeInfo-help-block": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-BooleanAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-CheckboxAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-CompositeAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-DateAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-EnumeratorAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-EnumeratorMapAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-HypertextAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-LongtextAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-MonolistAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-MonotextAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-NumberAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_front-ThreeStateAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_IteratorAttribute": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_passwordChanged": {
+    "widgetType": "",
+    "plugin": ""
+  },
+  "userprofile_is_profileChangeConfirmation": {
+    "widgetType": "",
+    "plugin": ""
+  }
+}
