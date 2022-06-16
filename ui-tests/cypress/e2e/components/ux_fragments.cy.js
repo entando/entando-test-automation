@@ -1,5 +1,5 @@
 import {loremIpsum}                              from 'lorem-ipsum';
-import {getArrayRandomElement, generateRandomId} from '../../support/utils';
+import {generateRandomId, getArrayRandomElement} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
@@ -225,31 +225,46 @@ describe('UX Fragments', () => {
     });
 
     it([Tag.FEATURE, 'ENG-3522'], 'Search with widget filter', () => {
-      cy.fixture('data/uxFragmentsWidgetTypes.json').then(widgetTypes => getArrayRandomElement(widgetTypes)).then(widgetType =>
-          openUXFragmentsPage()
-              .then(page => page.getContent().getWidgetFilter().then(select => page.getContent().select(select, widgetType.name)))
-              .then(page => page.getContent().clickSearchSubmitButton())
-              .then(page =>
-                  page.getContent().getTableRows()
-                      .each(row => cy.get(row).children(htmlElements.td).eq(2).should('have.text', widgetType.name))
-                      .then(rows => {
-                        page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', `1-${Math.min(rows.length, 10)}`);
-                        page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', `${rows.length}`);
-                      })));
+      cy.fixture('data/uxFragments.json').then(fragments => Object.entries(fragments))
+        .then(fragments => fragments.filter(fragment => fragment[1].widgetType !== ''))
+          //FIXME this two widget types are not listed in search select
+        .then(fragments => fragments.filter(fragment => fragment[1].widgetType !== 'userprofile_editCurrentUser_password' && fragment[1].widgetType !== 'userprofile_editCurrentUser_profile'))
+        .then(fragments => {
+          cy.fixture('data/uxFragmentsWidgetTypes.json')
+            .then(widgetTypes => widgetTypes.find(widgetType => widgetType.code === getArrayRandomElement(fragments)[1].widgetType))
+            .then(widgetType =>
+                openUXFragmentsPage()
+                    .then(page => page.getContent().getWidgetFilter().then(select => page.getContent().select(select, widgetType.name)))
+                    .then(page => page.getContent().clickSearchSubmitButton())
+                    .then(page => {
+                      const selectedFragments = fragments.filter(fragment => fragment[1].widgetType === widgetType.code);
+                      page.getContent().getTableRows().should('have.length', Math.min(selectedFragments.length, 10))
+                          .each(row => cy.get(row).children(htmlElements.td).eq(2).should('have.text', widgetType.name));
+                      page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', `1-${Math.min(selectedFragments.length, 10)}`);
+                      page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', `${selectedFragments.length}`);
+                    }));
+        });
     });
 
     it([Tag.FEATURE, 'ENG-3522'], 'Search with plugin filter', () => {
-      cy.fixture('data/uxFragmentsPlugins.json').then(plugins => getArrayRandomElement(plugins)).then(plugin =>
-          openUXFragmentsPage()
-              .then(page => page.getContent().getPluginFilter().then(select => page.getContent().select(select, plugin.name)))
-              .then(page => page.getContent().clickSearchSubmitButton())
-              .then(page =>
-                  page.getContent().getTableRows()
-                      .each(row => cy.get(row).children(htmlElements.td).eq(4).should('have.text', plugin.name))
-                      .then(rows => {
-                        page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', `1-${Math.min(rows.length, 10)}`);
-                        page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', `${rows.length}`);
-                      })));
+      cy.fixture('data/uxFragments.json').then(fragments => Object.entries(fragments))
+        .then(fragments => fragments.filter(fragment => fragment[1].plugin !== ''))
+        .then(fragments => {
+          cy.log(fragments);
+          cy.fixture('data/uxFragmentsPlugins.json')
+            .then(plugins => plugins.find(plugin => plugin.code === getArrayRandomElement(fragments)[1].plugin))
+            .then(plugin =>
+                openUXFragmentsPage()
+                    .then(page => page.getContent().getPluginFilter().then(select => page.getContent().select(select, plugin.name)))
+                    .then(page => page.getContent().clickSearchSubmitButton())
+                    .then(page => {
+                      const selectedFragments = fragments.filter(fragment => fragment[1].plugin === plugin.code);
+                      page.getContent().getTableRows().should('have.length', Math.min(selectedFragments.length, 10))
+                          .each(row => cy.get(row).children(htmlElements.td).eq(4).should('have.text', plugin.name));
+                      page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', `1-${Math.min(selectedFragments.length, 10)}`);
+                      page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', `${selectedFragments.length}`);
+                    }));
+        });
     });
 
     it([Tag.FEATURE, 'ENG-3522'], 'Search with fragment code and widget filter', () => {

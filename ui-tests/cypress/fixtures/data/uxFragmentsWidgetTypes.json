@@ -1,11 +1,7 @@
 [
   {
-    "code": "NWS_Archive",
-    "name": "News Archive"
-  },
-  {
-    "code": "NWS_Latest",
-    "name": "News Latest"
+    "code": "breadcrumb",
+    "name": "Breadcrumbs"
   },
   {
     "code": "content_viewer",
@@ -14,6 +10,50 @@
   {
     "code": "content_viewer_list",
     "name": "Content Search Query"
+  },
+  {
+    "code": "entando_apis",
+    "name": "APIs"
+  },
+  {
+    "code": "formAction",
+    "name": "Internal Servlet"
+  },
+  {
+    "code": "jpseo_content_viewer",
+    "name": "Content SEO Meta-description"
+  },
+  {
+    "code": "keycloak-login",
+    "name": "Login"
+  },
+  {
+    "code": "language",
+    "name": "Language"
+  },
+  {
+    "code": "login_form",
+    "name": "Legacy Login Form"
+  },
+  {
+    "code": "logo",
+    "name": "Logo"
+  },
+  {
+    "code": "messages_system",
+    "name": "System Messages"
+  },
+  {
+    "code": "navigation-menu",
+    "name": "Navigation Menu"
+  },
+  {
+    "code": "NWS_Archive",
+    "name": "News Archive"
+  },
+  {
+    "code": "NWS_Latest",
+    "name": "News Latest"
   },
   {
     "code": "row_content_viewer_list",
@@ -28,47 +68,15 @@
     "name": "Search Results"
   },
   {
-    "code": "breadcrumb",
-    "name": "Breadcrumbs"
-  },
-  {
-    "code": "navigation-menu",
-    "name": "Navigation Menu"
-  },
-  {
     "code": "sitemap",
     "name": "Sitemap"
   },
   {
-    "code": "entando_apis",
-    "name": "APIs"
+    "code": "userprofile_editCurrentUser_password",
+    "name": "Edit User Password"
   },
   {
-    "code": "formAction",
-    "name": "Internal Servlet"
-  },
-  {
-    "code": "keycloak-login",
-    "name": "Login"
-  },
-  {
-    "code": "login_form",
-    "name": "Legacy Login Form"
-  },
-  {
-    "code": "messages_system",
-    "name": "System Messages"
-  },
-  {
-    "code": "jpseo_content_viewer",
-    "name": "Content SEO Meta-description"
-  },
-  {
-    "code": "language",
-    "name": "Language"
-  },
-  {
-    "code": "logo",
-    "name": "Logo"
+    "code": "userprofile_editCurrentUser_profile",
+    "name": "Edit User Profile"
   }
 ]
