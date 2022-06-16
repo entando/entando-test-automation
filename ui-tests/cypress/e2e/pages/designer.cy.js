@@ -116,7 +116,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
             .then(page => page.getMenu().getPages().open().openDesigner())
             .then(page => page.getContent().clickSidebarTab(1))
             .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
-            .then(page => page.getContent().publishPageDesign())
+            .then(page => page.getContent().publishPageDesign(demoPage.code))
             .then(page => page.getContent().getPageStatusIcon()
                               .should('have.class', 'PageStatusIcon--published')
                               .and('have.attr', 'title').should('eq', 'Published')));
