@@ -70,7 +70,8 @@ describe([Tag.GTS], 'Contents', () => {
       openContentMgmtPage()
           .then(page => {
             cy.get('@contentToBeDeleted').then(content => {
-              page.getContent().getKebabMenu(content).open().openEdit()
+              // FIXME/TODO the element seems to be covered by another element
+              page.getContent().getKebabMenu(content).open(true).openEdit()
                   .then(page => page.getContent().getContentDescriptionInput().then(input => {
                     page.getContent().clear(input);
                     page.getContent().type(input, updatedDescription);
