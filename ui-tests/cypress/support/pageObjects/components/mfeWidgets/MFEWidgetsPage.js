@@ -16,6 +16,8 @@ export default class MFEWidgetsPage extends AppContent {
     cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'MFEAndWidgetsPageLoadingGET', '?*'));
     cy.get(button).click();
     cy.wait('@MFEAndWidgetsPageLoadingGET');
+    // FIXME/TODO a call to /system/report keeps getting fired detaching the elements from the page
+    cy.wait(1000);
   }
 
   getContents() {
