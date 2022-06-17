@@ -1,5 +1,5 @@
-import {loremIpsum}                              from 'lorem-ipsum';
-import {deleteDownloadsFolder, generateRandomId} from '../../support/utils';
+import {loremIpsum}       from 'lorem-ipsum';
+import {generateRandomId} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
@@ -196,7 +196,7 @@ describe('File browser', () => {
 
       afterEach(() =>
           cy.get('@deleteDownloadsFolder').then(deleteFolder => {
-            if (deleteFolder) deleteDownloadsFolder();
+            if (deleteFolder) cy.task('deleteDownloadsFolder');
           })
       );
 

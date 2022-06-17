@@ -28,13 +28,12 @@ export default defineConfig({
                 return launchOptions;
             });
 
-            const {isFileExist} = require('cy-verify-downloads');
             on('task', {
-                deleteFolder(folderName) {
-                    console.log('deleting folder %s', folderName);
+                deleteDownloadsFolder() {
+                    const downloadsFolder = config.downloadsFolder;
 
                     return new Promise((resolve, reject) => {
-                        fs.rmdir(folderName, {maxRetries: 10, recursive: true}, (err) => {
+                        fs.rmdir(downloadsFolder, {maxRetries: 10, recursive: true}, (err) => {
                             if (err) {
                                 console.error(err);
                                 return reject(err);
@@ -42,9 +41,11 @@ export default defineConfig({
                             resolve(null);
                         });
                     });
-                },
-                isFileExist
+                }
             });
+
+            const {isFileExist, findFiles} = require('cy-verify-downloads');
+            on('task', {isFileExist, findFiles});
 
             const tagify = require('cypress-tags');
             config.env.CYPRESS_EXCLUDE_TAGS = 'WIP';
