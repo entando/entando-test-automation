@@ -91,7 +91,7 @@ describe('UX Fragments', () => {
                 }));
       });
 
-      it([Tag.SMOKE, Tag.FEATURE, 'ENG-3522'], 'Clone page is displayed', () => {
+      it([Tag.SMOKE, Tag.FEATURE, 'ENG-3522', 'ENG-3665'], 'Clone page is displayed', () => {
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragment =>
             openCloneFragmentPage(fragment.code)
                 .then(page => {
@@ -201,7 +201,7 @@ describe('UX Fragments', () => {
           .then(page => page.getContent().getPagination().getInput().should('have.value', 7));
     });
 
-    it([Tag.SANITY, 'ENG-3522'], 'Page field', () => {
+    it([Tag.SANITY, 'ENG-3522', 'ENG-3660'], 'Page field', () => {
       cy.wrap(Math.floor(Math.random() * 4) + 2).then(randomPage =>
           openUXFragmentsPage()
               .then(page => page.getContent().getPagination().navigateToPage(randomPage))
@@ -224,7 +224,7 @@ describe('UX Fragments', () => {
           });
     });
 
-    it([Tag.FEATURE, 'ENG-3522'], 'Search with widget filter', () => {
+    it([Tag.FEATURE, 'ENG-3522', 'ENG-3661'], 'Search with widget filter', () => {
       cy.fixture('data/uxFragments.json').then(fragments => Object.entries(fragments))
         .then(fragments => fragments.filter(fragment => fragment[1].widgetType !== ''))
           //FIXME this two widget types are not listed in search select
@@ -340,7 +340,7 @@ describe('UX Fragments', () => {
           });
     });
 
-    it([Tag.FEATURE, 'ENG-3522'], 'Search with non-existing filters pair', () => {
+    it([Tag.FEATURE, 'ENG-3522', 'ENG-3662'], 'Search with non-existing filters pair', () => {
       openUXFragmentsPage()
           .then(page => page.getContent().getWidgetFilter().then(select => page.getContent().select(select, 'Sitemap')))
           .then(page => page.getContent().getPluginFilter().then(select => page.getContent().select(select, 'jpseo')))
