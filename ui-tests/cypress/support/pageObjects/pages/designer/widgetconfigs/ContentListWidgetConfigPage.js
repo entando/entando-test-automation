@@ -13,8 +13,8 @@ export default class ContentListWidgetConfigPage extends WidgetConfigPage {
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
     //cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'usersPageLoadingGET', '?*'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
-    cy.wait(['@categoriesPageLoadingGET', '@contentModelsPageLoadingGET', '@contentsPageLoadingGET', '@contentTypesPageLoadingGET', /*'@homeCategoriesPageLoadingGET',*/ '@languagesPageLoadingGET', /*'@searchPagesPageLoadingGET',*/ '@pagePageLoadingGET', /*'@usersPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET']);
+    // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
+    cy.wait(['@categoriesPageLoadingGET', '@contentModelsPageLoadingGET', '@contentsPageLoadingGET', '@contentTypesPageLoadingGET', /*'@homeCategoriesPageLoadingGET',*/ '@languagesPageLoadingGET', /*'@searchPagesPageLoadingGET',*/ '@pagePageLoadingGET', /*'@usersPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET'/*, '@pagePublishedWidgetsPageLoadingGET'*/]);
   }
   //TODO find a way to remove arbitrary wait
   static addContent(button){
@@ -41,8 +41,11 @@ export default class ContentListWidgetConfigPage extends WidgetConfigPage {
     return this.getContentListTableRowWithTitle(title)
                .find('button.btn.btn-default')//.contains(/^Add$/);
   }
-  clickAddButtonFromTableRowWithTitle(title) {
-    this.getAddButtonFromTableRowWithTitle(title).then(button => ContentListWidgetConfigPage.addContent(button));
+  clickAddButtonFromTableRowWithTitle(title, alreadyAddedContentType = false) {
+    this.getAddButtonFromTableRowWithTitle(title).then(button => {
+      if (alreadyAddedContentType) button.click();
+      else ContentListWidgetConfigPage.addContent(button);
+    })
     return cy.get('@currentPage');
   }
 

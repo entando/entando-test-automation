@@ -2,21 +2,20 @@ import {htmlElements} from '../../WebElement';
 
 import AdminContent from '../../app/AdminContent.js';
 
-import AdminPage               from '../../app/AdminPage.js';
-import ManagementPage          from './ManagementPage';
-import ContentWidgetConfigPage from '../../pages/designer/widgetconfigs/ContentWidgetConfigPage';
-import TextAttribute           from './attribute-fields/TextAttribute';
-import HypertextAttribute      from './attribute-fields/HypertextAttribute';
-import AssetAttribute          from './attribute-fields/AssetAttribute';
-import CompositeAttribute      from './attribute-fields/CompositeAttribute';
-import BooleanAttribute        from './attribute-fields/BooleanAttribute';
-import EnumeratorAttribute     from './attribute-fields/EnumeratorAttribute';
-import ThreeStateAttribute     from './attribute-fields/ThreeStateAttribute';
-import CheckboxAttribute       from './attribute-fields/CheckboxAttribute';
-import DateAttribute           from './attribute-fields/DateAttribute';
-import TimestampAttribute      from './attribute-fields/TimestampAttribute';
-import LinkAttribute           from './attribute-fields/LinkAttribute';
-import ListAttribute           from './attribute-fields/ListAttribute';
+import AdminPage           from '../../app/AdminPage.js';
+import ManagementPage      from './ManagementPage';
+import TextAttribute       from './attribute-fields/TextAttribute';
+import HypertextAttribute  from './attribute-fields/HypertextAttribute';
+import AssetAttribute      from './attribute-fields/AssetAttribute';
+import CompositeAttribute  from './attribute-fields/CompositeAttribute';
+import BooleanAttribute    from './attribute-fields/BooleanAttribute';
+import EnumeratorAttribute from './attribute-fields/EnumeratorAttribute';
+import ThreeStateAttribute from './attribute-fields/ThreeStateAttribute';
+import CheckboxAttribute   from './attribute-fields/CheckboxAttribute';
+import DateAttribute       from './attribute-fields/DateAttribute';
+import TimestampAttribute  from './attribute-fields/TimestampAttribute';
+import LinkAttribute       from './attribute-fields/LinkAttribute';
+import ListAttribute       from './attribute-fields/ListAttribute';
 
 export default class AddPage extends AdminContent {
 
@@ -291,20 +290,15 @@ export default class AddPage extends AdminContent {
       if ('Hypertext'.includes(type)) field.getInput().click();
       if (editMode) field.editValue(value);
       else if (assetId) field.setValue(value, assetId);
-           else field.setValue(value);
+      else field.setValue(value);
     });
     cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
 
   addContentFromContentWidgetConfig(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
     this.fillBasicContentFields({titleEn, titleIt, description, group}, append);
-    if (useApprove) {
-      this.submitApproveForm();
-    } else {
-      this.submitForm();
-    }
-
-    return cy.wrap(new AdminPage(ContentWidgetConfigPage)).as('currentPage');
+    if (useApprove) return this.submitApproveForm();
+    else return this.submitForm();
   }
 
   addContent(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
@@ -325,4 +319,3 @@ export default class AddPage extends AdminContent {
   }
 
 }
-

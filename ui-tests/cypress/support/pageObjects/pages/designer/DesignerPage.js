@@ -1,4 +1,4 @@
-import {DATA_TESTID, htmlElements} from '../../WebElement';
+import {htmlElements} from '../../WebElement';
 
 import AppContent from '../../app/AppContent';
 import KebabMenu  from '../../app/KebabMenu';
@@ -32,10 +32,8 @@ export default class DesignerPage extends AppContent {
 
   // Sidebar
   configTabs   = `${htmlElements.ul}[role=tablist].nav-tabs`;
-  toggleButton = `${htmlElements.button}[${DATA_TESTID}=config_ToolbarPageConfig_Button]`;
 
   // Widgets
-  widgetGroupings = `${htmlElements.div}[${DATA_TESTID}=config_WidgetGroupings_div]`;
   widgetList      = `${htmlElements.div}.collapse`;
   widgetGrouping  = `${htmlElements.div}.WidgetGrouping__item-area`;
 
@@ -43,17 +41,6 @@ export default class DesignerPage extends AppContent {
   pageTreeTable = `${htmlElements.table}.PageTreeCompact`;
   pageTreeTbody = `${htmlElements.tbody}`;
   pageTreeRow   = `${htmlElements.tr}.PageTreeCompact__row`;
-
-  frameMenuItem = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_MenuItem]`;
-  frameMenuLink = `${htmlElements.a}[${DATA_TESTID}=config_WidgetFrame_Link]`;
-
-  static FRAME_ACTIONS = {
-    SAVE_AS: 'Save As',
-    DETAILS: 'Details',
-    SETTINGS: 'Settings',
-    DELETE: 'Delete',
-    EDIT: 'Edit'
-  };
 
   static CMS_WIDGETS = {
     CONTENT: {
@@ -67,44 +54,6 @@ export default class DesignerPage extends AppContent {
     CONTENT_QUERY: {
       name: 'Content Search Query',
       code: 'content_viewer_list'
-    },
-    SEARCH_FORM: {
-      name: 'Search Form',
-      code: 'search_form'
-    },
-    SEARCH_RESULT: {
-      name: 'Search Results',
-      code: 'search_result'
-    },
-    NEWS_ARCHIVE: {
-      name: 'News Archive',
-      code: 'NWS_Archive'
-    },
-    NEWS_LATEST: {
-      name: 'News Latest',
-      code: 'NWS_Latest'
-    }
-  };
-
-  static PAGE_WIDGETS = {
-    LANGUAGE: {
-      name: 'Language',
-      code: 'language'
-    },
-    LOGO: {
-      name: 'Logo',
-      code: 'logo'
-    }
-  };
-
-  static SYSTEM_WIDGETS = {
-    APIS: {
-      name: 'APIs',
-      code: 'entando_apis'
-    },
-    SYS_MSGS: {
-      name: 'System Messages',
-      code: 'messages_system'
     }
   };
 
@@ -213,11 +162,6 @@ export default class DesignerPage extends AppContent {
                .children(this.sidebar)
                .children(htmlElements.div)
                .children(htmlElements.div);
-  }
-
-  getSidebarToggleButton() {
-    return this.getSidebar()
-               .children(this.toggleButton);
   }
 
   getSidebarTabs() {
@@ -334,30 +278,24 @@ export default class DesignerPage extends AppContent {
     return cy.get('@currentPage');
   }
 
-  dragWidgetToGrid(page, widgetSection, widgetPos, gridRow, gridCol) {
+  dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol) {
     this.getDesignerGridFrame(gridRow, gridCol)
         .then(frame => this.getSidebarWidgetSectionWidget(widgetSection, widgetPos).then(widget => {
-          cy.pagesController().then((controller => controller.intercept({method: 'PUT'}, 'widgetAddedToPage', `/${page.code}/widgets/*`)));
           cy.get(widget).drag(frame, {position: 'center'});
-          cy.wait('@widgetAddedToPage');
         }));
+  }
+
+  addWidgetToGrid(page, widgetSection, widgetPos, gridRow, gridCol) {
+    cy.pagesController().then((controller => controller.intercept({method: 'PUT'}, 'widgetAddedToPage', `/${page.code}/widgets/*`)));
+    this.dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol);
+    cy.wait('@widgetAddedToPage');
     return cy.get('@currentPage');
   }
 
-  dragWidgetToGridOld(widgetSection, widgetPos, gridRow, gridCol) {
-    this.getDesignerGridFrame(gridRow, gridCol)
-        .then(frame => this.getSidebarWidgetSectionWidget(widgetSection, widgetPos).drag(frame, {position: 'center'}));
-  }
-
   dragConfigurableWidgetToGrid(pageCode, widgetSection, widgetPos, gridRow, gridCol, widgetCode) {
-    this.dragWidgetToGridOld(widgetSection, widgetPos, gridRow, gridCol);
-
+    this.dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol);
     const WidgetConfigPage = this.gatherWidgetConfigPage(pageCode, widgetCode);
     return cy.wrap(new AppPage(WidgetConfigPage)).as('currentPage');
-  }
-
-  selectPageFromSidebarPageTreeTable(code) {
-    this.getSidebarPageTreeTableRow(code).click();
   }
 
   gatherWidgetConfigPage(pageCode, widgetCode) {
