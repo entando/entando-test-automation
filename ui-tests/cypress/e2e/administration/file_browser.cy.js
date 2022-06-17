@@ -224,7 +224,7 @@ describe('File browser', () => {
 
     describe('Content creation', () => {
 
-      it([Tag.FEATURE, 'ENG-3297'], 'No file is uploaded when canceling out of upload page', () => {
+      it([Tag.FEATURE, 'ENG-3297', 'ENG-3381'], 'No file is uploaded when canceling out of upload page', () => {
         cy.get('@currentPage')
           .then(page => page.getMenu().getAdministration().open().openFileBrowser())
           .then(page => page.getContent().openPublicFolder())
@@ -240,7 +240,7 @@ describe('File browser', () => {
           });
       });
 
-      it([Tag.SANITY, 'ENG-3297'], 'Uploading a file', () => {
+      it([Tag.SANITY, 'ENG-3297', 'ENG-3377'], 'Uploading a file', () => {
         cy.get('@currentPage')
           .then(page => page.getMenu().getAdministration().open().openFileBrowser())
           .then(page => page.getContent().openPublicFolder())
@@ -257,7 +257,7 @@ describe('File browser', () => {
           });
       });
 
-      it([Tag.FEATURE, 'ENG-3297'], 'No folder is created when canceling out of create folder page', () => {
+      it([Tag.FEATURE, 'ENG-3297', 'ENG-3381'], 'No folder is created when canceling out of create folder page', () => {
         const folder = generateRandomId();
 
         cy.get('@currentPage')
@@ -275,7 +275,7 @@ describe('File browser', () => {
           });
       });
 
-      it([Tag.SANITY, 'ENG-3297'], 'Creating a folder', () => {
+      it([Tag.SANITY, 'ENG-3297', 'ENG-3377'], 'Creating a folder', () => {
         const folder = generateRandomId();
 
         cy.get('@currentPage')
@@ -294,7 +294,7 @@ describe('File browser', () => {
           });
       });
 
-      it([Tag.FEATURE, 'ENG-3297'], 'No file is created when canceling out of create text file page', () => {
+      it([Tag.FEATURE, 'ENG-3297', 'ENG-3381'], 'No file is created when canceling out of create text file page', () => {
         const file = generateRandomId();
 
         cy.get('@currentPage')
@@ -313,7 +313,7 @@ describe('File browser', () => {
           });
       });
 
-      it([Tag.SANITY, 'ENG-3297'], 'Creating a text file', () => {
+      it([Tag.SANITY, 'ENG-3297', 'ENG-3377'], 'Creating a text file', () => {
         const file = generateRandomId();
 
         cy.get('@currentPage')
@@ -414,7 +414,7 @@ describe('File browser', () => {
           });
       });
 
-      it([Tag.FEATURE, 'ENG-3297'], 'Navigating out of file upload page NOT to root using breadcrumb', () => {
+      it([Tag.FEATURE, 'ENG-3297', 'ENG-3376'], 'Navigating out of file upload page NOT to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openUploadFilesPage())
           .then(page => page.getContent().goToFirstLevelViaBreadCrumbs())
@@ -434,7 +434,7 @@ describe('File browser', () => {
           });
       });
 
-      it([Tag.FEATURE, 'ENG-3297'], 'Navigating out of create folder page NOT to root using breadcrumb', () => {
+      it([Tag.FEATURE, 'ENG-3297', 'ENG-3376'], 'Navigating out of create folder page NOT to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openCreateFolderPage())
           .then(page => page.getContent().goToFirstLevelViaBreadCrumbs())
@@ -454,7 +454,7 @@ describe('File browser', () => {
           });
       });
 
-      it([Tag.FEATURE, 'ENG-3297'], 'Navigating out of create text file page NOT to root using breadcrumb', () => {
+      it([Tag.FEATURE, 'ENG-3297', 'ENG-3376'], 'Navigating out of create text file page NOT to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openCreateTextFilePage())
           .then(page => page.getContent().goToFirstLevelViaBreadCrumbs())

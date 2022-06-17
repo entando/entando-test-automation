@@ -157,7 +157,7 @@ describe('Page Templates', () => {
         });
     });
 
-    it([Tag.FEATURE, 'ENG-3525'], 'Navigating to edit template page from details', () => {
+    it([Tag.FEATURE, 'ENG-3525', 'ENG-3663'], 'Navigating to edit template page from details', () => {
       addPageTemplate(sampleData);
 
       openPageTemplateMgmtPage()
@@ -506,7 +506,7 @@ describe('Page Templates', () => {
         });
     });
 
-    it([Tag.SANITY, 'ENG-3525'], 'When confirming deletion, the list should be updated and a successful toast notification displayed', () => {
+    it([Tag.SANITY, 'ENG-3525', 'ENG-3664'], 'When confirming deletion, the list should be updated and a successful toast notification displayed', () => {
       addPageTemplate(sampleData);
 
       openPageTemplateMgmtPage()

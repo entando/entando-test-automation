@@ -226,7 +226,7 @@ describe('Labels', () => {
               .then(page => page.getDialog().getBody().getStateInfo().should('exist').and('contain', label.key)));
     });
 
-    it([Tag.SANITY, 'ENG-3238'], 'When deletion is confirmed, modal should close and list should be updated', () => {
+    it([Tag.SANITY, 'ENG-3238', 'ENG-3375'], 'When deletion is confirmed, modal should close and list should be updated', () => {
       addRandomLabel().then(label =>
           openLabelsPage()
               .then(page => page.getContent().getKebabMenu(label.key).open().clickDelete())
@@ -240,7 +240,7 @@ describe('Labels', () => {
               }));
     });
 
-    it([Tag.SANITY, 'ENG-3238'], 'When deletion is canceled, modal should close and the label should still be present', () => {
+    it([Tag.SANITY, 'ENG-3238', 'ENG-3375'], 'When deletion is canceled, modal should close and the label should still be present', () => {
       addRandomLabel().then(label =>
           openLabelsPage()
               .then(page => page.getContent().getKebabMenu(label.key).open().clickDelete())
