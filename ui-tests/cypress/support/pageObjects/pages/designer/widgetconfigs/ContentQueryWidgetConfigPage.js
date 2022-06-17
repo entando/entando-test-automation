@@ -19,8 +19,8 @@ export default class ContentQueryWidgetConfigPage extends WidgetConfigPage {
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'searchPagesPageLoadingGET', '/search?*'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
-    cy.wait(['@categoriesPageLoadingGET', '@contentTypesPageLoadingGET', '@homeCategoriesPageLoadingGET', '@languagesPageLoadingGET', '@searchPagesPageLoadingGET', '@pagePageLoadingGET', '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET']);
+    // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
+    cy.wait(['@categoriesPageLoadingGET', '@contentTypesPageLoadingGET', '@homeCategoriesPageLoadingGET', '@languagesPageLoadingGET', '@searchPagesPageLoadingGET', '@pagePageLoadingGET', '@pageDraftWidgetsPageLoadingGET'/*, '@pagePublishedWidgetsPageLoadingGET'*/]);
   }
   static settings(){
     cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentLoadingGET', `/?*`));
@@ -68,4 +68,10 @@ export default class ContentQueryWidgetConfigPage extends WidgetConfigPage {
                .find(this.accordPanel)
                .find('[name="maxElements"]');
   }
+
+  publishSettings() {
+    this.getPublishSettingsAccordButton().click();
+    return cy.get('@currentPage');
+  }
+
 }

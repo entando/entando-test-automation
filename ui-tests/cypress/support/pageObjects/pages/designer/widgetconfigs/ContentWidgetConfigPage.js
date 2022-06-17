@@ -39,8 +39,8 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
     cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesPageLoadingGET', '?*'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
-    cy.wait(['@contentModelsPageLoadingGET', '@contentTypesPageLoadingGET', '@pagePageLoadingGET', '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET']);
+    // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
+    cy.wait(['@contentModelsPageLoadingGET', '@contentTypesPageLoadingGET', '@pagePageLoadingGET', '@pageDraftWidgetsPageLoadingGET'/*, '@pagePublishedWidgetsPageLoadingGET'*/]);
   }
 
   static openDesignerWidgets(button, code) {
@@ -76,8 +76,8 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
 
   clickNewContentWith(ctype) {
     this.getAddNewButtonDropdown().click();
-    this.getButtonAddByContentTypeName(ctype).click();
-    return new AdminPage(AddContentPage);
+    this.getButtonAddByContentTypeName(ctype).then(button => AddContentPage.openPage(button));
+    return cy.wrap(new AdminPage(AddContentPage)).as('currentPage');
   }
 
   clickAddContentButton() {
