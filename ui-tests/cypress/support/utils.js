@@ -7,7 +7,7 @@ const emailRegex = new RandExp(/^([a-z][a-z0-9]{1,9}([-._][a-z0-9]{1,9}){0,5})@(
 
 export const getArrayRandomElement = (array) => {
   return array[Math.floor(Math.random() * array.length)];
-}
+};
 
 export const generateRandomId = () => uuidv4().substr(0, 10).replace(/-/g, '_');
 
@@ -22,8 +22,3 @@ export const generateRandomTypeCode = () => {
 export const generateRandomNumericId = () => Math.floor(Math.random() * 1000000000);
 
 export const generateRandomEmail = () => emailRegex.gen();
-
-export const deleteDownloadsFolder = () => {
-  const downloadsFolder = Cypress.config('downloadsFolder');
-  cy.task('deleteFolder', downloadsFolder);
-};
