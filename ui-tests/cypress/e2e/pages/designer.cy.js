@@ -4,7 +4,7 @@ import {htmlElements}        from '../../support/pageObjects/WebElement';
 
 import sampleContentTemplate from '../../fixtures/data/sampleContentTemplate.json';
 
-describe([Tag.GTS], 'Pages Designer', () => {
+describe('Pages Designer', () => {
 
   before(() => {
     cy.kcAPILogin();
@@ -62,7 +62,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
   describe('Change page status', () => {
 
-    it('Publish a page', function () {
+    it([Tag.GTS, 'ENG-2244'], 'Publish a page', function () {
       cy.wrap(this.pageToBeDeleted).then(demoPage =>
           cy.get('@currentPage')
             .then(page => page.getMenu().getPages().open().openDesigner())
@@ -82,7 +82,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'content_viewer';
 
-      it('Basic add with widget settings', function () {
+      it([Tag.GTS, 'ENG-2496'], 'Basic add with widget settings', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -143,7 +143,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
               }));
         });
 
-        it('Basic edit with widget', function () {
+        it([Tag.GTS, 'ENG-2496'], 'Basic edit with widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -162,7 +162,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Editing widget in Settings (widget config)', function () {
+        it([Tag.GTS, 'ENG-2496'], 'Editing widget in Settings (widget config)', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -189,7 +189,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the widget dropped', function () {
+        it([Tag.GTS, 'ENG-2496'], 'Open Widget Details from the widget dropped', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage => {
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -201,7 +201,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Save As Widget', function () {
+        it([Tag.GTS, 'ENG-2496'], 'Save As Widget', function () {
           cy.wrap(generateRandomId()).then(clonedWidgetCode =>
               cy.wrap(this.pageToBeDeleted).then(demoPage =>
                   cy.get('@currentPage')
@@ -239,7 +239,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       describe('Extended', () => {
 
-        it('select a content and a content template that is unrelated or inconsistent with the content type, then implement in Content widget. Publish the page and view published page', function () {
+        it([Tag.GTS, 'ENG-2497'], 'select a content and a content template that is unrelated or inconsistent with the content type, then implement in Content widget. Publish the page and view published page', function () {
           cy.wrap(sampleContentTemplate).then(contentTemplate => {
             contentTemplate.id    = generateRandomNumericId();
             contentTemplate.descr = generateRandomId();
@@ -294,7 +294,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('add a new no published content with a content type and content template, fill in all mandatory fields, save the content, then save the widget configuration', function () {
+        it([Tag.GTS, 'ENG-2497'], 'add a new no published content with a content type and content template, fill in all mandatory fields, save the content, then save the widget configuration', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -355,7 +355,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('add a new content with a content type and content template, fill in all mandatory fields, save and approve, then save the configuration', function () {
+        it([Tag.GTS, 'ENG-2497'], 'add a new content with a content type and content template, fill in all mandatory fields, save and approve, then save the configuration', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -425,7 +425,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'row_content_viewer_list';
 
-      it('Basic add with widget settings', function () {
+      it([Tag.GTS, 'ENG-2498'], 'Basic add with widget settings', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -489,7 +489,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
               }));
         });
 
-        it('Basic edit with widget', function () {
+        it([Tag.GTS, 'ENG-2498'], 'Basic edit with widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -508,7 +508,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Editing widget in Settings (widget config)', function () {
+        it([Tag.GTS, 'ENG-2498'], 'Editing widget in Settings (widget config)', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -532,7 +532,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the widget dropped', function () {
+        it([Tag.GTS, 'ENG-2498'], 'Open Widget Details from the widget dropped', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -543,7 +543,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
         });
 
-        it('Save As Widget', function () {
+        it([Tag.GTS, 'ENG-2498'], 'Save As Widget', function () {
           cy.wrap(generateRandomId()).then(clonedWidgetCode =>
               cy.wrap(this.pageToBeDeleted).then(demoPage =>
                   cy.get('@currentPage')
@@ -581,7 +581,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       describe('Extended', () => {
 
-        it('Add all existing published OOTB contents', function () {
+        it([Tag.GTS, 'ENG-2499'], 'Add all existing published OOTB contents', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -619,7 +619,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Add new existing published contents', function () {
+        it([Tag.GTS, 'ENG-2499'], 'Add new existing published contents', function () {
           cy.wrap(generateRandomId()).then(firstContentDescription => {
             cy.wrap(generateRandomId()).then(secondContentDescription => {
               cy.fixture('data/testContent.json').then(testContent =>
@@ -676,7 +676,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'content_viewer_list';
 
-      it('Basic add with widget settings', function () {
+      it([Tag.GTS, 'ENG-2500'], 'Basic add with widget settings', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -734,7 +734,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
               }));
         });
 
-        it('Basic edit with widget', function () {
+        it([Tag.GTS, 'ENG-2500'], 'Basic edit with widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -753,7 +753,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Editing widget in Settings (widget config)', function () {
+        it([Tag.GTS, 'ENG-2500'], 'Editing widget in Settings (widget config)', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -781,7 +781,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the widget dropped', function () {
+        it([Tag.GTS, 'ENG-2500'], 'Open Widget Details from the widget dropped', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -792,7 +792,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
         });
 
-        it('Save As Widget', function () {
+        it([Tag.GTS, 'ENG-2500'], 'Save As Widget', function () {
           cy.wrap(generateRandomId()).then(clonedWidgetCode =>
               cy.wrap(this.pageToBeDeleted).then(demoPage =>
                   cy.get('@currentPage')
@@ -834,7 +834,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'search_form';
 
-      it('Basic add', function () {
+      it([Tag.GTS, 'ENG-2501'], 'Basic add', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage => {
           cy.get('@currentPage')
             .then(page => page.getMenu().getPages().open().openDesigner())
@@ -878,7 +878,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Basic edit with CMS Search Form widget', function () {
+        it([Tag.GTS, 'ENG-2501'], 'Basic edit with CMS Search Form widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -897,7 +897,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the dropped CMS Search Form widget', function () {
+        it([Tag.GTS, 'ENG-2501'], 'Open Widget Details from the dropped CMS Search Form widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -916,7 +916,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'search_result';
 
-      it('Basic add', function () {
+      it([Tag.GTS, 'ENG-2501'], 'Basic add', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage => {
           cy.get('@currentPage')
             .then(page => page.getMenu().getPages().open().openDesigner())
@@ -960,7 +960,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Basic edit with CMS Search Result widget', function () {
+        it([Tag.GTS, 'ENG-2501'], 'Basic edit with CMS Search Result widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -979,7 +979,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the dropped CMS Search Results widget', function () {
+        it([Tag.GTS, 'ENG-2501'], 'Open Widget Details from the dropped CMS Search Results widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -998,7 +998,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'NWS_Archive';
 
-      it('Basic add', function () {
+      it([Tag.GTS, 'ENG-2503'], 'Basic add', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1041,7 +1041,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Basic edit with News Archive widget', function () {
+        it([Tag.GTS, 'ENG-2503'], 'Basic edit with News Archive widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1060,7 +1060,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the dropped CMS News Archive widget', function () {
+        it([Tag.GTS, 'ENG-2503'], 'Open Widget Details from the dropped CMS News Archive widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1079,7 +1079,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'NWS_Latest';
 
-      it('Basic add', function () {
+      it([Tag.GTS, 'ENG-2505'], 'Basic add', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1122,7 +1122,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Basic edit with News Latest widget', function () {
+        it([Tag.GTS, 'ENG-2505'], 'Basic edit with News Latest widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1141,7 +1141,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the dropped CMS News Latest widget', function () {
+        it([Tag.GTS, 'ENG-2505'], 'Open Widget Details from the dropped CMS News Latest widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1160,7 +1160,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'language';
 
-      it('Basic add', function () {
+      it([Tag.GTS, 'ENG-2509'], 'Basic add', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1205,7 +1205,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Basic edit with Language widget', function () {
+        it([Tag.GTS, 'ENG-2509'], 'Basic edit with Language widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1224,7 +1224,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the dropped Language widget', function () {
+        it([Tag.GTS, 'ENG-2509'], 'Open Widget Details from the dropped Language widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1243,7 +1243,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'logo';
 
-      it('Basic add', function () {
+      it([Tag.GTS, 'ENG-2509'], 'Basic add', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1288,7 +1288,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Basic edit with Logo widget', function () {
+        it([Tag.GTS, 'ENG-2509'], 'Basic edit with Logo widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1307,7 +1307,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the dropped Logo widget', function () {
+        it([Tag.GTS, 'ENG-2509'], 'Open Widget Details from the dropped Logo widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1328,7 +1328,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
      <@wp.info key="systemParam" paramName="applicationBaseURL" var="appUrl" />{enter}\
      <img src="${{}appUrl{}}resources/static/img/Entando_light.svg" aria-label="Entando" alt="Logo" role="logo" />';
 
-        it('Add the Logo widget in page (config), edit the logo widget (in kebab actions) changing, in the Custom UI, the default logo\'s image with a new image (.svg/.png/.jpg)', function () {
+        it([Tag.GTS, 'ENG-2510'], 'Add the Logo widget in page (config), edit the logo widget (in kebab actions) changing, in the Custom UI, the default logo\'s image with a new image (.svg/.png/.jpg)', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1371,7 +1371,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'entando_apis';
 
-      it('Basic add', function () {
+      it([Tag.GTS, 'ENG-2513'], 'Basic add', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1416,7 +1416,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Basic edit with APIs widget', function () {
+        it([Tag.GTS, 'ENG-2513'], 'Basic edit with APIs widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1435,7 +1435,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
                 }));
         });
 
-        it('Open Widget Details from the dropped APIs widget', function () {
+        it([Tag.GTS, 'ENG-2513'], 'Open Widget Details from the dropped APIs widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1454,7 +1454,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
       const widgetType = 'messages_system';
 
-      it('Basic add', function () {
+      it([Tag.GTS, 'ENG-2511'], 'Basic add', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1499,7 +1499,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Basic edit with System Messages widget', function () {
+        it([Tag.GTS, 'ENG-2511'], 'Basic edit with System Messages widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage => {
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1519,7 +1519,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
           });
         });
 
-        it('Open Widget Details from the dropped System Messages widget', function () {
+        it([Tag.GTS, 'ENG-2511'], 'Open Widget Details from the dropped System Messages widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -1538,7 +1538,7 @@ describe([Tag.GTS], 'Pages Designer', () => {
 
   describe('Drag and drop widgets', () => {
 
-    it('Move widget to different frame', function () {
+    it([Tag.GTS, 'ENG-2244'], 'Move widget to different frame', function () {
       cy.wrap(this.pageToBeDeleted).then(demoPage => {
         cy.pageWidgetsController(demoPage.code)
           .then(controller => controller.addWidget(4, 'NWS_Archive'))

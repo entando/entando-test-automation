@@ -1,6 +1,6 @@
 import {generateRandomId} from '../../support/utils';
 
-describe([Tag.GTS], 'Categories', () => {
+describe('Categories', () => {
   const titleIt      = generateRandomId();
   const titleEn      = generateRandomId();
   const categoryCode = generateRandomId();
@@ -20,7 +20,7 @@ describe([Tag.GTS], 'Categories', () => {
     cy.kcUILogout();
   });
 
-  it('Create a category should be possible', () => {
+  it([Tag.GTS, 'ENG-2527'], 'Create a category should be possible', () => {
     openCategoriesPage()
         .then(page => page.getContent().openAddCategoryPage())
         .then(page => {
@@ -31,7 +31,7 @@ describe([Tag.GTS], 'Categories', () => {
       .then(page => page.getContent().getCategoriesTree().contains('td', titleEn).should('be.visible'));
   });
 
-  it('Create a category with an already existing code should not be possible', () => {
+  it([Tag.GTS, 'ENG-2527'], 'Create a category with an already existing code should not be possible', () => {
     postTestCategory();
     openCategoriesPage()
         .then(page => page.getContent().openAddCategoryPage())
@@ -42,7 +42,7 @@ describe([Tag.GTS], 'Categories', () => {
         });
   });
 
-  it('Edit a category should be possible', () => {
+  it([Tag.GTS, 'ENG-2527'], 'Edit a category should be possible', () => {
     const newTitleEn = `${titleEn}-new`;
     const newTitleIt = `${titleIt}-new`;
     postTestCategory();
@@ -52,7 +52,7 @@ describe([Tag.GTS], 'Categories', () => {
         .then(page => page.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible'));
   });
 
-  it('Delete a category should be possible', () => {
+  it([Tag.GTS, 'ENG-2527'], 'Delete a category should be possible', () => {
     postTestCategory();
     openCategoriesPage()
         .then(page => {
@@ -95,7 +95,7 @@ describe([Tag.GTS], 'Categories', () => {
       });
     });
 
-    it('Update a category used in an unpublished content', () => {
+    it([Tag.GTS, 'ENG-2528'], 'Update a category used in an unpublished content', () => {
       const newTitleEn = `${titleEn}-new`;
       const newTitleIt = `${titleIt}-new`;
 
@@ -105,9 +105,9 @@ describe([Tag.GTS], 'Categories', () => {
           .then(page => page.getContent().getCategoriesTree().contains('td', newTitleEn).should('be.visible'));
     });
 
-    it('Update a category used in a published content', () => {
+    it([Tag.GTS, 'ENG-2528'], 'Update a category used in a published content', () => {
       cy.get('@contentToBeDeleted').then(contentId => cy.contentsController().then(controller => controller.updateStatus(contentId, 'published')));
-      
+
       const newTitleEn = `${titleEn}-new`;
       const newTitleIt = `${titleIt}-new`;
 

@@ -2,7 +2,7 @@ import {generateRandomId, generateRandomTypeCode} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
-describe([Tag.GTS], 'Profile Types', () => {
+describe('Profile Types', () => {
 
   beforeEach(() => {
     cy.wrap({code: generateRandomTypeCode(), name: generateRandomId()}).as('profileType');
@@ -18,7 +18,7 @@ describe([Tag.GTS], 'Profile Types', () => {
     cy.kcUILogout();
   });
 
-  it('Add a new profile type', () => {
+  it([Tag.GTS, 'ENG-2523'], 'Add a new profile type', () => {
     cy.get('@profileType').then(profileType => {
       openProfileTypesPage()
       .then(page => {
@@ -44,7 +44,7 @@ describe([Tag.GTS], 'Profile Types', () => {
     });
   });
 
-  it('Edit profile type', () => {
+  it([Tag.GTS, 'ENG-2523'], 'Edit profile type', () => {
     cy.get('@profileType').then(profileType => {
       addProfileType(profileType.code, profileType.name);
 
@@ -67,7 +67,7 @@ describe([Tag.GTS], 'Profile Types', () => {
     });
   });
 
-  it('Delete profile type', () => {
+  it([Tag.GTS, 'ENG-2523'], 'Delete profile type', () => {
     cy.get('@profileType').then(profileType => {
       addProfileType(profileType.code, profileType.name);
       openProfileTypesPage()

@@ -2,7 +2,7 @@ import {generateRandomId, generateRandomTypeCode} from '../../support/utils.js';
 
 import {htmlElements} from '../../support/pageObjects/WebElement.js';
 
-describe([Tag.GTS], 'Contents', () => {
+describe('Contents', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('contentToBeDeleted');
@@ -20,7 +20,7 @@ describe([Tag.GTS], 'Contents', () => {
 
   describe('Browse Contents', () => {
 
-    it('Filter contents with zero results and checking pagination info if the information is correct', () => {
+    it([Tag.GTS, 'ENG-2487'], 'Filter contents with zero results and checking pagination info if the information is correct', () => {
       openContentMgmtPage()
           .then(page => page.getContent().getFormNameInput().then(input => page.getContent().type(input, 'z')))
           .then(page => page.getContent().clickFormSearchButton())
@@ -35,7 +35,7 @@ describe([Tag.GTS], 'Contents', () => {
 
   describe('Add content', () => {
 
-    it('Add content', () => {
+    it([Tag.GTS, 'ENG-2487'], 'Add content', () => {
 
       const contentTitle = generateRandomId();
       openContentMgmtPage()
@@ -52,21 +52,21 @@ describe([Tag.GTS], 'Contents', () => {
     });
 
     // The save button is always enabled, the validation seems to happen on backend side; when trying to save without group, the default one is selected
-    // it('Add content without an owner group - not allowed', () => {});
+    // it([Tag.GTS, 'ENG-2488'], 'Add content without an owner group - not allowed', () => {});
 
     // Saving a content with only default language is allowed
-    // it('Add new content and does not fill values for any language but the default one, a modal must present to inform for other languages (ENG-2714)', () => {});
+    // it([Tag.GTS, 'ENG-2487'], 'Add new content and does not fill values for any language but the default one, a modal must present to inform for other languages (ENG-2714)', () => {});
 
   });
 
-  describe('Operations on unPublished content', () => {
+  describe.only('Operations on unPublished content', () => {
     beforeEach(() =>
         cy.fixture('data/testContent.json').then(testContent => {
           testContent.description = generateRandomId();
           addTestContent(testContent).as('contentToBeDeleted');
         }));
 
-    it('Edit content', () => {
+    it.only([Tag.GTS, 'ENG-2487'], 'Edit content', () => {
       openContentMgmtPage()
           .then(page => {
             cy.get('@contentToBeDeleted').then(content => {
@@ -81,7 +81,7 @@ describe([Tag.GTS], 'Contents', () => {
             });
           });
     });
-    it('Delete content', () => {
+    it([Tag.GTS, 'ENG-2487'], 'Delete content', () => {
       openContentMgmtPage()
           .then(page => {
             cy.get('@contentToBeDeleted').then(content => {
@@ -100,7 +100,7 @@ describe([Tag.GTS], 'Contents', () => {
 
     afterEach(() => removePublishedContent());
 
-    it('Delete published content - not allowed', () => {
+    it([Tag.GTS, 'ENG-2487'], 'Delete published content - not allowed', () => {
       cy.fixture('data/testContent.json').then(testContent => {
         testContent.description = generateRandomId();
         addPublishedContent(testContent);
@@ -123,7 +123,7 @@ describe([Tag.GTS], 'Contents', () => {
     beforeEach(() => addContentReferences());
     afterEach(() => removeContentReferences());
 
-    it('Update status of content referenced by a published page', () => {
+    it([Tag.GTS, 'ENG-2489'], 'Update status of content referenced by a published page', () => {
       openContentMgmtPage()
           .then(page =>
               cy.get('@publishedContentToBeDeleted').then(content => {

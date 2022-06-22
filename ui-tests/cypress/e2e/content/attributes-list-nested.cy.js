@@ -18,7 +18,7 @@ const listFormat = {
   nestedAttribute: {code: 'List'}
 };
 
-describe([Tag.GTS], 'Nested a in List Attribute', () => {
+describe('Nested a in List Attribute', () => {
 
   const navigateToContentForm = (mode = 'create') => {
     return cy.get('@currentPage')
@@ -171,12 +171,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
       it: ['Ciao', 'Bella', 'Ciao']
     };
 
-    it('Create', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Create', () => {
       basicCreateContentAttributes(attribute, testValues)
           .should('deep.equal', testValues);
     });
 
-    it('Edit', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Edit', () => {
       const editedValues = {
         en: ['The', 'Quick', 'Brown', 'Fox', 'Jumped'],
         it: ['Bella', 'Ciao']
@@ -185,7 +185,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           .should('deep.equal', editedValues);
     });
 
-    it('Try to set standard validation (required) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
       navigateToContentForm()
         .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
@@ -202,7 +202,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(() => checkAndSavePublishedContentId());
     });
 
-    it('Verify every list element can\'t be empty', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Verify every list element can\'t be empty', () => {
       const wrongValues = {
         en: ['The', 'Quick', '', 'Fox'],
         it: ['', 'Ciao']
@@ -243,7 +243,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(() => checkAndSavePublishedContentId());
     });
 
-    it('Try to set custom validation (regex) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set custom validation (regex) and check it in content validation', () => {
       const wrongValues   = {
         en: ['xyz', 'qwe'],
         it: ['s15']
@@ -309,12 +309,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
       it: ['bodo@dodo.com', 'bella@ciao.com', 'aa@xyz.com']
     };
 
-    it('Create', () => {
+    it([Tag.GTS, 'ENG-2520', 'ENG-3861'], 'Create', () => {
       basicCreateContentAttributes(attribute, testValues)
           .should('deep.equal', testValues);
     });
 
-    it('Edit', () => {
+    it([Tag.GTS, 'ENG-2520', 'ENG-3861'], 'Edit', () => {
       const editedValues = {
         en: ['bodo@coco.com', 'mama@papa.com', 'entando@entando.com'],
         it: ['abc@xyz.com', 'jeff@gogo.com']
@@ -323,7 +323,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           .should('deep.equal', editedValues);
     });
 
-    it('Try to set standard validation (required) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520', 'ENG-3861'], 'Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
       navigateToContentForm()
         .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
@@ -340,7 +340,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(() => checkAndSavePublishedContentId());
     });
 
-    it('Verify every list element can\'t be empty', () => {
+    it([Tag.GTS, 'ENG-2520', 'ENG-3861'], 'Verify every list element can\'t be empty', () => {
       const wrongValues = {
         en: ['bodo@coco.com', '', 'entando@entando.com'],
         it: ['abc@xyz.com', '']
@@ -381,7 +381,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(() => checkAndSavePublishedContentId());
     });
 
-    it('Check email address structure in content validation', () => {
+    it([Tag.GTS, 'ENG-2520', 'ENG-3861'], 'Check email address structure in content validation', () => {
       const wrongValues   = {
         en: ['xyz', 'qwe'],
         it: ['s15']
@@ -445,12 +445,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
       it: ['620', '123']
     };
 
-    it('Create', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Create', () => {
       basicCreateContentAttributes(attribute, testValues)
           .should('deep.equal', testValues);
     });
 
-    it('Edit', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Edit', () => {
       const editedValues = {
         en: ['11'],
         it: ['23', '350']
@@ -459,7 +459,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           .should('deep.equal', editedValues);
     });
 
-    it('Try to set standard validation (required) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
       navigateToContentForm()
         .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
@@ -476,7 +476,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(() => checkAndSavePublishedContentId());
     });
 
-    it('Verify every list element can\'t be empty', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Verify every list element can\'t be empty', () => {
       const wrongValues = {
         en: [''],
         it: ['23', '']
@@ -517,7 +517,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(() => checkAndSavePublishedContentId());
     });
 
-    it('Try to set custom validation (range) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set custom validation (range) and check it in content validation', () => {
       const range         = {
         start: '3',
         end: '8'
@@ -588,12 +588,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
       it: ['2021-04-22 00:00:00']
     };
 
-    it('Create', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Create', () => {
       basicCreateContentAttributes(attribute, testValues)
           .should('deep.equal', testValues);
     });
 
-    it('Edit', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Edit', () => {
       const editedValues = {
         en: ['2021-07-12 00:00:00'],
         it: ['2021-05-10 00:00:00', '2021-12-25 00:00:00']
@@ -602,7 +602,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           .should('deep.equal', editedValues);
     });
 
-    it('Try to set standard validation (required) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
       navigateToContentForm()
         .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
@@ -619,7 +619,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(() => checkAndSavePublishedContentId());
     });
 
-    it('Try to set custom validation (range) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set custom validation (range) and check it in content validation', () => {
       const validationRules = {
         rangeStartDate: '2021-09-01 00:00:00',
         rangeEndDate: '2021-09-30 00:00:00'
@@ -688,12 +688,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
       it: ['b', 'b', 'a']
     };
 
-    it('Create', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Create', () => {
       basicCreateContentAttributes(attribute, testValues, enumProps)
           .should('deep.equal', testValues);
     });
 
-    it('Edit', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Edit', () => {
       const editedValues = {
         en: ['c', 'a'],
         it: ['a', 'b']
@@ -702,7 +702,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           .should('deep.equal', editedValues);
     });
 
-    it('Try to set standard validation (required) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, enumProps, {mandatory: true});
       navigateToContentForm()
         .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
@@ -719,7 +719,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(() => checkAndSavePublishedContentId());
     });
 
-    it('Verify every list element can\'t be empty', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Verify every list element can\'t be empty', () => {
       const wrongValues = {
         en: ['c', ''],
         it: ['a', '']
@@ -770,12 +770,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
       it: ['y', 'y', 'z']
     };
 
-    it('Create', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Create', () => {
       basicCreateContentAttributes(attribute, testValues, enumProps)
           .should('deep.equal', testValues);
     });
 
-    it('Edit', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Edit', () => {
       const editedValues = {
         en: ['y', 'z'],
         it: ['x']
@@ -784,7 +784,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           .should('deep.equal', editedValues);
     });
 
-    it('Try to set standard validation (required) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, enumProps, {mandatory: true});
       navigateToContentForm()
         .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
@@ -801,7 +801,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
         .then(() => checkAndSavePublishedContentId());
     });
 
-    it('Verify every list element can\'t be empty', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Verify every list element can\'t be empty', () => {
       const wrongValues = {
         en: ['y', '', 'z'],
         it: ['x', '']
@@ -848,12 +848,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
       it: [true]
     };
 
-    it('Create', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Create', () => {
       basicCreateContentAttributes(attribute, testValues)
           .should('deep.equal', testValues);
     });
 
-    it('Edit', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Edit', () => {
       const editedValues = {
         en: [false, true, true],
         it: [false, true, false, false]
@@ -862,7 +862,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           .should('deep.equal', editedValues);
     });
 
-    it('Try to set standard validation (required) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
       navigateToContentForm()
         .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
@@ -887,12 +887,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
       it: [true]
     };
 
-    it('Create', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Create', () => {
       basicCreateContentAttributes(attribute, testValues)
           .should('deep.equal', testValues);
     });
 
-    it('Edit', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Edit', () => {
       const editedValues = {
         en: [false, true, true],
         it: [false, true, false, false]
@@ -901,7 +901,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           .should('deep.equal', editedValues);
     });
 
-    it('Try to set standard validation (required) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
       navigateToContentForm()
         .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))
@@ -926,12 +926,12 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
       it: [null, false]
     };
 
-    it('Create', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Create', () => {
       basicCreateContentAttributes(attribute, testValues)
           .should('deep.equal', testValues);
     });
 
-    it('Edit', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Edit', () => {
       const editedValues = {
         en: [null, false, true],
         it: [false, null, null, true]
@@ -940,7 +940,7 @@ describe([Tag.GTS], 'Nested a in List Attribute', () => {
           .should('deep.equal', editedValues);
     });
 
-    it('Try to set standard validation (required) and check it in content validation', () => {
+    it([Tag.GTS, 'ENG-2520'], 'Try to set standard validation (required) and check it in content validation', () => {
       addAttributeToContentType(attribute, {}, {mandatory: true});
       navigateToContentForm()
         .then(page => page.getContent().fillBeginContent(CONTENT_WITH_LIST.description))

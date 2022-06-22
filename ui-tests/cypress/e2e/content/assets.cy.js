@@ -17,9 +17,9 @@ describe('Assets', () => {
     cy.kcUILogout();
   });
 
-  describe([Tag.GTS], 'Add asset', () => {
+  describe('Add asset', () => {
 
-    it('Add asset', () => {
+    it([Tag.GTS, 'ENG-2524'], 'Add asset', () => {
       openAssetsPage()
           .then(page => page.getContent().openAddAssets())
           .then(page => page.getContent().selectFiles('cypress/fixtures/upload/image1.JPG'))
@@ -42,9 +42,9 @@ describe('Assets', () => {
           .then(controller => controller.addAsset(testFileInfo, testMetadata))
           .then(response => cy.wrap(response.payload).as('assetToBeDeleted')));
 
-    describe([Tag.GTS], 'Delete asset', () => {
+    describe('Delete asset', () => {
 
-      it('Delete asset', () => {
+      it([Tag.GTS, 'ENG-2526'], 'Delete asset', () => {
         openAssetsPage()
             .then(page => page.getContent().getKebabMenu(testFileInfo.name).openDropdown().clickDelete())
             .then(page => page.getContent().submit())
@@ -53,7 +53,7 @@ describe('Assets', () => {
         cy.wrap(null).as('assetToBeDeleted');
       });
 
-      it('Delete asset referenced by a content - not allowed', () => {
+      it([Tag.GTS, 'ENG-2526'], 'Delete asset referenced by a content - not allowed', () => {
         const isForbidden = true;
 
         cy.get('@assetToBeDeleted').then(assetToBeDeleted =>
@@ -99,9 +99,9 @@ describe('Assets', () => {
 
     });
 
-    describe([Tag.GTS], 'Edit asset', () => {
+    describe('Edit asset', () => {
 
-      it('Edit description', () => {
+      it([Tag.GTS, 'ENG-2524'], 'Edit description', () => {
         openAssetsPage()
             .then(page => page.getContent().getKebabMenu(testFileInfo.name).openDropdown().openEdit())
             .then(page => page.getContent().getDescriptionInput().then(input => {
@@ -114,7 +114,7 @@ describe('Assets', () => {
                     cy.wrap(rows).children(htmlElements.div).should('contain.text', 'test')));
       });
 
-      it('Crop image', () => {
+      it([Tag.GTS, 'ENG-2525', 'ENG-3860'], 'Crop image', () => {
         openAssetsPage()
             .then(page => page.getContent().getKebabMenu(testFileInfo.name).openDropdown().openEdit())
             .then(page => page.getContent().getImageHeight().invoke('text').then(originalImageHeight =>
@@ -127,7 +127,7 @@ describe('Assets', () => {
                   .then(page => page.getContent().getImageHeight().invoke('text').should('not.equal', originalImageHeight))));
       });
 
-      it('Rotate image', () => {
+      it([Tag.GTS, 'ENG-2525', 'ENG-3860'], 'Rotate image', () => {
         openAssetsPage()
             .then(page => page.getContent().getKebabMenu(testFileInfo.name).openDropdown().openEdit())
             .then(page => page.getContent().getFileModifiedDate().invoke('text').then(originalModifiedDate =>
@@ -142,9 +142,9 @@ describe('Assets', () => {
 
     });
 
-    describe(['ENG-2680'], 'Asset Browsing', () => {
+    describe('Asset Browsing', () => {
 
-      it('Displaying correct item counts when searching with zero results', () => {
+      it('ENG-2680', 'Displaying correct item counts when searching with zero results', () => {
         openAssetsPage()
             .then(page => page.getContent().openAdvancedFilter())
             .then(page => page.getContent().getSearchTextfield().then(input => {

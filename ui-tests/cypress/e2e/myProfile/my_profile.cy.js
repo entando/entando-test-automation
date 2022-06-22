@@ -1,6 +1,6 @@
 import {generateRandomId} from '../../support/utils';
 
-describe([Tag.GTS], 'My Profile', () => {
+describe('My Profile', () => {
 
   beforeEach(() => cy.kcAPILogin());
 
@@ -20,7 +20,7 @@ describe([Tag.GTS], 'My Profile', () => {
         });
     });
 
-    it('Account', () => {
+    it([Tag.GTS, 'ENG-2026'], 'Account', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().selectTab('account'))
         .then(page =>
@@ -30,7 +30,7 @@ describe([Tag.GTS], 'My Profile', () => {
         );
     });
 
-    it('Profile', () => {
+    it([Tag.GTS, 'ENG-2026'], 'Profile', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().selectTab('profile'))
         .then(page => {
@@ -45,7 +45,7 @@ describe([Tag.GTS], 'My Profile', () => {
         });
     });
 
-    it('Preferences', () => {
+    it([Tag.GTS, 'ENG-2026'], 'Preferences', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().selectTab('preferences'))
         .then(page => {
@@ -81,7 +81,7 @@ describe([Tag.GTS], 'My Profile', () => {
       });
     });
 
-    it('My Account - Change Password', () => {
+    it([Tag.GTS, 'ENG-2026'], 'My Account - Change Password', () => {
       cy.get('@userToBeDeleted').then(user =>
           cy.wrap(generateRandomId()).then(editedPassword =>
               cy.get('@currentPage')
@@ -93,7 +93,7 @@ describe([Tag.GTS], 'My Profile', () => {
                 .then(page => cy.validateToast(page))));
     });
 
-    it('Profile - Edit profile with image', () => {
+    it([Tag.GTS, 'ENG-2026'], 'Profile - Edit profile with image', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().selectTab('profile'))
         .then(page => page.getContent().clickProfileEditButton())
@@ -113,7 +113,7 @@ describe([Tag.GTS], 'My Profile', () => {
     });
 
     //TODO this test should first set an image for the user, possibly via API call
-    it('Profile - Remove profile image', () => {
+    it([Tag.GTS, 'ENG-2026'], 'Profile - Remove profile image', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().selectTab('profile'))
         .then(page => page.getContent().clickProfileEditButton())
@@ -132,7 +132,7 @@ describe([Tag.GTS], 'My Profile', () => {
         });
     });
 
-    it('Preferences - set preferences', () => {
+    it([Tag.GTS, 'ENG-2026'], 'Preferences - set preferences', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().selectTab('preferences'))
         .then(page => page.getContent().toggleWelcomeWizard())

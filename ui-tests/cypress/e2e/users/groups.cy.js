@@ -2,7 +2,7 @@ import {generateRandomId} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
-describe([Tag.GTS], 'Groups', () => {
+describe('Groups', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('groupToBeDeleted');
@@ -24,7 +24,7 @@ describe([Tag.GTS], 'Groups', () => {
     cy.kcUILogout();
   });
 
-  it('Add a new group', function () {
+  it([Tag.GTS, 'ENG-2530'], 'Add a new group', function () {
     openGroupsPage()
       .then(page => page.getContent().openAddGroupPage())
       .then(page => page.getContent().addGroup(this.groupName, this.groupCode))
@@ -35,7 +35,7 @@ describe([Tag.GTS], 'Groups', () => {
       });
   });
 
-  it('Add a new group using an existing code - not allowed', function () {
+  it([Tag.GTS, 'ENG-2530'], 'Add a new group using an existing code - not allowed', function () {
     addGroup(this.groupCode, this.groupName);
 
     openGroupsPage()
@@ -48,7 +48,7 @@ describe([Tag.GTS], 'Groups', () => {
       });
   });
 
-  it('Update an existing group', function () {
+  it([Tag.GTS, 'ENG-2530'], 'Update an existing group', function () {
     addGroup(this.groupCode, this.groupName);
 
     cy.wrap(generateRandomId()).then(updatedGroupName => {
@@ -67,7 +67,7 @@ describe([Tag.GTS], 'Groups', () => {
     });
   });
 
-  it('Delete an existing group', function () {
+  it([Tag.GTS, 'ENG-2530'], 'Delete an existing group', function () {
     addGroup(this.groupCode, this.groupName);
 
     openGroupsPage()
@@ -107,7 +107,7 @@ describe([Tag.GTS], 'Groups', () => {
       });
     });
 
-    it('Update a group used by an unpublished page', function () {
+    it([Tag.GTS, 'ENG-2531'], 'Update a group used by an unpublished page', function () {
       cy.wrap(generateRandomId()).then(updatedGroupName => {
         openEdit(this.groupCode, this.groupName)
           .then(page => page.getContent().editGroup(updatedGroupName))
@@ -124,7 +124,7 @@ describe([Tag.GTS], 'Groups', () => {
       });
     });
 
-    it('Update a group used by a published page', function () {
+    it([Tag.GTS, 'ENG-2531'], 'Update a group used by a published page', function () {
       cy.pagesController().then(controller => controller.setPageStatus(this.pageToBeDeleted, 'published'));
 
       cy.wrap(generateRandomId()).then(updatedGroupName => {
@@ -143,7 +143,7 @@ describe([Tag.GTS], 'Groups', () => {
       });
     });
 
-    it('Delete a group used by an unpublished page - not allowed', function () {
+    it([Tag.GTS, 'ENG-2532'], 'Delete a group used by an unpublished page - not allowed', function () {
       openGroupsPage()
         .then(page => {
           page.getContent().getKebabMenu(this.groupCode).open().clickDelete();
@@ -153,7 +153,7 @@ describe([Tag.GTS], 'Groups', () => {
         });
     });
 
-    it('Delete a group used by a published page - not allowed', function () {
+    it([Tag.GTS, 'ENG-2532'], 'Delete a group used by a published page - not allowed', function () {
       cy.pagesController().then(controller => controller.setPageStatus(this.pageToBeDeleted, 'published'));
 
       openGroupsPage()

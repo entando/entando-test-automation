@@ -1,6 +1,6 @@
 import contentTypeAttributes from '../../fixtures/data/contentTypeAttributes.json';
 
-describe([Tag.GTS], 'Content Type Attributes', () => {
+describe('Content Type Attributes', () => {
 
   before(() => {
     cy.kcAPILogin();
@@ -62,7 +62,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
         after(() => deleteAttribute(contentTypeAttribute));
 
-        it('Create', () => {
+        it([Tag.GTS, 'ENG-2519', 'ENG-3862'], 'Create', () => {
           openAddPage()
               .then(() => {
                 attributeProcessor[contentTypeAttribute.processor].fillContent(contentTypeAttribute);
@@ -73,7 +73,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
         });
 
         if (['Email'].includes(contentTypeAttribute.type)) {
-          it('Email format validation', () => {
+          it([Tag.GTS, 'ENG-2519'], 'Email format validation', () => {
             const testInvalidEmail = (email) => {
               cy.get('@currentPage')
                 .then(page => {
@@ -115,7 +115,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
             });
 
             //FIXME/TODO the fckeditor opens a new window to add links, and cypress can not handle it
-            xit('Add multiple links to hypertext', () => {
+            xit([Tag.GTS, 'ENG-2519'], 'Add multiple links to hypertext', () => {
               openAddPage()
                   .then(page => {
                     page.getContent().fillBeginContent('cypress basic attribute');
@@ -173,7 +173,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
               cy.groupsController().then(controller => controller.deleteGroup(TEST_GROUP));
             });
 
-            it('Check that image group is compatible with current content', () => {
+            it([Tag.GTS, 'ENG-2519', 'ENG-3862'], 'Check that image group is compatible with current content', () => {
               const addedImage = {...contentTypeAttribute};
               addedImage.value = {
                 en: {
@@ -212,7 +212,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
           beforeEach(() => attributeProcessor[contentTypeAttribute.processor].postContent(contentTypeAttribute));
 
-          it('Edit', () => {
+          it([Tag.GTS, 'ENG-2519', 'ENG-3862'], 'Edit', () => {
             cy.get('@contentToBeDeleted').then(contentId => {
               openEditPage(contentId)
                   .then(() => {
@@ -245,7 +245,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
             after(() => deleteAttribute(contentTypeAttribute));
 
-            it('Create', () => {
+            it([Tag.GTS, 'ENG-2519'], 'Create', () => {
               openAddPage()
                   .then(page => {
                     page.getContent().fillBeginContent('cypress basic attribute');
@@ -272,7 +272,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
             after(() => deleteAttribute(contentTypeAttribute));
 
-            it('Create', () => {
+            it([Tag.GTS, 'ENG-2519'], 'Create', () => {
               const value = ['Text', 'Longtext'].includes(contentTypeAttribute.type) ? contentTypeAttribute.value.en : contentTypeAttribute.value;
 
               openAddPage()
@@ -312,7 +312,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
             after(() => deleteAttribute(contentTypeAttribute));
 
-            it('Create', () => {
+            it([Tag.GTS, 'ENG-2519'], 'Create', () => {
               openAddPage()
                   .then(page => {
                     page.getContent().fillBeginContent('cypress basic attribute');
@@ -359,7 +359,7 @@ describe([Tag.GTS], 'Content Type Attributes', () => {
 
         after(() => deleteAttribute(DEFAULT_COMPOSITE_ATTRIBUTE));
 
-        it('Create', () => {
+        it([Tag.GTS, 'ENG-2180', 'ENG-3861', 'ENG-3862'], 'Create', () => {
           openAddPage()
               .then(() => {
                 attributeProcessor[contentTypeAttribute.processor].fillCompositeContent(contentTypeAttribute);

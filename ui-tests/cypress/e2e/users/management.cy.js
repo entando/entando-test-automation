@@ -2,7 +2,7 @@ import {generateRandomId} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
-describe([Tag.GTS], 'Users Management', () => {
+describe('Users Management', () => {
 
   beforeEach(() => {
     cy.kcAPILogin();
@@ -18,7 +18,7 @@ describe([Tag.GTS], 'Users Management', () => {
 
   describe('UI', () => {
 
-    it('Users management page', () => {
+    it([Tag.GTS, 'ENG-2522'], 'Users management page', () => {
       openManagementPage()
         .then(page => {
           cy.validateUrlPathname('/user');
@@ -45,7 +45,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Edit user page', () => {
+    it([Tag.GTS, 'ENG-2522'], 'Edit user page', () => {
       openManagementPage()
         .then(page => {
           page.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
@@ -84,7 +84,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Edit user profile page', () => {
+    it([Tag.GTS, 'ENG-2522'], 'Edit user profile page', () => {
       openManagementPage()
         .then(page => {
           page.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
@@ -126,7 +126,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('View user profile page', () => {
+    it([Tag.GTS, 'ENG-2522'], 'View user profile page', () => {
       openManagementPage()
         .then(page => {
           page.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
@@ -157,7 +157,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('User authorizations page', () => {
+    it([Tag.GTS, 'ENG-2522'], 'User authorizations page', () => {
       openManagementPage()
         .then(page => {
           page.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
@@ -204,7 +204,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Edit user profile page - save button to be disabled with invalid profile', () => {
+    it([Tag.GTS, 'ENG-2522'], 'Edit user profile page - save button to be disabled with invalid profile', () => {
       openManagementPage()
         .then(page => {
           page.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
@@ -223,7 +223,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Users management page - to not have "User without a profile" filter', () => {
+    it([Tag.GTS, 'ENG-2522'], 'Users management page - to not have "User without a profile" filter', () => {
       openManagementPage()
         .then(page => {
           cy.validateUrlPathname(`/user`);
@@ -248,7 +248,7 @@ describe([Tag.GTS], 'Users Management', () => {
       });
     });
 
-    it('Add a new user', function () {
+    it([Tag.GTS, 'ENG-2522'], 'Add a new user', function () {
       openManagementPage()
         .then(page => page.getContent().openAddUserPage())
         .then(() => addUserUI(this.username, this.password, PROFILE_TYPE_CODE))
@@ -259,7 +259,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Add a user with existing user name is forbidden', function () {
+    it([Tag.GTS, 'ENG-2522'], 'Add a user with existing user name is forbidden', function () {
       addUserAPI(this.username, this.password, PROFILE_TYPE_CODE);
 
       openManagementPage()
@@ -271,7 +271,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Update an existing user', function () {
+    it([Tag.GTS, 'ENG-2522'], 'Update an existing user', function () {
       addUserAPI(this.username, this.password, PROFILE_TYPE_CODE);
 
       cy.wrap(generateRandomId()).then(updatedPassword => {
@@ -286,7 +286,7 @@ describe([Tag.GTS], 'Users Management', () => {
       });
     });
 
-    it('Update an existing user profile', function () {
+    it([Tag.GTS, 'ENG-2522'], 'Update an existing user profile', function () {
       const PROFILE_TYPE_DESC = 'Default user profile';
 
       addUserAPI(this.username, this.password, PROFILE_TYPE_CODE);
@@ -311,7 +311,7 @@ describe([Tag.GTS], 'Users Management', () => {
       });
     });
 
-    it('Update an existing user authorization', function () {
+    it([Tag.GTS, 'ENG-2522'], 'Update an existing user authorization', function () {
       const GROUP = {
         ID: 'free',
         DESCRIPTION: 'Free Access'
@@ -342,7 +342,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Search an existing user', function () {
+    it([Tag.GTS, 'ENG-2522'], 'Search an existing user', function () {
       addUserAPI(this.username, this.password, PROFILE_TYPE_CODE);
 
       openManagementPage()
@@ -355,7 +355,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Search a non-existing user', function () {
+    it([Tag.GTS, 'ENG-2522'], 'Search a non-existing user', function () {
       openManagementPage()
         .then(page => {
           page.getContent().searchUser(this.username);
@@ -366,7 +366,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Delete a user', function () {
+    it([Tag.GTS, 'ENG-2522'], 'Delete a user', function () {
       addUserAPI(this.username, this.password, PROFILE_TYPE_CODE);
 
       openManagementPage()
@@ -380,7 +380,7 @@ describe([Tag.GTS], 'Users Management', () => {
         });
     });
 
-    it('Deletion of admin is forbidden', () => {
+    it([Tag.GTS, 'ENG-2522'], 'Deletion of admin is forbidden', () => {
       openManagementPage()
         .then(page => {
           page.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
