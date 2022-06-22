@@ -3,7 +3,7 @@ import {generateRandomId} from '../../support/utils';
 import {htmlElements}   from '../../support/pageObjects/WebElement';
 import defaultTemplates from '../../fixtures/data/defaultTemplates.json';
 
-describe([Tag.GTS], 'Page Management', () => {
+describe('Page Management', () => {
 
   beforeEach(() => {
     cy.wrap([]).as('pagesToBeDeleted');
@@ -22,7 +22,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
   describe('UI', () => {
 
-    it('Add page', () => {
+    it([Tag.GTS, 'ENG-2175'], 'Add page', () => {
       cy.get('@currentPage')
         .then(page => page.getMenu().getPages().open().openManagement())
         .then(page => page.getContent().openAddPagePage())
@@ -55,7 +55,7 @@ describe([Tag.GTS], 'Page Management', () => {
       describe('Add a new page without SEO attributes', () => {
 
         defaultTemplates.map(template => template.code).forEach(template =>
-            it(`Add ${template} template`, () => {
+            it([Tag.GTS, 'ENG-2278'], `Add ${template} template`, () => {
               cy.wrap({
                 code: generateRandomId(),
                 title: generateRandomId()
@@ -79,7 +79,7 @@ describe([Tag.GTS], 'Page Management', () => {
       describe('Add a new page with SEO Attributes', () => {
 
         defaultTemplates.map(template => template.code).forEach(template =>
-            it(`Add ${template} template`, () => {
+            it([Tag.GTS, 'ENG-2278'], `Add ${template} template`, () => {
               cy.wrap({
                 code: generateRandomId(),
                 title: generateRandomId()
@@ -112,7 +112,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
       });
 
-      it('Add a new child page', () => {
+      it([Tag.GTS, 'ENG-2278'], 'Add a new child page', () => {
         cy.fixture('data/demoPage.json').then(demoPage => {
           demoPage.code = generateRandomId();
           cy.seoPagesController().then(controller => controller.addNewPage(demoPage));
@@ -156,7 +156,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
     describe('Add page validations', () => {
 
-      it('Adding a new page with non existing parent code is forbidden', () => {
+      it([Tag.GTS, 'ENG-2278'], 'Adding a new page with non existing parent code is forbidden', () => {
         cy.visit('/page/add?parentCode=non-existing-pageCode');
         cy.location().should(url => {
           expect(url.pathname).eq('/app-builder/page/add');
@@ -164,7 +164,7 @@ describe([Tag.GTS], 'Page Management', () => {
         });
       });
 
-      it('Adding a new page with empty fields is forbidden', () => {
+      it([Tag.GTS, 'ENG-2278'], 'Adding a new page with empty fields is forbidden', () => {
         cy.get('@currentPage')
           .then(page => page.getMenu().getPages().open().openManagement())
           .then(page => page.getContent().openAddPagePage())
@@ -174,7 +174,7 @@ describe([Tag.GTS], 'Page Management', () => {
           });
       });
 
-      it('Adding a new page without mandatory fields is forbidden', () => {
+      it([Tag.GTS, 'ENG-2278'], 'Adding a new page without mandatory fields is forbidden', () => {
         cy.wrap({
           code: generateRandomId(),
           title: generateRandomId()
@@ -200,7 +200,7 @@ describe([Tag.GTS], 'Page Management', () => {
               }));
       });
 
-      it('Adding a new page with existing code is forbidden', () => {
+      it([Tag.GTS, 'ENG-2278'], 'Adding a new page with existing code is forbidden', () => {
         cy.fixture('data/demoPage.json').then(demoPage => {
           demoPage.code = generateRandomId();
           cy.seoPagesController().then(controller => controller.addNewPage(demoPage));
@@ -239,7 +239,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
       describe('Search a page', () => {
 
-        it('Search by name', () => {
+        it([Tag.GTS, 'ENG-2175'], 'Search by name', () => {
           cy.fixture('data/demoPage.json').then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openManagement())
@@ -250,7 +250,7 @@ describe([Tag.GTS], 'Page Management', () => {
                                   .each(row => cy.wrap(row).children(htmlElements.td).eq(2).should('contain', demoPage.titles.en))));
         });
 
-        it('Search by code', () => {
+        it([Tag.GTS, 'ENG-2175'], 'Search by code', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openManagement())
@@ -266,7 +266,7 @@ describe([Tag.GTS], 'Page Management', () => {
       describe('Update a page', () => {
 
         //FIXME this is not a real test case, it's covered by the following one
-        xit('with an owner not compatible with the users', () => {
+        xit([Tag.GTS, 'ENG-2483'], 'with an owner not compatible with the users', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode =>
               cy.fixture('data/demoPage.json').then(demoPage =>
                   cy.get('@currentPage')
@@ -275,7 +275,7 @@ describe([Tag.GTS], 'Page Management', () => {
                     .then(page => page.getContent().getOwnerGroupButton().should('be.disabled'))));
         });
 
-        it('Change a page\'s owner group - not allowed', () => {
+        it([Tag.GTS, 'ENG-2483'], 'Change a page\'s owner group - not allowed', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode =>
               cy.fixture('data/demoPage.json').then(demoPage =>
                   cy.get('@currentPage')
@@ -290,7 +290,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
         //TODO move the creation and deletion of the language outside of test
         //FIXME it adds the page title, not the page code
-        it('when adding secondary language, editing a page automatically adds default page code from default language (ENG-2695)', () => {
+        it('ENG-2695', 'when adding secondary language, editing a page automatically adds default page code from default language (ENG-2695)', () => {
           cy.languagesController()
             .then(controller => controller.putLanguage('cs', 'Czech', true, false));
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode =>
@@ -307,7 +307,7 @@ describe([Tag.GTS], 'Page Management', () => {
             .then(controller => controller.putLanguage('cs', 'Czech', false, false));
         });
 
-        it('Avoid accept blank page titles in an inactive language tab (ENG-2642)', () => {
+        it('ENG-2642', 'Avoid accept blank page titles in an inactive language tab', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode =>
               cy.fixture('data/demoPage.json').then(demoPage =>
                   cy.get('@currentPage')
@@ -328,7 +328,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
       describe('Change page position in the page tree', () => {
 
-        it('Move outside page', () => {
+        it([Tag.GTS, 'ENG-2486'], 'Move outside page', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(parentPageCode =>
               cy.fixture('data/demoPage.json').then(parentPage =>
                   cy.fixture('data/demoPage.json').then(testPage => {
@@ -355,7 +355,7 @@ describe([Tag.GTS], 'Page Management', () => {
                   })));
         });
 
-        it('Move inside page', () => {
+        it([Tag.GTS, 'ENG-2486'], 'Move inside page', () => {
           cy.fixture('data/demoPage.json').then(parentPage =>
               cy.fixture('data/demoPage.json').then(testPage => {
                 testPage.code      = generateRandomId();
@@ -374,7 +374,7 @@ describe([Tag.GTS], 'Page Management', () => {
               }));
         });
 
-        it('Move inside subpages is forbidden', () => {
+        it([Tag.GTS, 'ENG-2486'], 'Move inside subpages is forbidden', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(parentPageCode =>
               cy.fixture('data/demoPage.json').then(parentPage =>
                   cy.fixture('data/demoPage.json').then(testPage => {
@@ -399,7 +399,7 @@ describe([Tag.GTS], 'Page Management', () => {
                   })));
         });
 
-        it('Move free pages inside reserved pages is forbidden', () => {
+        it([Tag.GTS, 'ENG-2486'], 'Move free pages inside reserved pages is forbidden', () => {
           cy.fixture('data/demoPage.json').then(parentPage =>
               cy.fixture('data/demoPage.json').then(testPage => {
                 testPage.code       = generateRandomId();
@@ -415,7 +415,7 @@ describe([Tag.GTS], 'Page Management', () => {
               }));
         });
 
-        it('Move published pages inside unpublished pages is forbidden', () => {
+        it([Tag.GTS, 'ENG-2486'], 'Move published pages inside unpublished pages is forbidden', () => {
           cy.fixture('data/demoPage.json').then(parentPage =>
               cy.fixture('data/demoPage.json').then(testPage => {
                 testPage.code      = generateRandomId();
@@ -459,7 +459,7 @@ describe([Tag.GTS], 'Page Management', () => {
 
       describe('Change page status', () => {
 
-        it('Publish a page', () => {
+        it([Tag.GTS, 'ENG-2485'], 'Publish a page', () => {
           cy.fixture('data/demoPage.json').then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openManagement())
@@ -472,7 +472,7 @@ describe([Tag.GTS], 'Page Management', () => {
                 )));
         });
 
-        it('Unpublish a page', () => {
+        it([Tag.GTS, 'ENG-2485'], 'Unpublish a page', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0])
             .then(demoPageCode => cy.pagesController().then(controller => controller.setPageStatus(demoPageCode, 'published')));
           cy.fixture('data/demoPage.json').then(demoPage =>
@@ -486,7 +486,7 @@ describe([Tag.GTS], 'Page Management', () => {
                       .and('equal', 'Unpublished'))));
         });
 
-        it('Publish a subpage of an unpublished page is forbidden', () => {
+        it([Tag.GTS, 'ENG-2485'], 'Publish a subpage of an unpublished page is forbidden', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(parentPageCode =>
               cy.fixture('data/demoPage.json').then(parentPage =>
                   cy.fixture('data/demoPage.json').then(testPage => {
@@ -505,7 +505,7 @@ describe([Tag.GTS], 'Page Management', () => {
                   })));
         });
 
-        it('Unpublish a page with published children is forbidden', () => {
+        it([Tag.GTS, 'ENG-2485'], 'Unpublish a page with published children is forbidden', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(parentPageCode =>
               cy.fixture('data/demoPage.json').then(parentPage =>
                   cy.fixture('data/demoPage.json').then(testPage => {
@@ -524,45 +524,45 @@ describe([Tag.GTS], 'Page Management', () => {
                   })));
         });
 
-      });
+        describe('Non admin user', () => {
 
-      describe('Non admin user', () => {
+          beforeEach(() => {
+            cy.wrap({code: generateRandomId(), name: generateRandomId()}).as('groupToBeDeleted').then(group => {
+              cy.groupsController().then(controller => controller.addGroup(group.code, group.name));
+              cy.fixture(`users/details/user`).then(userJSON =>
+                  cy.usersController().then(controller => {
+                    controller.addUser(userJSON);
+                    controller.updateUser(userJSON);
+                    controller.addAuthorities(userJSON.username, group.code, 'approver');
+                  }));
+            });
+            cy.kcLogout();
+            cy.kcUILogin('login/user');
+          });
 
-        beforeEach(() => {
-          cy.wrap({code: generateRandomId(), name: generateRandomId()}).as('groupToBeDeleted').then(group => {
-            cy.groupsController().then(controller => controller.addGroup(group.code, group.name));
+          afterEach(() => {
             cy.fixture(`users/details/user`).then(userJSON =>
                 cy.usersController().then(controller => {
-                  controller.addUser(userJSON);
-                  controller.updateUser(userJSON);
-                  controller.addAuthorities(userJSON.username, group.code, 'approver');
+                  controller.deleteAuthorities(userJSON.username);
+                  controller.deleteUser(userJSON.username);
                 }));
+            cy.get('@groupToBeDeleted').then(group => cy.groupsController().then(controller => controller.deleteGroup(group.code)));
           });
-          cy.kcLogout();
-          cy.kcUILogin('login/user');
-        });
 
-        afterEach(() => {
-          cy.fixture(`users/details/user`).then(userJSON =>
-              cy.usersController().then(controller => {
-                controller.deleteAuthorities(userJSON.username);
-                controller.deleteUser(userJSON.username);
-              }));
-          cy.get('@groupToBeDeleted').then(group => cy.groupsController().then(controller => controller.deleteGroup(group.code)));
-        });
+          it([Tag.GTS, 'ENG-2485'], 'Unpublish a page without permission', () => {
+            cy.fixture('data/demoPage.json').then(demoPage =>
+                cy.get('@currentPage')
+                  .then(page => page.getMenu().getPages().open().openManagement())
+                  .then(page => page.getContent().getTableRows().should('not.contain', demoPage.titles.en)));
+          });
 
-        it('Unpublish a page without permission', () => {
-          cy.fixture('data/demoPage.json').then(demoPage =>
-              cy.get('@currentPage')
-                .then(page => page.getMenu().getPages().open().openManagement())
-                .then(page => page.getContent().getTableRows().should('not.contain', demoPage.titles.en)));
         });
 
       });
 
       describe('Delete a page', () => {
 
-        it('Delete an unpublished page', () => {
+        it([Tag.GTS, 'ENG-2484'], 'Delete an unpublished page', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(demoPageCode =>
               cy.fixture('data/demoPage.json').then(demoPage =>
                   cy.get('@currentPage')
@@ -578,13 +578,13 @@ describe([Tag.GTS], 'Page Management', () => {
                     })));
         });
 
-        it('Delete a published page is forbidden', () => {
+        it([Tag.GTS, 'ENG-2484'], 'Delete a published page is forbidden', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0])
             .then(demoPageCode => cy.pagesController().then(controller => controller.setPageStatus(demoPageCode, 'published')));
           cy.fixture('data/demoPage.json').then(demoPage => cy.get('@currentPage').then(page => checkDeleteIsDisabled(page, demoPage.titles.en)));
         });
 
-        it('Delete a drafted page is forbidden', () => {
+        it([Tag.GTS, 'ENG-2484'], 'Delete a drafted page is forbidden', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0])
             .then(demoPageCode => {
               cy.pagesController().then(controller => controller.setPageStatus(demoPageCode, 'published'));
@@ -593,7 +593,7 @@ describe([Tag.GTS], 'Page Management', () => {
           cy.fixture('data/demoPage.json').then(demoPage => cy.get('@currentPage').then(page => checkDeleteIsDisabled(page, demoPage.titles.en)));
         });
 
-        it('Delete a page with children is forbidden', () => {
+        it([Tag.GTS, 'ENG-2484'], 'Delete a page with children is forbidden', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(parentPageCode =>
               cy.fixture('data/demoPage.json').then(parentPage => {
                 cy.fixture('data/demoPage.json').then(testPage => {
@@ -619,10 +619,10 @@ describe([Tag.GTS], 'Page Management', () => {
 
     describe('Form Validations', () => {
 
-      describe('Page form should be not possible to save NULL title in default language (ENG-2687)', () => {
+      describe('Page form should be not possible to save NULL title in default language', () => {
 
         //FIXME duplicate of 'when adding secondary language, editing a page automatically adds default page code from default language (ENG-2695)'
-        it('There must be a page title for default language, otherwise it will not allow to save', () => {
+        xit('ENG-2687', 'There must be a page title for default language, otherwise it will not allow to save', () => {
           cy.fixture('data/demoPage.json').then(demoPage => {
             demoPage.code = generateRandomId();
             cy.seoPagesController().then(controller => controller.addNewPage(demoPage));
@@ -642,7 +642,7 @@ describe([Tag.GTS], 'Page Management', () => {
         });
 
         //FIXME duplicate of 'Add a new page without SEO attributes' > 'Add 1-2-column template'
-        it('Adding a title from default language without other languages will be allowed to save', () => {
+        xit('ENG-2687', 'Adding a title from default language without other languages will be allowed to save', () => {
           cy.wrap({
             code: generateRandomId(),
             title: generateRandomId()
@@ -698,7 +698,7 @@ describe([Tag.GTS], 'Page Management', () => {
               }));
         });
 
-        it('Cloning a page should copy all SEO details to the new page', () => {
+        it([Tag.GTS, 'ENG-2638'], 'Cloning a page should copy all SEO details to the new page', () => {
           cy.wrap({
             code: generateRandomId(),
             title: generateRandomId()
@@ -726,7 +726,7 @@ describe([Tag.GTS], 'Page Management', () => {
                             })))));
         });
 
-        it('Cloning a page should copy all attached widgets to the new page', () => {
+        it([Tag.GTS, 'ENG-2638'], 'Cloning a page should copy all attached widgets to the new page', () => {
           cy.wrap({
             code: generateRandomId(),
             title: generateRandomId()

@@ -2,7 +2,7 @@ import {generateRandomId} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
-describe([Tag.GTS], 'User Roles', () => {
+describe('User Roles', () => {
 
   const ROLE_CODE_ADMIN = 'admin';
   const ROLE_NAME_ADMIN = 'Administrator';
@@ -18,7 +18,7 @@ describe([Tag.GTS], 'User Roles', () => {
 
   describe('UI', () => {
 
-    it('Roles page', () => {
+    it([Tag.GTS, 'ENG-2069'], 'Roles page', () => {
       openRolesPage()
         .then(page => {
           cy.validateUrlPathname('/role');
@@ -39,7 +39,7 @@ describe([Tag.GTS], 'User Roles', () => {
         });
     });
 
-    it('Add role page', () => {
+    it([Tag.GTS, 'ENG-2069'], 'Add role page', () => {
       openRolesPage()
         .then(page => page.getContent().openAddRolePage())
         .then(page => {
@@ -67,7 +67,7 @@ describe([Tag.GTS], 'User Roles', () => {
         });
     });
 
-    it('Edit role page', () => {
+    it([Tag.GTS, 'ENG-2069'], 'Edit role page', () => {
       openRolesPage()
         .then(page => page.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openEdit())
         .then(page => {
@@ -96,7 +96,7 @@ describe([Tag.GTS], 'User Roles', () => {
         });
     });
 
-    it('View role details page', () => {
+    it([Tag.GTS, 'ENG-2069'], 'View role details page', () => {
       openRolesPage()
         .then(page => page.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openDetails())
         .then(page => {
@@ -132,7 +132,7 @@ describe([Tag.GTS], 'User Roles', () => {
       });
     });
 
-    it('Add a new role', () => {
+    it([Tag.GTS, 'ENG-2069'], 'Add a new role', () => {
       cy.get('@sampleRole').then(sampleRole => {
         openRolesPage()
           .then(page => page.getContent().openAddRolePage())
@@ -145,7 +145,7 @@ describe([Tag.GTS], 'User Roles', () => {
       });
     });
 
-    it('Update an existing role', () => {
+    it([Tag.GTS, 'ENG-2069'], 'Update an existing role', () => {
       cy.get('@sampleRole').then(sampleRole => {
         addRole(sampleRole.code, sampleRole.name);
 
@@ -169,7 +169,7 @@ describe([Tag.GTS], 'User Roles', () => {
       });
     });
 
-    it('Delete an unreferenced role', () => {
+    it([Tag.GTS, 'ENG-2069'], 'Delete an unreferenced role', () => {
       cy.get('@sampleRole').then(sampleRole => {
         addRole(sampleRole.code, sampleRole.name);
 
@@ -184,7 +184,7 @@ describe([Tag.GTS], 'User Roles', () => {
       });
     });
 
-    it('Deletion of an assigned role is forbidden', () => {
+    it([Tag.GTS, 'ENG-2069'], 'Deletion of an assigned role is forbidden', () => {
       openRolesPage()
         .then(page => {
           page.getContent().getTableRows().should('contain', ROLE_CODE_ADMIN);

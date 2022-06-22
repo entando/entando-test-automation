@@ -14,7 +14,7 @@ const postContentType = (code, name) => cy.contentTypesController().then(control
 
 const deleteContentType = (code) => cy.contentTypesController().then(controller => controller.deleteContentType(code));
 
-describe([Tag.GTS], 'Content Templates', () => {
+describe('Content Templates', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('pageToBeDeleted');
@@ -49,7 +49,7 @@ describe([Tag.GTS], 'Content Templates', () => {
     cy.kcUILogout();
   });
 
-  it('Add content template', () => {
+  it([Tag.GTS, 'ENG-2494'], 'Add content template', () => {
     openContentTemplatesPage()
       .then(page => {
         cy.log(`Add content template with id ${sampleContentTemplate.id}`);
@@ -67,7 +67,7 @@ describe([Tag.GTS], 'Content Templates', () => {
       }));
   });
 
-  it('Edit content template', () => {
+  it([Tag.GTS, 'ENG-2494'], 'Edit content template', () => {
     addContentTemplate(sampleContentTemplate);
 
     openContentTemplatesPage()
@@ -82,7 +82,7 @@ describe([Tag.GTS], 'Content Templates', () => {
       .then(page => page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).eq(0).should('contain.text', `${sampleContentTemplate.descr}-new`));
   });
 
-  it('Delete content template', () => {
+  it([Tag.GTS, 'ENG-2494'], 'Delete content template', () => {
     addContentTemplate(sampleContentTemplate);
 
     openContentTemplatesPage()
@@ -97,7 +97,7 @@ describe([Tag.GTS], 'Content Templates', () => {
       });
   });
 
-  it('Search for content template', () => {
+  it([Tag.GTS, 'ENG-2494'], 'Search for content template', () => {
     addContentTemplate(sampleContentTemplate);
 
     openContentTemplatesPage()
@@ -108,7 +108,7 @@ describe([Tag.GTS], 'Content Templates', () => {
       });
   });
 
-  it('Empty template type should be not available', () => {
+  it([Tag.GTS, 'ENG-2494'], 'Empty template type should be not available', () => {
     postContentType(sampleContentTemplate.testType, sampleContentTemplate.testName);
 
     openContentTemplatesPage()
@@ -119,7 +119,7 @@ describe([Tag.GTS], 'Content Templates', () => {
       });
   });
 
-  it('Delete content template referenced by a published content - not allowed', () => {
+  it([Tag.GTS, 'ENG-2495'], 'Delete content template referenced by a published content - not allowed', () => {
 
     const content = {
       description: 'test',
@@ -183,7 +183,7 @@ describe([Tag.GTS], 'Content Templates', () => {
       .then(page => page.getContent().getAlertMessage().should('exist').and('contain.text', 'used'));
   });
 
-  it('Edit mandatory fields', () => {
+  it([Tag.GTS, 'ENG-2494'], 'Edit mandatory fields', () => {
     openContentTemplatesPage()
       .then(page => page.getContent().openAddTemplatePage())
       .then(page => {
@@ -196,14 +196,14 @@ describe([Tag.GTS], 'Content Templates', () => {
         page.getContent().getAlertMessage().should('be.visible');
         page.getContent().getFormArea().should('contain', 'is mandatory');
         page.getContent().getIDInput().then(input => page.getContent().type(input, sampleContentTemplate.id));
-        
+
         cy.log(`Verify that template name is mandatory`);
         page.getContent().getNameInput().then(input => page.getContent().clear(input));
         page.getContent().getSaveButton().then(button => page.getContent().click(button));
         page.getContent().getAlertMessage().should('be.visible');
         page.getContent().getFormArea().should('contain', 'is mandatory');
         page.getContent().getNameInput().then(input => page.getContent().type(input, sampleContentTemplate.descr));
-        
+
         cy.log(`Verify that template HTML model is mandatory`);
         page.getContent().clearHTMLModel(sampleContentTemplate.contentShape);
         page.getContent().getSaveButton().then(button => page.getContent().click(button));

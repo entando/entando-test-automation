@@ -8,7 +8,7 @@ describe( 'Content Versioning', () => {
   afterEach(() => cy.kcUILogout());
 
   describe('Content Version Browsing', () => {
-    it('Pagination check when there are no results (ENG-2680)', () => {
+    it('ENG-2680', 'Pagination check when there are no results', () => {
       openVersioningPage()
           .then(page => page.getContent().getSearchDescInput().then(input => page.getContent().type(input, 'z')))
           .then(page => page.getContent().submitSearch())

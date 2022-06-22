@@ -2,7 +2,7 @@ import {generateRandomTypeCode, generateRandomId} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
-describe([Tag.GTS], 'Content Types', () => {
+describe('Content Types', () => {
 
   let contentType = {};
 
@@ -25,7 +25,7 @@ describe([Tag.GTS], 'Content Types', () => {
       if (code) deleteContentType(code);
     }));
 
-    it('should have the functionality to add a new content type', () => {
+    it([Tag.GTS, 'ENG-2491'], 'should have the functionality to add a new content type', () => {
       openContentTypesPage()
         .then(page => {
           cy.log(`Add content type with code ${contentType.code}`);
@@ -40,7 +40,7 @@ describe([Tag.GTS], 'Content Types', () => {
           }));
     });
 
-    it('should have the functionality to edit a content type', () => {
+    it([Tag.GTS, 'ENG-2491'], 'should have the functionality to edit a content type', () => {
       postContentType(contentType.code, contentType.name);
 
       cy.wrap(generateRandomId()).then(newContentTypeName => {
@@ -57,7 +57,7 @@ describe([Tag.GTS], 'Content Types', () => {
       });
     });
 
-    it('should allow deleting a content type not referenced by a published content', () => {
+    it([Tag.GTS, 'ENG-2491'], 'should allow deleting a content type not referenced by a published content', () => {
       postContentType(contentType.code, contentType.name);
 
       openContentTypesPage()
@@ -106,7 +106,7 @@ describe([Tag.GTS], 'Content Types', () => {
       })
     });
 
-    it('should not allow deleting a content type', () => {
+    it([Tag.GTS, 'ENG-2493'], 'should not allow deleting a content type', () => {
       openContentTypesPage()
         .then(page => {
           cy.log(`Delete content type with code ${contentType.code}`);
@@ -115,7 +115,7 @@ describe([Tag.GTS], 'Content Types', () => {
         .then(page => page.getContent().getAlertMessage().should('exist').and('contain.text', 'before deleting'));
     });
 
-    it('should allow adding an attribute', () => {
+    it([Tag.GTS, 'ENG-2492'], 'should allow adding an attribute', () => {
       cy.wrap('Text').then(testAttribute => {
         openContentTypesPage()
           .then(page => page.getContent().getKebabMenu(contentType.code).open().openEdit())
@@ -128,7 +128,7 @@ describe([Tag.GTS], 'Content Types', () => {
       });
     });
 
-    it('should allow updating an attribute', () => {
+    it([Tag.GTS, 'ENG-2492'], 'should allow updating an attribute', () => {
       cy.wrap({ type: 'Text', code: 'Text' }).then(testAttribute => {
         cy.wrap('Text2').then(newAttributeName => {
           cy.contentTypeAttributesController(contentType.code).then(controller => controller.addAttribute(testAttribute));
@@ -191,7 +191,7 @@ describe([Tag.GTS], 'Content Types', () => {
       const BASIC_ATTRIBUTES = ['Attach', 'Boolean', 'CheckBox', 'Date', 'Email', 'Hypertext', 'Image', 'Link', 'Longtext', 'Monotext', 'Number', 'Text', 'ThreeState', 'Timestamp'];
 
       BASIC_ATTRIBUTES.forEach(type => {
-        it(`Add ${type} attribute`, function () {
+        it([Tag.GTS, 'ENG-2492'], `Add ${type} attribute`, function () {
           cy.wrap(generateRandomId()).then(attribute => {
             openEditContentTypePage(this.contentType)
             .then(page => page.getContent().openAddAttributePage(type))
@@ -208,7 +208,7 @@ describe([Tag.GTS], 'Content Types', () => {
       });
 
       BASIC_ATTRIBUTES.forEach(type => {
-        it(`Edit ${type} attribute`, function () {
+        it([Tag.GTS, 'ENG-2492'], `Edit ${type} attribute`, function () {
           cy.wrap(generateRandomId()).then(updatedAttributeName => {
             cy.wrap(generateRandomId()).then(attribute => {
               postBasicAttribute(this.contentType, attribute, type);
@@ -221,7 +221,7 @@ describe([Tag.GTS], 'Content Types', () => {
       });
 
       BASIC_ATTRIBUTES.forEach(type => {
-        it(`Delete ${type} attribute`, function () {
+        it([Tag.GTS, 'ENG-2492'], `Delete ${type} attribute`, function () {
           cy.wrap(generateRandomId()).then(attribute => {
             postTextAttribute(this.contentType);
             postBasicAttribute(this.contentType, attribute, type);
@@ -245,7 +245,7 @@ describe([Tag.GTS], 'Content Types', () => {
 
     describe('List', () => {
 
-      it('Un-allowed nested attribute types', function () {
+      it([Tag.GTS, 'ENG-2492'], 'Un-allowed nested attribute types', function () {
         openEditContentTypePage(this.contentType)
           .then(page => page.getContent().openAddAttributePage(ATTRIBUTE_TYPES.LIST))
           .then(page => page.getContent().getNestedAttributeType()
@@ -262,13 +262,13 @@ describe([Tag.GTS], 'Content Types', () => {
         const NESTED_ATTRIBUTE_TYPES = {CHECKBOX: 'CheckBox', EMAIL: 'Email', DATE: 'Date'};
 
         Object.values(NESTED_ATTRIBUTE_TYPES).forEach(type =>
-          it(`Add ${type} attribute`, function () {
+          it([Tag.GTS, 'ENG-2492'], `Add ${type} attribute`, function () {
             addArrayAttribute(ATTRIBUTE_TYPES.LIST, type, this.contentType);
           })
         );
 
         Object.values(NESTED_ATTRIBUTE_TYPES).forEach(type =>
-          it(`Update ${type} attribute`, function () {
+          it([Tag.GTS, 'ENG-2492'], `Update ${type} attribute`, function () {
             cy.wrap(generateRandomId()).then(attribute => editArrayAttribute(ATTRIBUTE_TYPES.LIST, type, this.contentType, attribute));
           })
         );
@@ -279,7 +279,7 @@ describe([Tag.GTS], 'Content Types', () => {
 
     describe('Monolist', () => {
 
-      it('Un-allowed nested attribute types', function () {
+      it([Tag.GTS, 'ENG-2492'], 'Un-allowed nested attribute types', function () {
         openEditContentTypePage(this.contentType)
           .then(page => page.getContent().openAddAttributePage(ATTRIBUTE_TYPES.MONOLIST))
           .then(page => page.getContent().getNestedAttributeType()
@@ -292,13 +292,13 @@ describe([Tag.GTS], 'Content Types', () => {
         const NESTED_ATTRIBUTE_TYPES = {TEXT: 'Text', IMAGE: 'Image', ATTACH: 'Attach'};
 
         Object.values(NESTED_ATTRIBUTE_TYPES).forEach(type =>
-          it(`Add ${type} attribute`, function () {
+          it([Tag.GTS, 'ENG-2492'], `Add ${type} attribute`, function () {
             addArrayAttribute(ATTRIBUTE_TYPES.MONOLIST, type, this.contentType)
           })
         );
 
         Object.values(NESTED_ATTRIBUTE_TYPES).forEach(type =>
-          it(`Update ${type} attribute`, function () {
+          it([Tag.GTS, 'ENG-2492'], `Update ${type} attribute`, function () {
             cy.wrap(generateRandomId()).then(attribute => editArrayAttribute(ATTRIBUTE_TYPES.MONOLIST, type, this.contentType, attribute));
           })
         );
@@ -315,7 +315,7 @@ describe([Tag.GTS], 'Content Types', () => {
             })
         );
 
-        it('Add monolist composite attribute', function () {
+        it([Tag.GTS, 'ENG-2492'], 'Add monolist composite attribute', function () {
           cy.wrap(generateRandomId()).then(attribute => {
             openEditContentTypePage(this.contentType)
               .then(page => page.getContent().openAddAttributePage(ATTRIBUTE_TYPES.MONOLIST))
@@ -331,7 +331,7 @@ describe([Tag.GTS], 'Content Types', () => {
           })
         });
 
-        it('Edit monolist composite attribute', function () {
+        it([Tag.GTS, 'ENG-2492'], 'Edit monolist composite attribute', function () {
           cy.wrap(generateRandomId()).then(attribute => {
             postMonolistCompositeAttribute(this.contentType, attribute);
             cy.wrap(generateRandomId()).then(updatedAttributeName => {
@@ -340,7 +340,7 @@ describe([Tag.GTS], 'Content Types', () => {
           });
         });
 
-        it('Add sub-attribute', function () {
+        it([Tag.GTS, 'ENG-2492'], 'Add sub-attribute', function () {
           cy.wrap(generateRandomId()).then(attribute => {
             postMonolistCompositeAttribute(this.contentType, attribute);
             openEditAttribute(this.contentType, attribute)
@@ -349,7 +349,7 @@ describe([Tag.GTS], 'Content Types', () => {
           });
         });
 
-        it('Remove sub-attribute', function () {
+        it([Tag.GTS, 'ENG-2492'], 'Remove sub-attribute', function () {
           cy.wrap(generateRandomId()).then(attribute => {
             postMonolistCompositeAttribute(this.contentType, attribute);
             openEditAttribute(this.contentType, attribute)
@@ -358,7 +358,7 @@ describe([Tag.GTS], 'Content Types', () => {
           });
         });
 
-        it('Delete monolist composite attribute', function () {
+        it([Tag.GTS, 'ENG-2492'], 'Delete monolist composite attribute', function () {
           postTextAttribute(this.contentType);
           cy.wrap(generateRandomId()).then(attribute => {
             postMonolistCompositeAttribute(this.contentType, attribute);
@@ -401,7 +401,7 @@ describe([Tag.GTS], 'Content Types', () => {
           })
       );
 
-      it('Add composite attribute', function () {
+      it([Tag.GTS, 'ENG-2492'], 'Add composite attribute', function () {
         cy.wrap(generateRandomId()).then(attribute => {
           openEditContentTypePage(this.contentType)
             .then(page => page.getContent().openAddAttributePage(ATTRIBUTE_TYPES.COMPOSITE))
@@ -416,7 +416,7 @@ describe([Tag.GTS], 'Content Types', () => {
         });
       });
 
-      it('Edit composite attribute', function () {
+      it([Tag.GTS, 'ENG-2492'], 'Edit composite attribute', function () {
         cy.wrap(generateRandomId()).then(updatedAttributeName => {
           cy.wrap(generateRandomId()).then(attribute => {
             postCompositeAttribute(attribute, this.contentType);
@@ -427,7 +427,7 @@ describe([Tag.GTS], 'Content Types', () => {
         });
       });
 
-      it('Add sub-attribute', function () {
+      it([Tag.GTS, 'ENG-2492'], 'Add sub-attribute', function () {
         cy.wrap(generateRandomId()).then(attribute => {
           postCompositeAttribute(attribute, this.contentType);
           openEditAttribute(this.contentType, attribute)
@@ -437,7 +437,7 @@ describe([Tag.GTS], 'Content Types', () => {
         });
       });
 
-      it('Remove sub-attribute', function () {
+      it([Tag.GTS, 'ENG-2492'], 'Remove sub-attribute', function () {
         cy.wrap(generateRandomId()).then(attribute => {
           postCompositeAttribute(attribute, this.contentType);
           openEditAttribute(this.contentType, attribute)
@@ -449,7 +449,7 @@ describe([Tag.GTS], 'Content Types', () => {
         });
       });
 
-      it('Delete composite attribute', function () {
+      it([Tag.GTS, 'ENG-2492'], 'Delete composite attribute', function () {
         postTextAttribute(this.contentType);
         cy.wrap(generateRandomId()).then(attribute => {
           postCompositeAttribute(attribute, this.contentType)

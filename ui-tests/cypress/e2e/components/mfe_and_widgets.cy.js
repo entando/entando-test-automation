@@ -2,7 +2,7 @@ import {generateRandomId} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
 
-describe([Tag.GTS], 'Microfrontends and Widgets', () => {
+describe('Microfrontends and Widgets', () => {
 
   describe('Main functionalities', () => {
 
@@ -54,7 +54,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
             .then(page => page.getMenu().getComponents().open().openMFEAndWidgets())
             .then(page => page.getContent().openAddWidgetForm()));
 
-      it('Adding a basic widget with icon', () => {
+      it([Tag.GTS, 'ENG-2515'], 'Adding a basic widget with icon', () => {
         cy.wrap(generateRandomId()).then(widgetID =>
             cy.get('@currentPage')
               .then(page => {
@@ -69,7 +69,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
               }));
       });
 
-      it('Add a widget with existing code widget', () => {
+      it([Tag.GTS, 'ENG-2515'], 'Add a widget with existing code widget', () => {
         cy.get('@currentPage')
           .then(page => {
             page.getContent().fillWidgetForm(generateRandomId(), 'content_viewer');
@@ -81,7 +81,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
           });
       });
 
-      it('Add a widget with invalid code', () => {
+      it([Tag.GTS, 'ENG-2244'], 'Add a widget with invalid code', () => {
         cy.get('@currentPage')
           .then(page => {
             page.getContent().getCodeInput().then(input => {
@@ -93,7 +93,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
           });
       });
 
-      it('Add a widget without choosing group and title', () => {
+      it([Tag.GTS, 'ENG-2515'], 'Add a widget without choosing group and title', () => {
         cy.get('@currentPage')
           .then(page => {
             page.getContent().editFormFields({code: 'momaco', iconUpload, customUi: '<h2>memecode</h2>'});
@@ -116,7 +116,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
           .then(page => page.getMenu().getComponents().open().openMFEAndWidgets());
       });
 
-      it('Editing widget by modifying all mandatory fields', () => {
+      it([Tag.GTS, 'ENG-2517'], 'Editing widget by modifying all mandatory fields', () => {
         cy.wrap(generateRandomId()).then(editedName =>
             cy.get('@widgetToBeDeleted').then(widget =>
                 cy.get('@currentPage')
@@ -141,7 +141,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
                   })));
       });
 
-      it('Editing a used widget via widget list modifying all mandatory fields', () => {
+      it([Tag.GTS, 'ENG-2517'], 'Editing a used widget via widget list modifying all mandatory fields', () => {
         cy.wrap(generateRandomId()).then(editedName =>
             cy.get('@widgetToBeDeleted').then(widget =>
                 cy.get('@currentPage')
@@ -166,7 +166,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
 
     describe('Editing via different section', () => {
 
-      it('Editing a used widget via page designer modifying all mandatory fields', function () {
+      it([Tag.GTS, 'ENG-2517'], 'Editing a used widget via page designer modifying all mandatory fields', function () {
         cy.wrap(generateRandomId()).then(editedName =>
             cy.wrap(this.pageToBeDeleted).then(demoPage => {
               cy.fixture('data/basicWidget.json').then(widget => {
@@ -214,7 +214,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
             cy.wrap(widget).as('widgetToBeDeleted');
           }));
 
-      it('Attempt to delete the widget with reference to a published page', function () {
+      it([Tag.GTS, 'ENG-2516'], 'Attempt to delete the widget with reference to a published page', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@widgetToBeDeleted').then(widget => {
               cy.pageWidgetsController(demoPage.code)
@@ -231,7 +231,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
             }));
       });
 
-      it('Attempt to delete the widget with reference to an unpublished page', function () {
+      it([Tag.GTS, 'ENG-2516'], 'Attempt to delete the widget with reference to an unpublished page', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@widgetToBeDeleted').then(widget => {
               cy.pageWidgetsController(demoPage.code)
@@ -247,7 +247,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
             }));
       });
 
-      it('Delete a user widget', () => {
+      it([Tag.GTS, 'ENG-2516'], 'Delete a user widget', () => {
         cy.get('@widgetToBeDeleted').then(widget => {
           cy.get('@currentPage')
             .then(page => page.getMenu().getComponents().open().openMFEAndWidgets())
@@ -299,7 +299,7 @@ describe([Tag.GTS], 'Microfrontends and Widgets', () => {
       cy.kcUILogout();
     });
 
-    it('Widgets page should not be accessible without superuser role', () => {
+    it([Tag.GTS, 'ENG-2543'], 'Widgets page should not be accessible without superuser role', () => {
       cy.get('@currentPage')
         .then(page => {
           page.getMenu().get().should('not.contain', 'Components');
