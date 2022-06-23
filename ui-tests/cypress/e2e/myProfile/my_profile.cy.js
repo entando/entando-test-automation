@@ -2,14 +2,14 @@ import {generateRandomId} from '../../support/utils';
 
 describe('My Profile', () => {
 
-  beforeEach(() => cy.kcAPILogin());
+  beforeEach(() => cy.kcClientCredentialsLogin());
 
-  afterEach(() => cy.kcUILogout());
+  afterEach(() => cy.kcTokenLogout());
 
   describe('UI', () => {
 
     beforeEach(() => {
-      cy.kcUILogin('login/admin');
+      cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
       cy.get('@currentPage')
         .then(page => page.getNavbar().openUserMenu().openProfile())
         .then(page => {
@@ -69,7 +69,7 @@ describe('My Profile', () => {
           controller.addAuthorities(user.username, 'administrators', 'admin');
         });
       });
-      cy.kcUILogin('login/user');
+      cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
       cy.get('@currentPage').then(page => page.getNavbar().openUserMenu().openProfile());
     });
 

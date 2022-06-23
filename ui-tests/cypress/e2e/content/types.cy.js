@@ -7,11 +7,11 @@ describe('Content Types', () => {
   let contentType = {};
 
   beforeEach(() => {
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
-  afterEach(() => cy.kcUILogout());
+  afterEach(() => cy.kcTokenLogout());
 
   describe('Unreferenced', () => {
 
@@ -162,12 +162,12 @@ describe('Content Types', () => {
     ];
 
     before(() => {
-      cy.kcAPILogin();
+      cy.kcClientCredentialsLogin();
       postContentType(generateRandomTypeCode(), generateRandomId(), 'contentType')
     });
 
     beforeEach(() => {
-      cy.kcAPILogin();
+      cy.kcClientCredentialsLogin();
       cy.wrap([]).as('attributesToBeDeleted');
     });
 
@@ -182,7 +182,7 @@ describe('Content Types', () => {
     });
 
     after(function () {
-      cy.kcAPILogin();
+      cy.kcClientCredentialsLogin();
       if (this.contentType) cy.contentTypesController().then(controller => controller.deleteContentType(this.contentType));
     });
 

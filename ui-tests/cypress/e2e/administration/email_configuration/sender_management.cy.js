@@ -6,8 +6,8 @@ describe('Sender Management Functionalities', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('senderToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
     cy.get('@currentPage')
       .then(page => page
           .getMenu().getAdministration().open()
@@ -18,7 +18,7 @@ describe('Sender Management Functionalities', () => {
     cy.get('@senderToBeDeleted').then(sender => {
       if (sender) cy.senderController().then(controller => controller.deleteSender(sender.code));
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   describe([Tag.SMOKE, 'ENG-3299'], 'Sender Current Configuration is displayed', () => {

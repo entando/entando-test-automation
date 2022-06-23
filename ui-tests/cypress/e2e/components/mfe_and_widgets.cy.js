@@ -7,7 +7,7 @@ describe('Microfrontends and Widgets', () => {
   describe('Main functionalities', () => {
 
     before(() => {
-      cy.kcAPILogin();
+      cy.kcClientCredentialsLogin();
       cy.fixture('data/demoPage.json').then(page => {
         page.code = generateRandomId();
         cy.seoPagesController()
@@ -20,8 +20,8 @@ describe('Microfrontends and Widgets', () => {
     beforeEach(() => {
       cy.wrap([]).as('widgetsToBeRemovedFromPage');
       cy.wrap(null).as('widgetToBeDeleted');
-      cy.kcAPILogin();
-      cy.kcUILogin('login/admin');
+      cy.kcClientCredentialsLogin();
+      cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
     });
 
     afterEach(function () {
@@ -36,11 +36,11 @@ describe('Microfrontends and Widgets', () => {
                 cy.widgetsController().then(controller => controller.deleteWidget(widget.code));
               }
             })));
-      cy.kcUILogout();
+      cy.kcTokenLogout();
     });
 
     after(function () {
-      cy.kcAPILogin();
+      cy.kcClientCredentialsLogin();
       cy.wrap(this.pageToBeDeleted).then(page =>
           cy.pagesController()
             .then(controller => controller.setPageStatus(page.code, 'draft')
@@ -271,7 +271,7 @@ describe('Microfrontends and Widgets', () => {
   describe('Role access', () => {
 
     beforeEach(() => {
-      cy.kcAPILogin();
+      cy.kcClientCredentialsLogin();
       cy.wrap({}).then(role => {
         role.code        = generateRandomId();
         role.name        = generateRandomId();
@@ -290,13 +290,13 @@ describe('Microfrontends and Widgets', () => {
               controller.addAuthorities(user.username, 'administrators', role.code);
             }));
       });
-      cy.kcUILogin('login/user');
+      cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
     });
 
     afterEach(() => {
       cy.get('@userToBeDeleted').then(userToBeDeleted => cy.usersController().then(controller => controller.deleteUser(userToBeDeleted.username)));
       cy.get('@roleToBeDeleted').then(roleToBeDeleted => cy.rolesController().then(controller => controller.deleteRole(roleToBeDeleted.code)));
-      cy.kcUILogout();
+      cy.kcTokenLogout();
     });
 
     it([Tag.GTS, 'ENG-2543'], 'Widgets page should not be accessible without superuser role', () => {

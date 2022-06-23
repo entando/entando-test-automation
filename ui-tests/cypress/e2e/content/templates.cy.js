@@ -24,8 +24,8 @@ describe('Content Templates', () => {
     sampleContentTemplate.id    = generateRandomNumericId();
     sampleContentTemplate.descr = generateRandomId();
 
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
@@ -46,7 +46,7 @@ describe('Content Templates', () => {
     cy.get('@contentTypeToBeDeleted').then(contentType => {
       if (contentType) deleteContentType(contentType);
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   it([Tag.GTS, 'ENG-2494'], 'Add content template', () => {

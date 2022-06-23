@@ -7,8 +7,8 @@ import sampleData         from "../../fixtures/data/sampleData.json";
 describe('Page Templates', () => {
 
   beforeEach(() => {
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
     cy.wrap([]).as('templatesToBeDeleted');
     sampleData.code  = generateRandomId();
     sampleData.descr = generateRandomId();
@@ -23,7 +23,7 @@ describe('Page Templates', () => {
                                     templatesToBeDeleted.forEach(templateToBeDeleted => controller.deletePageTemplate(templateToBeDeleted))
                                   });
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   const openPageTemplateMgmtPage = () => {
@@ -213,14 +213,14 @@ describe('Page Templates', () => {
     describe('Navigating the pagination', () => {
 
       before(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
         cy.wrap([]).as('templatesToBeDeleted');
         addRandomPageTemplates(14);
         cy.get('@templatesToBeDeleted').then(templates => Cypress.env('commonTemplatesToBeDeleted', templates));
       });
 
       after(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
 
         cy.wrap(Cypress.env('commonTemplatesToBeDeleted')).then(templatesToBeDeleted => {
           if (templatesToBeDeleted) cy.pageTemplatesController()

@@ -3,7 +3,7 @@ describe('Page visibility in Portal UI', () => {
   const TEST_GROUPS = ['administrators', 'free', 'group1', 'group2'];
 
   const checkPermission = (permission = true) => {
-    cy.kcUILogin('login/user');
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
     cy.fixture('data/demoPage.json').then(demoPage => {
       cy.visit(`/${demoPage.code}.page`, {portalUI: true});
       if (permission) cy.validateUrlPathname(`/${demoPage.code}.page`, {portalUI: true});
@@ -12,7 +12,7 @@ describe('Page visibility in Portal UI', () => {
   };
 
   before(() => {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
     TEST_GROUPS.filter(group => (group !== 'administrators' && group !== 'free')).forEach(group =>
         cy.groupsController().then(controller => controller.addGroup(group, group)));
     cy.fixture(`users/details/user`).then(user =>
@@ -24,7 +24,7 @@ describe('Page visibility in Portal UI', () => {
   });
 
   after(() => {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
     cy.fixture(`users/details/user`).then(user =>
         cy.usersController().then(controller => controller.deleteUser(user.username)));
     TEST_GROUPS.filter(group => (group !== 'administrators' && group !== 'free')).forEach(group =>
@@ -36,14 +36,14 @@ describe('Page visibility in Portal UI', () => {
     describe(`User with ${groupPermission} group permission`, () => {
 
       before(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
         cy.fixture(`users/details/user`).then(user =>
             cy.usersController().then(controller =>
                 controller.addAuthorities(user.username, groupPermission, 'admin')));
       });
 
       after(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
         cy.fixture(`users/details/user`).then(user =>
             cy.usersController().then(controller =>
                 controller.deleteAuthorities(user.username)));
@@ -54,7 +54,7 @@ describe('Page visibility in Portal UI', () => {
         describe(`Page with ${ownerGroup} owner group`, () => {
 
           before(() => {
-            cy.kcAPILogin();
+            cy.kcClientCredentialsLogin();
             cy.fixture('data/demoPage.json').then(demoPage => {
               demoPage.ownerGroup = ownerGroup;
               cy.seoPagesController().then(controller => controller.addNewPage(demoPage));
@@ -70,7 +70,7 @@ describe('Page visibility in Portal UI', () => {
                   })
               ));
 
-          afterEach(() => cy.kcUILogout());
+          afterEach(() => cy.kcTokenLogout());
 
           if (ownerGroup === groupPermission) {
             it([Tag.SMOKE, 'ENG-3798'], `A user with "${groupPermission}" permission SHOULD be able to view a page with "${ownerGroup}" owner group and no join group`, () => checkPermission());
@@ -85,7 +85,7 @@ describe('Page visibility in Portal UI', () => {
             if (ownerGroup === groupPermission || joinGroup === groupPermission || (joinGroup === 'free' && (ownerGroup === 'group1' || ownerGroup === 'group2'))) {
               it([Tag.FEATURE, 'ENG-3798'], `A user with "${groupPermission}" permission SHOULD be able to view a page with "${ownerGroup}" owner group and "${joinGroup}" join group`, () => {
                 cy.fixture('data/demoPage.json').then(demoPage => {
-                  cy.kcAPILogin();
+                  cy.kcClientCredentialsLogin();
                   demoPage.ownerGroup = ownerGroup;
                   cy.seoPagesController().then(controller => controller.setPageJoinGroups(demoPage, [joinGroup]));
                   cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));

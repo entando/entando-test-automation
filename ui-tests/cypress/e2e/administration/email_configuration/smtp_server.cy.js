@@ -3,8 +3,8 @@ import {htmlElements} from '../../../support/pageObjects/WebElement';
 describe('SMTP Server Functionalities', () => {
 
   beforeEach(() => {
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
     cy.get('@currentPage')
       .then(page => page
           .getMenu().getAdministration().open()
@@ -13,7 +13,7 @@ describe('SMTP Server Functionalities', () => {
 
   afterEach(() => {
     cy.smtpServerController().then(controller => controller.defaultSettings());
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   it([Tag.SMOKE, 'ENG-3298'], 'SMTP Current Configuration is displayed', () => {

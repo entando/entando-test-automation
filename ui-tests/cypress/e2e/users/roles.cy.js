@@ -8,12 +8,12 @@ describe('User Roles', () => {
   const ROLE_NAME_ADMIN = 'Administrator';
 
   beforeEach(() => {
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   describe('UI', () => {

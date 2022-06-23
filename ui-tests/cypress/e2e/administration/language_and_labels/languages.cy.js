@@ -4,15 +4,15 @@ describe('Languages', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('languageToDelete');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
     cy.get('@languageToDelete').then(language => {
       if (language) cy.languagesController().then(controller => controller.putLanguage(language.code, language.name, false, false));
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   describe('Languages page structure', () => {

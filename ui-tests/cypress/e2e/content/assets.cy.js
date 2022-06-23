@@ -5,8 +5,8 @@ describe('Assets', () => {
   beforeEach(() => {
     cy.wrap(null).as('assetToBeDeleted');
 
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
@@ -14,7 +14,7 @@ describe('Assets', () => {
       if (assetToBeDeleted !== null) cy.assetsController().then(controller => controller.deleteAsset(assetToBeDeleted.id));
     });
 
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   describe('Add asset', () => {

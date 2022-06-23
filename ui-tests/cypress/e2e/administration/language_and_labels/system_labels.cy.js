@@ -6,8 +6,8 @@ describe('Labels', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('labelToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
@@ -16,7 +16,7 @@ describe('Labels', () => {
         cy.labelsController().then(controller => controller.removeLabel(label.key));
       }
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   describe('Labels pages visualisation', () => {

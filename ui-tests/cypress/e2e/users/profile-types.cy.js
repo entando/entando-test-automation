@@ -7,15 +7,15 @@ describe('Profile Types', () => {
   beforeEach(() => {
     cy.wrap({code: generateRandomTypeCode(), name: generateRandomId()}).as('profileType');
     cy.wrap(null).as('profileTypeToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
     cy.get('@profileTypeToBeDeleted').then(code => {
       if (code) deleteProfileType(code);
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   it([Tag.GTS, 'ENG-2523'], 'Add a new profile type', () => {

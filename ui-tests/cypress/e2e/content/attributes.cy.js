@@ -3,7 +3,7 @@ import contentTypeAttributes from '../../fixtures/data/contentTypeAttributes.jso
 describe('Content Type Attributes', () => {
 
   before(() => {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
     cy.contentTypesController()
       .then(controller => controller.addContentType(CONTENT_TYPE.code, CONTENT_TYPE.name));
   });
@@ -11,8 +11,8 @@ describe('Content Type Attributes', () => {
   beforeEach(() => {
     cy.wrap(null).as('contentToBeDeleted');
     cy.wrap(null).as('assetToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
@@ -28,11 +28,11 @@ describe('Content Type Attributes', () => {
         cy.assetsController().then(controller => controller.deleteAsset(assetId));
       }
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   after(() => {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
     //FIXME/TODO needed as autosave might create unwanted contents
     cy.contentsController()
       .then(controller => controller.getContentList()).then(response =>
@@ -51,7 +51,7 @@ describe('Content Type Attributes', () => {
       describe('Base attribute options', () => {
 
         before(() => {
-          cy.kcAPILogin();
+          cy.kcClientCredentialsLogin();
           cy.contentTypeAttributesController(CONTENT_TYPE.code)
             .then(controller => controller.addAttribute({
               type: contentTypeAttribute.type,
@@ -105,12 +105,12 @@ describe('Content Type Attributes', () => {
           describe('FCKEditor', () => {
 
             before(() => {
-              cy.kcAPILogin();
+              cy.kcClientCredentialsLogin();
               cy.contentSettingsController().then(controller => controller.putContentEditor('fckeditor'));
             });
 
             after(() => {
-              cy.kcAPILogin();
+              cy.kcClientCredentialsLogin();
               cy.contentSettingsController().then(controller => controller.putContentEditor());
             });
 
@@ -155,7 +155,7 @@ describe('Content Type Attributes', () => {
             const TEST_GROUP = 'testgroup';
 
             before(() => {
-              cy.kcAPILogin();
+              cy.kcClientCredentialsLogin();
               cy.groupsController()
                 .then(controller => controller.addGroup(TEST_GROUP, TEST_GROUP))
                 .then(() => cy.assetsController().then(controller =>
@@ -166,7 +166,7 @@ describe('Content Type Attributes', () => {
             });
 
             after(() => {
-              cy.kcAPILogin();
+              cy.kcClientCredentialsLogin();
               cy.wrap(Cypress.env('imageToBeDeleted')).then(imageId => {
                 if (imageId) { cy.assetsController().then(controller => controller.deleteAsset(imageId)); }
               });
@@ -233,7 +233,7 @@ describe('Content Type Attributes', () => {
           describe('Mandatoriness validation', () => {
 
             before(() => {
-              cy.kcAPILogin();
+              cy.kcClientCredentialsLogin();
               cy.contentTypeAttributesController(CONTENT_TYPE.code)
                 .then(controller => controller.addAttribute({
                   type: contentTypeAttribute.type,
@@ -260,7 +260,7 @@ describe('Content Type Attributes', () => {
           describe('Custom regex validation', () => {
 
             before(() => {
-              cy.kcAPILogin();
+              cy.kcClientCredentialsLogin();
               cy.contentTypeAttributesController(CONTENT_TYPE.code)
                 .then(controller => controller.addAttribute({
                   type: contentTypeAttribute.type,
@@ -300,7 +300,7 @@ describe('Content Type Attributes', () => {
           describe('Custom range validation', () => {
 
             before(() => {
-              cy.kcAPILogin();
+              cy.kcClientCredentialsLogin();
               cy.contentTypeAttributesController(CONTENT_TYPE.code)
                 .then(controller => controller.addAttribute({
                   type: contentTypeAttribute.type,
@@ -344,7 +344,7 @@ describe('Content Type Attributes', () => {
       describe('Nest in a composite attribute', () => {
 
         before(() => {
-          cy.kcAPILogin();
+          cy.kcClientCredentialsLogin();
           cy.contentTypeAttributesController(CONTENT_TYPE.code)
             .then(controller => controller.addAttribute({
               ...DEFAULT_COMPOSITE_ATTRIBUTE,
@@ -830,7 +830,7 @@ describe('Content Type Attributes', () => {
   };
 
   const deleteAttribute = (contentTypeAttribute) => {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
     cy.contentTypeAttributesController(CONTENT_TYPE.code)
       .then(controller => controller.deleteAttribute(contentTypeAttribute.type));
   };

@@ -8,8 +8,8 @@ describe('File browser', () => {
   beforeEach(() => {
     cy.wrap([]).as('filesToBeDeleted');
     cy.wrap([]).as('foldersToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
@@ -19,7 +19,7 @@ describe('File browser', () => {
     cy.get('@foldersToBeDeleted')
       .then(folders => folders.forEach(folder =>
           cy.fileBrowserController().then(controller => controller.deleteFolder(folder))));
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   describe('Structure', () => {

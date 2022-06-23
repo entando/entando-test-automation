@@ -48,7 +48,7 @@ Cypress.Commands.add('addToReport', (context) => {
   cy.once('test:after:run', (test, runnable) => addContext({test}, context(test, runnable)));
 });
 
-Cypress.Commands.add('kcAPILogin', () => {
+Cypress.Commands.add('kcClientCredentialsLogin', () => {
   Cypress.log({name: 'Login via client credentials'});
   const authBaseUrl   = Cypress.env('auth_base_url');
   const realm         = Cypress.env('auth_realm');
@@ -67,8 +67,12 @@ Cypress.Commands.add('kcAPILogin', () => {
   }).its('body').as('tokens');
 });
 
-Cypress.Commands.add('kcUILogin', user => {
+Cypress.Commands.add('kcAuthorizationCodeLogin', (user) => {
   performAuthorizationCodeLogin(user).its('body').as('UITokens');
+});
+
+Cypress.Commands.add('kcAuthorizationCodeLoginAndOpenDashboard', user => {
+  cy.kcAuthorizationCodeLogin(user);
   cy.visit('/');
   cy.wrap(new HomePage())
     .then(page => {
@@ -151,7 +155,7 @@ Cypress.Commands.add('kcLogout', () => {
   });
 });
 
-Cypress.Commands.add('kcUILogout', () => {
+Cypress.Commands.add('kcTokenLogout', () => {
   Cypress.log({name: 'Logout'});
   const authBaseUrl = Cypress.env('auth_base_url');
   const realm       = Cypress.env('auth_realm');

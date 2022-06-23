@@ -6,15 +6,15 @@ describe('Contents', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('contentToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
     cy.get('@contentToBeDeleted').then(contentCode => {
       if (contentCode) cy.contentsController().then(controller => controller.deleteContent(contentCode));
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
 
