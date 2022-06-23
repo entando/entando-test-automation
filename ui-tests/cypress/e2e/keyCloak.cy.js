@@ -10,17 +10,17 @@ describe([Tag.SMOKE], 'Keycloack', () => {
   const pathName = `/${authBaseUrl[3]}/realms/${realm}/protocol/openid-connect/auth`;
 
   it('Login via API client_credentials', () => {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
   });
 
   it('Login/Logout via API authorization_code', () => {
-    cy.kcUILogin('login/admin');
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
     cy.location().should((location) => {
       expect(location.origin).to.eq(Cypress.config('baseUrl'));
       expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
     });
 
-    cy.kcUILogout();
+    cy.kcTokenLogout();
 
     cy.visit('/');
     cy.location().should((location) => {

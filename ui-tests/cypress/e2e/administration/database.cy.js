@@ -4,15 +4,15 @@ describe('Database', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('backupToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
     cy.get('@backupToBeDeleted').then(backup => {
       if (backup) cy.databaseController().then(controller => controller.deleteBackup(backup.code));
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   it([Tag.SMOKE, 'ENG-3239'], 'Database section', () => {

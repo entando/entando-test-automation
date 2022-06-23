@@ -3,12 +3,12 @@ import {htmlElements} from '../../support/pageObjects/WebElement';
 describe('Reload configuration', () => {
 
   beforeEach(() => {
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
     cy.get('@currentPage').then(page => page.getMenu().getAdministration().open().openReloadConfiguration());
   });
 
-  afterEach(() => cy.kcUILogout());
+  afterEach(() => cy.kcTokenLogout());
 
   it([Tag.SMOKE, 'ENG-3296'], 'Reload configuration page structure', () => {
     cy.validateUrlPathname('/reloadConfiguration');

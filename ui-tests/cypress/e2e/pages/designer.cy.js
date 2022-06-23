@@ -7,7 +7,7 @@ import sampleContentTemplate from '../../fixtures/data/sampleContentTemplate.jso
 describe('Pages Designer', () => {
 
   before(() => {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
     cy.fixture('data/demoPage.json').then(page => {
       page.code      = generateRandomId();
       page.pageModel = '1-2-column';
@@ -22,8 +22,8 @@ describe('Pages Designer', () => {
     cy.wrap(null).as('widgetToBeReverted');
     cy.wrap(null).as('templateToBeDeleted');
     cy.wrap([]).as('contentsToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(function () {
@@ -49,11 +49,11 @@ describe('Pages Designer', () => {
     cy.get('@templateToBeDeleted').then(template => {
       if (template) cy.contentTemplatesController().then(controller => controller.deleteContentTemplate(template));
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   after(function () {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
     cy.wrap(this.pageToBeDeleted).then(page =>
         cy.pagesController()
           .then(controller => controller.setPageStatus(page.code, 'draft')

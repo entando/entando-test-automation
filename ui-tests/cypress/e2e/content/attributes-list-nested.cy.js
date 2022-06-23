@@ -121,7 +121,7 @@ describe('Nested a in List Attribute', () => {
   };
 
   before(() => {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
     cy.contentTypesController()
       .then(controller => controller.addContentType(CONTENT_TYPE_WITH_LIST.code, CONTENT_TYPE_WITH_LIST.name));
   });
@@ -130,8 +130,8 @@ describe('Nested a in List Attribute', () => {
     cy.wrap(null).as('attributeToBeDeleted');
     cy.wrap(null).as('contentToBeDeleted');
 
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
@@ -149,11 +149,11 @@ describe('Nested a in List Attribute', () => {
       }
     });
 
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   after(() => {
-    cy.kcAPILogin();
+    cy.kcClientCredentialsLogin();
     //FIXME/TODO needed as autosave might create unwanted contents
     cy.contentsController()
       .then(controller => controller.getContentList()).then(response =>

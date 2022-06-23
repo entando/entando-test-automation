@@ -5,12 +5,12 @@ import {htmlElements} from '../../support/pageObjects/WebElement';
 describe('Users Management', () => {
 
   beforeEach(() => {
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   const PROFILE_TYPE_CODE = 'PFL';

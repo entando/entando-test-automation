@@ -13,15 +13,15 @@ describe('Groups', () => {
         cy.wrap(groupName.toLowerCase()).as('groupCode');
       });
 
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
     cy.get('@groupToBeDeleted').then(groupCode => {
       if(groupCode) cy.groupsController().then(controller => controller.deleteGroup(groupCode));
     })
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   it([Tag.GTS, 'ENG-2530'], 'Add a new group', function () {

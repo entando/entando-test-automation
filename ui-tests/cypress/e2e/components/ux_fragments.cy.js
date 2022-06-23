@@ -6,11 +6,11 @@ import {htmlElements} from '../../support/pageObjects/WebElement';
 describe('UX Fragments', () => {
 
   beforeEach(() => {
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
-  afterEach(() => cy.kcUILogout());
+  afterEach(() => cy.kcTokenLogout());
 
   describe('Page structure', () => {
 
@@ -40,7 +40,7 @@ describe('UX Fragments', () => {
     describe('Existing fragment', () => {
 
       before(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
         generateRandomFragment().then(fragment =>
             cy.fragmentsController()
               .then(controller => controller.addFragment(fragment))
@@ -48,7 +48,7 @@ describe('UX Fragments', () => {
       });
 
       after(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragmentToBeDeleted =>
             cy.fragmentsController().then(controller => controller.deleteFragment(fragmentToBeDeleted.code)));
       });
@@ -365,7 +365,7 @@ describe('UX Fragments', () => {
     describe('Existing fragment', () => {
 
       before(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
         generateRandomFragment().then(fragment =>
             cy.fragmentsController()
               .then(controller => controller.addFragment(fragment))
@@ -373,7 +373,7 @@ describe('UX Fragments', () => {
       });
 
       after(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragmentToBeDeleted =>
             cy.fragmentsController().then(controller => controller.deleteFragment(fragmentToBeDeleted.code)));
       });
@@ -579,7 +579,7 @@ describe('UX Fragments', () => {
     describe('Existing fragment', () => {
 
       before(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
         generateRandomFragment().then(fragment =>
             cy.fragmentsController()
               .then(controller => controller.addFragment(fragment))
@@ -587,7 +587,7 @@ describe('UX Fragments', () => {
       });
 
       after(() => {
-        cy.kcAPILogin();
+        cy.kcClientCredentialsLogin();
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragmentToBeDeleted =>
             cy.fragmentsController().then(controller => controller.deleteFragment(fragmentToBeDeleted.code)));
       });

@@ -1,11 +1,11 @@
 describe( 'Content Versioning', () => {
 
   beforeEach(() => {
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
-  afterEach(() => cy.kcUILogout());
+  afterEach(() => cy.kcTokenLogout());
 
   describe('Content Version Browsing', () => {
     it('ENG-2680', 'Pagination check when there are no results', () => {

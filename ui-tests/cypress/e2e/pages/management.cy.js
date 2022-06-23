@@ -7,8 +7,8 @@ describe('Page Management', () => {
 
   beforeEach(() => {
     cy.wrap([]).as('pagesToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
@@ -17,7 +17,7 @@ describe('Page Management', () => {
           controller.setPageStatus(page, 'draft');
           controller.deletePage(page);
         })));
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   describe('UI', () => {
@@ -536,8 +536,8 @@ describe('Page Management', () => {
                     controller.addAuthorities(userJSON.username, group.code, 'approver');
                   }));
             });
-            cy.kcLogout();
-            cy.kcUILogin('login/user');
+            cy.kcTokenLogout();
+            cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
           });
 
           afterEach(() => {

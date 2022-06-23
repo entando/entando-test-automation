@@ -9,15 +9,15 @@ describe('Categories', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('categoryToBeDeleted');
-    cy.kcAPILogin();
-    cy.kcUILogin('login/admin');
+    cy.kcClientCredentialsLogin();
+    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
   });
 
   afterEach(() => {
     cy.get('@categoryToBeDeleted').then(categoryCode => {
       if (categoryCode) deleteTestCategory(categoryCode);
     });
-    cy.kcUILogout();
+    cy.kcTokenLogout();
   });
 
   it([Tag.GTS, 'ENG-2527'], 'Create a category should be possible', () => {
