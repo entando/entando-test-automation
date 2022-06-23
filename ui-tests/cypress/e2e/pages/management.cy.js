@@ -2,6 +2,7 @@ import {generateRandomId} from '../../support/utils';
 
 import {htmlElements}   from '../../support/pageObjects/WebElement';
 import defaultTemplates from '../../fixtures/data/defaultTemplates.json';
+import HomePage         from '../../support/pageObjects/HomePage';
 
 describe('Page Management', () => {
 
@@ -453,7 +454,7 @@ describe('Page Management', () => {
               page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.i}.fa`).eq(2)
                   .should('have.class', 'fa-folder-o').and('not.have.class', 'fa-folder');
             });
-        }
+        };
 
       });
 
@@ -527,25 +528,36 @@ describe('Page Management', () => {
         describe('Non admin user', () => {
 
           beforeEach(() => {
+            cy.kcTokenLogout();
             cy.wrap({code: generateRandomId(), name: generateRandomId()}).as('groupToBeDeleted').then(group => {
               cy.groupsController().then(controller => controller.addGroup(group.code, group.name));
-              cy.fixture(`users/details/user`).then(userJSON =>
-                  cy.usersController().then(controller => {
-                    controller.addUser(userJSON);
-                    controller.updateUser(userJSON);
-                    controller.addAuthorities(userJSON.username, group.code, 'approver');
-                  }));
+              cy.fixture('users/details/user').then(userJSON => {
+                cy.usersController().then(controller => {
+                  controller.addUser(userJSON);
+                  controller.updateUser(userJSON);
+                  controller.addAuthorities(userJSON.username, group.code, 'approver');
+                });
+                cy.kcAuthorizationCodeLogin('login/user');
+                cy.userPreferencesController().then(controller => {
+                  // FIXME the userPreferences are not immediately available after user creation, but are immediately created on GET
+                  controller.getUserPreferences(userJSON.username);
+                  controller.updateUserPreferences(userJSON.username, {wizard: false});
+                });
+              });
             });
-            cy.kcTokenLogout();
-            cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
+            cy.visit('/').then(() => HomePage.openPage());
+            cy.wrap(new HomePage()).as('currentPage');
           });
 
           afterEach(() => {
-            cy.fixture(`users/details/user`).then(userJSON =>
-                cy.usersController().then(controller => {
-                  controller.deleteAuthorities(userJSON.username);
-                  controller.deleteUser(userJSON.username);
-                }));
+            cy.fixture('users/details/user').then(userJSON => {
+              //FIXME deleted user, when re-created, retain user preferences
+              cy.userPreferencesController().then(controller => controller.resetUserPreferences(userJSON.username));
+              cy.usersController().then(controller => {
+                controller.deleteAuthorities(userJSON.username);
+                controller.deleteUser(userJSON.username);
+              });
+            });
             cy.get('@groupToBeDeleted').then(group => cy.groupsController().then(controller => controller.deleteGroup(group.code)));
           });
 

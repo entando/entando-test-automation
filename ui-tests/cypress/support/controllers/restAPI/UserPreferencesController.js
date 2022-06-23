@@ -23,6 +23,13 @@ export default class UserPreferencesController extends AbstractController {
     wizard: true
   };
 
+  getUserPreferences(username) {
+    return this.request({
+      url: `${this.apiURL}/${username}`,
+      method: 'GET',
+    });
+  }
+
   updateUserPreferences(username, options) {
     return this.request({
       url: `${this.apiURL}/${username}`,
@@ -32,11 +39,7 @@ export default class UserPreferencesController extends AbstractController {
   }
 
   resetUserPreferences(username) {
-    return this.request({
-      url: `${this.apiURL}/${username}`,
-      method: 'PUT',
-      body: this.defaultOptions
-    });
+    return this.updateUserPreferences(username, this.defaultOptions);
   }
 
 }

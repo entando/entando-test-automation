@@ -226,7 +226,7 @@ describe('Users Management', () => {
     it([Tag.GTS, 'ENG-2522'], 'Users management page - to not have "User without a profile" filter', () => {
       openManagementPage()
         .then(page => {
-          cy.validateUrlPathname(`/user`);
+          cy.validateUrlPathname('/user');
           page.getContent().getSearchForm().contains('User without a profile')
               .should('have.length', 0);
         });

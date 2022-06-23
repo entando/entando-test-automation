@@ -1,4 +1,5 @@
 import {generateRandomId} from '../../support/utils';
+import HomePage           from '../../support/pageObjects/HomePage';
 
 describe('My Profile', () => {
 
@@ -62,22 +63,29 @@ describe('My Profile', () => {
   describe('Actions', () => {
 
     beforeEach(() => {
-      cy.fixture(`users/details/user`).then(user => {
+      cy.fixture('users/details/user').then(user => {
         cy.usersController().then(controller => {
           controller.addUser(user).then(() => cy.wrap(user).as('userToBeDeleted'));
           controller.updateUser(user);
           controller.addAuthorities(user.username, 'administrators', 'admin');
         });
+        cy.kcAuthorizationCodeLogin('login/user');
+        cy.userPreferencesController().then(controller => {
+          // FIXME the userPreferences are not immediately available after user creation, but are immediately created on GET
+          controller.getUserPreferences(user.username);
+          controller.updateUserPreferences(user.username, {wizard: false});
+        });
       });
-      cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
-      cy.get('@currentPage').then(page => page.getNavbar().openUserMenu().openProfile());
+      cy.visit('/').then(() => HomePage.openPage());
+      cy.wrap(new HomePage()).as('currentPage')
+        .then(page => page.getNavbar().openUserMenu().openProfile());
     });
 
     afterEach(() => {
       cy.get('@userToBeDeleted').then(userToBeDeleted => {
         //FIXME deleted user, when re-created, retain user preferences
         cy.userPreferencesController().then(controller => controller.resetUserPreferences(userToBeDeleted.username));
-        cy.usersController().then(controller => controller.deleteUser(userToBeDeleted.username))
+        cy.usersController().then(controller => controller.deleteUser(userToBeDeleted.username));
       });
     });
 

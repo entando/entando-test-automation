@@ -15,18 +15,30 @@ describe('Page visibility in Portal UI', () => {
     cy.kcClientCredentialsLogin();
     TEST_GROUPS.filter(group => (group !== 'administrators' && group !== 'free')).forEach(group =>
         cy.groupsController().then(controller => controller.addGroup(group, group)));
-    cy.fixture(`users/details/user`).then(user =>
-        cy.usersController().then(controller => {
-          controller.addUser(user);
-          controller.updateUser(user);
-        })
-    );
+    cy.fixture('users/details/user').then(user => {
+      cy.usersController().then(controller => {
+        controller.addUser(user);
+        controller.updateUser(user);
+      });
+      cy.kcAuthorizationCodeLogin('login/user');
+      cy.userPreferencesController().then(controller => {
+        // FIXME the userPreferences are not immediately available after user creation, but are immediately created on GET
+        controller.getUserPreferences(user.username);
+        controller.updateUserPreferences(user.username, {wizard: false});
+      });
+      cy.kcTokenLogout();
+    });
   });
 
   after(() => {
+    cy.kcAuthorizationCodeLogin('login/user');
+    //FIXME deleted user, when re-created, retain user preferences
+    cy.fixture('users/details/user').then(user =>
+        cy.userPreferencesController().then(controller => controller.resetUserPreferences(user.username)));
+    cy.kcTokenLogout();
     cy.kcClientCredentialsLogin();
-    cy.fixture(`users/details/user`).then(user =>
-        cy.usersController().then(controller => controller.deleteUser(user.username)));
+    cy.fixture('users/details/user')
+      .then(user => cy.usersController().then(controller => controller.deleteUser(user.username)));
     TEST_GROUPS.filter(group => (group !== 'administrators' && group !== 'free')).forEach(group =>
         cy.groupsController().then(controller => controller.deleteGroup(group)));
   });
@@ -37,14 +49,14 @@ describe('Page visibility in Portal UI', () => {
 
       before(() => {
         cy.kcClientCredentialsLogin();
-        cy.fixture(`users/details/user`).then(user =>
+        cy.fixture('users/details/user').then(user =>
             cy.usersController().then(controller =>
                 controller.addAuthorities(user.username, groupPermission, 'admin')));
       });
 
       after(() => {
         cy.kcClientCredentialsLogin();
-        cy.fixture(`users/details/user`).then(user =>
+        cy.fixture('users/details/user').then(user =>
             cy.usersController().then(controller =>
                 controller.deleteAuthorities(user.username)));
       });

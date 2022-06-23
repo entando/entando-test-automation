@@ -46,10 +46,10 @@ describe([Tag.SMOKE], 'Keycloack', () => {
     });
 
     cy.wrap(new HomePage())
-        .then(page => {
-          page.closeAppTour();
-          page.getNavbar().openUserMenu().logout();
-        });
+      .then(page => {
+        HomePage.openPage();
+        page.getNavbar().openUserMenu().logout();
+      });
     cy.location().should((location) => {
       expect(location.origin).to.eq(origin);
       expect(location.pathname).to.eq(pathName);
