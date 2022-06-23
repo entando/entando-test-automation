@@ -314,7 +314,7 @@ describe('Pages Designer', () => {
                   // FIXME/TODO when coming from adminConsole not all the page loading API calls are performed
                 .then(page => page.getMenu().getPages().open().openDesigner(true))
                 .then(page => {
-                  page.closeAppTour();
+                  cy.wait(1500);
                   page.getContent().clickSidebarTab(1);
                 })
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
@@ -375,7 +375,7 @@ describe('Pages Designer', () => {
                   // FIXME/TODO when coming from adminConsole not all the page loading API calls are performed
                 .then(page => page.getMenu().getPages().open().openDesigner(true))
                 .then(page => {
-                  page.closeAppTour();
+                  cy.wait(1500);
                   page.getContent().clickSidebarTab(1);
                 })
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))

@@ -1,6 +1,7 @@
 import {generateRandomId} from '../../support/utils';
 
 import {htmlElements} from '../../support/pageObjects/WebElement';
+import HomePage       from '../../support/pageObjects/HomePage';
 
 describe('Microfrontends and Widgets', () => {
 
@@ -283,18 +284,33 @@ describe('Microfrontends and Widgets', () => {
         cy.rolesController()
           .then(controller => controller.addRole(role))
           .then(() => cy.wrap(role).as('roleToBeDeleted'));
-        cy.fixture(`users/details/user`).then(user =>
-            cy.usersController().then(controller => {
-              controller.addUser(user).then(() => cy.wrap(user).as('userToBeDeleted'));
-              controller.updateUser(user);
-              controller.addAuthorities(user.username, 'administrators', role.code);
-            }));
+        cy.fixture('users/details/user').then(user => {
+          cy.usersController().then(controller => {
+            controller.addUser(user);
+            controller.updateUser(user);
+            controller.addAuthorities(user.username, 'administrators', role.code);
+          });
+          cy.kcAuthorizationCodeLogin('login/user');
+          cy.userPreferencesController().then(controller => {
+            // FIXME the userPreferences are not immediately available after user creation, but are immediately created on GET
+            controller.getUserPreferences(user.username);
+            controller.updateUserPreferences(user.username, {wizard: false});
+          });
+        });
       });
-      cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
+      cy.visit('/').then(() => HomePage.openPage());
+      cy.wrap(new HomePage()).as('currentPage');
     });
 
     afterEach(() => {
-      cy.get('@userToBeDeleted').then(userToBeDeleted => cy.usersController().then(controller => controller.deleteUser(userToBeDeleted.username)));
+      cy.fixture('users/details/user').then(user => {
+        //FIXME deleted user, when re-created, retain user preferences
+        cy.userPreferencesController().then(controller => controller.resetUserPreferences(user.username));
+        cy.usersController().then(controller => {
+          controller.deleteAuthorities(user.username);
+          controller.deleteUser(user.username);
+        });
+      });
       cy.get('@roleToBeDeleted').then(roleToBeDeleted => cy.rolesController().then(controller => controller.deleteRole(roleToBeDeleted.code)));
       cy.kcTokenLogout();
     });

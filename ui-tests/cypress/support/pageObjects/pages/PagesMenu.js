@@ -43,7 +43,7 @@ export default class PagesMenu extends SubMenu {
   }
 
   openDesigner(blind = false) {
-    if(blind) this.getDesigner().click();
+    if (blind) this.getDesigner().click();
     else this.getDesigner().then(button => DesignerPage.openPage(button));
     return cy.wrap(new AppPage(DesignerPage)).as('currentPage');
   }

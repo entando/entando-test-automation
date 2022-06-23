@@ -73,12 +73,8 @@ Cypress.Commands.add('kcAuthorizationCodeLogin', (user) => {
 
 Cypress.Commands.add('kcAuthorizationCodeLoginAndOpenDashboard', user => {
   cy.kcAuthorizationCodeLogin(user);
-  cy.visit('/');
-  cy.wrap(new HomePage())
-    .then(page => {
-      page.closeAppTour();
-      return cy.then(() => page);
-    }).as('currentPage');
+  cy.visit('/').then(() => HomePage.openPage());
+  cy.wrap(new HomePage()).as('currentPage');
 });
 
 const performAuthorizationCodeLogin = (user) => {
