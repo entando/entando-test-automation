@@ -31,7 +31,7 @@ export default class CreateFolderPage extends FilesBrowserPage {
   }
 
   cancel() {
-    this.getCancelButton().then(button => BrowserPage.openPage(button));
+    this.getCancelButton().click();
     return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 

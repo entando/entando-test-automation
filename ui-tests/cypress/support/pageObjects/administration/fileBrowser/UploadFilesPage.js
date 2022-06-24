@@ -40,7 +40,7 @@ export default class UploadFilesPage extends FilesBrowserPage {
   }
 
   cancelUpload() {
-    this.getCancelButton().then(button => BrowserPage.openPage(button));
+    this.getCancelButton().click();
     return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
