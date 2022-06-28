@@ -59,14 +59,14 @@ describe('Contents', () => {
 
   });
 
-  describe.only('Operations on unPublished content', () => {
+  describe('Operations on unPublished content', () => {
     beforeEach(() =>
         cy.fixture('data/testContent.json').then(testContent => {
           testContent.description = generateRandomId();
           addTestContent(testContent).as('contentToBeDeleted');
         }));
 
-    it.only([Tag.GTS, 'ENG-2487'], 'Edit content', () => {
+    it([Tag.GTS, 'ENG-2487'], 'Edit content', () => {
       openContentMgmtPage()
           .then(page => {
             cy.get('@contentToBeDeleted').then(content => {
