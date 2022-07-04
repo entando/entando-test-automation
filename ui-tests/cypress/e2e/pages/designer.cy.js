@@ -1,6 +1,6 @@
 import {generateRandomId, generateRandomNumericId} from '../../support/utils';
 
-import {htmlElements}        from '../../support/pageObjects/WebElement';
+import {htmlElements} from '../../support/pageObjects/WebElement';
 
 import sampleContentTemplate from '../../fixtures/data/sampleContentTemplate.json';
 
@@ -13,6 +13,7 @@ describe('Pages Designer', () => {
       page.pageModel = '1-2-column';
       cy.seoPagesController().then(controller => controller.addNewPage(page));
       cy.wrap(page).as('pageToBeDeleted');
+      cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
     });
   });
 
@@ -27,14 +28,12 @@ describe('Pages Designer', () => {
   });
 
   afterEach(function () {
-    cy.wrap(this.pageToBeDeleted).then(page =>
-        cy.get('@widgetToBeRemovedFromPage')
-          .then(widget => {
-            if (widget) {
-              cy.pageWidgetsController(page.code).then(controller => controller.deleteWidget(widget));
-              cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
-            }
-          }));
+    cy.wrap(this.pageToBeDeleted).then(page => {
+      cy.get('@widgetToBeRemovedFromPage').then(widget => {
+        if (widget) cy.pageWidgetsController(page.code).then(controller => controller.deleteWidget(widget));
+      });
+      cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'));
+    });
     cy.get('@widgetToBeDeleted').then(widgetToBeDeleted => {
       if (widgetToBeDeleted) cy.widgetsController().then(controller => controller.deleteWidget(widgetToBeDeleted));
     });
@@ -61,6 +60,10 @@ describe('Pages Designer', () => {
   });
 
   describe('Change page status', () => {
+
+    beforeEach(function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'draft')))
+    });
 
     it([Tag.GTS, 'ENG-2244'], 'Publish a page', function () {
       cy.wrap(this.pageToBeDeleted).then(demoPage =>
