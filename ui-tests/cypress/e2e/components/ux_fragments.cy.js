@@ -632,6 +632,7 @@ describe('UX Fragments', () => {
             cy.wrap(Cypress.env('fragmentToBeDeleted')).then(originalFragment =>
                 openCloneFragmentPage(originalFragment.code)
                     .then(page => page.getContent().getCodeInput().then(input => page.getContent().type(input, fragment.code)))
+                    .then(page => page.getContent().getGuiCodeInput().then(input => page.getContent().clear(input)))
                     .then(page => page.getContent().openSaveMenu())
                     .then(page => page.getContent().getSaveOption().parent().should('have.class', 'disabled'))));
       });
