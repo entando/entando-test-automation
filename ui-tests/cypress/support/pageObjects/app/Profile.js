@@ -57,6 +57,16 @@ export default class Profile extends AppContent {
     cy.wait(['@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@myProfileTypePageLoadingGET', '@myUserProfilePageLoadingGET']);
   }
 
+  getContents() {
+    return this.get().children(`${htmlElements.div}.InternalPage`);
+  }
+
+  getTitle() {
+    return this.getContents()
+               .children(htmlElements.div).eq(0)
+               .find(htmlElements.h1);
+  }
+
   getTabContent() {
     return this.getContents().find(this.tabContent);
   }

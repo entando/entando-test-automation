@@ -2,59 +2,56 @@ import {htmlElements, WebElement} from '../WebElement.js';
 
 export default class AppTour extends WebElement {
 
-  tourFrame           = `${htmlElements.div}#___reactour`;
-  tourContainer       = `${htmlElements.div}.TourStart`;
-  #footer             = `${htmlElements.div}.TourStart__footer`;
-  closeButton         = `${htmlElements.button}.TourStart__cancel-button`;
-  startButton         = `${htmlElements.button}.TourStart__start-button`;
-  cancelCloseButton   = `${htmlElements.button}.TourStart__no-button`;
-  cancelConfirmButton = `${htmlElements.button}.TourStart__yes-button`;
-
   get() {
-    return cy.get(this.tourFrame);
+    return this.parent.get()
+               .children(htmlElements.body)
+               .children(`${htmlElements.div}#___reactour`);
   }
 
   getTourContainer() {
     return this.get()
-               .find(this.tourContainer);
+               .find(`${htmlElements.div}.TourStart`);
   }
 
   getFooter() {
     return this.getTourContainer()
-               .children(this.#footer);
-  }
-
-  getCloseButton() {
-    return this.getFooter()
-               .children(this.closeButton);
+               .children(`${htmlElements.div}.TourStart__footer`);
   }
 
   getStartButton() {
     return this.getFooter()
-               .children(this.startButton);
+               .children(`${htmlElements.button}.TourStart__start-button`);
+  }
+
+  getCloseButton() {
+    return this.getFooter()
+               .children(`${htmlElements.button}.TourStart__cancel-button`);
   }
 
   getCancelCloseButton() {
     return this.getFooter()
-               .children(this.cancelCloseButton);
+               .children(`${htmlElements.button}.TourStart__no-button`);
   }
 
   getConfirmCloseButton() {
     return this.getFooter()
-               .children(this.cancelConfirmButton);
+               .children(`${htmlElements.button}.TourStart__yes-button`);
   }
 
   close() {
     this.getCloseButton().click();
+    return cy.get('@currentPage');
   }
 
   confirmClose() {
     this.getConfirmCloseButton().click();
+    return cy.get('@currentPage');
   }
 
   closeAndConfirm() {
     this.close();
     this.confirmClose();
+    return cy.get('@currentPage');
   }
 
 }

@@ -52,8 +52,7 @@ export default class AddPage extends AdminContent {
   }
 
   getContents() {
-    return this.get()
-               .children(`${htmlElements.div}#main`);
+    return super.getContents().children(`${htmlElements.div}#main`);
   }
 
   getForm() {

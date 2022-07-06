@@ -37,11 +37,12 @@ export default class DeleteAdminPage extends AdminContent {
 
   getForm() {
     return this.getContents()
+               .children(`${htmlElements.div}.text-center`)
                .children(this.form);
   }
 
-  setForm(newForm) {
-    this.form = `${htmlElements.form}[id="${newForm}"]`;
+  setForm(formID) {
+    this.form = `${htmlElements.form}#${formID}`;
   }
 
   getCloseButton() {

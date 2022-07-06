@@ -21,7 +21,7 @@ export default class HomePage extends AppPage {
     cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'usersPageLoadingGET', '?page=1&pageSize=1'));
     cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?page=1&pageSize=1'));
     cy.wait(['@contentsPageLoadingGET', '@contentTypesPageLoadingGET', '@groupsPageLoadingGET', '@languagesPageLoadingGET', '@pageTemplatesPageLoadingGET', '@pageSearchPageLoadingGET', '@contentsStatusPageLoadingGET', '@usersPageLoadingGET', '@widgetsPageLoadingGET']);*/
-    cy.wait(1500);
+    cy.wait(3000);
   }
 
 }

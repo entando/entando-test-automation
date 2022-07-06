@@ -9,7 +9,6 @@ export default class AdminPage extends AbstractPage {
 
   toastList = `${htmlElements.div}.toast-notifications-list-pf`;
 
-
   constructor(content) {
     super();
     this.menus   = new AdminMenus(this);
@@ -18,19 +17,7 @@ export default class AdminPage extends AbstractPage {
   }
 
   get() {
-    return this.parent.get()
-               .children(htmlElements.body);
-  }
-  getDialog() {
-    return this.dialog;
-  }
-
-  getNavbar() {
-    return this.menus.getNavbar();
-  }
-
-  getMenu() {
-    return this.menus.getMenu();
+    return this.parent.get().children(htmlElements.body);
   }
 
   getToastList() {

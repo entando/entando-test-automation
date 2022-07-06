@@ -9,7 +9,6 @@ import BrowserPage   from '../../administration/fileBrowser/BrowserPage';
 
 export default class MFEWidgetsPage extends AppContent {
 
-  maincontent = `${htmlElements.div}.container-fluid`;
   rowlayout   = `${htmlElements.div}.row`;
 
   static openPage(button) {
@@ -18,11 +17,6 @@ export default class MFEWidgetsPage extends AppContent {
     cy.wait('@MFEAndWidgetsPageLoadingGET');
     // FIXME/TODO a call to /system/report keeps getting fired detaching the elements from the page
     cy.wait(1000);
-  }
-
-  getContents() {
-    return this.get()
-               .children(this.maincontent);
   }
 
   getListArea() {

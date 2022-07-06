@@ -7,11 +7,6 @@ import {Dialog} from './Dialog';
 
 export default class AppPage extends AbstractPage {
 
-
-  root      = `${htmlElements.div}#root`;
-  page      = `${htmlElements.div}.InternalPage`;
-  toastList = `${htmlElements.div}.toast-notifications-list-pf`;
-
   constructor(content) {
     super();
     this.menus   = new AppMenus(this);
@@ -22,26 +17,13 @@ export default class AppPage extends AbstractPage {
   get() {
     return this.parent.get()
                .children(htmlElements.body)
-               .children(this.root)
-               .children(this.page);
-  }
-  getDialog() {
-    return this.dialog;
-  }
-
-  getNavbar() {
-    return this.menus.getNavbar();
-  }
-
-  getMenu() {
-    return this.menus.getMenu();
+               .children(`${htmlElements.div}#root`)
+               .children(htmlElements.div)
+               .children(`${htmlElements.div}.layout-pf-fixed`);
   }
 
   getToastList() {
-    return this.parent.get()
-               .children(htmlElements.body)
-               .children(this.root)
-               .children(this.toastList);
+    return this.getContent().get().children(`${htmlElements.div}.toast-notifications-list-pf`);
   }
 
 }

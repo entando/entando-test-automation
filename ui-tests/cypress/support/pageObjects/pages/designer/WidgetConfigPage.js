@@ -7,23 +7,30 @@ import AppPage      from '../../app/AppPage';
 
 export default class WidgetConfigPage extends AppContent {
 
-  panel      = `${htmlElements.div}.PageConfigPage__panel-body`;
-  saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
-
-  getMainContainer() {
-    return this.get()
-               .children(htmlElements.div)
-               .children(htmlElements.div).eq(5);
+  getContents() {
+    return this.get().children(`${htmlElements.div}.InternalPage`);
   }
 
-  getInnerPanel() {
-    return this.getMainContainer()
-               .find(this.panel);
+  getContentsHeader() {
+    return this.getContents().children(`${htmlElements.div}.WidgetConfigPage__header`);
   }
 
   getSaveButton() {
-    return this.getInnerPanel()
-               .find(this.saveButton);
+    return this.getContentsHeader().find(`${htmlElements.button}.AddContentTypeFormBody__save--btn`);
+  }
+
+  getContentsBody() {
+    return this.getContents()
+               .children(`${htmlElements.div}.WidgetConfigPage__body`)
+               .children(`${htmlElements.div}.container-fluid`);
+  }
+
+  getMainContainer() {
+    return this.getContentsBody().children(htmlElements.div).eq(3);
+  }
+
+  getInnerPanel() {
+    return this.getMainContainer().find(`${htmlElements.div}.PageConfigPage__panel-body`);
   }
 
   setDialogBodyWithClass(component) {

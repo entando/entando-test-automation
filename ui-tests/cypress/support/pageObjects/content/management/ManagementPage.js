@@ -36,8 +36,7 @@ export default class ManagementPage extends AdminContent {
   }
 
   getContents() {
-    return this.get()
-               .children(`${htmlElements.div}#main`);
+    return super.getContents().children(`${htmlElements.div}#main`);
   }
 
   getSearchForm() {
@@ -87,7 +86,7 @@ export default class ManagementPage extends AdminContent {
   }
 
   getDelete() {
-    return this.get()
+    return this.getContents()
                .find(`${htmlElements.button}.btn-danger`);
   }
 
@@ -98,7 +97,7 @@ export default class ManagementPage extends AdminContent {
   }
 
   getUnPublish() {
-    return this.get()
+    return this.getContents()
                .find(`${htmlElements.button}[title="Suspend the content"]`);
   }
 
