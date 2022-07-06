@@ -93,7 +93,7 @@ describe('Content Templates', () => {
       .then(page => page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).eq(4).should('contain.text', sampleContentTemplate.descr));
   });
 
-  it([Tag.GTS, 'ENG-2494'], 'Check pagination for zero results if info displayed is correct (ENG-2680)', () => {
+  it([Tag.GTS, 'ENG-2494', 'ENG-2680'], 'Check pagination for zero results if info displayed is correct', () => {
     openContentTemplatesPage()
       .then(page => page.getContent().getSearchInput().then(input => page.getContent().type(input, 'z')))
       .then(page => page.getContent().clickSearch())
