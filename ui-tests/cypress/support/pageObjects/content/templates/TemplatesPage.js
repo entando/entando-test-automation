@@ -23,7 +23,7 @@ export default class TemplatesPage extends AdminContent {
   }
 
   getMain() {
-    return this.get()
+    return this.getContents()
                .children(this.main);
   }
 
@@ -49,7 +49,7 @@ export default class TemplatesPage extends AdminContent {
   }
 
   getTable() {
-    return this.get()
+    return this.getContents()
                .find(htmlElements.table);
   }
 
@@ -70,7 +70,7 @@ export default class TemplatesPage extends AdminContent {
   }
 
   getFootArea() {
-    return this.get()
+    return this.getContents()
                .find(this.filterRow).eq(1);
   }
 
@@ -79,7 +79,7 @@ export default class TemplatesPage extends AdminContent {
   }
 
   getAddButton() {
-    return this.get()
+    return this.getContents()
                .children(this.main)
                .find(this.addButton);
   }

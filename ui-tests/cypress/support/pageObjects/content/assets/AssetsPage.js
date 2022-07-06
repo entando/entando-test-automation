@@ -29,7 +29,7 @@ export default class AssetsPage extends AdminContent {
   }
 
   getAddButton() {
-    return this.get().find(this.addButton);
+    return this.getContents().find(this.addButton);
   }
 
   openAddAssets() {
@@ -38,7 +38,7 @@ export default class AssetsPage extends AdminContent {
   }
 
   getAssetsFilter() {
-    return this.get()
+    return this.getContents()
                .find(this.assetsFilter)
                .children(htmlElements.a);
   }
@@ -49,7 +49,7 @@ export default class AssetsPage extends AdminContent {
   }
 
   getCollapsePanel() {
-    return this.get().find(this.collapsePanel);
+    return this.getContents().find(this.collapsePanel);
   }
 
   getSearchTextfield() {
@@ -57,7 +57,7 @@ export default class AssetsPage extends AdminContent {
   }
 
   getSearchButton() {
-    return this.get().find(this.assetsFilterSearchButton);
+    return this.getContents().find(this.assetsFilterSearchButton);
   }
 
   submitSearch() {
@@ -70,7 +70,7 @@ export default class AssetsPage extends AdminContent {
   }
 
   getAssetsView() {
-    return this.get()
+    return this.getContents()
                .find(this.assetsView);
   }
 
@@ -80,7 +80,7 @@ export default class AssetsPage extends AdminContent {
   }
 
   getFilterResultInfo() {
-    return this.get().find(this.resultInfo);
+    return this.getContents().find(this.resultInfo);
   }
 
   getFilterResultItemCount() {

@@ -14,7 +14,6 @@ import DetailsPage                  from '../../components/mfeWidgets/DetailsPag
 export default class DesignerPage extends AppContent {
 
   // Structure
-  grid      = `${htmlElements.div}.container-fluid`;
   container = `${htmlElements.div}.row`;
   contents  = `${htmlElements.div}.PageConfigPage__main`;
   sidebar   = `${htmlElements.div}.PageConfigPage__side-widget`;
@@ -79,9 +78,7 @@ export default class DesignerPage extends AppContent {
   }
 
   getMainContainer() {
-    return this.get()
-               .children(this.grid)
-               .children(this.container);
+    return super.getContents().children(this.container);
   }
 
   getContents() {

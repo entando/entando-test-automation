@@ -13,13 +13,20 @@ export default class AbstractPage extends WebElement {
     return this.appTour;
   }
 
-  getContent() {
-    return this.content;
+  getDialog() {
+    return this.dialog;
   }
 
-  closeAppTour() {
-    this.getAppTour()
-        .closeAndConfirm();
+  getNavbar() {
+    return this.menus.getNavbar();
+  }
+
+  getMenu() {
+    return this.menus.getMenu();
+  }
+
+  getContent() {
+    return this.content;
   }
 
 }

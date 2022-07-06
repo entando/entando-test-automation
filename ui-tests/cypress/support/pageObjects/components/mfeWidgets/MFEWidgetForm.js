@@ -50,6 +50,11 @@ export default class MFEWidgetForm extends AppContent {
     this.cloneMode = mode;
   }
 
+  getContents() {
+    return this.get()
+               .children(`${htmlElements.div}.InternalPage`);
+  }
+
   getFormBody() {
     return this.getContents()
                .find('form');

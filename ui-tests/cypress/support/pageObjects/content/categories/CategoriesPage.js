@@ -17,6 +17,10 @@ export default class CategoriesPage extends AdminContent {
     cy.wait('@categoriesPageLoadingGET');
   }
 
+  getContents() {
+    return super.getContents().children(`${htmlElements.div}#main`);
+  }
+
   getCategoriesTree() {
     return this.getContents()
                .find(this.categoriesTree);
