@@ -64,7 +64,7 @@ describe('Page Templates', () => {
         });
     });
 
-    it([Tag.SMOKE, 'ENG-3525'], 'Add template page', () => {
+    it([Tag.SMOKE, 'ENG-3525', 'ENG-3918'], 'Add template page', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().openAddPage())
         .then(page => {
@@ -93,7 +93,7 @@ describe('Page Templates', () => {
         });
     });
 
-    it([Tag.SMOKE, Tag.FEATURE, 'ENG-3525'], 'Edit template page', () => {
+    it([Tag.SMOKE, Tag.FEATURE, 'ENG-3525', 'ENG-3918'], 'Edit template page', () => {
       addPageTemplate(sampleData);
 
       openPageTemplateMgmtPage()
@@ -118,7 +118,7 @@ describe('Page Templates', () => {
         });
     });
 
-    it([Tag.SMOKE, Tag.FEATURE, 'ENG-3525'], 'Clone template page', () => {
+    it([Tag.SMOKE, Tag.FEATURE, 'ENG-3525', 'ENG-3918'], 'Clone template page', () => {
       addPageTemplate(sampleData);
 
       openPageTemplateMgmtPage()
@@ -141,7 +141,7 @@ describe('Page Templates', () => {
         });
     });
 
-    it([Tag.SMOKE, 'ENG-3525'], 'Template details page', () => {
+    it([Tag.SMOKE, 'ENG-3525', 'ENG-3918'], 'Template details page', () => {
       addPageTemplate(sampleData);
 
       openPageTemplateMgmtPage()
@@ -157,7 +157,7 @@ describe('Page Templates', () => {
         });
     });
 
-    it([Tag.FEATURE, 'ENG-3525', 'ENG-3663'], 'Navigating to edit template page from details', () => {
+    it([Tag.FEATURE, 'ENG-3525', 'ENG-3663', 'ENG-3918'], 'Navigating to edit template page from details', () => {
       addPageTemplate(sampleData);
 
       openPageTemplateMgmtPage()

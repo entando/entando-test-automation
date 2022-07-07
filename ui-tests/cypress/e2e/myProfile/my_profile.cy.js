@@ -46,7 +46,7 @@ describe('My Profile', () => {
         });
     });
 
-    it([Tag.GTS, 'ENG-2026'], 'Preferences', () => {
+    it([Tag.GTS, 'ENG-2026', 'ENG-3918'], 'Preferences', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().selectTab('preferences'))
         .then(page => {
