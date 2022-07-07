@@ -201,7 +201,7 @@ describe('Page Management', () => {
               }));
       });
 
-      it([Tag.GTS, 'ENG-2278'], 'Adding a new page with existing code is forbidden', () => {
+      it([Tag.GTS, 'ENG-2278', 'ENG-3918'], 'Adding a new page with existing code is forbidden', () => {
         cy.fixture('data/demoPage.json').then(demoPage => {
           demoPage.code = generateRandomId();
           cy.seoPagesController().then(controller => controller.addNewPage(demoPage));

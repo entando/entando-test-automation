@@ -14,7 +14,7 @@ describe('UX Fragments', () => {
 
   describe('Page structure', () => {
 
-    it([Tag.SMOKE, 'ENG-3522'], 'UXFragments page is displayed', () => {
+    it([Tag.SMOKE, 'ENG-3522', 'ENG-3918'], 'UXFragments page is displayed', () => {
       openUXFragmentsPage()
           .then(page => {
             page.getContent().getTable().should('exist').and('be.visible');

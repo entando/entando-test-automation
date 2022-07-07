@@ -16,7 +16,7 @@ describe('SMTP Server Functionalities', () => {
     cy.kcTokenLogout();
   });
 
-  it([Tag.SMOKE, 'ENG-3298'], 'SMTP Current Configuration is displayed', () => {
+  it([Tag.SMOKE, 'ENG-3298', 'ENG-3918'], 'SMTP Current Configuration is displayed', () => {
     cy.get('@currentPage')
       .then(page => {
         page.getContent().getSMTPServerTab()

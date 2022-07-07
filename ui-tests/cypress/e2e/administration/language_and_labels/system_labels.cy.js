@@ -21,7 +21,7 @@ describe('Labels', () => {
 
   describe('Labels pages visualisation', () => {
 
-    it([Tag.SMOKE, 'ENG-3238'], 'Labels section', () => {
+    it([Tag.SMOKE, 'ENG-3238', 'ENG-3918'], 'Labels section', () => {
       cy.fixture('data/languages.json').then(languages => {
         const defaultLanguage = languages.en;
 
