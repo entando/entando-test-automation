@@ -3,7 +3,7 @@ describe('Page visibility in Portal UI', () => {
   const TEST_GROUPS = ['administrators', 'free', 'group1', 'group2'];
 
   const checkPermission = (permission = true) => {
-    cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
+    cy.kcAuthorizationCodeLogin('login/user');
     cy.fixture('data/demoPage.json').then(demoPage => {
       cy.visit(`/${demoPage.code}.page`, {portalUI: true});
       if (permission) cy.validateUrlPathname(`/${demoPage.code}.page`, {portalUI: true});
