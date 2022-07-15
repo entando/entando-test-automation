@@ -18,7 +18,6 @@ export default class AppPage extends AbstractPage {
     return this.parent.get()
                .children(htmlElements.body)
                .children(`${htmlElements.div}#root`)
-               .children(htmlElements.div)
                .children(`${htmlElements.div}.layout-pf-fixed`);
   }
 
