@@ -12,6 +12,11 @@ export default class AppPage extends AbstractPage {
     this.menus   = new AppMenus(this);
     this.content = new content(this);
     this.dialog  = new Dialog();
+    this.parent.get()
+        .children(htmlElements.body)
+        .children(`${htmlElements.div}#root`)
+        .children(`${htmlElements.div}.shell-preload`, {timeout: 180000})
+        .should('not.exist');
   }
 
   get() {
