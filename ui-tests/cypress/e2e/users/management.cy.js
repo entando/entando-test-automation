@@ -67,11 +67,11 @@ describe('Users Management', () => {
               .should('have.text', 'Username ');
           page.getContent().getPasswordInput()
               .should('be.visible');
-          page.getContent().getPasswordInput().parent().parent().parent().children(htmlElements.div).eq(0)
+          page.getContent().getPasswordInput().parent().parent().parent().children(htmlElements.div).eq(1)
               .should('have.text', 'Password ');
           page.getContent().getPasswordConfirmInput()
               .should('be.visible');
-          page.getContent().getPasswordConfirmInput().parent().parent().parent().children(htmlElements.div).eq(0)
+          page.getContent().getPasswordConfirmInput().parent().parent().parent().children(htmlElements.div).eq(2)
               .should('have.text', 'Confirm password ');
           page.getContent().getStatus()
               .should('be.visible');
@@ -106,19 +106,19 @@ describe('Users Management', () => {
           page.getContent().getUsernameInput()
               .should('be.visible')
               .and('be.disabled');
-          page.getContent().getUsernameInput().parent().parent().parent().children(htmlElements.div).eq(0)
+          page.getContent().getUsernameInput().parent().parent().parent().children(htmlElements.div)
               .should('have.text', 'Username ');
           page.getContent().getFullNameInput()
               .should('be.visible');
-          page.getContent().getFullNameInput().parent().parent().parent().children(htmlElements.div).eq(0)
+          page.getContent().getFullNameInput().parent().parent().parent().children(htmlElements.div).eq(3)
               .should('have.text', 'Full Name ');
           page.getContent().getEmailInput()
               .should('be.visible');
-          page.getContent().getEmailInput().parent().parent().parent().children(htmlElements.div).eq(0)
+          page.getContent().getEmailInput().parent().parent().parent().children(htmlElements.div).eq(4)
               .should('have.text', 'Email ');
           page.getContent().getProfilePictureInput()
               .should('be.visible');
-          page.getContent().getProfilePictureInput().parent().parent().parent().children(htmlElements.div).eq(0)
+          page.getContent().getProfilePictureInput().parent().parent().parent().children(htmlElements.div).eq(5)
               .should('have.text', 'Profile Picture ');
           page.getContent().getSaveButton()
               .should('be.visible')
@@ -223,7 +223,7 @@ describe('Users Management', () => {
         });
     });
 
-    it([Tag.GTS, 'ENG-2522'], 'Users management page - to not have "User without a profile" filter', () => {
+    xit([Tag.GTS, 'ENG-2522'], 'Users management page - to not have "User without a profile" filter', () => {
       openManagementPage()
         .then(page => {
           cy.validateUrlPathname('/user');
