@@ -4,6 +4,7 @@ import AppContent from '../../app/AppContent.js';
 
 import AppPage       from '../../app/AppPage';
 import FragmentsPage from './FragmentsPage';
+import UXFragmentsPage from './UXFragmentsPage.js';
 
 export default class DetailsPage extends AppContent {
 
@@ -45,6 +46,11 @@ export default class DetailsPage extends AppContent {
   openEdit(code) {
     this.getEditButton().then(button => FragmentsPage.openPage(button, `${code}`));
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
+  }
+
+  goToFragmentsViaBreadCrumb() {
+    this.getBreadCrumb().children(htmlElements.li).eq(1).then(button => UXFragmentsPage.openPage(button));
+    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
 }

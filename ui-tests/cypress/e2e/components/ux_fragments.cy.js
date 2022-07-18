@@ -329,7 +329,7 @@ describe('UX Fragments', () => {
           });
     });
 
-    it([Tag.FEATURE, 'ENG-3522'], 'Search with non-existing fragment code', () => {
+    it([Tag.FEATURE, 'ENG-3522', 'ENG-3974'], 'Search with non-existing fragment code', () => {
       openUXFragmentsPage()
           .then(page => page.getContent().getSearchCodeInput().then(input => page.getContent().type(input, generateRandomId())))
           .then(page => page.getContent().clickSearchSubmitButton())
@@ -340,7 +340,7 @@ describe('UX Fragments', () => {
           });
     });
 
-    it([Tag.FEATURE, 'ENG-3522', 'ENG-3662'], 'Search with non-existing filters pair', () => {
+    it([Tag.FEATURE, 'ENG-3522', 'ENG-3974'], 'Search with non-existing filters pair', () => {
       openUXFragmentsPage()
           .then(page => page.getContent().getWidgetFilter().then(select => page.getContent().select(select, 'Sitemap')))
           .then(page => page.getContent().getPluginFilter().then(select => page.getContent().select(select, 'jpseo')))
@@ -392,7 +392,7 @@ describe('UX Fragments', () => {
                 .then(() => cy.validateUrlPathname('/fragment')));
       });
 
-      it([Tag.FEATURE, 'ENG-3522'], 'BreadCrumb in details page', () => {
+      xit([Tag.FEATURE, 'ENG-3522'], 'BreadCrumb in details page', () => {
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragment =>
             openFragmentDetailsPage(fragment.code)
                 .then(page => page.getContent().goToFragmentsViaBreadCrumb())

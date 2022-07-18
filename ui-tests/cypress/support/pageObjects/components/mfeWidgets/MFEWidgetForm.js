@@ -36,10 +36,10 @@ export default class MFEWidgetForm extends AppContent {
     if (code) cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetPageLoadingGET', `/${code}`));
     else cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupPermissionsPageLoadingGET', '/myGroupPermissions'));
     cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupsPageLoadingGET', '/myGroups'));
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupsPageLoadingGET', '?page=1&pageSize=0'));
     cy.get(button).click();
-    if (code) cy.wait(['@widgetPageLoadingGET', '@languagesPageLoadingGET', '@myGroupsPageLoadingGET']);
-    else cy.wait(['@myGroupPermissionsPageLoadingGET', '@languagesPageLoadingGET', '@myGroupsPageLoadingGET']);
+    if (code) cy.wait(['@widgetPageLoadingGET', '@languagesPageLoadingGET', '@groupsPageLoadingGET']);
+    else cy.wait(['@languagesPageLoadingGET', '@groupsPageLoadingGET']);
   }
 
   get isCloneMode() {
@@ -51,8 +51,7 @@ export default class MFEWidgetForm extends AppContent {
   }
 
   getContents() {
-    return this.get()
-               .children(`${htmlElements.div}.InternalPage`);
+    return this.get();
   }
 
   getFormBody() {
