@@ -18,12 +18,14 @@ export default class AppPage extends AbstractPage {
     return this.parent.get()
                .children(htmlElements.body)
                .children(`${htmlElements.div}#root`)
-               .children(htmlElements.div)
                .children(`${htmlElements.div}.layout-pf-fixed`);
   }
 
   getToastList() {
-    return this.getContent().get().children(`${htmlElements.div}.toast-notifications-list-pf`);
+    return this.parent.get()
+               .children(htmlElements.body)
+               .children(`${htmlElements.div}#root`)
+               .children(`${htmlElements.div}.toast-notifications-list-pf`);
   }
 
 }

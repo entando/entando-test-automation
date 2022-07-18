@@ -410,17 +410,19 @@ describe('File browser', () => {
           .then(page => page.getContent().goToRootViaBreadCrumbs())
           .then(page => {
             cy.validateUrlPathname('/file-browser');
+            page.getContent().getFilesTable().should('exist');
             page.getContent().getBreadCrumbsFirstLevelFolder().should('not.exist');
           });
       });
 
-      it([Tag.FEATURE, 'ENG-3297', 'ENG-3376'], 'Navigating out of file upload page NOT to root using breadcrumb', () => {
+      it([Tag.FEATURE, 'ENG-3297', 'ENG-3972'], 'Navigating out of file upload page NOT to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openUploadFilesPage())
           .then(page => page.getContent().goToFirstLevelViaBreadCrumbs())
           .then(page => {
             cy.validateUrlPathname('/file-browser');
-            page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public');
+            page.getContent().getFilesTable().should('exist');
+            page.getContent().getBreadCrumbsFirstLevelFolder().should('exist').and('have.text', 'public');
           });
       });
 
@@ -430,16 +432,18 @@ describe('File browser', () => {
           .then(page => page.getContent().goToRootViaBreadCrumbs())
           .then(page => {
             cy.validateUrlPathname('/file-browser');
+            page.getContent().getFilesTable().should('exist');
             page.getContent().getBreadCrumbsFirstLevelFolder().should('not.exist');
           });
       });
 
-      it([Tag.FEATURE, 'ENG-3297', 'ENG-3376'], 'Navigating out of create folder page NOT to root using breadcrumb', () => {
+      it([Tag.FEATURE, 'ENG-3297', 'ENG-3972'], 'Navigating out of create folder page NOT to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openCreateFolderPage())
           .then(page => page.getContent().goToFirstLevelViaBreadCrumbs())
           .then(page => {
             cy.validateUrlPathname('/file-browser');
+            page.getContent().getFilesTable().should('exist');
             page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public');
           });
       });
@@ -450,16 +454,18 @@ describe('File browser', () => {
           .then(page => page.getContent().goToRootViaBreadCrumbs())
           .then(page => {
             cy.validateUrlPathname('/file-browser');
+            page.getContent().getFilesTable().should('exist');
             page.getContent().getBreadCrumbsFirstLevelFolder().should('not.exist');
           });
       });
 
-      it([Tag.FEATURE, 'ENG-3297', 'ENG-3376'], 'Navigating out of create text file page NOT to root using breadcrumb', () => {
+      it([Tag.FEATURE, 'ENG-3297', 'ENG-3972'], 'Navigating out of create text file page NOT to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openCreateTextFilePage())
           .then(page => page.getContent().goToFirstLevelViaBreadCrumbs())
           .then(page => {
             cy.validateUrlPathname('/file-browser');
+            page.getContent().getFilesTable().should('exist');
             page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public');
           });
       });

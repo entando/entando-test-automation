@@ -10,13 +10,12 @@ export default class AppContent extends Content {
 
   getContents() {
     return this.get()
-               .children(`${htmlElements.div}.InternalPage`)
-               .children(`${htmlElements.div}.container-fluid`);
+               .children(htmlElements.div);
   }
 
   getBreadCrumb() {
     return this.getContents()
-               .children(htmlElements.div).eq(0)
+               .children(`${htmlElements.div}.row`).eq(0)
                .children(htmlElements.div)
                .children(htmlElements.ol);
   }

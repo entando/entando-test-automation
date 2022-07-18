@@ -1,23 +1,23 @@
-import {generateRandomEmail, generateRandomId} from '../../../support/utils';
+import { generateRandomEmail, generateRandomId } from '../../../support/utils';
 
-import {htmlElements} from '../../../support/pageObjects/WebElement';
+import { htmlElements } from '../../../support/pageObjects/WebElement';
 
 describe('Sender Management Functionalities', () => {
 
   beforeEach(() => {
-    cy.wrap(null).as('senderToBeDeleted');
+    cy.wrap([]).as('sendersToBeDeleted');
     cy.kcClientCredentialsLogin();
     cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
     cy.get('@currentPage')
       .then(page => page
-          .getMenu().getAdministration().open()
-          .openEmailConfiguration());
+        .getMenu().getAdministration().open()
+        .openEmailConfiguration());
   });
 
   afterEach(() => {
-    cy.get('@senderToBeDeleted').then(sender => {
+    cy.get('@sendersToBeDeleted').then(senders => senders.forEach(sender => {
       if (sender) cy.senderController().then(controller => controller.deleteSender(sender.code));
-    });
+    }));
     cy.kcTokenLogout();
   });
 
@@ -31,29 +31,29 @@ describe('Sender Management Functionalities', () => {
         .then(page => {
           page.getContent().getSenderTable().should('be.visible');
           page.getContent().getSenderTableHeaders()
-              .children(htmlElements.th).should('have.length', 3)
-              .then(elements => cy.validateListTexts(elements, ['Code', 'Email', 'Actions']));
+            .children(htmlElements.th).should('have.length', 3)
+            .then(elements => cy.validateListTexts(elements, ['Code', 'Email', 'Actions']));
           page.getContent().getAddButton()
-              .should('be.visible')
-              .and('have.text', 'Add');
+            .should('be.visible')
+            .and('have.text', 'Add');
         });
     });
 
     it([Tag.SMOKE, 'ENG-3299'], 'Action Buttons are diplayed', () => {
 
       addTestSender().then(sender =>
-          cy.get('@currentPage')
-            .then(page => page.getContent().openSenderManagement())
-            .then(page => {
-              const kebabMenu = page.getContent().getKebabMenu(sender.code).open();
-              kebabMenu.getDropdown().should('be.visible');
-              kebabMenu.getEdit()
-                       .should('be.visible')
-                       .should('have.text', 'Edit');
-              kebabMenu.getDelete()
-                       .should('be.visible')
-                       .should('have.text', 'Delete');
-            })
+        cy.get('@currentPage')
+          .then(page => page.getContent().openSenderManagement())
+          .then(page => {
+            const kebabMenu = page.getContent().getKebabMenu(sender.code).open();
+            kebabMenu.getDropdown().should('be.visible');
+            kebabMenu.getEdit()
+              .should('be.visible')
+              .should('have.text', 'Edit');
+            kebabMenu.getDelete()
+              .should('be.visible')
+              .should('have.text', 'Delete');
+          })
       );
     });
 
@@ -117,9 +117,9 @@ describe('Sender Management Functionalities', () => {
         .then(page => page.getContent().save())
         .then(page => {
           cy.validateToast(page);
-          cy.wrap(sender).as('senderToBeDeleted');
+          cy.pushAlias('@sendersToBeDeleted', sender);
           page.getContent().getSenderTableRow(sender.code).should('be.visible')
-              .children(htmlElements.td).then(cells =>
+            .children(htmlElements.td).then(cells =>
               cy.validateListTexts(cells, [sender.code, sender.email]));
         });
     });
@@ -128,60 +128,60 @@ describe('Sender Management Functionalities', () => {
       const editedEmail = generateRandomEmail();
 
       addTestSender().then(sender =>
-          cy.get('@currentPage')
-            .then(page => page.getContent().openSenderManagement())
-            .then(page => page.getContent().getKebabMenu(sender.code).open().openEdit())
-            .then(page => page.getContent().getEmailInput().then(input => page.getContent().type(input, editedEmail)))
-            .then(page => page.getContent().save())
-            .then(page => {
-              cy.validateToast(page);
-              page.getContent().getSenderTableRow(sender.code).should('be.visible')
-                  .children(htmlElements.td).then(cells =>
-                  cy.validateListTexts(cells, [sender.code, editedEmail]));
-            })
+        cy.get('@currentPage')
+          .then(page => page.getContent().openSenderManagement())
+          .then(page => page.getContent().getKebabMenu(sender.code).open().openEdit())
+          .then(page => page.getContent().getEmailInput().then(input => page.getContent().type(input, editedEmail)))
+          .then(page => page.getContent().save())
+          .then(page => {
+            cy.validateToast(page);
+            page.getContent().getSenderTableRow(sender.code).should('be.visible')
+              .children(htmlElements.td).then(cells =>
+                cy.validateListTexts(cells, [sender.code, editedEmail]));
+          })
       );
     });
 
     it([Tag.SANITY, 'ENG-3299'], 'Delete Modal is displayed', () => {
       addTestSender().then(sender =>
-          cy.get('@currentPage')
-            .then(page => page.getContent().openSenderManagement())
-            .then(page => {
-              page.getContent().getKebabMenu(sender.code).open().clickDelete();
-              page.getDialog().get().should('exist');
-              page.getDialog().getBody().getStateInfo()
-                  .should('be.visible')
-                  .should('contain', sender.code);
-            })
+        cy.get('@currentPage')
+          .then(page => page.getContent().openSenderManagement())
+          .then(page => {
+            page.getContent().getKebabMenu(sender.code).open().clickDelete();
+            page.getDialog().get().should('exist');
+            page.getDialog().getBody().getStateInfo()
+              .should('be.visible')
+              .should('contain', sender.code);
+          })
       );
     });
 
     it([Tag.SANITY, 'ENG-3299'], 'Click on Cancel Modal Button ', () => {
       addTestSender().then(sender =>
-          cy.get('@currentPage')
-            .then(page => page.getContent().openSenderManagement())
-            .then(page => page.getContent().getKebabMenu(sender.code).open().clickDelete())
-            .then(page => page.getDialog().cancel())
-            .then(page => {
-              page.getDialog().get().should('not.exist');
-              page.getContent().getSenderTableRow(sender.code).should('be.visible')
-                  .children(htmlElements.td).then(cells =>
-                  cy.validateListTexts(cells, [sender.code, sender.email]));
-            })
+        cy.get('@currentPage')
+          .then(page => page.getContent().openSenderManagement())
+          .then(page => page.getContent().getKebabMenu(sender.code).open().clickDelete())
+          .then(page => page.getDialog().cancel())
+          .then(page => {
+            page.getDialog().get().should('not.exist');
+            page.getContent().getSenderTableRow(sender.code).should('be.visible')
+              .children(htmlElements.td).then(cells =>
+                cy.validateListTexts(cells, [sender.code, sender.email]));
+          })
       );
     });
 
     it([Tag.SANITY, 'ENG-3299'], 'Delete a sender', () => {
       addTestSender().then(sender =>
-          cy.get('@currentPage')
-            .then(page => page.getContent().openSenderManagement())
-            .then(page => page.getContent().getKebabMenu(sender.code).open().clickDelete())
-            .then(page => page.getDialog().confirm())
-            .then(page => {
-              cy.validateToast(page);
-              page.getContent().getSenderTable().should('not.contain', sender.code);
-              cy.wrap(null).as('senderToBeDeleted');
-            })
+        cy.get('@currentPage')
+          .then(page => page.getContent().openSenderManagement())
+          .then(page => page.getContent().getKebabMenu(sender.code).open().clickDelete())
+          .then(page => page.getDialog().confirm())
+          .then(page => {
+            cy.validateToast(page);
+            page.getContent().getSenderTable().should('not.contain', sender.code);
+            cy.deleteAlias('@sendersToBeDeleted', sender);
+          })
       );
     });
 
@@ -191,7 +191,7 @@ describe('Sender Management Functionalities', () => {
 
     it([Tag.FEATURE, 'ENG-3299'], 'No Sender Exist ', () => {
       cy.fixture('data/senders').each(defaultSender =>
-          cy.senderController().then(controller => controller.deleteSender(defaultSender.code)));
+        cy.senderController().then(controller => controller.deleteSender(defaultSender.code)));
 
       cy.get('@currentPage')
         .then(page => page.getContent().openSenderManagement())
@@ -199,11 +199,11 @@ describe('Sender Management Functionalities', () => {
           page.getContent().getSenderTable().should('be.visible');
           page.getContent().getSenderTable().children(htmlElements.tbody).should('not.be.visible');
           cy.fixture('data/senders').each(defaultSender =>
-              page.getContent().getSenderTable().should('not.contain', defaultSender.code));
+            page.getContent().getSenderTable().should('not.contain', defaultSender.code));
         });
 
       cy.fixture('data/senders').each(defaultSender =>
-          cy.senderController().then(controller => controller.addSender(defaultSender.code, defaultSender.email)));
+        cy.senderController().then(controller => controller.addSender(defaultSender.code, defaultSender.email)));
     });
 
     it([Tag.FEATURE, 'ENG-3299'], 'Save Button is disabled ', () => {
@@ -224,8 +224,8 @@ describe('Sender Management Functionalities', () => {
           .then(page => page.getContent().getKebabMenu(sender.code).open().openEdit())
           .then(page => {
             page.getContent().getCodeInput()
-                .should('have.value', sender.code)
-                .and('be.disabled');
+              .should('have.value', sender.code)
+              .and('be.disabled');
             page.getContent().getEmailInput().should('have.value', sender.email);
             page.getContent().getSaveButton().should('be.enabled');
           });
@@ -244,8 +244,8 @@ describe('Sender Management Functionalities', () => {
           page.getContent().focus(input);
           page.getContent().blur(input);
           page.getContent().getInputError(input)
-              .should('be.visible')
-              .and('have.text', 'Field required');
+            .should('be.visible')
+            .and('have.text', 'Field required');
         }));
     });
 
@@ -257,34 +257,40 @@ describe('Sender Management Functionalities', () => {
           page.getContent().focus(input);
           page.getContent().blur(input);
           page.getContent().getInputError(input)
-              .should('be.visible')
-              .and('have.text', 'Field required');
+            .should('be.visible')
+            .and('have.text', 'Field required');
         }));
     });
 
-    it([Tag.ERROR, 'ENG-3299'], 'Invalid value', () => {
-      const testInvalidEmail = (page, email) => {
-        page.getContent().getEmailInput().then(input => page.getContent().type(input, email));
-        page.getContent().getSaveButton().click();
-        cy.validateToast(page, 'Invalid sender Email', false);
-        return cy.then(() => page);
-      };
+    it([Tag.ERROR, 'ENG-3299', 'ENG-3970'], 'Invalid value', () => {
+      cy.wrap(generateRandomId()).then(code => {
+        const testInvalidEmail = (page, email) => {
+          page.getContent().getEmailInput().then(input => page.getContent().type(input, email));
+          page.getContent().getSaveButton().click();
+          const sender = {code: code, email: email};
+          cy.pushAlias('@sendersToBeDeleted', sender);
+          cy.validateToast(page, 'Invalid sender Email', false);
+          cy.deleteAlias('@sendersToBeDeleted', sender);
+          return cy.then(() => page);
+        };
 
-      cy.get('@currentPage')
-        .then(page => page.getContent().openSenderManagement())
-        .then(page => page.getContent().openAddSender())
-        .then(page => page.getContent().getCodeInput().then(input => page.getContent().type(input, generateRandomId())))
-        .then(page => testInvalidEmail(page, 'cypress@entando'))
-        .then(page => testInvalidEmail(page, 'cypress@.com'))
-        .then(page => testInvalidEmail(page, '@entando.com'))
-        .then(page => testInvalidEmail(page, 'cypressentando.com'));
+        cy.get('@currentPage')
+          .then(page => page.getContent().openSenderManagement())
+          .then(page => page.getContent().openAddSender())
+          .then(page => page.getContent().getCodeInput().then(input => page.getContent().type(input, code)))
+          .then(page => testInvalidEmail(page, 'cypress@entando'))
+          .then(page => testInvalidEmail(page, 'cypress@.com'))
+          .then(page => testInvalidEmail(page, '@entando.com'))
+          .then(page => testInvalidEmail(page, 'cypressentando.com'));
+      })
+
     });
 
   });
 
   const addTestSender = () =>
-      cy.senderController()
-        .then(controller => controller.addSender(generateRandomId(), generateRandomEmail()))
-        .then(res => cy.wrap(res.body.payload).as('senderToBeDeleted'));
+    cy.senderController()
+      .then(controller => controller.addSender(generateRandomId(), generateRandomEmail()))
+      .then(res => cy.pushAlias('@sendersToBeDeleted', res.body.payload));
 
 });
