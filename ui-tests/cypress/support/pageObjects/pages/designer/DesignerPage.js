@@ -74,7 +74,7 @@ export default class DesignerPage extends AppContent {
     // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
 
     cy.get(button).click();
-    cy.wait([/*'@languagesPageLoadingGET',*/ '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', /*'@pagePublishedWidgetsPageLoadingGET'*/]);
+    cy.wait([/*'@languagesPageLoadingGET', '@myGroupsPageLoadingGET', */'@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', /*'@pagePublishedWidgetsPageLoadingGET'*/]);
   }
 
   getMainContainer() {

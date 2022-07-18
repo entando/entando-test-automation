@@ -90,7 +90,7 @@ describe('Microfrontends and Widgets', () => {
               page.getContent().blur(input);
             });
             page.getContent().getCodeInput().closest('div.form-group').invoke('attr', 'class').should('contain', 'has-error');
-            page.getContent().getCodeInput().parent().next().invoke('attr', 'class').should('contain', 'help-block');
+            page.getContent().getCodeInput().then(input => page.getContent().getInputError(input).should('exist'));
           });
       });
 
@@ -98,6 +98,7 @@ describe('Microfrontends and Widgets', () => {
         cy.get('@currentPage')
           .then(page => {
             page.getContent().editFormFields({code: 'momaco', iconUpload, customUi: '<h2>memecode</h2>'});
+            cy.closeAllToasts(page);
             page.getContent().getSaveDropdownButton().click();
             page.getContent().getRegularSaveButton().closest(htmlElements.li).invoke('attr', 'class').should('contain', 'disabled');
           });
@@ -315,7 +316,7 @@ describe('Microfrontends and Widgets', () => {
       cy.kcTokenLogout();
     });
 
-    it([Tag.GTS, 'ENG-2543'], 'Widgets page should not be accessible without superuser role', () => {
+    it([Tag.GTS, 'ENG-2543', 'ENG-3977'], 'Widgets page should not be accessible without superuser role', () => {
       cy.get('@currentPage')
         .then(page => {
           page.getMenu().get().should('not.contain', 'Components');
