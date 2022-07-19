@@ -40,10 +40,9 @@ export default class Profile extends AppContent {
   missingTranslationSwitch       = `${htmlElements.div}[aria-labelledby=switch-translationWarning] ${htmlElements.div}.bootstrap-switch`;
   loadOnPageSelectSwitch         = `${htmlElements.div}[aria-labelledby=switch-loadOnPageSelect] ${htmlElements.div}.bootstrap-switch`;
   defaultPageOwnerSelect         = `${htmlElements.select}[name=defaultPageOwnerGroup]`;
-  defaultPageJoinGroupsSelect    = `${htmlElements.select}[name=defaultPageJoinGroups]`;
+  formControlSelect              = `${htmlElements.select}[class="form-control"]`;
   defaultPageJoinGroupsButton    = `${htmlElements.button}.MultiSelectRenderer__add-btn`;
   defaultContentOwnerGroupSelect = `${htmlElements.select}[name=defaultContentOwnerGroup]`;
-  defaultContentJoinGroupSelect  = `${htmlElements.select}[name=defaultContentJoinGroups]`;
   defaultContentJoinGroupButton  = `${htmlElements.button}.MultiSelectRenderer__add-btn`;
   defaultWidgetOwnerGroupSelect  = `${htmlElements.select}[name=defaultWidgetOwnerGroup]`;
   settingsSaveBtn                = `${htmlElements.button}[type=submit]`;
@@ -182,9 +181,13 @@ export default class Profile extends AppContent {
     return cy.get('@currentPage');
   }
 
+  getSelectDefaultPageJoinGroups() {
+    return this.getTabContent().find(this.formControlSelect).eq(0);
+  }
+
   selectDefaultPageJoinGroups(value) {
-    this.getTabContent().find(this.defaultPageJoinGroupsSelect).select(value);
-    this.getTabContent().find(this.defaultPageJoinGroupsSelect).parent().find(this.defaultPageJoinGroupsButton).click();
+    this.getSelectDefaultPageJoinGroups().select(value);
+    this.getSelectDefaultPageJoinGroups().parent().find(this.defaultPageJoinGroupsButton).click();
     return cy.get('@currentPage');
   }
 
@@ -193,9 +196,13 @@ export default class Profile extends AppContent {
     return cy.get('@currentPage');
   }
 
+  getSelectDefaultContentJoinGroups() {
+    return this.getTabContent().find(this.formControlSelect).eq(1);
+  }
+
   selectDefaultContentJoinGroups(value) {
-    this.getTabContent().find(this.defaultContentJoinGroupSelect).select(value);
-    this.getTabContent().find(this.defaultContentJoinGroupSelect).parent().find(this.defaultContentJoinGroupButton).click();
+    this.getSelectDefaultContentJoinGroups().select(value);
+    this.getSelectDefaultContentJoinGroups().parent().find(this.defaultContentJoinGroupButton).click();
     return cy.get('@currentPage');
   }
 
