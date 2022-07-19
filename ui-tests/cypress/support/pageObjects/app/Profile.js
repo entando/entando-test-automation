@@ -58,7 +58,7 @@ export default class Profile extends AppContent {
   }
 
   getContents() {
-    return this.get().children(`${htmlElements.div}.InternalPage`);
+    return this.get();
   }
 
   getTitle() {
