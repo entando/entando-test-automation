@@ -1,11 +1,11 @@
-import {htmlElements, WebElement} from '../WebElement.js';
+import {WebElement} from '../WebElement.js';
 
 export default class Content extends WebElement {
 
   getInputError(input) {
     return cy.get(input)
              .parent().parent()
-             .find(`${htmlElements.span}.help-block`);
+             .find(`.help-block`);
   }
 
   click(input, force = false) {
