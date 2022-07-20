@@ -332,9 +332,9 @@ describe('Page Templates', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().openAddPage())
         .then(page => {
-          page.getContent().getCodeInput().parent().siblings(`${htmlElements.span}.help-block`).should('not.exist');
+          page.getContent().getCodeInput().then(input => page.getContent().getInputError(input).should('not.exist'));
           page.getContent().getCodeInput().focus().blur();
-          page.getContent().getCodeInput().parent().siblings(`${htmlElements.span}.help-block`).should('exist').and('be.visible');
+          page.getContent().getCodeInput().then(input => page.getContent().getInputError(input).should('exist').and('be.visible'));
         });
     });
 
@@ -342,12 +342,12 @@ describe('Page Templates', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().openAddPage())
         .then(page => {
-          page.getContent().getJsonConfigInput().parent().siblings(`${htmlElements.div}.help-block`).should('not.exist');
-          page.getContent().getNameInput().parent().siblings(`${htmlElements.span}.help-block`).should('not.exist');
+          page.getContent().getJsonConfigInput().then(input => page.getContent().getInputError(input).should('not.exist'));
+          page.getContent().getNameInput().then(input => page.getContent().getInputError(input).should('not.exist'));
           page.getContent().clearJsonConfig();
           page.getContent().getNameInput().focus().blur();
-          page.getContent().getJsonConfigInput().parent().siblings(`${htmlElements.div}.help-block`).should('exist').and('be.visible');
-          page.getContent().getNameInput().parent().siblings(`${htmlElements.span}.help-block`).should('exist').and('be.visible');
+          page.getContent().getJsonConfigInput().then(input => page.getContent().getInputError(input).should('exist').and('be.visible'));
+          page.getContent().getNameInput().then(input => page.getContent().getInputError(input).should('exist').and('be.visible'));
         });
     });
 
@@ -382,7 +382,7 @@ describe('Page Templates', () => {
         .then(page => page.getContent().openAddPage())
         .then(page => {
           page.getContent().fillForm({code: sampleData.code, descr: sampleData.descr, configuration: '{"frames": [{"pos": 1, "descr": "Logo", "mainFrame": false, "defaultWidget": {"code": "logo","properties": null}, "sketch": {"x1": 0, "y1": 0, "x2": 2, "y2": 0}}]}', template: sampleData.template});
-          page.getContent().getJsonConfigInput().parent().siblings(`${htmlElements.div}.help-block`).should('exist').and('be.visible').and('contain', 'index');
+          page.getContent().getJsonConfigInput().then(input => page.getContent().getInputError(input).should('exist').and('be.visible').and('contain', 'index'));
         });
     });
 
@@ -506,7 +506,7 @@ describe('Page Templates', () => {
         });
     });
 
-    it([Tag.SANITY, 'ENG-3525', 'ENG-3664'], 'When confirming deletion, the list should be updated and a successful toast notification displayed', () => {
+    it([Tag.SANITY, 'ENG-3525', 'ENG-3984'], 'When confirming deletion, the list should be updated and a successful toast notification displayed', () => {
       addPageTemplate(sampleData);
 
       openPageTemplateMgmtPage()
