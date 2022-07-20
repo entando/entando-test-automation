@@ -93,6 +93,7 @@ export default class AddPage extends AppContent {
         .then((editor) => {
           editor[0].CodeMirror.setValue('');
         });
+    this.getJsonConfigInput().click();
     return cy.get('@currentPage');
   }
 
