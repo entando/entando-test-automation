@@ -22,9 +22,9 @@ export default class AddPage extends AppContent {
     }
     cy.get(button).click();
     if (code) {
-      cy.wait(['@groupsPageLoadingGET', '@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pagePageLoadingGET']);
+      cy.wait(['@groupsPageLoadingGET', '@languagesPageLoadingGET',/* '@myGroupsPageLoadingGET',*/ '@pageModelsPageLoadingGET' /*'@pagePageLoadingGET'*/]);
     } else {
-      cy.wait(['@groupsPageLoadingGET', '@homepagePageLoadingGET', '@homepagePageLoadingGET', '@languagesPageLoadingGET', '@myGroupPermissionsPageLoadingGET', '@myGroupsPageLoadingGET', '@pageModelsPageLoadingGET', '@homepageChildrenPageLoadingGET']);
+      cy.wait(['@groupsPageLoadingGET', '@homepagePageLoadingGET', '@homepagePageLoadingGET', '@languagesPageLoadingGET', /*'@myGroupPermissionsPageLoadingGET',*/ /*'@myGroupsPageLoadingGET',*/ '@pageModelsPageLoadingGET', '@homepageChildrenPageLoadingGET']);
     }
   }
 
@@ -145,6 +145,7 @@ export default class AddPage extends AppContent {
     this.getSeoTabs()
         .find(htmlElements.a).eq(langOrder)
         .click();
+    cy.wait(1000); //ToDo find a better way to wait input languages name.
     return cy.get('@currentPage');
   }
 

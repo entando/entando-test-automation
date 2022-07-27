@@ -276,7 +276,7 @@ describe('Page Management', () => {
                     .then(page => page.getContent().getOwnerGroupButton().should('be.disabled'))));
         });
 
-        it([Tag.GTS, 'ENG-2483'], 'Change a page\'s owner group - not allowed', () => {
+        it([Tag.GTS, 'ENG-2483', 'ENG-3991'], 'Change a page\'s owner group - not allowed', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode =>
               cy.fixture('data/demoPage.json').then(demoPage =>
                   cy.get('@currentPage')
@@ -289,26 +289,7 @@ describe('Page Management', () => {
                     })));
         });
 
-        //TODO move the creation and deletion of the language outside of test
-        //FIXME it adds the page title, not the page code
-        it('ENG-2695', 'when adding secondary language, editing a page automatically adds default page code from default language (ENG-2695)', () => {
-          cy.languagesController()
-            .then(controller => controller.putLanguage('cs', 'Czech', true, false));
-          cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode =>
-              cy.fixture('data/demoPage.json').then(demoPage =>
-                  cy.get('@currentPage')
-                    .then(page => page.getMenu().getPages().open().openManagement())
-                    .then(page => page.getContent().getKebabMenu(demoPage.titles.en).open().openEdit(pageCode))
-                    .then(page => {
-                      page.getContent().getTitleInput('en').invoke('val').should('eq', demoPage.titles.en);
-                      page.getContent().selectSeoLanguage(1);
-                    })
-                    .then(page => page.getContent().getTitleInput('cs').invoke('val').should('eq', demoPage.titles.en))));
-          cy.languagesController()
-            .then(controller => controller.putLanguage('cs', 'Czech', false, false));
-        });
-
-        it('ENG-2642', 'Avoid accept blank page titles in an inactive language tab', () => {
+        it([Tag.GTS, 'ENG-2642', 'ENG-3997'], 'Avoid accept blank page titles in an inactive language tab', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode =>
               cy.fixture('data/demoPage.json').then(demoPage =>
                   cy.get('@currentPage')
@@ -325,6 +306,35 @@ describe('Page Management', () => {
                     })));
         });
 
+      });
+      describe('Update when adding a language', () => {
+
+        beforeEach(() => {
+          cy.languagesController()
+            .then(controller => controller.putLanguage('cs', 'Czech', true, false));
+        });
+        afterEach(() => {
+          cy.languagesController()
+            .then(controller => controller.putLanguage('cs', 'Czech', false, false));
+        });
+        it([Tag.GTS, 'ENG-2695'], 'when I add a secondary language, in the page edit section, the seo values of the default language are not added by default in the new one.', () => {
+          cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode => {
+            cy.fixture('data/demoPage.json').then(demoPage =>
+                cy.get('@currentPage')
+                  .then(page => page.getMenu().getPages().open().openManagement())
+                  .then(page => page.getContent().getKebabMenu(demoPage.titles.en).open().openEdit(pageCode))
+                  .then(page => page.getContent().getSeoDescriptionInput('en').then(input => page.getContent().type(input, `${demoPage.titles.en}_1`)))
+                  .then(page => page.getContent().getSeoKeywordsInput('en').then(input => page.getContent().type(input, `${demoPage.titles.en}_2`)))
+                  .then(page => page.getContent().getSeoFriendlyCodeInput('en').then(input => page.getContent().type(input, `${demoPage.titles.en}_3`)))
+                  .then(page => page.getContent().selectSeoLanguage(1))
+                  .then(page => {
+                    page.getContent().getSeoDescriptionInput('cs').invoke('val').should('not.eq', `${demoPage.titles.en}_1`);
+                    page.getContent().getSeoKeywordsInput('cs').invoke('val').should('not.eq', `${demoPage.titles.en}_2`);
+                    page.getContent().getSeoFriendlyCodeInput('cs').invoke('val').should('not.eq', `${demoPage.titles.en}_3`);
+                  })
+            );
+          });
+        });
       });
 
       describe('Change page position in the page tree', () => {
@@ -596,7 +606,7 @@ describe('Page Management', () => {
           cy.fixture('data/demoPage.json').then(demoPage => cy.get('@currentPage').then(page => checkDeleteIsDisabled(page, demoPage.titles.en)));
         });
 
-        it([Tag.GTS, 'ENG-2484'], 'Delete a drafted page is forbidden', () => {
+        it([Tag.GTS, 'ENG-2484', 'ENG-4009'], 'Delete a drafted page is forbidden', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0])
             .then(demoPageCode => {
               cy.pagesController().then(controller => controller.setPageStatus(demoPageCode, 'published'));
@@ -633,8 +643,7 @@ describe('Page Management', () => {
 
       describe('Page form should be not possible to save NULL title in default language', () => {
 
-        //FIXME duplicate of 'when adding secondary language, editing a page automatically adds default page code from default language (ENG-2695)'
-        xit('ENG-2687', 'There must be a page title for default language, otherwise it will not allow to save', () => {
+        it('ENG-2687', 'There must be a page title for default language, otherwise it will not allow to save', () => {
           cy.fixture('data/demoPage.json').then(demoPage => {
             demoPage.code = generateRandomId();
             cy.seoPagesController().then(controller => controller.addNewPage(demoPage));
@@ -710,7 +719,7 @@ describe('Page Management', () => {
               }));
         });
 
-        it([Tag.GTS, 'ENG-2638'], 'Cloning a page should copy all SEO details to the new page', () => {
+        it([Tag.GTS, 'ENG-2638', 'ENG-3986'], 'Cloning a page should copy all SEO details to the new page', () => {
           cy.wrap({
             code: generateRandomId(),
             title: generateRandomId()
