@@ -13,11 +13,10 @@ import DesignerPage from '../designer/DesignerPage';
 export default class ManagementPage extends AppContent {
 
   static openPage(button) {
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepagePageLoadingGET', '/homepage?status=draft'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepageChildrenPageLoadingGET', '?parentCode=homepage'));
     cy.get(button).click();
-    cy.wait(['@languagesPageLoadingGET', '@homepagePageLoadingGET', '@homepageChildrenPageLoadingGET']);
+    cy.wait(['@homepagePageLoadingGET', '@homepageChildrenPageLoadingGET']);
   }
 
   static searchPage(button, searchType, value) {
