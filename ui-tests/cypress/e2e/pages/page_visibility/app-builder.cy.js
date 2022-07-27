@@ -107,7 +107,7 @@ describe('Page visibility in AppBuilder', () => {
               const permission = (ownerGroup === groupPermission || groupPermission === 'administrators');
               const visibility = permission ? ' ' : ' NOT ';
 
-              it([Tag.FEATURE, 'ENG-3797', 'ENG-3827'], `A user with "${groupPermission}" permission SHOULD${visibility}be able to view a page with "${ownerGroup}" owner group and "${joinGroup}" join group`, () => {
+              it([Tag.FEATURE, 'ENG-3797', 'ENG-3988'], `A user with "${groupPermission}" permission SHOULD${visibility}be able to view a page with "${ownerGroup}" owner group and "${joinGroup}" join group`, () => {
                 cy.fixture('data/demoPage.json').then(demoPage => {
                   cy.kcClientCredentialsLogin();
                   demoPage.ownerGroup = ownerGroup;
