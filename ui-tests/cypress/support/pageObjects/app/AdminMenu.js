@@ -1,12 +1,12 @@
 import {htmlElements, WebElement} from '../WebElement.js';
 
 import DashboardMenu       from '../dashboard/DashboardMenu.js';
-import PagesMenu           from '../pages/PagesMenu';
 import ComponentsAdminMenu from '../components/ComponentsAdminMenu';
 import ContentMenu         from '../content/ContentMenu';
 import UsersAdminMenu      from '../users/UsersAdminMenu.js';
 import RepositoryMenu      from '../repository/RepositoryMenu';
 import AdministrationMenu  from '../administration/AdministrationMenu';
+import PagesAdminMenu      from '../pages/PagesAdminMenu';
 
 export default class AdminMenu extends WebElement {
 
@@ -22,7 +22,7 @@ export default class AdminMenu extends WebElement {
   }
 
   getPages() {
-    return new PagesMenu(this);
+    return new PagesAdminMenu(this);
   }
 
   getComponents() {
