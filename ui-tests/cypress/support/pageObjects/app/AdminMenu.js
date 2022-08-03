@@ -4,13 +4,13 @@ import DashboardMenu      from '../dashboard/DashboardMenu.js';
 import PagesMenu          from '../pages/PagesMenu';
 import ComponentsMenu     from '../components/ComponentsMenu';
 import ContentMenu        from '../content/ContentMenu';
-import UsersMenu          from '../users/UsersMenu.js';
+import UsersAdminMenu     from '../users/UsersAdminMenu.js';
 import RepositoryMenu     from '../repository/RepositoryMenu';
 import AdministrationMenu from '../administration/AdministrationMenu';
 
-export default class Menu extends WebElement {
+export default class AdminMenu extends WebElement {
 
-  collapseButton = `${htmlElements.button}.VerticalMenu__expand-collapse-btn`;
+  collapseButton = `${htmlElements.button}.navbar-toggle`;
 
   get() {
     return this.parent.get()
@@ -34,7 +34,7 @@ export default class Menu extends WebElement {
   }
 
   getUsers() {
-    return new UsersMenu(this);
+    return new UsersAdminMenu(this);
   }
 
   getRepository() {

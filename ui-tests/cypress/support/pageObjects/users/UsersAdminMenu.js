@@ -10,7 +10,7 @@ import GroupsPage       from './groups/GroupsPage';
 import ProfileTypesPage from './profileTypes/ProfileTypesPage';
 import RestrictionsPage from './restrictions/RestrictionsPage';
 
-export default class UsersMenu extends SubMenu {
+export default class UsersAdminMenu extends SubMenu {
 
   get() {
     return this.parent.get()
