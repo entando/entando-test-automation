@@ -2,11 +2,11 @@ import {htmlElements, WebElement} from '../WebElement';
 
 import DashboardAppMenu      from '../dashboard/DashboardAppMenu';
 import ComponentsAppMenu     from '../components/ComponentsAppMenu';
-import ContentMenu           from '../content/ContentMenu';
 import UsersAppMenu          from '../users/UsersAppMenu';
 import RepositoryAppMenu     from '../repository/RepositoryAppMenu';
 import PagesAppMenu          from '../pages/PagesAppMenu';
 import AdministrationAppMenu from '../administration/AdministrationAppMenu.';
+import ContentAppMenu        from '../content/ContentAppMenu';
 
 export default class AppMenu extends WebElement {
 
@@ -34,7 +34,8 @@ export default class AppMenu extends WebElement {
   }
 
   getContent() {
-    return new ContentMenu(this);
+    cy.wait(1000);
+    return new ContentAppMenu(this);
   }
 
   getUsers() {

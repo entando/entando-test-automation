@@ -1,5 +1,3 @@
-import {htmlElements} from '../WebElement.js';
-
 import {SubMenu} from '../app/MenuElement.js';
 
 import AdminPage      from '../app/AdminPage.js';
@@ -11,47 +9,52 @@ import VersioningPage from './versioning/VersioningPage';
 import TypesPage      from './types/TypesPage';
 import SettingsPage   from './settings/SettingsPage';
 
-export default class ContentMenu extends SubMenu {
+export default class ContentAppMenu extends SubMenu {
+
+  open() {
+    this.click();
+    cy.wait(1000);
+    return this;
+  }
 
   get() {
-    return this.parent.get()
-               .children(htmlElements.ul)
-               .children(htmlElements.li).eq(3);
+    return this.parent.get().find('[data-id="content"]');
+  }
+
+  getSubmenu() {
+    return this.get().find('[data-id="menu"]');
   }
 
   getManagement() {
-    return this.getElements()
-               .children(htmlElements.li).eq(0);
+    return this.getSubmenu().find('[data-id="content-management"]');
   }
 
   getAssets() {
-    return this.getElements()
-               .children(htmlElements.li).eq(1);
+    return this.getSubmenu().find('[data-id="content-assets"]');
   }
 
   getTemplates() {
-    return this.getElements()
-               .children(htmlElements.li).eq(2);
+    return this.getSubmenu().find('[data-id="content-templates"]');
   }
 
   getCategories() {
-    return this.getElements()
-               .children(htmlElements.li).eq(3);
+    return this.getSubmenu().find('[data-id="content-categories"]');
   }
 
   getVersioning() {
-    return this.getElements()
-               .children(htmlElements.li).eq(4);
+    return this.getSubmenu().find('[data-id="content-versioning"]');
   }
 
   getTypes() {
-    return this.getElements()
-               .children(htmlElements.li).eq(5);
+    return this.getSubmenu().find('[data-id="content-types"]');
   }
 
   getSettings() {
-    return this.getElements()
-               .children(htmlElements.li).eq(6);
+    return this.getSubmenu().find('[data-id="content-settings"]');
+  }
+
+  getCollapseButton() {
+    return this.getSubmenu().find('[data-back="back"]');
   }
 
   openManagement() {
