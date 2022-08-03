@@ -7,7 +7,7 @@ import AppPage from '../app/AppPage.js';
 import MFEWidgetsPage  from './mfeWidgets/MFEWidgetsPage';
 import UXFragmentsPage from './uxFragments/UXFragmentsPage';
 
-export default class ComponentsMenu extends SubMenu {
+export default class ComponentsAdminMenu extends SubMenu {
 
   get() {
     return this.parent.get()
