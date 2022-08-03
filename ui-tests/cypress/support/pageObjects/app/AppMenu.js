@@ -2,7 +2,7 @@ import {htmlElements, WebElement} from '../WebElement';
 
 import DashboardMenu      from '../dashboard/DashboardMenu';
 import PagesMenu          from '../pages/PagesMenu';
-import ComponentsMenu     from '../components/ComponentsMenu';
+import ComponentsAppMenu  from '../components/ComponentsAppMenu';
 import ContentMenu        from '../content/ContentMenu';
 import UsersAppMenu       from '../users/UsersAppMenu';
 import RepositoryMenu     from '../repository/RepositoryMenu';
@@ -27,7 +27,8 @@ export default class AppMenu extends WebElement {
   }
 
   getComponents() {
-    return new ComponentsMenu(this);
+    cy.wait(1000);
+    return new ComponentsAppMenu(this);
   }
 
   getContent() {
