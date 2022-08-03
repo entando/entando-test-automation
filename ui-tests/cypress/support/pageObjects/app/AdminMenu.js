@@ -1,10 +1,10 @@
 import {htmlElements, WebElement} from '../WebElement.js';
 
-import DashboardMenu           from '../dashboard/DashboardMenu.js';
+import DashboardAdminMenu           from '../dashboard/DashboardAdminMenu.js';
 import ComponentsAdminMenu     from '../components/ComponentsAdminMenu';
 import ContentMenu             from '../content/ContentMenu';
 import UsersAdminMenu          from '../users/UsersAdminMenu.js';
-import RepositoryMenu          from '../repository/RepositoryMenu';
+import RepositoryAdminMenu     from '../repository/RepositoryAdminMenu';
 import AdministrationAdminMenu from '../administration/AdministrationAdminMenu';
 import PagesAdminMenu          from '../pages/PagesAdminMenu';
 
@@ -18,7 +18,7 @@ export default class AdminMenu extends WebElement {
   }
 
   getDashboard() {
-    return new DashboardMenu(this);
+    return new DashboardAdminMenu(this);
   }
 
   getPages() {
@@ -38,7 +38,7 @@ export default class AdminMenu extends WebElement {
   }
 
   getRepository() {
-    return new RepositoryMenu(this);
+    return new RepositoryAdminMenu(this);
   }
 
   getAdministration() {

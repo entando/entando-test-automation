@@ -2,12 +2,12 @@ import {htmlElements} from '../WebElement.js';
 
 import {MenuElement} from '../app/MenuElement.js';
 
-export default class RepositoryMenu extends MenuElement {
+export default class DashboardAdminMenu extends MenuElement {
 
   get() {
     return this.parent.get()
                .children(htmlElements.ul)
-               .children(htmlElements.li).eq(5);
+               .children(htmlElements.li).eq(0);
   }
 
 }

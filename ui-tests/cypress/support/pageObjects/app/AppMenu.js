@@ -1,10 +1,10 @@
 import {htmlElements, WebElement} from '../WebElement';
 
-import DashboardMenu         from '../dashboard/DashboardMenu';
+import DashboardAppMenu      from '../dashboard/DashboardAppMenu';
 import ComponentsAppMenu     from '../components/ComponentsAppMenu';
 import ContentMenu           from '../content/ContentMenu';
 import UsersAppMenu          from '../users/UsersAppMenu';
-import RepositoryMenu        from '../repository/RepositoryMenu';
+import RepositoryAppMenu     from '../repository/RepositoryAppMenu';
 import PagesAppMenu          from '../pages/PagesAppMenu';
 import AdministrationAppMenu from '../administration/AdministrationAppMenu.';
 
@@ -19,7 +19,8 @@ export default class AppMenu extends WebElement {
   }
 
   getDashboard() {
-    return new DashboardMenu(this);
+    cy.wait(1000);
+    return new DashboardAppMenu(this);
   }
 
   getPages() {
@@ -42,7 +43,8 @@ export default class AppMenu extends WebElement {
   }
 
   getRepository() {
-    return new RepositoryMenu(this);
+    cy.wait(1000);
+    return new RepositoryAppMenu(this);
   }
 
   getAdministration() {
