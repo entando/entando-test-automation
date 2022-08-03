@@ -4,14 +4,14 @@ import {SubMenu} from '../app/MenuElement.js';
 
 import AppPage from '../app/AppPage.js';
 
-import DatabasePage           from './database/DatabasePage';
-import BrowserPage            from './fileBrowser/BrowserPage';
-import LanguagesAndLabelsPage from './languagesAndLabels/LanguagesAndLabelsPage';
+import DatabasePage            from './database/DatabasePage';
+import BrowserPage             from './fileBrowser/BrowserPage';
+import LanguagesAndLabelsPage  from './languagesAndLabels/LanguagesAndLabelsPage';
 import LanguagesPage           from './languagesAndLabels/LanguagesPage';
 import ReloadConfigurationPage from './reloadConfiguration/ReloadConfigurationPage';
 import SMTPServerPage          from './emailConfiguration/SMTPServerPage';
 
-export default class AdministrationMenu extends SubMenu {
+export default class AdministrationAdminMenu extends SubMenu {
 
   get() {
     return this.parent.get()

@@ -1,12 +1,12 @@
 import {htmlElements, WebElement} from '../WebElement.js';
 
-import DashboardMenu       from '../dashboard/DashboardMenu.js';
-import ComponentsAdminMenu from '../components/ComponentsAdminMenu';
-import ContentMenu         from '../content/ContentMenu';
-import UsersAdminMenu      from '../users/UsersAdminMenu.js';
-import RepositoryMenu      from '../repository/RepositoryMenu';
-import AdministrationMenu  from '../administration/AdministrationMenu';
-import PagesAdminMenu      from '../pages/PagesAdminMenu';
+import DashboardMenu           from '../dashboard/DashboardMenu.js';
+import ComponentsAdminMenu     from '../components/ComponentsAdminMenu';
+import ContentMenu             from '../content/ContentMenu';
+import UsersAdminMenu          from '../users/UsersAdminMenu.js';
+import RepositoryMenu          from '../repository/RepositoryMenu';
+import AdministrationAdminMenu from '../administration/AdministrationAdminMenu';
+import PagesAdminMenu          from '../pages/PagesAdminMenu';
 
 export default class AdminMenu extends WebElement {
 
@@ -42,7 +42,7 @@ export default class AdminMenu extends WebElement {
   }
 
   getAdministration() {
-    return new AdministrationMenu(this);
+    return new AdministrationAdminMenu(this);
   }
 
   getCollapseButton() {

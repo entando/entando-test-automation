@@ -1,12 +1,12 @@
 import {htmlElements, WebElement} from '../WebElement';
 
-import DashboardMenu      from '../dashboard/DashboardMenu';
-import ComponentsAppMenu  from '../components/ComponentsAppMenu';
-import ContentMenu        from '../content/ContentMenu';
-import UsersAppMenu       from '../users/UsersAppMenu';
-import RepositoryMenu     from '../repository/RepositoryMenu';
-import AdministrationMenu from '../administration/AdministrationMenu';
-import PagesAppMenu       from '../pages/PagesAppMenu';
+import DashboardMenu         from '../dashboard/DashboardMenu';
+import ComponentsAppMenu     from '../components/ComponentsAppMenu';
+import ContentMenu           from '../content/ContentMenu';
+import UsersAppMenu          from '../users/UsersAppMenu';
+import RepositoryMenu        from '../repository/RepositoryMenu';
+import PagesAppMenu          from '../pages/PagesAppMenu';
+import AdministrationAppMenu from '../administration/AdministrationAppMenu.';
 
 export default class AppMenu extends WebElement {
 
@@ -46,7 +46,8 @@ export default class AppMenu extends WebElement {
   }
 
   getAdministration() {
-    return new AdministrationMenu(this);
+    cy.wait(1000);
+    return new AdministrationAppMenu(this);
   }
 
 }
