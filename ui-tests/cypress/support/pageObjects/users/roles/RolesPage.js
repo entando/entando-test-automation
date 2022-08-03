@@ -107,6 +107,7 @@ class RolesKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDelete().then(button => this.parent.click(button));
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(RolesPage);
     return cy.get('@currentPage');
   }
 

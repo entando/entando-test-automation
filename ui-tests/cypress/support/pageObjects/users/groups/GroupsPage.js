@@ -19,7 +19,7 @@ export default class GroupsPage extends AppContent {
   pageLink = `${htmlElements.a}`;
 
   static openPage(button) {
-    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'userGroupsPageLoadingGET', '?sort=name&page=1&pageSize=10'));
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'userGroupsPageLoadingGET', '?*page=1&pageSize=10'));
     cy.get(button).click();
     cy.wait('@userGroupsPageLoadingGET');
   }
@@ -101,9 +101,10 @@ class GroupsKebabMenu extends KebabMenu {
     return cy.wrap(new AppPage(EditPage)).as('currentPage');
   }
 
-  clickDelete() {
+  clickDelete(setLoadOnConfirm = false) {
     this.getDelete().then(button => this.parent.click(button));
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    if (setLoadOnConfirm) this.parent.parent.getDialog().getBody().setLoadOnConfirm(GroupsPage);
   }
 
 }

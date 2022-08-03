@@ -72,7 +72,7 @@ describe('Groups', () => {
 
     openGroupsPage()
       .then(page => {
-        page.getContent().getKebabMenu(this.groupCode).open().clickDelete();
+        page.getContent().getKebabMenu(this.groupCode).open().clickDelete(true);
         page.getDialog().getBody().getStateInfo().should('contain', this.groupCode);
         page.getDialog().confirm();
         page.getContent().getTableRows().should('not.contain', this.groupCode);
