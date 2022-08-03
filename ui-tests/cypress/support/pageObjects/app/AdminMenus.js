@@ -1,14 +1,14 @@
 import Menus from './Menus';
 
-import Menu   from './Menu';
-import Navbar from './Navbar';
+import AdminMenu   from './AdminMenu';
+import AdminNavbar from './AdminNavbar';
 
 export default class AdminMenus extends Menus {
 
   constructor(parent) {
     super(parent);
-    this.navbar = new Navbar(this);
-    this.menu   = new Menu(this);
+    this.navbar = new AdminNavbar(this);
+    this.menu   = new AdminMenu(this);
   }
 
   get() {

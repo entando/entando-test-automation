@@ -1,14 +1,14 @@
 {
-  "baseUrl": "http://cypress-updated.cypress.eng-entando.com",
+  "baseUrl": "http://entando-7-1.cypress.eng-entando.com",
   "basePath": "/app-builder",
   "portalUIPath": "/entando-de-app/en",
-  "restAPI": "http://cypress-updated.cypress.eng-entando.com/entando-de-app/api",
-  "adminConsolePath": "http://cypress-updated.cypress.eng-entando.com/entando-de-app/do",
+  "restAPI": "http://entando-7-1.cypress.eng-entando.com/entando-de-app/api",
+  "adminConsolePath": "http://entando-7-1.cypress.eng-entando.com/entando-de-app/do",
   "env": {
-    "auth_base_url": "http://cypress-updated.cypress.eng-entando.com/auth",
+    "auth_base_url": "http://entando-7-1.cypress.eng-entando.com/auth",
     "auth_realm": "entando",
     "auth_client_id": "entando-web",
-    "api_client_id": "cypress-updated-de",
-    "api_client_secret": "QCktm07T5l6jC2VdCGEG0etcLZ91gpTk"
+    "api_client_id": "entando-7-1-de",
+    "api_client_secret": "tS4JVpbwM8hQtpLo46EKxI5mWS1YyLOm"
   }
 }
