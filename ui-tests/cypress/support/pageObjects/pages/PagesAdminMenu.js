@@ -9,7 +9,7 @@ import DesignerPage   from './designer/DesignerPage';
 import TemplatesPage  from './templates/TemplatesPage';
 import SettingsPage   from './settings/SettingsPage';
 
-export default class PagesMenu extends SubMenu {
+export default class PagesAdminMenu extends SubMenu {
 
   get() {
     return this.parent.get()

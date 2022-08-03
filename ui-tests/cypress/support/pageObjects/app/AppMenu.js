@@ -1,12 +1,12 @@
 import {htmlElements, WebElement} from '../WebElement';
 
 import DashboardMenu      from '../dashboard/DashboardMenu';
-import PagesMenu          from '../pages/PagesMenu';
 import ComponentsAppMenu  from '../components/ComponentsAppMenu';
 import ContentMenu        from '../content/ContentMenu';
 import UsersAppMenu       from '../users/UsersAppMenu';
 import RepositoryMenu     from '../repository/RepositoryMenu';
 import AdministrationMenu from '../administration/AdministrationMenu';
+import PagesAppMenu       from '../pages/PagesAppMenu';
 
 export default class AppMenu extends WebElement {
 
@@ -23,7 +23,8 @@ export default class AppMenu extends WebElement {
   }
 
   getPages() {
-    return new PagesMenu(this);
+    cy.wait(1000);
+    return new PagesAppMenu(this);
   }
 
   getComponents() {
