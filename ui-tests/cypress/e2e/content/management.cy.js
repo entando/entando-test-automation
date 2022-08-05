@@ -11,8 +11,8 @@ describe('Contents', () => {
   });
 
   afterEach(() => {
-    cy.get('@contentToBeDeleted').then(contentCode => {
-      if (contentCode) cy.contentsController().then(controller => controller.deleteContent(contentCode));
+    cy.get('@contentToBeDeleted').then(content => {
+      if (content) cy.contentsController().then(controller => controller.deleteContent(content.id));
     });
     cy.kcTokenLogout();
   });
@@ -20,14 +20,12 @@ describe('Contents', () => {
 
   describe('Browse Contents', () => {
 
-    it([Tag.GTS, 'ENG-2487'], 'Filter contents with zero results and checking pagination info if the information is correct', () => {
+    it([Tag.GTS, 'ENG-2487', 'ENG-2680'], 'Filter contents with zero results and checking pagination info if the information is correct', () => {
       openContentMgmtPage()
-          .then(page => page.getContent().getFormNameInput().then(input => page.getContent().type(input, 'z')))
-          .then(page => page.getContent().clickFormSearchButton())
+          .then(page => page.getContent().doSearch('z'))
           .then(page => {
-            page.getContent().getAlertMessage()
-                .should('exist').and('be.visible')
-                .and('contain', 'empty');
+            page.getContent().getPagination().getItemsCurrent().invoke('text').should('be.equal', '0-0');
+            page.getContent().getPagination().getItemsTotal().invoke('text').should('be.equal', '0');
           });
     });
 
@@ -36,26 +34,60 @@ describe('Contents', () => {
   describe('Add content', () => {
 
     it([Tag.GTS, 'ENG-2487'], 'Add content', () => {
-
-      const contentTitle = generateRandomId();
       openContentMgmtPage()
-          .then(page => page.getContent().openAddContentPage(DEFAULT_CONTENT_TYPE))
-          .then(page => page.getContent().getOwnerGroupSelect().then(input => page.getContent().select(input, DEFAULT_GROUP)))
-          .then(page => page.getContent().clickOwnerGroupSetGroupButton())
-          .then(page => page.getContent().getContentAttributesContentAttributeInput('title').then(input => page.getContent().type(input, contentTitle)))
-          .then(page => page.getContent().save())
-          .then(page =>
-              page.getContent().getTableRow(contentTitle).then(row => {
-                cy.get(row).should('exist').and('be.visible');
-                cy.get(row).children(htmlElements.td).eq(3).then(code => cy.wrap(code.text().trim()).as('contentToBeDeleted'));
-              }));
+        .then(page => page.getContent().openAddContentPage(DEFAULT_CONTENT_TYPE))
+        .then(page => page.getContent().fillBeginContent(content.description, DEFAULT_GROUP))
+        .then(page => page.getContent().fillAttributes([{type: 'Text', value: 'test text'}]))
+        .then(page => page.getContent().copyToAllLanguages())
+        .then(page => {
+          cy.contentsController().then(controller => controller.intercept({method: 'POST'}, 'postedContent'));
+          page.getContent().submitForm();
+        })
+        .then(page => {
+          cy.wait('@postedContent').then(response => cy.wrap(response.response.body.payload[0]).as('contentToBeDeleted'));
+          cy.validateToast(page, 'Saved');
+        });
     });
 
-    // The save button is always enabled, the validation seems to happen on backend side; when trying to save without group, the default one is selected
-    // it([Tag.GTS, 'ENG-2488'], 'Add content without an owner group - not allowed', () => {});
+    it([Tag.GTS, 'ENG-2488'], 'Add content without an owner group - not allowed', () => {
+      openContentMgmtPage()
+        .then(page => page.getContent().openAddContentPage(DEFAULT_CONTENT_TYPE))
+        .then(page => page.getContent().getDescriptionInput().then(input => page.getContent().type(input, content.description)))
+        .then(page => page.getContent().clearOwnerGroup())
+        .then(page => page.getContent().getSaveAction().should('have.class', 'disabled'));
+    });
 
-    // Saving a content with only default language is allowed
-    // it([Tag.GTS, 'ENG-2487'], 'Add new content and does not fill values for any language but the default one, a modal must present to inform for other languages (ENG-2714)', () => {});
+    it([Tag.GTS, 'ENG-2487'], 'Add new content and does not fill values for any language but the default one, a modal must present to inform for other languages (ENG-2714)', () => {
+      openContentMgmtPage()
+        .then(page => page.getContent().openAddContentPage(DEFAULT_CONTENT_TYPE))
+        .then(page => page.getContent().fillBeginContent(content.description, DEFAULT_GROUP))
+        .then(page => page.getContent().fillAttributes([{type: 'Text', value: 'test text'}]))
+        .then(page => page.getContent().getDropDown)
+        .then(page => {
+          page.getContent().getSaveAction().invoke('hasClass', 'disabled').should('be.false');
+          page.getContent().getSaveContinueAction().invoke('hasClass', 'disabled').should('be.false');
+          page.getContent().getSaveApproveAction().should('not.have.class', 'disabled');
+          page.getContent().getSaveApproveAction(true).then(button => page.getContent().click(button));
+        })
+        .then(page => {
+          page.getDialog().getHeader().should('contain.text', 'Missing Translations');
+          page.getDialog().getCancelButton().then(button => page.getContent().click(button))
+        })
+        .then(page => {
+          page.getDialog().get().should('not.exist');
+          page.getContent().getSaveApproveAction(true).then(button => page.getContent().click(button));
+        })
+        .then(page => page.getDialog().getFooter().children(htmlElements.button).eq(2).then(button => page.getContent().click(button)))
+        .then(page => {
+          page.getContent().getContentAttributesLanguageTab('it').invoke('attr', 'aria-selected').should('eq', 'true');
+          cy.contentsController().then(controller => controller.intercept({method: 'POST'}, 'postedContent'));
+          page.getContent().submitForm(true);
+        })
+        .then(page => {
+          cy.wait('@postedContent').then(response => cy.wrap(response.response.body.payload[0]).as('contentToBeDeleted'));
+          cy.validateToast(page, 'Saved');
+        });
+    });
 
   });
 
@@ -64,32 +96,27 @@ describe('Contents', () => {
         cy.fixture('data/testContent.json').then(testContent => {
           testContent.description = generateRandomId();
           addTestContent(testContent).as('contentToBeDeleted');
-        }));
+    }));
 
     it([Tag.GTS, 'ENG-2487'], 'Edit content', () => {
       openContentMgmtPage()
           .then(page => {
             cy.get('@contentToBeDeleted').then(content => {
-              // FIXME/TODO the element seems to be covered by another element
-              page.getContent().getKebabMenu(content).open(true).openEdit()
-                  .then(page => page.getContent().getContentDescriptionInput().then(input => {
-                    page.getContent().clear(input);
-                    page.getContent().type(input, updatedDescription);
-                  }))
-                  .then(page => page.getContent().save())
-                  .then(page => page.getContent().getTableRow(content).find(htmlElements.td).eq(1).should('contain.text', updatedDescription));
-            });
+              page.getContent().getKebabMenu(content.id).open().openEdit(content.typeCode)
+                  .then(page => page.getContent().editContent(updatedDescription))
+                  .then(page => page.getContent().getTableRow(content.id).find(htmlElements.td).eq(2).should('contain.text', updatedDescription));
+              })
           });
     });
+
     it([Tag.GTS, 'ENG-2487'], 'Delete content', () => {
       openContentMgmtPage()
           .then(page => {
             cy.get('@contentToBeDeleted').then(content => {
-                page.getContent().getContentCheckBox(content).check({force: true});
-                page.getContent().clickDelete();
-              })
-              .then(page => page.getContent().submit())
-              .then(page => page.getContent().getStatus().should('exist').and('be.visible'));
+              page.getContent().getKebabMenu(content.id).open().clickDelete()
+                  .then(page => page.getDialog().confirm())
+                  .then(page => cy.validateToast(page, 'removed'))
+            });
             cy.wrap(null).as('contentToBeDeleted');
           });
     });
@@ -107,15 +134,13 @@ describe('Contents', () => {
 
         openContentMgmtPage()
             .then(page => {
-              cy.get('@publishedContentToBeDeleted').then(content => {
-                  page.getContent().getContentCheckBox(content).check({force: true});
-                  page.getContent().clickDelete();
-                })
-                .then(page => page.getContent().submit())
-                .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible').and('contain', `${testContent.description}`));
+              cy.get('@publishedContentToBeDeleted').then(content => 
+                page.getContent().getKebabMenu(content.id).open().getDelete().should('have.class', 'disabled')
+              )
             });
       });
     });
+
   });
 
   describe('Operations on referenced content', () => {
@@ -126,18 +151,17 @@ describe('Contents', () => {
     it([Tag.GTS, 'ENG-2489'], 'Update status of content referenced by a published page', () => {
       openContentMgmtPage()
           .then(page =>
-              cy.get('@publishedContentToBeDeleted').then(content => {
-                page.getContent().getContentCheckBox(content).check({force: true});
-                page.getContent().clickUnPublish();
-              }))
-          .then(page => page.getContent().submit())
-          .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible').and('contain', `${content.description}`));
-      cy.wrap(null).as('contentToBeDeleted');
+              cy.get('@publishedContentToBeDeleted').then(content => 
+                page.getContent().getKebabMenu(content.id).open().clickUnpublish()
+                    .then(page => page.getDialog().confirm())
+                    .then(page => cy.validateToast(page, content.id, false))
+              ));
     });
+
   });
 
   const DEFAULT_GROUP        = 'Free Access';
-  const DEFAULT_CONTENT_TYPE = 'Banner';
+  const DEFAULT_CONTENT_TYPE = {name: 'Banner', code: 'BNR'};
   const contentTypeCode      = generateRandomTypeCode();
   const contentTypeName      = generateRandomId();
   const content              = {
@@ -151,21 +175,23 @@ describe('Contents', () => {
 
   const addTestContent = (content, typeCode) => {
     return cy.contentsController().then(controller => controller.addContent(content, typeCode))
-             .then(response => cy.wrap(response.body.payload[0].id));
+             .then(response => cy.wrap(response.body.payload[0]));
   };
 
   const addPublishedContent      = (content, typeCode) => {
     return addTestContent(content, typeCode).as('publishedContentToBeDeleted').then(content =>
-        cy.contentsController().then(controller => controller.updateStatus(content, 'published')));
+        cy.contentsController().then(controller => controller.updateStatus(content.id, 'published')));
   };
+
   const removePublishedContent   = () => {
-    return cy.get('@publishedContentToBeDeleted').then(contentCode => {
+    return cy.get('@publishedContentToBeDeleted').then(content => {
       cy.contentsController().then(controller => {
-        controller.updateStatus(contentCode, 'draft');
-        controller.deleteContent(contentCode);
+        controller.updateStatus(content.id, 'draft');
+        controller.deleteContent(content.id);
       });
     });
   };
+
   const addPage                  = () => {
     return cy.fixture('data/demoPage.json').then(demoPage => {
       demoPage.code = generateRandomId();
@@ -173,11 +199,13 @@ describe('Contents', () => {
         .then(response => cy.wrap(response.body.payload).as('pageToBeDeleted'));
     });
   };
+
   const setPageStatusOnPublished = () => {
     return cy.get('@pageToBeDeleted').then(page =>
         cy.pagesController().then(controller => controller.setPageStatus(page.code, 'published'))
     );
   };
+
   const removePublishedPage      = () => {
     return cy.get('@pageToBeDeleted').then(page => {
       if (page) cy.pagesController().then(controller => {
@@ -186,17 +214,18 @@ describe('Contents', () => {
       });
     });
   };
+
   const addWidget                = () => {
     return cy.fixture('data/pageWidget.json').then(pageWidget => {
       cy.get('@pageToBeDeleted').then(page => {
-        cy.get('@publishedContentToBeDeleted').then(contentId => {
+        cy.get('@publishedContentToBeDeleted').then(content => {
           cy.pageWidgetsController(page.code)
             .then(controller => controller
                 .addWidget(0,
                     'search_form',
                     {
                       ...pageWidget.config,
-                      contentId: contentId
+                      contentId: content.id
                     }
                 )
             );
@@ -204,17 +233,19 @@ describe('Contents', () => {
       });
     });
   };
+
   const removeWidget             = () => {
     return cy.get('@pageToBeDeleted').then(page => {
       cy.pageWidgetsController(page.code).then(controller => controller.deleteWidget(0));
     });
   };
+
   const addContentType           = () => {
     return cy.contentTypesController().then(controller => controller.addContentType(contentTypeCode, contentTypeName))
              .then(response => cy.wrap(response.body.payload)).as('contentTypeToBeDelete');
   };
-  const removeContentType        = () => {
 
+  const removeContentType        = () => {
     return cy.get('@contentTypeToBeDelete').then(contentTypeCode =>
         cy.contentTypesController().then(controller => controller.deleteContentType(contentTypeCode.code)));
   };
@@ -233,4 +264,5 @@ describe('Contents', () => {
     removePublishedContent();
     removeContentType();
   };
+
 });

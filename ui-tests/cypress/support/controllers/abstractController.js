@@ -5,8 +5,9 @@ export default class AbstractController {
     this.accessToken = accessToken;
   }
 
-  intercept(routeMatcher, alias, path = '') {
+  intercept(routeMatcher, alias, path = '', times) {
     routeMatcher.url = this.apiURL + path;
+    if (times) routeMatcher.times = times;
     return cy.intercept(routeMatcher).as(alias);
   }
 

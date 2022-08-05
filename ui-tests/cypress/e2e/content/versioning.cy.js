@@ -12,7 +12,12 @@ describe( 'Content Versioning', () => {
       openVersioningPage()
           .then(page => page.getContent().getSearchDescInput().then(input => page.getContent().type(input, 'z')))
           .then(page => page.getContent().submitSearch())
-          .then(page => page.getContent().getSearchForm().should('contain.text', 'There aren\'t modified contents.'));
+          .then(page => {
+            page.getContent().getPagination()
+                .getItemsCurrent().invoke('text').should('be.equal', '0-0');
+            page.getContent().getPagination()
+                .getItemsTotal().invoke('text').should('be.equal', '0');
+          });
     });
 
   });

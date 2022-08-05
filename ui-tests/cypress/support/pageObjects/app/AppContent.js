@@ -5,7 +5,7 @@ import Content from './Content';
 export default class AppContent extends Content {
 
   get() {
-    return this.parent.get().children(`${htmlElements.div}.container-fluid`);
+    return this.parent.get().find(`${htmlElements.div}.container-fluid`);
   }
 
   getContents() {

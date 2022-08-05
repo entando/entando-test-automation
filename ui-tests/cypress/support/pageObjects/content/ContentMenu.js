@@ -2,7 +2,7 @@ import {htmlElements} from '../WebElement.js';
 
 import {SubMenu} from '../app/MenuElement.js';
 
-import AdminPage      from '../app/AdminPage.js';
+import AppPage        from '../app/AppPage.js';
 import ManagementPage from './management/ManagementPage';
 import AssetsPage     from './assets/AssetsPage';
 import TemplatesPage  from './templates/TemplatesPage';
@@ -56,37 +56,37 @@ export default class ContentMenu extends SubMenu {
 
   openManagement() {
     this.getManagement().then(button => ManagementPage.openPage(button));
-    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
   openAssets() {
     this.getAssets().then(button => AssetsPage.openPage(button));
-    return cy.wrap(new AdminPage(AssetsPage)).as('currentPage');
+    return cy.wrap(new AppPage(AssetsPage)).as('currentPage');
   }
 
   openTemplates() {
     this.getTemplates().then(button => TemplatesPage.openPage(button));
-    return cy.wrap(new AdminPage(TemplatesPage)).as('currentPage');
+    return cy.wrap(new AppPage(TemplatesPage)).as('currentPage');
   }
 
   openCategories() {
     this.getCategories().then(button => CategoriesPage.openPage(button));
-    return cy.wrap(new AdminPage(CategoriesPage)).as('currentPage');
+    return cy.wrap(new AppPage(CategoriesPage)).as('currentPage');
   }
 
   openVersioning() {
     this.getVersioning().then(button => VersioningPage.openPage(button));
-    return cy.wrap(new AdminPage(VersioningPage)).as('currentPage');
+    return cy.wrap(new AppPage(VersioningPage)).as('currentPage');
   }
 
   openTypes() {
     this.getTypes().then(button => TypesPage.openPage(button));
-    return cy.wrap(new AdminPage(TypesPage)).as('currentPage');
+    return cy.wrap(new AppPage(TypesPage)).as('currentPage');
   }
 
   openSettings() {
     this.getSettings().click();
-    return new AdminPage(SettingsPage);
+    return new AppPage(SettingsPage);
   }
 
 }

@@ -27,15 +27,8 @@ import SeoPagesController              from './controllers/restAPI/SeoPagesContr
 import SMTPServerController            from './controllers/restAPI/SMTPServerController';
 import UserPreferencesController       from './controllers/restAPI/UserPreferencesController';
 import UsersController                 from './controllers/restAPI/UsersController';
+import VersioningController            from './controllers/restAPI/VersioningController';
 import WidgetsController               from './controllers/restAPI/WidgetsController';
-
-import AssetsAdminConsoleController            from './controllers/cmsActions/AssetsAdminConsoleController';
-import CategoriesAdminConsoleController        from './controllers/cmsActions/CategoriesAdminConsoleController';
-import ContentsAdminConsoleController          from './controllers/cmsActions/ContentsAdminConsoleController';
-import ContentTemplatesAdminConsoleController  from './controllers/cmsActions/ContentTemplatesAdminConsoleController';
-import ContentTypesAdminConsoleController      from './controllers/cmsActions/ContentTypesAdminConsoleController';
-import ContentTypesJacmsAdminConsoleController from './controllers/cmsActions/ContentTypesJacmsAdminConsoleController';
-import VersioningAdminConsoleController        from './controllers/cmsActions/VersioningAdminConsoleController';
 
 export const enum Tag {
     WIP,
@@ -266,46 +259,14 @@ declare namespace Cypress {
         usersController(): Chainable<UsersController>;
 
         /**
+         * Returns a new instance of a content versioning controller
+         */
+        versioningController(): Chainable<VersioningController>;
+
+        /**
          * Returns a new instance of a widgets controller
          */
         widgetsController(widgetCode?): Chainable<WidgetsController>;
-    }
-
-    interface Chainable<Subject> {
-        /**
-         * Returns a new instance of an assets admin console controller
-         */
-        assetsAdminConsoleController(): Chainable<AssetsAdminConsoleController>;
-
-        /**
-         * Returns a new instance of a categories admin consolecontroller
-         */
-        categoriesAdminConsoleController(): Chainable<CategoriesAdminConsoleController>;
-
-        /**
-         * Returns a new instance of a contents admin console controller
-         */
-        contentsAdminConsoleController(): Chainable<ContentsAdminConsoleController>;
-
-        /**
-         * Returns a new instance of a content templates controller
-         */
-        contentTemplatesAdminConsoleController(): Chainable<ContentTemplatesAdminConsoleController>;
-
-        /**
-         * Returns a new instance of a content types admin console controller
-         */
-        contentTypesAdminConsoleController(): Chainable<ContentTypesAdminConsoleController>;
-
-        /**
-         * Returns a new instance of a content types jacms admin console controller
-         */
-        contentTypesJacmsAdminConsoleController(): Chainable<ContentTypesJacmsAdminConsoleController>;
-
-        /**
-         * Returns a new instance of a content versioning controller
-         */
-        versioningController(): Chainable<VersioningAdminConsoleController>;
     }
 
 }

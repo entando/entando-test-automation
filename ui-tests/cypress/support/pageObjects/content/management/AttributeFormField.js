@@ -15,7 +15,12 @@ export default class AttributeFormField extends WebElement {
 
   getLangPane() {
     return this.parent.get()
-               .find(`${htmlElements.div}#${this.lang}_tab`);
+      .find(`#content-attributes-tabs-pane-${this.lang}`);
+  }
+
+  getCollapseMain() {
+    return this.getLangPane()
+      .children('div.ContentFormFieldCollapse').then(el => Array.isArray(el) ? el[this.index] : el);
   }
 
   getTopContents() {
@@ -34,6 +39,24 @@ export default class AttributeFormField extends WebElement {
     return this.get();
   }
 
+  get prefix() {
+    if (!this.parentAttribute) {
+      return `attributes[${this.index}]`;
+    }
+    const { prefix, attributeType } = this.parentAttribute;
+    switch (attributeType) {
+      default:
+        return `attributes[${this.index}]`;
+      case 'Composite':
+        return `${prefix}.compositeelements[${this.index}]`;
+      case 'List':
+        return `${prefix}.listelements.${this.lang}[${this.index}]`;
+      case 'Monolist':
+        return `${prefix}.elements[${this.index}]`;
+    }
+    
+  }
+
   isCollapsed() {
     return this.getCollapseMain().invoke('hasClass', 'closed');
   }
@@ -45,6 +68,18 @@ export default class AttributeFormField extends WebElement {
   toggleCollapse() {
     this.getToggleTitle().click();
     return this;
+  }
+
+  getDialogOfAttribute() {
+    return this.parent.parent.getDialog();
+  }
+
+  getDialogBodyOfAttribute() {
+    return this.getDialogOfAttribute().getBody();
+  }
+
+  setDialogBodyWithClass(component) {
+    this.parent.parent.getDialog().setBody(component);
   }
 
   collapse() {
@@ -63,5 +98,10 @@ export default class AttributeFormField extends WebElement {
       }
     });
     return this;
+  }
+
+  getHelpBlock() {
+    return this.getContents()
+      .find('.help-block');
   }
 }

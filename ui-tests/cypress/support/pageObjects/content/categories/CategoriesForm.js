@@ -1,27 +1,29 @@
 import {htmlElements} from '../../WebElement';
 
-import AdminContent   from '../../app/AdminContent';
-import AdminPage      from '../../app/AdminPage';
+import AppContent   from '../../app/AppContent';
+import AppPage      from '../../app/AppPage';
 import CategoriesPage from './CategoriesPage';
 
-export default class CategoriesForm extends AdminContent {
+export default class CategoriesForm extends AppContent {
 
-  titleItInput      = `${htmlElements.input}#langit`;
-  titleEnInput      = `${htmlElements.input}#langen`;
-  codeInput         = `${htmlElements.input}#categoryCode`;
-  treePositionInput = `${htmlElements.table}#categoryTree`;
-  saveButton        = `${htmlElements.button}[type="submit"]`;
+  titleItInput      = `${htmlElements.input}[name="titles.it"][id="titles.it"]`;
+  titleEnInput      = `${htmlElements.input}[name="titles.en"][id="titles.en"]`;
+  codeInput         = `${htmlElements.input}[name="code"]#code`;
+  treePositionInput = `${htmlElements.table}.CategoryTreeSelector`;
+  saveButton        = `${htmlElements.button}[type=submit].CategoryForm__save-btn`;
 
   static openAddPage(button) {
-    cy.categoriesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addCategoryPageLoadingGET', '/new.action'));
+    cy.categoriesController().then(controller => controller.intercept({method: 'GET'}, 'categoriesLoadingGET', '/home'));
+    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesLoadingGET', '?*'));
     cy.get(button).click();
-    cy.wait('@addCategoryPageLoadingGET');
+    cy.wait(['@categoriesLoadingGET', '@categoriesLoadingGET', '@languagesLoadingGET']);
   }
 
-  static openEditPage(button) {
-    cy.categoriesAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'editCategoryPageLoadingPOST', '/viewTree.action'));
+  static openEditPage(button, code) {
+    cy.categoriesController().then(controller => controller.intercept({method: 'GET'}, 'categoryLoadingGET', `/${code}`))
+    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesLoadingGET', '?*'));
     cy.get(button).click();
-    cy.wait('@editCategoryPageLoadingPOST');
+    cy.wait(['@categoryLoadingGET', '@languagesLoadingGET']);
   }
 
   getTitleItInput() {
@@ -55,7 +57,7 @@ export default class CategoriesForm extends AdminContent {
 
   submitForm() {
     this.getSaveButton().then(button => CategoriesPage.openPage(button));
-    return cy.wrap(new AdminPage(CategoriesPage)).as('currentPage');
+    return cy.wrap(new AppPage(CategoriesPage)).as('currentPage');
   }
 
   fillFields(titleEn, titleIt, code, treePosition, append = false, edit = false) {

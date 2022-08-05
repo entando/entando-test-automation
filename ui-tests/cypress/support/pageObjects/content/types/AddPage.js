@@ -1,20 +1,19 @@
 import {htmlElements} from '../../WebElement';
 
-import AdminContent from '../../app/AdminContent';
+import AppContent from '../../app/AppContent';
 
-import AdminPage from '../../app/AdminPage.js';
+import AppPage from '../../app/AppPage.js';
 
-import TypesPage from './TypesPage';
+import EditPage from './EditPage';
 
-export default class AddPage extends AdminContent {
+export default class AddPage extends AppContent {
 
-  codeInput  = `${htmlElements.input}#entityTypeCode`;
-  nameInput  = `${htmlElements.input}#entityTypeDescription`;
-  saveButton = `${htmlElements.button}[name="entandoaction:saveEntityType"]`;
+  codeInput  = `${htmlElements.input}[name=code]`;
+  nameInput  = `${htmlElements.input}[name=name]`;
+  saveButton = `${htmlElements.button}.AddContentTypeFormBody__save--btn`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'addContentTypePageLoadingGET', '/initAddEntityType.action?entityManagerName=jacmsContentManager'));
+    cy.contentTypeAttributesController().then(controller => controller.intercept({ method: 'GET' }, 'addContentTypePageLoadingGET', '?page=1&pageSize=0', 1));
     cy.get(button).click();
     cy.wait('@addContentTypePageLoadingGET');
   }
@@ -34,15 +33,15 @@ export default class AddPage extends AdminContent {
                .find(this.saveButton);
   }
 
-  save() {
-    this.getSaveButton().then(button => TypesPage.openPage(button));
-    return cy.wrap(new AdminPage(TypesPage)).as('currentPage');
+  save(code) {
+    this.getSaveButton().then(button => EditPage.openPageFromAttribute(button, code));
+    return cy.wrap(new AppPage(EditPage)).as('currentPage');
   }
 
   addAndSaveContentType(code, name) {
     this.getCodeInput().then(input => this.type(input, code));
     this.getNameInput().then(input => this.type(input, name));
-    return this.save();
+    return this.save(code);
   }
 
 }

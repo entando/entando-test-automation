@@ -1,190 +1,138 @@
 import {htmlElements} from '../../WebElement.js';
 
-import AdminContent from '../../app/AdminContent';
+import AppContent from '../../app/AppContent.js';
+import Pagination from '../../app/Pagination.js';
+import AppPage from '../../app/AppPage.js';
+import AddPage from './AddPage.js';
+import DeleteDialog from '../../app/DeleteDialog.js';
+import KebabMenu from '../../app/KebabMenu.js';
+import { Dialog } from '../../app/Dialog.js';
 
-import AddPage     from './AddPage';
-import AdminPage   from '../../app/AdminPage';
-import KebabMenu   from '../../app/KebabMenu.js';
-import ResultsPage from './ResultsPage';
+export default class ManagementPage extends AppContent {
 
-export default class ManagementPage extends AdminContent {
+  addButton     = `${htmlElements.button}#addContent`;
 
-  contentsTableDiv        = `${htmlElements.div}.Contents__table`;
-  contentsKebabMenu       = `${htmlElements.div}.dropdown-kebab-pf`;
-  contentsKebabMenuButton = `${htmlElements.button}`;
-  contentsKebabMenuAction = `${htmlElements.li}`;
+  contentsFilter           = `${htmlElements.div}.ContentsFilter`;
+  searchFilterTextfield    = `${htmlElements.input}[type=text]`;
+  searchFilterSubmitButton = `${htmlElements.button}.ContentsFilter__search-button`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'contentManagementPageLoadingGET', '/list.action'));
+    cy.contentsController().then(controller => controller.intercept({method: 'GET'}, 'contentManagementPageLoadingGET', '?*'));
+    cy.categoriesController().then(controller => controller.intercept({method: 'GET'}, 'categoriesLoadingGET', '?parentCode=home'));
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupsLoadingGET', '?page=1&pageSize=0'));
+    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesLoadingGET', '?page=1&pageSize=0'));
+    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'usersLoadingGET', '?page=1&pageSize=0'));
     cy.get(button).click();
-    cy.wait('@contentManagementPageLoadingGET');
-  }
-
-  //FIXME AdminConsole is not built on REST APIs
-  static openSearchPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'contentManagementSearchPOST', '/search.action'));
-    cy.get(button).click();
-    cy.wait('@contentManagementSearchPOST');
-  }
-
-  //FIXME AdminConsole is not built on REST APIs
-  static savePage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'contentManagementPageLoadingGET', '/results.action'));
-    cy.get(button).click();
-    cy.wait('@contentManagementPageLoadingGET');
-  }
-
-  getContents() {
-    return super.getContents().children(`${htmlElements.div}#main`);
-  }
-
-  getSearchForm() {
-    return this.getContents()
-               .children(htmlElements.div).eq(0)
-               .children(htmlElements.form);
-  }
-
-  getFormNameInput() {
-    return this.getSearchForm()
-               .find(`${htmlElements.input}#text`);
-  }
-
-  getFormCodeInput() {
-    return this.getSearchForm()
-               .find(`${htmlElements.input}#contentIdToken`);
+    cy.wait(['@contentManagementPageLoadingGET', '@categoriesLoadingGET', '@groupsLoadingGET', '@contentTypesLoadingGET', '@usersLoadingGET']);
   }
 
   getAddButton() {
-    return this.getContents()
-               .children(htmlElements.div).eq(1)
-               .children(htmlElements.div)
-               .children(htmlElements.button);
+    return this.get()
+               .find(this.addButton)
+               .eq(0);
   }
 
-  getAddOptionsList() {
-    return this.getContents()
-               .children(htmlElements.div).eq(1)
-               .children(htmlElements.div)
-               .children(htmlElements.ul);
-  }
-
-  //FIXME elements should be identifiable by a more reliable properties
-  getAddOption(typeName) {
-    return this.getAddOptionsList()
-               .children(htmlElements.li)
-               .contains(typeName);
-  }
-
-  getFormSearchButton() {
-    return this.getSearchForm()
-               .find(`${htmlElements.button}[type=submit]`);
-  }
-
-  getContentCheckBox(content) {
-    return this.getTableRow(content).children().find(`${htmlElements.input}#content_${content}`);
-  }
-
-  getDelete() {
-    return this.getContents()
-               .find(`${htmlElements.button}.btn-danger`);
-  }
-
-  getContentsForm() {
-    return this.getContents()
-               .children(htmlElements.div).eq(2)
-               .children(`${htmlElements.form}#search`);
-  }
-
-  getUnPublish() {
-    return this.getContents()
-               .find(`${htmlElements.button}[title="Suspend the content"]`);
-  }
-
-  getTableWrapper() {
-    return this.getContentsForm().find(`${htmlElements.div}#contentListTable_wrapper`);
-  }
-
-  getTable() {
-    return this.getTableWrapper().find(`${htmlElements.table}#contentListTable`);
-  }
-
-  getTableHeaders() {
-    //TODO it's a separate table!!
-  }
-
-  getTableRows() {
-    return this.getTable()
-               .children(htmlElements.tbody)
-               .children(htmlElements.tr);
-  }
-
-  getTableRow(code) {
-    return this.getTableRows()
-               .contains(htmlElements.td, code)
-               .parents(htmlElements.tr);
-  }
-
-  getActionsRow(code) {
-    return this.getTableRow(code)
-               .find('.table-view-pf-actions');
-  }
-
-  clickDelete() {
-    this.getDelete().then(button => ResultsPage.openConfirmActionPage(button));
-    return cy.wrap(new AdminPage(ResultsPage)).as('currentPage');
-  }
-
-  clickFormSearchButton() {
-    this.getFormSearchButton().then(button => ManagementPage.openSearchPage(button));
-    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
-  }
-
-  clickUnPublish() {
-    this.getUnPublish().then(button => ResultsPage.openConfirmActionPage(button));
-    return cy.wrap(new AdminPage(ResultsPage)).as('currentPage');
+  getAddContentDropdownList() {
+    return this.getAddButton()
+               .closest(htmlElements.div)
+               .find(htmlElements.ul);
   }
 
   openAddContentPage(contentType) {
-    this.getAddButton().click()
-        .then(() => this.getAddOption(contentType).then(button => AddPage.openPage(button)));
-    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
+    this.getAddButton().click();
+    this.getAddContentDropdownList().contains(contentType.name).then(element => AddPage.openPage(element, contentType.code));
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
+  }
+
+  getSearchPanel() {
+    return this.getContents()
+               .find(this.contentsFilter);
+  }
+
+  getSearchTextField() {
+    return this.getSearchPanel()
+               .find(this.searchFilterTextfield);
+  }
+
+  getSearchSubmitButton() {
+    return this.getSearchPanel()
+               .find(this.searchFilterSubmitButton);
+  }
+
+  doSearch(text = '') {
+    this.getSearchTextField().then(input => this.clear(input));
+    if (text !== '') {
+      this.getSearchTextField().then(input => this.type(input, text));
+    }
+    return this.getSearchSubmitButton().then(button => this.click(button));
+  }
+
+  getTable() {
+    return this.getContents()
+               .find(htmlElements.table);
+  }
+
+  getTableRowAction(code) {
+    return this.getTable()
+               .find(`${htmlElements.button}#actionsKebab_${code}`);
+  }
+
+  getTableRow(code) {
+    return this.getTableRowAction(code)
+               .closest(htmlElements.tr);
   }
 
   getKebabMenu(code) {
     return new ManagementKebabMenu(this, code);
   }
 
-  openEditContentPage() {
-    this.getContents()
-        .get(this.contentsTableDiv)
-        .find(this.contentsKebabMenu).eq(0)
-        .find(this.contentsKebabMenuButton)
-        .click();
-    this.getContents()
-        .get(this.contentsTableDiv)
-        .find(this.contentsKebabMenuAction).eq(0)
-        .click();
-    return new AdminPage(AddPage);
+  getPagination() {
+    return new Pagination(this);
   }
-
+  
 }
 
 class ManagementKebabMenu extends KebabMenu {
 
   get() {
-    return this.parent.getActionsRow(this.code)
-               .children(htmlElements.div);
+    return this.parent
+               .getTableRowAction(this.code)
+               .closest(htmlElements.div);
   }
-
+  
   getEdit() {
     return this.get()
                .find(htmlElements.li)
-               .contains(`Edit`);
+               .eq(0);
   }
 
-  openEdit() {
-    this.getEdit().then(button => AddPage.editPage(button, this.code));
-    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
+  getDelete() {
+    return this.get()
+               .find(htmlElements.li)
+               .eq(1);
   }
+
+  getUnpublish() {
+    return this.get()
+               .find(htmlElements.li)
+               .eq(4);
+  }
+
+  openEdit(contentType) {
+    this.getEdit().then(button => AddPage.openPage(button, contentType, true));
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
+  }
+
+  clickDelete() {
+    this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
+    return cy.get('@currentPage');
+  }
+
+  clickUnpublish() {
+    this.getUnpublish().click();
+    this.parent.parent.getDialog().setBody(Dialog);
+    return cy.get('@currentPage');
+  }
+
 }

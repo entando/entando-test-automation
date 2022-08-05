@@ -37,9 +37,9 @@ export class ListAttributeItem extends WebElement {
     return this.getCollapsePanelHead().find(`${htmlElements.span}.icon`);
   }
 
-  getSubAttributeItemDelete(lang) {
+  getSubAttributeItemDelete() {
     return this.getCollapsePanelHead()
-               .find(`${htmlElements.button}[name="entandoaction:removeListElement?attributeName=List;elementIndex=${this.index};listLangCode=${lang}"]`);
+      .find(`button[title="Delete ${this.index + 1}"].btn-danger`);
   }
 
   toggleSubAttributeCollapse() {
@@ -72,7 +72,7 @@ export class ListAttributeItem extends WebElement {
 }
 
 export default class ListAttribute extends AttributeFormField {
-  listBody       = `${htmlElements.div}#contentedit_${this.lang}_List`;
+  listBody = 'div.RenderListField__body';
   attributeItems = [];
   nestedType     = '';
 
@@ -87,7 +87,7 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   getAttributesArea() {
-    return this.getLangPane().children(this.listBody);
+    return this.getContents().find(this.listBody);
   }
 
   getTopControlArea() {
@@ -95,17 +95,16 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   getAddListitemButton() {
-    return this.getTopControlArea().find(`${htmlElements.button}[name="entandoaction:addListElement?attributeName=List;listLangCode=${this.lang}"]`);
+    return this.getTopControlArea().find(`${htmlElements.button}[title="Add"]`);
   }
 
   getSubAttributeCollapseAt(idx) {
-    return this.getAttributesArea().find(`${htmlElements.ul}.list-group`)
-                                   .children(`${htmlElements.li}.list-group-item`).eq(idx);
+    return this.getAttributesArea().children().eq(idx + 1);
   }
 
   getSubAttributeChildrenAt(idx) {
     return this.getSubAttributeCollapseAt(idx)
-               .find(`${htmlElements.div}.panel-body`);
+      .find(`${htmlElements.div}.ReactCollapse--content`).children(`${htmlElements.div}.panel-body`);
   }
 
   setAttributeType(type) {
@@ -152,14 +151,13 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   setValue(values, editMode = false) {
-    cy.log('edit mode è '+editMode);
     cy.wrap(0).as('toAddItem');
     if (editMode) {
       cy.wrap(0).as('toMinusItem');
       cy.wrap(0).as('attributeElementsLength');
-      this.getAttributesArea().find(`${htmlElements.li}.list-group-item`)
+      this.getAttributesArea().children()
           .then((attributeElements) => {
-            const attributeElementsLength = attributeElements.length;
+            const attributeElementsLength = attributeElements.length - 1;
             cy.wrap(attributeElementsLength).as('attributeElementsLength');
             if (attributeElementsLength === values.length) {
               return;
@@ -176,7 +174,6 @@ export default class ListAttribute extends AttributeFormField {
       cy.get('@toAddItem').then((toAdd) => {
         if (!editMode || (toAdd > 0 && values.length - toAdd <= idx)) {
           this.getAddListitemButton().click();
-          if (this.lang === 'it') cy.get('@currentPage').then(page => page.getContent().getContentAttributesLanguageTab(this.lang).click());
         }
       });
       const attributeItem = this.generateInstanceListItem(idx);
@@ -193,8 +190,7 @@ export default class ListAttribute extends AttributeFormField {
           cy.get('@attributeElementsLength').then((alength) => {
             for (let count = alength - 1; count > alength - 1 - toMinus; --count) {
               const attributeItem = new ListAttributeItem(this, null, count);
-              if (this.lang === 'it') cy.get('@currentPage').then(page => page.getContent().getContentAttributesLanguageTab(this.lang).click());
-              attributeItem.getSubAttributeItemDelete(this.lang).click();
+              attributeItem.getSubAttributeItemDelete().click();
             }
           });
 

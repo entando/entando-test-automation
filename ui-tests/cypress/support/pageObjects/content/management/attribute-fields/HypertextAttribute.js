@@ -1,92 +1,92 @@
-import {htmlElements} from '../../../WebElement';
-
+import { htmlElements } from '../../../WebElement';
 import AttributeFormField from '../AttributeFormField';
-
-import AdminPage    from '../../../app/AdminPage';
-import {LinkDialog} from './LinkAttribute';
+import { LinkDialog } from './LinkAttribute';
 
 export default class HypertextAttribute extends AttributeFormField {
-  fckeditor    = false;
-  quillToolbar = `${htmlElements.span}.cke_top`;
-  linkButton   = `${htmlElements.a}.cke_button__entandolink`;
-  quillEditor  = `${htmlElements.div}.quill`;
+  quillToolbar = `${htmlElements.div}.ql-toolbar`;
+  linkButton = `${htmlElements.button}.ql-enlink[title="Link"]`;
+  quillEditor = `${htmlElements.div}.quill`;
+  fckeditor = false;
 
-  constructor(parent, attributeIndex, lang = 'en', composite = false) {
+  constructor(parent, attributeIndex, lang = 'en', fckeditor = false) {
     super(parent, 'Hypertext', attributeIndex, lang);
-    this.composite = composite;
+    this.setFckeditor(fckeditor);
+  }
+
+  setFckeditor(fckeditor) {
+    this.fckeditor = fckeditor;
   }
 
   getEditorToolbar() {
     return this.getContents().find(this.quillToolbar);
-  }
+  } 
 
   getAddLinkButton() {
     return this.getEditorToolbar().find(this.linkButton);
   }
 
-  setLinkInfo(link) {
+  clickAddLinkButton() {
+    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesLoadingGET', '?page=1&pageSize=0', 1));
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupsLoadingGET', '?page=1&pageSize=0', 1));
+    cy.categoriesController().then(controller => controller.intercept({method: 'GET'}, 'categoriesLoadingGET', '?parentCode=home', 1));
+    cy.contentsController().then(controller => controller.intercept({method: 'GET'}, 'contentLoadingGET', '?*', 1));
     this.getAddLinkButton().click();
-    const {destType, rel, target, hreflang} = link;
-    cy.wrap(new AdminPage(LinkDialog))
-      .then(page => {
-        page.getContent().clickTabByDestType(destType);
+    cy.wait(['@contentTypesLoadingGET', '@groupsLoadingGET', '@categoriesLoadingGET', '@contentLoadingGET']);
+  }
 
-        switch (destType) {
-          case 1:
-          default:
-            page.getContent().setUrlValue(link.urlDest);
-            break;
-          case 2:
-            page.getContent().setPageValue(link.pageDest);
-            break;
-          case 3:
-            page.getContent().setContentValue(link.contentDest);
-            break;
-        }
-        if (link.rel) {
-          page.getContent().setAttributeRelValue(rel);
-        }
-        if (link.target) {
-          page.getContent().setAttributesTargetValue(target);
-        }
-        if (link.hreflang) {
-          page.getContent().setAttributeshrefLangValue(hreflang);
-        }
-        page.confirm();
+  setLinkInfo(link) {
+    this.setDialogBodyWithClass(LinkDialog);
+    this.clickAddLinkButton();
 
-      })
+    const { destType, rel, target, hreflang } = link;
+    this.getDialogBodyOfAttribute().clickTabByDestType(destType);
 
+    switch(destType) {
+      case 1:
+      default:
+        this.getDialogBodyOfAttribute().setUrlValue(link.urlDest);
+        break;
+      case 2:
+        this.getDialogBodyOfAttribute().setPageValue(link.pageDest);
+        break;
+      case 3:
+        this.getDialogBodyOfAttribute().setContentValue(link.contentDest);
+        break;
+    }
+    if (link.rel) {
+      this.getDialogBodyOfAttribute().setAttributeRelValue(rel);
+    }
+    if (link.target) {
+      this.getDialogBodyOfAttribute().setAttributesTargetValue(target);
+    }
+    if (link.hreflang) {
+      this.getDialogBodyOfAttribute().setAttributeshrefLangValue(hreflang);
+    }
+    this.getDialogBodyOfAttribute().confirm();
   }
 
   getEditorArea() {
     return this.getContents().find(this.quillEditor);
   }
 
-  getInput(fckeditor = false) {
-    const textarea = (this.composite ? `Composite:Hypertext:${this.lang}_Composite_Hypertext` : `Hypertext:${this.lang}_Hypertext`);
-    if (fckeditor) return this.getIframeBody();
-    else return this.getContents()
-                    .find(`${htmlElements.textarea}[name="${textarea}"]`);
+  getInput() {
+      if (this.fckeditor) {
+        return this.getEditorArea().find(`${htmlElements.div}.ql-editor`);
+      }
+      return this.getContents()
+        .find(`${htmlElements.textarea}[name="${this.prefix}.values.${this.lang}"]`);
   }
 
-  getIframeDocument() {
-    return this.getContents().find(`${htmlElements.iframe}.cke_wysiwyg_frame`).its('0.contentDocument');
+  setValue(text) {
+    this.getInput().type(text);
   }
 
-  getIframeBody() {
-    return this.getIframeDocument().its('body').should('not.be.undefined').then(cy.wrap);
-  }
-
-  setValue(text, fckeditor = false) {
-    this.getInput(fckeditor).then(input => this.parent.type(input, text));
-  }
-
-  editValue(value, fckeditor = false) {
-    this.getInput(fckeditor).clear();
+  editValue(value) {
+    this.getInput().clear();
     this.setValue(value);
   }
 
-  getValue(fckeditor = false) {
-    this.getInput(fckeditor).invoke('val');
+  getValue() {
+    this.getInput().invoke('val');
   }
 }

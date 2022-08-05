@@ -1,7 +1,5 @@
 {
    "contentType":"BNR",
    "contentTypeText":"Banner",
-   "contentShape":"<div>test</div>",
-   "testType":"BAU",
-   "testName":"Test"
+   "contentShape":"<div>test</div>"
 }

@@ -62,20 +62,20 @@ export default class CompositeAttribute extends AttributeFormField {
           break;
         }
         case 'Hypertext': {
-          field = new HypertextAttribute(this.parent, idx, this.lang, true);
+          field = new HypertextAttribute(this.parent, idx, this.lang);
           break;
         }
         case 'Link': {
-          field = new LinkAttribute(this.parent, idx, this.lang, true);
+          field = new LinkAttribute(this.parent, idx, this.lang);
           break;
         }
         case 'Timestamp': {
-          field = new TimestampAttribute(this.parent, idx, true);
+          field = new TimestampAttribute(this.parent, idx);
           break;
         }
         case 'Attach':
         case 'Image': {
-          field = new AssetAttribute(this.parent, idx, type, this.lang, true);
+          field = new AssetAttribute(this.parent, idx, type, this.lang);
           break;
         }
       }

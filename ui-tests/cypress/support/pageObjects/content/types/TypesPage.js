@@ -1,21 +1,20 @@
 import {htmlElements} from '../../WebElement.js';
 
-import AdminContent from '../../app/AdminContent.js';
+import AppContent from '../../app/AppContent.js';
 import KebabMenu    from '../../app/KebabMenu';
 
-import AdminPage    from '../../app/AdminPage.js';
+import AppPage    from '../../app/AppPage.js';
 
 import AddPage  from './AddPage.js';
 import EditPage from './EditPage.js';
-import DeleteAdminPage from '../../app/DeleteAdminPage.js';
+import DeleteDialog from '../../app/DeleteDialog.js';
 
-export default class TypesPage extends AdminContent {
+export default class TypesPage extends AppContent {
 
-  addButton = `${htmlElements.a}.btn.btn-primary.pull-right.mb-5`;
+  addButton = `${htmlElements.button}.ContentTypeList__addbutton`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'typesPageLoadingGET', '/initViewEntityTypes.action?entityManagerName=jacmsContentManager'));
+    cy.contentTypesController().then(controller => controller.intercept({ method: 'GET' }, 'typesPageLoadingGET', '?page=1&pageSize=10', 1));
     cy.get(button).click();
     cy.wait('@typesPageLoadingGET');
   }
@@ -42,22 +41,21 @@ export default class TypesPage extends AdminContent {
 
   getAddButton() {
     return this.getContents()
-               .find(`${htmlElements.form}[id="initViewEntityTypes"]`)
                .find(this.addButton);
   }
 
   openAddContentTypePage() {
     this.getAddButton().then(button => AddPage.openPage(button));
-    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
+    return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
 }
 
 class TypesKebabMenu extends KebabMenu {
 
-  edit   = `${htmlElements.a}[href*="initEditEntityType.action"]`;
-  reload = `${htmlElements.a}[href*="reloadEntityTypeReferences.action"]`;
-  delete = `${htmlElements.a}[href*="trashEntityType.action"]`;
+  edit   = `${htmlElements.li}.ContentTypeList__menu-item-edit`;
+  reload = `${htmlElements.li}.ContentTypeList__menu-item-reload`;
+  delete = `${htmlElements.li}.ContentTypeList__menu-item-delete`;
 
   get() {
     return this.parent.getTableRow(this.code)
@@ -80,16 +78,15 @@ class TypesKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getEdit().then(button => EditPage.openPage(button, this.code));
-    return cy.wrap(new AdminPage(EditPage)).as('currentPage');
+    this.getEdit().then(button => EditPage.openPageFromAttribute(button, this.code));
+    return cy.wrap(new AppPage(EditPage)).as('currentPage');
   }
 
   clickDelete() {
-    this.getDelete().then(button => DeleteAdminPage.openDeleteContentTypePage(button, this.code));
-    const deletePage = new AdminPage(DeleteAdminPage);
-    deletePage.getContent().setOrigin(this.parent.parent);
-    deletePage.getContent().setForm('removeEntityType');
-    return cy.wrap(deletePage).as('currentPage');
+    this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(TypesPage);
+    return cy.get('@currentPage');
   }
 
 }

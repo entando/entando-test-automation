@@ -1,34 +1,34 @@
 import {htmlElements} from '../../WebElement';
 
-import AdminContent  from '../../app/AdminContent';
-import AdminPage     from '../../app/AdminPage';
+import AppContent    from '../../app/AppContent';
+import AppPage       from '../../app/AppPage';
 import TemplatesPage from './TemplatesPage';
 
-export default class TemplateForm extends AdminContent {
+export default class TemplateForm extends AppContent {
 
-  idInput           = `${htmlElements.input}[name="modelId"]`;
-  nameInput         = `${htmlElements.input}[name="description"]`;
-  contentTypeInput  = `${htmlElements.select}[name="contentType"]`;
-  assistButton      = `${htmlElements.a}[id="popover-inline-editing-assist"]`;
-  contentShapeInput = `${htmlElements.div}[class="display-block"]`;
-  htmlCode          = `${htmlElements.div}[class="CodeMirror-code"]`;
-  aceTextInput      = `${htmlElements.div}.CodeMirror-lines`;
+  idInput           = `${htmlElements.input}[name='id']`;
+  nameInput         = `${htmlElements.input}[name='descr']`;
+  contentTypeInput  = `${htmlElements.div}.DropdownTypeahead.form-group`;
+  assistButton      = `${htmlElements.button}[type='button'].AddContentTemplateForm__editassistbtn`;
+  contentShapeInput = `${htmlElements.div}#contentShape`;
+  aceTextInput      = `${htmlElements.textarea}.ace_text-input`;
   stylesheetInput   = `${htmlElements.input}[name='stylesheet']`;
-  submitButton      = `${htmlElements.button}[type='submit'][class="btn btn-primary pull-right"]`;
+  submitButton      = `${htmlElements.button}[type='submit'].AddContentTypeFormBody__save--btn.btn-primary`;
   cancelButton      = `${htmlElements.button}[type='button'].AddContentTypeFormBody__cancel--btn.btn-default`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addContentTemplatePageLoadingGET', '/new.action'));
+    cy.contentTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'addContentTemplatePageLoadingGET', '/dictionary'));
+    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesLoadingGET', '?pageSize=0'));
     cy.get(button).click();
-    cy.wait('@addContentTemplatePageLoadingGET');
+    cy.wait(['@addContentTemplatePageLoadingGET', '@contentTypesLoadingGET']);
   }
 
-  //FIXME AdminConsole is not built on REST APIs
   static openEdit(button, code) {
-    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editContentTemplatePageLoadingGET', `/edit.action?modelId=${code}`));
+    cy.contentTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'editContentTemplatePageLoadingGET', `/${code}`));
+    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesLoadingGET', '?pageSize=0'));
+    cy.contentTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'contentTemplateDictionaryGET', '/dictionary'));
     cy.get(button).click();
-    cy.wait('@editContentTemplatePageLoadingGET');
+    cy.wait(['@editContentTemplatePageLoadingGET', '@contentTypesLoadingGET', '@contentTemplateDictionaryGET']);
   }
 
   getFormArea() {
@@ -67,13 +67,13 @@ export default class TemplateForm extends AdminContent {
                .find(this.stylesheetInput);
   }
 
-  clearHTMLModel(text) {
-    this.getContentShapeInput().click();
-    for (let i = 0; i < text.length; i++) {
-      cy.realPress(['Shift', 'ArrowLeft']);
-    }
-    cy.realPress(['Backspace']);
-    return cy.get('@currentPage');
+  clearHTMLModel() {
+    return this.getContentShapeInput().focus().then(input => this.clear(input));
+  }
+
+  selectContentType(value) {
+    this.getContentTypeDropdown().click()
+        .contains(value).click();
   }
 
   fillFormFields(payload) {
@@ -89,11 +89,11 @@ export default class TemplateForm extends AdminContent {
         case 'descr':
           this.getNameInput().then(input => this.type(input, payload[field]));
           break;
-        case 'contentType':
-          this.getContentTypeDropdown().then(input => this.select(input, payload[field]));
+        case 'contentTypeText':
+          this.selectContentType(payload[field]);
           break;
         case 'contentShape':
-          this.getContentShapeInput().then(input => this.type(input, payload[field], true));
+          this.getContentShapeInput().focus().then(input => this.type(input, payload[field], true));
           break;
         case 'stylesheet':
           this.getStylesheetInput().then(input => this.type(input, payload[field]));
@@ -102,6 +102,7 @@ export default class TemplateForm extends AdminContent {
           break;
       }
     });
+    return cy.get('@currentPage');
   }
 
   getSaveButton() {
@@ -110,8 +111,8 @@ export default class TemplateForm extends AdminContent {
   }
 
   submitForm() {
-    this.getSaveButton().then(button => this.click(button));
-    return cy.wrap(new AdminPage(TemplatesPage)).as('currentPage');
+    this.getSaveButton().then(button => TemplatesPage.openPage(button));
+    return cy.wrap(new AppPage(TemplatesPage)).as('currentPage');
   }
 
 }

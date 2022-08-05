@@ -20,14 +20,16 @@ export const usersAPIURL                 = `${apiURL}/users`;
 export const userPreferencesAPIURL       = `${apiURL}/userPreferences`;
 export const widgetsAPIURL               = `${apiURL}/widgets`;
 
-const pluginsURL = `${apiURL}/plugins`;
+const pluginsURL                         = `${apiURL}/plugins`;
+export const versioningURL               = `${pluginsURL}/versioning`;
 
-const cmsURL                       = `${pluginsURL}/cms`;
-export const assetsAPIURL          = `${cmsURL}/assets`;
-export const contentsAPIURL        = `${cmsURL}/contents`;
-export const contentModelsAPIURL   = `${cmsURL}/contentmodels`;
-export const contentSettingsAPIURL = `${cmsURL}/contentSettings`;
-export const contentTypesAPIURL    = `${cmsURL}/contentTypes`;
+const cmsURL                             = `${pluginsURL}/cms`;
+export const assetsAPIURL                = `${cmsURL}/assets`;
+export const contentsAPIURL              = `${cmsURL}/contents`;
+export const contentModelsAPIURL         = `${cmsURL}/contentmodels`;
+export const contentSettingsAPIURL       = `${cmsURL}/contentSettings`;
+export const contentTypesAPIURL          = `${cmsURL}/contentTypes`;
+export const contentTypeAttributesAPIURL = `${cmsURL}/contentTypeAttributes`;
 
 const emailSettingsURL        = `${pluginsURL}/emailSettings`;
 export const sendersAPIURL    = `${emailSettingsURL}/senders`;
@@ -35,18 +37,3 @@ export const SMTPServerAPIURL = `${emailSettingsURL}/SMTPServer`;
 
 const seoURL                = `${pluginsURL}/seo`;
 export const seoPagesAPIURL = `${seoURL}/pages`;
-
-const adminConsoleURL = Cypress.config('adminConsolePath');
-
-export const categoriesURL   = `${adminConsoleURL}/Category`;
-export const contentTypesURL = `${adminConsoleURL}/Entity`;
-
-const jpVersioningURL      = `${adminConsoleURL}/jpversioning`;
-const jpVersionContentURL  = `${jpVersioningURL}/Content`;
-export const versioningURL = `${jpVersionContentURL}/Versioning`;
-
-const cmsAdminConsoleURL          = `${adminConsoleURL}/jacms`;
-export const contentManagementURL = `${cmsAdminConsoleURL}/Content`;
-export const contentModelsURL     = `${cmsAdminConsoleURL}/ContentModel`;
-export const contentTypesJacmsURL = `${cmsAdminConsoleURL}/Entity`;
-export const assetsURL            = `${cmsAdminConsoleURL}/Resource`;
