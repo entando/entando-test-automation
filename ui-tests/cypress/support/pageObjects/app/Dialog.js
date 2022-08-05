@@ -72,7 +72,7 @@ export class Dialog extends WebElement {
     this.getConfirmButton().then(button => {
       if (body.loadOnConfirm) {
         body.loadOnConfirm.openPage(button);
-        return cy.wrap(new body.appOrAdmin(body.loadOnConfirm)).as('currentPage');
+        return cy.wrap(new AppPage(body.loadOnConfirm)).as('currentPage');
       } else {
         cy.get(button).click();
         return cy.get('@currentPage');
@@ -86,16 +86,14 @@ export class DialogContent extends WebElement {
 
   body = `${htmlElements.div}.modal-body`;
   loadOnConfirm = null;
-  appOrAdmin = null;
 
   get() {
     return this.parent.get()
                .find(this.body);
   }
 
-  setLoadOnConfirm(loadOnConfirm, appOrAdmin = AppPage) {
+  setLoadOnConfirm(loadOnConfirm) {
     this.loadOnConfirm = loadOnConfirm;
-    this.appOrAdmin = appOrAdmin;
   }
 
 }

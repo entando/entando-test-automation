@@ -1,71 +1,34 @@
+import AppContent from '../../app/AppContent';
+import DeleteDialog from '../../app/DeleteDialog.js';
+import {DialogContent} from '../../app/Dialog.js';
+import KebabMenu from '../../app/KebabMenu.js';
 import {htmlElements} from '../../WebElement.js';
 
-import AdminContent from '../../app/AdminContent';
+export default class AssetsPage extends AppContent {
 
-import KebabMenu from '../../app/KebabMenu.js';
-
-import AdminPage          from '../../app/AdminPage';
-import AddPage            from './AddPage';
-import EditPage           from './EditPage';
-import CrossReferencePage from './CrossReferencePage';
-import DeleteAdminPage    from '../../app/DeleteAdminPage';
-
-export default class AssetsPage extends AdminContent {
-
-  addButton                = `${htmlElements.a}[title="Add"]`;
-  assetsFilter             = `${htmlElements.p}.panel-title`;
-  collapsePanel            = `${htmlElements.div}#collapseOne`;
-  assetsSearchText         = `${htmlElements.input}#fileName`;
+  fileInput                = `${htmlElements.input}[type=file]`;
+  assetsView               = `${htmlElements.div}.AssetsList__files-grid`;
+  assetsBody               = `${htmlElements.div}.AssetsList__body`;
+  assetsSearchText         = `${htmlElements.input}#keyword`;
+  assetsFilter             = `${htmlElements.div}.AssetsAdvancedFilter`;
   assetsFilterSearchButton = `${htmlElements.button}[type=submit]`;
-  assetsView               = `${htmlElements.div}#list-view`;
-  assetsBody               = `${htmlElements.form}#search`;
-  resultInfo               = `${htmlElements.div}#list-view`;
-  resultInfoItemCount      = `${htmlElements.span}`;
+  resultInfo               = `${htmlElements.div}.AssetsList__filter-info`;
+  resultInfoItemCount      = `${htmlElements.span}.AssetsList__items-count`;
 
   static openPage(button) {
-    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'assetsPageLoadingGet', '/list.action?*'));
+    cy.assetsController().then(controller => controller.intercept({method: 'GET'}, 'assetsPageLoadingGet', '?page=1&pageSize=10'));
     cy.get(button).click();
     cy.wait('@assetsPageLoadingGet');
   }
 
-  getAddButton() {
-    return this.getContents().find(this.addButton);
+  getFileInput() {
+    return this.get()
+               .find(this.fileInput);
   }
 
-  openAddAssets() {
-    this.getAddButton().then(button => AddPage.openPage(button));
-    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
-  }
-
-  getAssetsFilter() {
-    return this.getContents()
-               .find(this.assetsFilter)
-               .children(htmlElements.a);
-  }
-
-  openAdvancedFilter() {
-    this.getAssetsFilter().click();
-    return cy.get('@currentPage');
-  }
-
-  getCollapsePanel() {
-    return this.getContents().find(this.collapsePanel);
-  }
-
-  getSearchTextfield() {
-    return this.getCollapsePanel().find(this.assetsSearchText);
-  }
-
-  getSearchButton() {
-    return this.getContents().find(this.assetsFilterSearchButton);
-  }
-
-  submitSearch() {
-    this.getSearchButton().then(button => {
-      cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'submitSearch', '/search.action'));
-      this.click(button);
-      cy.wait('@submitSearch');
-    });
+  selectFiles(...fileName) {
+    this.getFileInput().selectFile(fileName, {force: true});
+    this.parent.getDialog().setBody(AddAssetDialog);
     return cy.get('@currentPage');
   }
 
@@ -79,17 +42,55 @@ export default class AssetsPage extends AdminContent {
                .find(this.assetsBody);
   }
 
+  getTable() {
+    return this.getAssetsBody()
+               .find(htmlElements.table);
+  }
+
+  getTableRows() {
+    return this.getTable()
+               .children(htmlElements.tbody)
+               .children(htmlElements.tr);
+  }
+
+  getAssetsFilter() {
+    return this.get()
+               .find(this.assetsFilter);
+  }
+
+  openAdvancedFilter() {
+    this.getAssetsFilter().click();
+    return cy.get('@currentPage');
+  }
+
+  getCollapsePanel() {
+    return this.getContents().find(this.collapsePanel);
+  }
+
+  getSearchTextfield() {
+    return this.getAssetsFilter()
+               .find(this.assetsSearchText);
+  }
+
+  getSearchButton() {
+    return this.getAssetsFilter()
+               .children(htmlElements.div).eq(3)
+               .find(this.assetsFilterSearchButton);
+  }
+
   getFilterResultInfo() {
-    return this.getContents().find(this.resultInfo);
+    return this.getAssetsBody()
+               .find(this.resultInfo);
   }
 
   getFilterResultItemCount() {
     return this.getFilterResultInfo()
-               .find(`#search > .pager`)
                .find(this.resultInfoItemCount);
   }
 
   getKebabMenu(code) {
+    //TODO find a better way to prevent trying to interact with detached DOM element
+    cy.wait(500);
     return new AssetsKebabMenu(this, code);
   }
 
@@ -98,53 +99,94 @@ export default class AssetsPage extends AdminContent {
 class AssetsKebabMenu extends KebabMenu {
 
   get() {
-    return this.parent.getAssetsBody()
-               .find(`${htmlElements.div}.list-group-item`)
-               .children(`${htmlElements.div}.list-view-pf-actions`)
-               .children(htmlElements.div);
-  }
-
-  getActionsButton() {
-    return this.getDropdown()
-               .children(htmlElements.li)
-               .find(`${htmlElements.a}[title="Edit: ${this.code}"]`)
+    return this.parent.getTableRows()
+               .find(`#AssetsList__item-action-${this.code}`)
                .closest(htmlElements.div);
   }
 
-  openDropdown() {
-    this.getActionsButton()
-        .children(`${htmlElements.button}#dropdownKebabRight2`)
-        .click();
-    return this;
-  }
-
   getEdit() {
-    return this.getActionsButton()
+    return this.get()
                .find(htmlElements.li)
                .eq(0);
   }
 
   getDelete() {
-    return this.getActionsButton()
+    return this.get()
                .find(htmlElements.li)
-               .eq(1);
+               .eq(3);
   }
 
   openEdit() {
-    this.getEdit().then(button => EditPage.openPage(button));
-    return cy.wrap(new AdminPage(EditPage)).as('currentPage');
+    cy.categoriesController().then(controller => controller.intercept({method: 'GET'}, 'categoriesLoadedGET', '?parentCode=home'));
+    this.getEdit().click();
+    this.parent.parent.getDialog().setBody(EditAssetDialog);
+    cy.wait('@categoriesLoadedGET');
+    return cy.get('@currentPage');
   }
 
-  clickDelete(isForbidden = null) {
-    if (isForbidden) {
-      this.getDelete().then(button => CrossReferencePage.openPage(button));
-      return cy.wrap(new AdminPage(CrossReferencePage)).as('currentPage');
-    } else {
-      this.getDelete().then(button => DeleteAdminPage.openDeleteAssetsPage(button));
-      const deletePage = new AdminPage(DeleteAdminPage);
-      deletePage.getContent().setOrigin(this.parent.parent);
-      return cy.wrap(deletePage).as('currentPage');
-    }
+  clickDelete() {
+    this.getDelete().click();
+    this.parent.parent.getDialog().setBody(DeleteDialog);
+    return cy.get('@currentPage');
   }
 
+}
+
+class AddAssetDialog extends DialogContent {
+
+  getNameInput(idx = 0) {
+    return this.get()
+               .find(`${htmlElements.input}[name="files[${idx}].filename"]`);
+  }
+
+  getGroupSelect(idx = 0) {
+    return this.get()
+               .find(`${htmlElements.select}[name="files[${idx}].group"]`);
+  }
+
+  selectGroup(group) {
+    this.getGroupSelect().select(group);
+    return cy.get('@currentPage');
+  }
+
+  submit() {
+    cy.assetsController().then(controller => controller.intercept({method: 'POST'}, 'assetUploadedPOST'));
+    this.get()
+        .find(`${htmlElements.button}[type=submit]`)
+        .click();
+    cy.wait('@assetUploadedPOST');
+    return cy.get('@currentPage');
+  }
+}
+
+class EditAssetDialog extends DialogContent {
+
+
+  getDescriptionInput() {
+    return this.get()
+               .find(`${htmlElements.input}[name=description]`);
+  }
+
+  crop(xOffset, yOffset) {
+    this.get().find('.cropper-point.point-se').then(($cropperPoint) => {
+      const {x, y} = $cropperPoint[0].getBoundingClientRect();
+      cy.wrap($cropperPoint)
+        .trigger('mousedown', {which: 1})
+        .trigger('mousemove', {clientX: x + xOffset, clientY: y + yOffset})
+        .trigger('mouseup', {force: true});
+      return this.apply();
+    });
+  }
+
+  rotate(direction) {
+    this.get()
+        .find(`[data-action=rotate${direction}]`)
+        .click();
+    return this.apply();
+  }
+
+  apply() {
+    this.get().find('[data-action=save]').click();
+    return cy.get('@currentPage');
+  }
 }

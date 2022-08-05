@@ -1,4 +1,5 @@
 import contentTypeAttributes from '../../fixtures/data/contentTypeAttributes.json';
+import { htmlElements } from '../../support/pageObjects/WebElement';
 
 describe('Content Type Attributes', () => {
 
@@ -33,12 +34,6 @@ describe('Content Type Attributes', () => {
 
   after(() => {
     cy.kcClientCredentialsLogin();
-    //FIXME/TODO needed as autosave might create unwanted contents
-    cy.contentsController()
-      .then(controller => controller.getContentList()).then(response =>
-        response.body.payload.filter(content => content.typeCode === CONTENT_TYPE.code).forEach(content =>
-            cy.contentsController().then(controller => controller.updateStatus(content.id, 'draft').then(() =>
-                controller.deleteContent(content.id)))));
     cy.contentTypesController()
       .then(controller => controller.deleteContentType(CONTENT_TYPE.code));
   });
@@ -62,7 +57,7 @@ describe('Content Type Attributes', () => {
 
         after(() => deleteAttribute(contentTypeAttribute));
 
-        it([Tag.GTS, 'ENG-2519', 'ENG-3862'], 'Create', () => {
+        it([Tag.GTS, 'ENG-2519', 'ENG-4017'], 'Create', () => {
           openAddPage()
               .then(() => {
                 attributeProcessor[contentTypeAttribute.processor].fillContent(contentTypeAttribute);
@@ -74,30 +69,35 @@ describe('Content Type Attributes', () => {
 
         if (['Email'].includes(contentTypeAttribute.type)) {
           it([Tag.GTS, 'ENG-2519'], 'Email format validation', () => {
-            const testInvalidEmail = (email) => {
+            const testInvalidEmail = (email, field) => {
               cy.get('@currentPage')
+                .then(page => page.getContent().fillAttributes([{value: email, type: 'Email'}], {editMode: true}))
                 .then(page => {
-                  page.getContent().fillAttributes([{value: email, type: 'Email'}], {editMode: true});
-                  page.getContent().getSaveAction().click();
-                  page.getContent().getAlertMessage().should('exist').and('contain.text', 'Email');
+                  field.getContents().should('have.class', 'has-error');
+                  field.getHelpBlock().should('exist');
                   return cy.wrap(page).as('currentPage');
-                });
+                })
             };
+
+            let fieldArea;
 
             openAddPage()
                 .then(page => {
-                  page.getContent().fillBeginContent('cypress basic attribute');
-                  testInvalidEmail('cypress@entando');
-                  testInvalidEmail('cypress@.com');
-                  testInvalidEmail('@entando.com');
-                  testInvalidEmail('cypressentando.com');
-                  page.getContent().fillAttributes(
+                  fieldArea = page.getContent().getAttributeByTypeIndex('Email', 0);
+                  page.getContent().fillBeginContent('cypress basic attribute')
+                })
+                .then(() => testInvalidEmail('cypress@entando', fieldArea))
+                .then(() => testInvalidEmail('cypress@.com', fieldArea))
+                .then(() => testInvalidEmail('@entando.com', fieldArea))
+                .then(() => testInvalidEmail('cypressentando.com', fieldArea))
+                .then(page => page.getContent().fillAttributes(
                       [{value: contentTypeAttribute.value, type: 'Email'}],
                       {editMode: true}
-                  );
-                  page.getContent().submitForm();
+                ))
+                .then(() => {
+                  fieldArea.getContents().should('not.have.class', 'has-error');
+                  fieldArea.getHelpBlock().should('not.exist');
                 })
-                .then(page => page.getContent().getTableRow('cypress basic attribute').should('exist'));
           });
         }
 
@@ -114,16 +114,15 @@ describe('Content Type Attributes', () => {
               cy.contentSettingsController().then(controller => controller.putContentEditor());
             });
 
-            //FIXME/TODO the fckeditor opens a new window to add links, and cypress can not handle it
-            xit([Tag.GTS, 'ENG-2519'], 'Add multiple links to hypertext', () => {
+            it([Tag.GTS, 'ENG-2519'], 'Add multiple links to hypertext', () => {
               openAddPage()
-                  .then(page => {
-                    page.getContent().fillBeginContent('cypress basic attribute');
-                    page.getContent().fillAttributes([{
+                  .then(page => page.getContent().fillBeginContent('cypress basic attribute'))
+                  .then(page => page.getContent().fillAttributes([{
                       type: contentTypeAttribute.type,
                       value: 'hello{selectall}'
-                    }], null, true);
-                    const editor = page.getContent().getAttributeByTypeIndex(contentTypeAttribute.type, 0);
+                    }], null, true))
+                  .then(page => {
+                    const editor = page.getContent().getAttributeByTypeIndex(contentTypeAttribute.type, 0, 'en', true);
                     editor.setLinkInfo({destType: 3, contentDest: 'NWS4', target: '_blank'});
                     editor.getInput().type('{movetoend} there, world!');
                     cy.realPress('ArrowLeft');
@@ -134,6 +133,8 @@ describe('Content Type Attributes', () => {
                     cy.realPress(['Shift', 'ArrowLeft']);
                     editor.setLinkInfo({destType: 3, contentDest: 'TCL6', target: '_blank'});
                     page.getContent().copyToAllLanguages();
+                  })
+                  .then(() => {
                     attributeProcessor.submitContentAndWrapContentId();
                     cy.get('@contentToBeDeleted').then(contentId => {
                       getContentAttribute(contentId)
@@ -173,7 +174,7 @@ describe('Content Type Attributes', () => {
               cy.groupsController().then(controller => controller.deleteGroup(TEST_GROUP));
             });
 
-            it([Tag.GTS, 'ENG-2519', 'ENG-3862'], 'Check that image group is compatible with current content', () => {
+            it([Tag.GTS, 'ENG-2519'], 'Check that image group is compatible with current content', () => {
               const addedImage = {...contentTypeAttribute};
               addedImage.value = {
                 en: {
@@ -212,7 +213,7 @@ describe('Content Type Attributes', () => {
 
           beforeEach(() => attributeProcessor[contentTypeAttribute.processor].postContent(contentTypeAttribute));
 
-          it([Tag.GTS, 'ENG-2519', 'ENG-3862'], 'Edit', () => {
+          it([Tag.GTS, 'ENG-2519', 'ENG-4017'], 'Edit', () => {
             cy.get('@contentToBeDeleted').then(contentId => {
               openEditPage(contentId)
                   .then(() => {
@@ -228,8 +229,7 @@ describe('Content Type Attributes', () => {
 
       describe('Field validation options', () => {
 
-        //TODO Date and Timestamp have the mandatoriness validation and should be handled here, not excluded
-        if (!['Boolean', 'CheckBox', 'ThreeState', 'Date', 'Timestamp'].includes(contentTypeAttribute.type)) {
+        if (!['Boolean', 'CheckBox', 'ThreeState'].includes(contentTypeAttribute.type)) {
           describe('Mandatoriness validation', () => {
 
             before(() => {
@@ -276,21 +276,28 @@ describe('Content Type Attributes', () => {
               const value = ['Text', 'Longtext'].includes(contentTypeAttribute.type) ? contentTypeAttribute.value.en : contentTypeAttribute.value;
 
               openAddPage()
-                  .then(page => {
-                    page.getContent().fillBeginContent('cypress basic attribute');
-                    page.getContent().fillAttributes([{
+                  .then(page => page.getContent().fillBeginContent('cypress basic attribute'))
+                  .then(page => page.getContent().fillAttributes([{
                       value: value + '0',
                       type: contentTypeAttribute.type
-                    }]);
-                    page.getContent().getSaveAction().click();
-                    page.getContent().getAlertMessage().should('exist').and('contain.text', 'Invalid');
+                  }]))
+                  .then(page => {
+                    cy.wrap(page.getContent().getAttributeByTypeIndex(contentTypeAttribute.type, 0)).as('fieldArea');
+                    cy.get('@fieldArea').then(fieldArea => {
+                      fieldArea.getContents().should('have.class', 'has-error');
+                      fieldArea.getHelpBlock().should('exist').and('contain.text', 'regex');
+                    });
                     page.getContent().fillAttributes([{
                       value: value,
                       type: contentTypeAttribute.type
                     }], {editMode: true});
-                    page.getContent().submitForm();
                   })
-                  .then(page => page.getContent().getTableRow('cypress basic attribute').should('exist'));
+                  .then(() => {
+                    cy.get('@fieldArea').then(fieldArea => {
+                      fieldArea.getContents().should('not.have.class', 'has-error');
+                      fieldArea.getHelpBlock().should('not.exist');
+                    });
+                  })
             });
 
           });
@@ -314,26 +321,26 @@ describe('Content Type Attributes', () => {
 
             it([Tag.GTS, 'ENG-2519'], 'Create', () => {
               openAddPage()
+                  .then(page => page.getContent().fillBeginContent('cypress basic attribute'))
+                  .then(page => page.getContent().fillAttributes(
+                        [{value: contentTypeAttribute.value, type: contentTypeAttribute.type}]))
                   .then(page => {
-                    page.getContent().fillBeginContent('cypress basic attribute');
-                    page.getContent().fillAttributes(
-                        [{value: contentTypeAttribute.value, type: contentTypeAttribute.type}]);
-                    page.getContent().getSaveAction().click();
-                    page.getContent().getAlertMessage().should('exist').and('contain.text', contentTypeAttribute.type);
+                    cy.wrap(page.getContent().getAttributeByTypeIndex(contentTypeAttribute.type, 0)).as('fieldArea');
+                    cy.get('@fieldArea').then(fieldArea => fieldArea.getContents().should('have.class', 'has-error'));
                     page.getContent().fillAttributes(
                         [{value: contentTypeAttribute.editedValue, type: contentTypeAttribute.type}],
                         {editMode: true});
-                    page.getContent().getSaveAction().click();
-                    page.getContent().getAlertMessage().should('exist').and('contain.text', contentTypeAttribute.type);
-                    page.getContent().fillAttributes(
-                        [{
-                          value: Object.values(contentTypeAttribute.validationRules)[0],
-                          type: contentTypeAttribute.type
-                        }],
-                        {editMode: true});
-                    page.getContent().submitForm();
                   })
-                  .then(page => page.getContent().getTableRow('cypress basic attribute').should('exist'));
+                  .then(page => {
+                    cy.get('@fieldArea').then(fieldArea => fieldArea.getContents().should('have.class', 'has-error'));
+                    page.getContent().fillAttributes(
+                      [{
+                        value: Object.values(contentTypeAttribute.validationRules)[0],
+                        type: contentTypeAttribute.type
+                      }],
+                      {editMode: true});
+                  })
+                  .then(() => cy.get('@fieldArea').then(fieldArea => fieldArea.getContents().should('not.have.class', 'has-error')));
             });
 
           });
@@ -359,7 +366,7 @@ describe('Content Type Attributes', () => {
 
         after(() => deleteAttribute(DEFAULT_COMPOSITE_ATTRIBUTE));
 
-        it([Tag.GTS, 'ENG-2180', 'ENG-3861', 'ENG-3862'], 'Create', () => {
+        it([Tag.GTS, 'ENG-2180', 'ENG-4017'], 'Create', () => {
           openAddPage()
               .then(() => {
                 attributeProcessor[contentTypeAttribute.processor].fillCompositeContent(contentTypeAttribute);
@@ -387,10 +394,10 @@ describe('Content Type Attributes', () => {
     },
     submitContentAndWrapContentId: function () {
       return cy.get('@currentPage')
+               .then(page => page.getContent().submitApproveForm())
                .then(page => {
-                 page.getContent().submitApproveForm();
-                 checkAndSavePublishedContentId();
-                 cy.wrap(page).as('currentPage');
+                  checkAndSavePublishedContentId();
+                cy.wrap(page).as('currentPage');
                });
     },
     simple: {
@@ -416,14 +423,12 @@ describe('Content Type Attributes', () => {
       },
       fillCompositeContent: function (contentAttribute) {
         cy.get('@currentPage')
-          .then(page => {
-            page.getContent().fillBeginContent('cypress demo desc');
-            page.getContent().fillAttributes([{
+          .then(page => page.getContent().fillBeginContent('cypress demo desc'))
+          .then(page => page.getContent().fillAttributes([{
               type: DEFAULT_COMPOSITE_ATTRIBUTE.type,
               value: [{type: contentAttribute.type, value: contentAttribute.value}]
-            }]);
-            return this.parent.submitContentAndWrapContentId();
-          });
+            }]));
+        return this.parent.submitContentAndWrapContentId();
       },
       editContent: function (contentAttribute) {
         cy.get('@currentPage')
@@ -448,10 +453,13 @@ describe('Content Type Attributes', () => {
       validateMandatoriness: function (contentTypeAttribute) {
         cy.get('@currentPage')
           .then(page => {
-            page.getContent().getSaveApproveAction().click();
-            page.getContent().getAlertMessage().should('exist').and('contain.text', contentTypeAttribute.type);
-            return cy.wrap(page).as('currentPage');
-          });
+            if (['Date', 'Timestamp'].includes(contentTypeAttribute.type)) page.getContent().getAttributeByTypeIndex(contentTypeAttribute.type, 0).getInputArea().find(htmlElements.input).then(input => page.getContent().clear(input));
+          })
+          .then(page => page.getContent().getSaveApproveAction().then(button => page.getContent().click(button)))
+          .then(page => {
+            page.getContent().getAttributeByTypeIndex(contentTypeAttribute.type, 0).getHelpBlock().should('exist');
+            return cy.wrap(page);
+          })
       }
     },
     multilang: {
@@ -481,18 +489,17 @@ describe('Content Type Attributes', () => {
       },
       fillCompositeContent: function (contentAttribute) {
         cy.get('@currentPage')
-          .then(page => {
-            page.getContent().fillBeginContent('cypress demo desc');
-            page.getContent().fillAttributes([{
+          .then(page => page.getContent().fillBeginContent('cypress demo desc'))
+          .then(page => page.getContent().fillAttributes([{
               type: DEFAULT_COMPOSITE_ATTRIBUTE.type,
               value: [{type: contentAttribute.type, value: contentAttribute.value.en}]
-            }]);
-            page.getContent().fillAttributes([{
+          }]))
+          .then(page => page.getContent().fillAttributes([{
               type: DEFAULT_COMPOSITE_ATTRIBUTE.type,
               value: [{type: contentAttribute.type, value: contentAttribute.value.it}]
-            }], {lang: 'it'});
-            return this.parent.submitContentAndWrapContentId();
-          });
+          }], {lang: 'it'}));
+        return this.parent.submitContentAndWrapContentId();
+
       },
       editContent: function (contentAttribute) {
         cy.get('@currentPage')
@@ -530,8 +537,8 @@ describe('Content Type Attributes', () => {
                           ...DEFAULT_CONTENT,
                           attributes: [{
                             code: contentAttribute.type,
-                            value: contentAttribute.postValue.link,
-                            values: contentAttribute.postValue.values
+                            value: contentAttribute.value.link,
+                            values: contentAttribute.value.values
                           }]
                         })
                         .then(response => {
@@ -556,24 +563,22 @@ describe('Content Type Attributes', () => {
       },
       fillCompositeContent: function (contentAttribute) {
         cy.get('@currentPage')
-          .then(page => {
-            page.getContent().fillBeginContent('cypress demo desc');
-            page.getContent().fillAttributes([{
+          .then(page => page.getContent().fillBeginContent('cypress demo desc'))
+          .then(page => page.getContent().fillAttributes([{
               type: DEFAULT_COMPOSITE_ATTRIBUTE.type,
               value: [{
                 type: contentAttribute.type,
                 value: {link: contentAttribute.value.link, value: contentAttribute.value.values.en}
               }]
-            }]);
-            page.getContent().fillAttributes([{
+          }]))
+          .then(page => page.getContent().fillAttributes([{
               type: DEFAULT_COMPOSITE_ATTRIBUTE.type,
               value: [{
                 type: contentAttribute.type,
                 value: {link: contentAttribute.value.link, value: contentAttribute.value.values.it}
               }]
-            }], {lang: 'it'});
-            return this.parent.submitContentAndWrapContentId();
-          });
+          }], {lang: 'it'}));
+        return this.parent.submitContentAndWrapContentId();
       },
       editContent: function (contentAttribute) {
         cy.get('@currentPage')
@@ -800,7 +805,7 @@ describe('Content Type Attributes', () => {
   };
 
   const openContentManagement = () => cy.get('@currentPage').then(page => page.getMenu().getContent().open().openManagement());
-  const openAddPage           = () => openContentManagement().then(page => page.getContent().openAddContentPage(CONTENT_TYPE.name));
+  const openAddPage           = () => openContentManagement().then(page => page.getContent().openAddContentPage(CONTENT_TYPE));
   const openEditPage          = (code) => openContentManagement().then(page => page.getContent().getKebabMenu(code).open(true).openEdit());
 
   const getContent                   = (contentId) => {

@@ -1,15 +1,15 @@
-import AdminContent   from '../../app/AdminContent';
+import AppContent     from '../../app/AppContent';
 import {htmlElements} from '../../WebElement.js';
 import Pagination     from '../../app/Pagination.js';
 
-export default class VersioningPage extends AdminContent {
-  searchForm      = `${htmlElements.form}[id="search"]`;
-  searchDescInput = `${htmlElements.input}.form-control`;
+export default class VersioningPage extends AppContent {
+  searchForm = `${htmlElements.form}.VersioningSearchForm__form`;
+  searchDescInput = `${htmlElements.input}[name=description]`;
 
   static openPage(button) {
     cy.versioningController()
       .then(controller =>
-          controller.intercept({method: 'GET'}, 'contentVersioningPageLoadingGET', '/list.action'));
+          controller.intercept({method: 'GET'}, 'contentVersioningPageLoadingGET', '/contents?page=1&pageSize=*'));
     cy.get(button).click();
     cy.wait('@contentVersioningPageLoadingGET');
   }
@@ -26,7 +26,7 @@ export default class VersioningPage extends AdminContent {
 
   getSearchSubmitButton() {
     return this.getSearchForm()
-               .find(`${htmlElements.button}.btn`);
+               .find(`${htmlElements.button}[type=submit]`);
   }
 
   submitSearch() {
@@ -34,7 +34,7 @@ export default class VersioningPage extends AdminContent {
         .then(button => {
           cy.versioningController()
             .then(controller =>
-                controller.intercept({method: 'POST'}, 'submitSearch', '/search.action'));
+                controller.intercept({method: 'GET'}, 'submitSearch', '/contents?filters*'));
           cy.get(button).click();
           cy.wait('@submitSearch');
         });

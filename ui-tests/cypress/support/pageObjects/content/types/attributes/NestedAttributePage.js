@@ -1,20 +1,19 @@
 import {htmlElements} from '../../../WebElement';
 
-import AdminContent from '../../../app/AdminContent';
+import AppContent from '../../../app/AppContent';
 
-import AdminPage from '../../../app/AdminPage';
+import AppPage from '../../../app/AppPage';
 
 import EditPage from '../EditPage';
 
-export default class NestedAttributePage extends AdminContent {
+export default class NestedAttributePage extends AppContent {
 
-  continueButton = `${htmlElements.button}[type="submit"][value="Submit"].btn.btn-primary.pull-right`;
+  continueButton = `${htmlElements.button}[type="submit"].btn.btn-primary.pull-right`;
 
-  //FIXME AdminConsole is not built on REST APIs
-  static openPage(button) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'nestedAttributePageLoadingGET', `/ListAttribute/configureListElement.action`));
+  static openPage(button, code, attributeCode) {
+    cy.contentTypeAttributesController().then(controller => controller.intercept({ method: 'GET' }, 'nestedAttributePageLoadingGET', `/${code}/attribute/${attributeCode}`, 2));
     cy.get(button).click();
-    cy.wait('@nestedAttributePageLoadingGET');
+    cy.wait(['@nestedAttributePageLoadingGET', '@nestedAttributePageLoadingGET']);
   }
 
   getContinueButton() {
@@ -22,9 +21,9 @@ export default class NestedAttributePage extends AdminContent {
                .find(this.continueButton);
   }
 
-  continue() {
-    this.getContinueButton().then(button => EditPage.openPageFromAttribute(button));
-    return cy.wrap(new AdminPage(EditPage)).as('currentPage');
+  continue(code) {
+    this.getContinueButton().then(button => EditPage.openPageFromAttribute(button, code));
+    return cy.wrap(new AppPage(EditPage)).as('currentPage');
   }
 
 }

@@ -115,22 +115,10 @@
       "type":"Link",
       "value":{
          "link":{
-            "urlDest":"https://entando.com",
-            "hrefLang":"en",
             "destType":1,
-            "target":"_blank"
-         },
-         "values":{
-            "en":"Entando en",
-            "it":"Entando it"
-         }
-      },
-      "postValue":{
-         "link":{
             "urlDest":"https://entando.com",
-            "hreflang":"en",
-            "destType":1,
-            "target":"_blank"
+            "target":"_blank",
+            "hreflang":"en"
          },
          "values":{
             "en":"Entando en",
@@ -193,8 +181,7 @@
             "metadata":{
                "legend":"TPlan",
                "alt":"Entando at Plan",
-               "description":"At Plan",
-               "actionButton": "entandoAtPlan"
+               "description":"At Plan"
             }
          },
          "it":{
@@ -212,8 +199,7 @@
             "metadata":{
                "legend":"legend",
                "alt":"_popup",
-               "description":"desc edited",
-               "actionButton": "entandoAtWork"
+               "description":"desc edited"
             }
          },
          "it":{

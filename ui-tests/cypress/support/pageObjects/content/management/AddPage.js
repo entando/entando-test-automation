@@ -1,8 +1,7 @@
-import {htmlElements} from '../../WebElement';
+import {htmlElements, WebElement} from '../../WebElement';
 
-import AdminContent from '../../app/AdminContent.js';
+import AppContent from '../../app/AppContent.js';
 
-import AdminPage           from '../../app/AdminPage.js';
 import ManagementPage      from './ManagementPage';
 import TextAttribute       from './attribute-fields/TextAttribute';
 import HypertextAttribute  from './attribute-fields/HypertextAttribute';
@@ -16,157 +15,103 @@ import DateAttribute       from './attribute-fields/DateAttribute';
 import TimestampAttribute  from './attribute-fields/TimestampAttribute';
 import LinkAttribute       from './attribute-fields/LinkAttribute';
 import ListAttribute       from './attribute-fields/ListAttribute';
+import AppPage from '../../app/AppPage';
+import ContentWidgetConfigPage from '../../pages/designer/widgetconfigs/ContentWidgetConfigPage';
+import { Dialog } from '../../app/Dialog';
 
-export default class AddPage extends AdminContent {
+export default class AddPage extends AppContent {
 
-  form = `${htmlElements.form}#configureMainGroup`;
+  static ATTRIBUTES = [
+    'Attach',
+    'Boolean',
+    'CheckBox',
+    'Date',
+    'Email',
+    'Hypertext',
+    'Image',
+    'Link',
+    'Longtext',
+    'Monotext',
+    'Number',
+    'Text',
+    'ThreeState',
+    'Timestamp',
+    'Composite',
+    'List',
+    'Monolist',
+  ];
 
-  contentTitleAttrEnInput = `${htmlElements.input}[name="Text:en_title"]`;
-  contentTitleAttrItInput = `${htmlElements.input}[name="Text:it_title"]`;
+  static COMPLEX_ATTRIBUTES = [
+    'Composite',
+    'List',
+    'Monolist',
+  ];
+
+  static MULTILANG_ATTRIBUTES = [
+    'Text',
+    'Image',
+    'Longtext',
+    'Hypertext',
+    'Attach',
+  ];
+
+  contentDescriptionInput = `${htmlElements.input}#description`;
+  contentGroupFormBody    = `${htmlElements.div}.GroupsFormBody.EditContentForm__outer-fieldset`;
+  contentGroupInput       = `${htmlElements.div}.DropdownTypeahead`;
+  contentTitleAttrInput   = `.RenderTextInput`;
   contentAttrsEnTab       = `${htmlElements.a}#content-attributes-tabs-tab-en`;
-  contentAttrsItTab       = `${htmlElements.a}[href="#it_tab"]`;
-  contentAttrEnPane       = `${htmlElements.div}#en_tab`;
-  contentAttrItPane       = `${htmlElements.div}#it_tab`;
-  stickyToolbar           = `${htmlElements.div}#sticky-toolbar`;
+  contentAttrsItTab       = `${htmlElements.a}#content-attributes-tabs-tab-it`;
+  contentTitleAttrInputIt = `attributes[0].values.it`;
+  contentAttrEnPane       = `${htmlElements.div}#content-attributes-tabs-pane-en`;
+  contentAttrItPane       = `${htmlElements.div}#content-attributes-tabs-pane-it`;
+  groupsFormSection       = `${htmlElements.div}.GroupsFormBody`;
 
-
-  //FIXME AdminConsole is not built on REST APIs
-  static openPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addContentPageLoadingGET', '/createNew.action?*'));
+  static openPage(button, contentType, editPage = false) {
+    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'addContentPageLoadingGET', `/${contentType}`));
+    cy.contentSettingsController().then(controller => controller.intercept({method: 'GET'}, 'contentSettingsGET'));
+    cy.categoriesController().then(controller => controller.intercept({method: 'GET'}, 'categoriesLoadingGET', '?parentCode=home'));
+    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupsLoadingGET', '?page=1&pageSize=0'));
     cy.get(button).click();
-    cy.wait('@addContentPageLoadingGET');
+    cy.wait(['@contentSettingsGET', '@categoriesLoadingGET', '@groupsLoadingGET']);
+    if (!editPage) cy.wait(['@addContentPageLoadingGET', '@addContentPageLoadingGET']);
   }
 
-  //FIXME AdminConsole is not built on REST APIs
-  static reloadPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'addContentPageReloadingPOST', '/entryContent.action'));
-    cy.get(button).click();
-    cy.wait('@addContentPageReloadingPOST');
+  static get BASIC_ATTRIBUTES() {
+    return AddPage.ATTRIBUTES.filter(attribute => !AddPage.COMPLEX_ATTRIBUTES.includes(attribute));
   }
 
-  //FIXME AdminConsole is not built on REST APIs
-  static editPage(button, code) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editContentPageReloadingGET', `/edit.action?contentId=${code}`));
-    cy.get(button).click({force: true});
-    cy.wait('@editContentPageReloadingGET');
+  getItContentPane() {
+    return this.getContents().get(this.contentAttrItPane);
   }
-
-  getContents() {
-    return super.getContents().children(`${htmlElements.div}#main`);
-  }
-
-  getForm() {
-    return this.getContents().children(htmlElements.form);
-  }
-
-  getInfo() {
-    return this.getForm().children(`${htmlElements.div}.form-horizontal`);
-  }
-
-  getVersion() {
-    return this.getInfo().children(`${htmlElements.div}.form-group`).eq(0);
-  }
-
-  getContentType() {
-    return this.getInfo().children(`${htmlElements.div}.form-group`).eq(1);
-  }
-
-  getContentDescription() {
-    return this.getInfo().children(`${htmlElements.div}.form-group`).eq(2);
-  }
-
-  getContentDescriptionInput() {
-    return this.getContentDescription().find(`${htmlElements.input}#contentDescription`);
-  }
-
-  getOwnerGroup() {
-    return this.getForm().children(`${htmlElements.div}.form-group`).eq(0);
-  }
-
-  getOwnerGroupSelect() {
-    return this.getOwnerGroup().find(`${htmlElements.select}#contentMainGroup`);
-  }
-
-  getOwnerGroupSetGroupButton() {
-    return this.getOwnerGroup().find(`${htmlElements.button}[name="entandoaction:configureMainGroup"]`);
-  }
-
-  getViewOnlyGroups() {
-    return this.getForm().children(`${htmlElements.div}.form-group`).eq(1);
-  }
-
-  getCategories() {
-    return this.getForm().children(`${htmlElements.div}.form-group`).eq(2);
-  }
-
-  getContentAttributesLanguageTabs() {
-    return this.getForm().children(`${htmlElements.ul}#tab-togglers`);
-  }
-
-  getContentAttributesLanguageTab(lang) {
-    return this.getContentAttributesLanguageTabs().find(`${htmlElements.a}[href="#${lang}_tab"]`);
-  }
-
-  getContentAttributesContent() {
-    return this.getForm()
-               .children(`${htmlElements.div}#tab-container`)
-               .children(`${htmlElements.div}.active`);
-  }
-
-  getContentAttributesContentAttribute(attribute) {
-    return this.getContentAttributesContent()
-               .children(`${htmlElements.div}[id^=contentedit_][id$=_${attribute}]`);
-  }
-
-  getContentAttributesContentAttributeInput(attribute) {
-    return this.getContentAttributesContentAttribute(attribute)
-               .find(`${htmlElements.input}[id^="Text:"][id$=_${attribute}]`);
-  }
-
-  getContentInfo() {
-    return this.getForm().children(`${htmlElements.div}#info`);
-  }
-
-  getToolbar() {
-    return this.getForm().children(`${htmlElements.div}#sticky-toolbar`);
-  }
-
-  getToolbarActions() {
-    return this.getToolbar().find(`${htmlElements.div}.toolbar-pf-actions`);
-  }
-
-  getSaveButton() {
-    return this.getToolbarActions().find(`${htmlElements.button}[name="entandoaction:save"]`);
-  }
-
-  clickOwnerGroupSetGroupButton() {
-    this.getOwnerGroupSetGroupButton().then(button => AddPage.reloadPage(button));
-    return cy.wrap(new AdminPage(AddPage)).as('currentPage');
-  }
-
-  save() {
-    this.getSaveButton().then(button => ManagementPage.savePage(button));
-    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
-  }
-
-  // ----- old -----
 
   getTitleAttrItInput() {
-    return this.getContents().get(this.contentAttrItPane)
-               .find(this.contentTitleAttrItInput).eq(0);
+    return this.getItContentPane()
+               .find(this.contentTitleAttrInput).eq(0);
+  }
+
+  getEnContentPane() {
+    return this.getContents().get(this.contentAttrEnPane);
   }
 
   getTitleAttrEnInput() {
-    return this.getContents().get(this.contentAttrEnPane)
-               .find(this.contentTitleAttrEnInput);
+    return this.getEnContentPane()
+               .find(this.contentTitleAttrInput).eq(0);
   }
 
-  getEnLanguageTab() {
-    return this.getContents().find(this.contentAttrsEnTab);
+  getDescriptionInput() {
+    return this.getContents()
+               .find(this.contentDescriptionInput);
   }
 
-  getItLanguageTab() {
-    return this.getContents().find(this.contentAttrsItTab);
+  getGroupDropdown() {
+    return this.getContents()
+               .find(this.contentGroupFormBody)
+               .find(this.contentGroupInput).eq(0)
+               .children(htmlElements.div).eq(1);
+  }
+
+  getContentAttributesLanguageTab(lang) {
+    return this.getContents().find(`${htmlElements.a}#content-attributes-tabs-tab-${lang}`);
   }
 
   getCopyToLangBtn() {
@@ -176,73 +121,86 @@ export default class AddPage extends AdminContent {
                .eq(0);
   }
 
-  getStickyToolbar() {
+  getSaveDropDownButton() {
+    return new DropDownButton(this);
+  }
+
+  getSaveDropDownListItems() {
+    return this.getSaveDropDownButton().open();
+  }
+
+  getOwnerGroup() {
     return this.getContents()
-               .find(this.stickyToolbar);
+               .get(this.groupsFormSection)
+               .find(htmlElements.input)
+               .eq(0);
   }
 
   getSaveAction() {
-    return this.getStickyToolbar()
-               .find(`${htmlElements.button}[name="entandoaction:save"]`);
+    // 0 is the Save action number
+    return this.getSaveDropDownListItems().get(0);
   }
 
-  getSaveApproveAction() {
-    return this.getStickyToolbar()
-               .find(`${htmlElements.button}[name="entandoaction:saveAndApprove"]`);
+  getSaveContinueAction() {
+    return this.getSaveDropDownListItems().get(1);
   }
 
-  typeAttrTitleIt(input) {
-    this.getTitleAttrItInput().type(input);
+  getSaveApproveAction(confirmTranslation = false) {
+    if (confirmTranslation) {
+      this.parent.getDialog().setBody(Dialog);
+    }
+    return this.getSaveDropDownListItems().get(2);
   }
 
-  typeAttrTitleEn(input) {
-    this.getTitleAttrEnInput().type(input);
+  typeAttrTitleIt(title) {
+    return this.getTitleAttrItInput().then(input => this.type(input, title));
   }
 
-  typeDescription(input) {
-    this.getContentDescriptionInput().type(input);
+  typeAttrTitleEn(title) {
+    return this.getTitleAttrEnInput().then(input => this.type(input, title));
   }
 
-  clearDescription() {
-    this.getContentDescriptionInput().clear();
+  clearOwnerGroup() {
+    return this.getOwnerGroup().then(input => this.clear(input));
   }
 
   copyToAllLanguages() {
-    this.getCopyToLangBtn().click();
+    return this.getCopyToLangBtn().then(button => this.click(button));
   }
 
   submitForm(confirmTranslation = false) {
-    this.getSaveAction().click();
     if (confirmTranslation) {
-      this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
-    }
-    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
+      this.getSaveAction().click();
+      this.parent.getDialog().setBody(Dialog);
+      this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).then(button => ManagementPage.openPage(button));
+    } else this.getSaveAction().then(button => ManagementPage.openPage(button));
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
   submitApproveForm(confirmTranslation = false) {
-    this.getSaveApproveAction().then(button => ManagementPage.savePage(button));
     if (confirmTranslation) {
-      this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).click();
-    }
-    return cy.wrap(new AdminPage(ManagementPage)).as('currentPage');
+      this.getSaveApproveAction().click();
+      this.parent.getDialog().setBody(Dialog);
+      this.parent.getDialog().getFooter().children(htmlElements.button).eq(1).then(button => ManagementPage.openPage(button));
+    } else this.getSaveApproveAction().then(button => ManagementPage.openPage(button));
+    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
   fillBeginContent(description, group = 'Free Access', append = false) {
-    this.getOwnerGroupSelect().then(input => this.select(input, group));
-    this.getOwnerGroupSetGroupButton().then(button => this.click(button));
-    this.getContentDescriptionInput().then(input => this.type(input, description, append));
-    return cy.get('@currentPage');
+    this.getGroupDropdown().click({scrollBehavior: 'center'});
+    this.getGroupDropdown().contains(group).click({scrollBehavior: 'center'});
+    return this.getDescriptionInput().then(input => this.type(input, description, append));
   }
 
   fillBasicContentFields({description, titleEn, titleIt, group}, append = false) {
     this.fillBeginContent(description, group, append);
     this.typeAttrTitleEn(titleEn);
-    this.getItLanguageTab().click();
-    this.typeAttrTitleIt(titleIt);
+    this.getContentAttributesLanguageTab('it').click();
+    return this.typeAttrTitleIt(titleIt);
   }
 
-  getAttributeByTypeIndex(type, idx, lang = 'en') {
-    switch (type) {
+  getAttributeByTypeIndex(type, idx, lang = 'en', fckeditor = false) {
+    switch(type) {
       case 'Text':
       case 'Longtext':
       case 'Monotext':
@@ -261,7 +219,7 @@ export default class AddPage extends AdminContent {
       case 'EnumeratorMap':
         return new EnumeratorAttribute(this, idx, type === 'EnumeratorMap');
       case 'Hypertext':
-        return new HypertextAttribute(this, idx, lang);
+        return new HypertextAttribute(this, idx, lang, fckeditor);
       case 'Link':
         return new LinkAttribute(this, idx, lang);
       case 'Timestamp':
@@ -279,25 +237,36 @@ export default class AddPage extends AdminContent {
     }
   }
 
-  fillAttributes(attributeValues, options, assetId = null) {
-    const {lang, editMode} = {lang: 'en', editMode: false, ...options};
+  fillAttributes(attributeValues, options, fckeditor = false) {
+    const { lang, editMode } = { lang: 'en', editMode: false, ...options };
     this.getContentAttributesLanguageTab(lang).click();
-    attributeValues.forEach(({type, value, nestedType}, idx) => {
-      const field = this.getAttributeByTypeIndex(type, idx, lang);
-      if (field === null) return;
-      if (['List', 'Monolist'].includes(type)) field.setAttributeType(nestedType);
-      if ('Hypertext'.includes(type)) field.getInput().click();
-      if (editMode) field.editValue(value);
-      else if (assetId) field.setValue(value, assetId);
-      else field.setValue(value);
+    attributeValues.forEach(({ type, value, nestedType }, idx) => {
+      const field = this.getAttributeByTypeIndex(type, idx, lang, fckeditor);
+      if (field === null) {
+        return;
+      }
+      if (['List', 'Monolist'].includes(type)) {
+        field.setAttributeType(nestedType);
+      }
+      field.expand();
+      if (editMode) {
+        field.editValue(value);
+      } else {
+        field.setValue(value);
+      }
     });
-    cy.wrap(new AdminPage(AddPage)).as('currentPage');
+    return cy.get('@currentPage');
   }
 
   addContentFromContentWidgetConfig(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
     this.fillBasicContentFields({titleEn, titleIt, description, group}, append);
-    if (useApprove) return this.submitApproveForm();
-    else return this.submitForm();
+    if (useApprove) {
+      this.submitApproveForm();
+    } else {
+      this.submitForm();
+    }
+
+    return new AppPage(ContentWidgetConfigPage);
   }
 
   addContent(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
@@ -310,11 +279,51 @@ export default class AddPage extends AdminContent {
   }
 
   editContent(description, append = false) {
-    if (!append) {
-      this.clearDescription();
-    }
-    this.typeDescription(description);
+    this.getDescriptionInput().then(input => this.type(input, description, append))
     return this.submitForm();
+  }
+
+}
+
+class ActionItems extends WebElement {
+
+  contentSaveButtonUl         = `${htmlElements.ul}`;
+  contentSaveButtonWrapper    = `${htmlElements.div}.StickySave__row--top`;
+  contentSaveButtonSaveAction = `${htmlElements.li}`;
+
+  get(action = 0) {
+    return this.parent.get()
+               .children().find(this.contentSaveButtonWrapper).find(this.contentSaveButtonUl)
+               .find(this.contentSaveButtonSaveAction).eq(action);
+  }
+
+  click(action = 0) {
+    this.get(action).click();
+    return cy.get('@currentPage');
+  }
+
+}
+
+
+class DropDownButton extends WebElement {
+
+  contentSaveButton = `${htmlElements.button}#saveopts`;
+
+  get() {
+    return this.parent.get()
+               .children()
+               .find(this.contentSaveButton);
+  }
+
+  open() {
+    this.get().invoke('attr', 'aria-expanded')
+        .then(expanded => {
+          const isExpanded = (expanded === 'true');
+          if (isExpanded === false) {
+            this.get().click();
+          }
+        })
+    return new ActionItems();
   }
 
 }

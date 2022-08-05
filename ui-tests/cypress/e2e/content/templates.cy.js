@@ -9,18 +9,12 @@ const addContentTemplate = template => cy.contentTemplatesController().then(cont
 
 const deleteContentTemplate = id => cy.contentTemplatesController().then(controller => controller.deleteContentTemplate(id));
 
-const postContentType = (code, name) => cy.contentTypesController().then(controller => controller.addContentType(code, name)
-                                                                   .then(() => cy.wrap(code).as('contentTypeToBeDeleted')));
-
-const deleteContentType = (code) => cy.contentTypesController().then(controller => controller.deleteContentType(code));
-
 describe('Content Templates', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('pageToBeDeleted');
     cy.wrap(null).as('contentToBeDeleted');
     cy.wrap(null).as('templateToBeDeleted');
-    cy.wrap(null).as('contentTypeToBeDeleted');
     sampleContentTemplate.id    = generateRandomNumericId();
     sampleContentTemplate.descr = generateRandomId();
 
@@ -43,9 +37,6 @@ describe('Content Templates', () => {
     cy.get('@templateToBeDeleted').then(template => {
       if (template) deleteContentTemplate(template);
     });
-    cy.get('@contentTypeToBeDeleted').then(contentType => {
-      if (contentType) deleteContentType(contentType);
-    });
     cy.kcTokenLogout();
   });
 
@@ -53,16 +44,14 @@ describe('Content Templates', () => {
     openContentTemplatesPage()
       .then(page => {
         cy.log(`Add content template with id ${sampleContentTemplate.id}`);
-        page.getContent(). openAddTemplatePage();
+        page.getContent().openAddTemplatePage();
       })
-      .then(page => {
-        page.getContent().fillFormFields(sampleContentTemplate);
-        page.getContent().submitForm();
-      })
+      .then(page => page.getContent().fillFormFields(sampleContentTemplate))
+      .then(page => page.getContent().submitForm())
       .then(page => page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).then(($tds) => {
-        cy.wrap($tds).eq(0).should('contain.text', sampleContentTemplate.descr);
-        cy.wrap($tds).eq(1).should('contain.text', sampleContentTemplate.contentTypeText);
-        cy.wrap($tds).eq(2).should('contain.text', sampleContentTemplate.id);
+        cy.wrap($tds).eq(0).should('contain.text', sampleContentTemplate.id);
+        cy.wrap($tds).eq(2).should('contain.text', sampleContentTemplate.contentType);
+        cy.wrap($tds).eq(4).should('contain.text', sampleContentTemplate.descr);
         cy.wrap(sampleContentTemplate.id).as('templateToBeDeleted');
       }));
   });
@@ -75,11 +64,9 @@ describe('Content Templates', () => {
         cy.log(`Edit content template with id ${sampleContentTemplate.id}`);
         page.getContent().getKebabMenu(sampleContentTemplate.id).open().openEdit();
       })
-      .then(page => {
-        page.getContent().getNameInput().then(input => page.getContent().type(input, `${sampleContentTemplate.descr}-new`));
-        page.getContent().submitForm();
-      })
-      .then(page => page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).eq(0).should('contain.text', `${sampleContentTemplate.descr}-new`));
+      .then(page => page.getContent().getNameInput().then(input => page.getContent().type(input, `${sampleContentTemplate.descr}-new`)))
+      .then(page => page.getContent().submitForm())
+      .then(page => page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).eq(4).should('contain.text', `${sampleContentTemplate.descr}-new`));
   });
 
   it([Tag.GTS, 'ENG-2494'], 'Delete content template', () => {
@@ -90,7 +77,7 @@ describe('Content Templates', () => {
         cy.log(`Delete content template with id ${sampleContentTemplate.id}`);
         page.getContent().getKebabMenu(sampleContentTemplate.id).open().clickDelete();
       })
-      .then(page => page.getContent().submit())
+      .then(page => page.getDialog().confirm())
       .then(page => {
         page.getContent().getTable().should('not.contain', sampleContentTemplate.id);
         cy.wrap(null).as('templateToBeDeleted');
@@ -101,21 +88,20 @@ describe('Content Templates', () => {
     addContentTemplate(sampleContentTemplate);
 
     openContentTemplatesPage()
-      .then(page => {
-        page.getContent().getSearchInput().then(input => page.getContent().select(input, sampleContentTemplate.contentTypeText));
-        page.getContent().clickSearch();
-        page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).eq(0).should('contain.text', sampleContentTemplate.descr);
-      });
+      .then(page => page.getContent().getSearchInput().then(input => page.getContent().type(input, sampleContentTemplate.descr)))
+      .then(page => page.getContent().clickSearch())
+      .then(page => page.getContent().getTableRow(sampleContentTemplate.id).find(htmlElements.td).eq(4).should('contain.text', sampleContentTemplate.descr));
   });
 
-  it([Tag.GTS, 'ENG-2494'], 'Empty template type should be not available', () => {
-    postContentType(sampleContentTemplate.testType, sampleContentTemplate.testName);
-
+  it([Tag.GTS, 'ENG-2494'], 'Check pagination for zero results if info displayed is correct (ENG-2680)', () => {
     openContentTemplatesPage()
+      .then(page => page.getContent().getSearchInput().then(input => page.getContent().type(input, 'z')))
+      .then(page => page.getContent().clickSearch())
       .then(page => {
-        page.getContent().getSearchInput().then(input => page.getContent().select(input, sampleContentTemplate.testName));
-        page.getContent().clickSearch();
-        page.getContent().getForm().should('contain.text', 'There are no models available.');
+        page.getContent().getPagination()
+            .getItemsCurrent().invoke('text').should('be.equal', '0-0');
+        page.getContent().getPagination()
+            .getItemsTotal().invoke('text').should('be.equal', '0');
       });
   });
 
@@ -180,37 +166,36 @@ describe('Content Templates', () => {
         cy.log(`Delete referenced content template with id ${sampleContentTemplate.id}`);
         page.getContent().getKebabMenu(sampleContentTemplate.id).open().clickDelete();
       })
-      .then(page => page.getContent().getAlertMessage().should('exist').and('contain.text', 'used'));
+      .then(page => page.getDialog().getConfirmButton().then(button => page.getContent().click(button)))
+      .then(page => cy.validateToast(page, 'referenced', false));
   });
 
   it([Tag.GTS, 'ENG-2494'], 'Edit mandatory fields', () => {
     openContentTemplatesPage()
       .then(page => page.getContent().openAddTemplatePage())
+      .then(page => page.getContent().fillFormFields(sampleContentTemplate))
       .then(page => {
-        page.getContent().fillFormFields(sampleContentTemplate);
         page.getContent().getSaveButton().should('not.be.disabled');
-
         cy.log(`Verify that template id is mandatory`);
         page.getContent().getIDInput().then(input => page.getContent().clear(input));
-        page.getContent().getSaveButton().then(button => page.getContent().click(button));
-        page.getContent().getAlertMessage().should('be.visible');
-        page.getContent().getFormArea().should('contain', 'is mandatory');
+      })
+      .then(page => {
+        page.getContent().getSaveButton().should('be.disabled');
         page.getContent().getIDInput().then(input => page.getContent().type(input, sampleContentTemplate.id));
-
+      })
+      .then(page => {
         cy.log(`Verify that template name is mandatory`);
         page.getContent().getNameInput().then(input => page.getContent().clear(input));
-        page.getContent().getSaveButton().then(button => page.getContent().click(button));
-        page.getContent().getAlertMessage().should('be.visible');
-        page.getContent().getFormArea().should('contain', 'is mandatory');
+      })
+      .then(page => {
+        page.getContent().getSaveButton().should('be.disabled');
         page.getContent().getNameInput().then(input => page.getContent().type(input, sampleContentTemplate.descr));
-
+      })
+      .then(page => {
         cy.log(`Verify that template HTML model is mandatory`);
-        page.getContent().clearHTMLModel(sampleContentTemplate.contentShape);
-        page.getContent().getSaveButton().then(button => page.getContent().click(button));
-        page.getContent().getAlertMessage().should('be.visible');
-        page.getContent().getFormArea().should('contain', 'is mandatory');
-        page.getContent().getContentShapeInput().then(input => page.getContent().type(input, sampleContentTemplate.contentShape, true));
-      });
+        page.getContent().clearHTMLModel();
+      })
+      .then(page => page.getContent().getSaveButton().should('be.disabled'));
   });
 
 });

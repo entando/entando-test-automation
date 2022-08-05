@@ -1,44 +1,30 @@
 import {htmlElements} from '../../../WebElement';
 
-import AdminContent from '../../../app/AdminContent';
+import AppContent from '../../../app/AppContent';
 
-import AdminPage from '../../../app/AdminPage';
+import AppPage from '../../../app/AppPage';
 
 import EditPage               from '../EditPage';
 import NestedAttributePage    from './NestedAttributePage';
 import CompositeAttributePage from './CompositeAttributePage';
 
-export default class AttributePage extends AdminContent {
+export default class AttributePage extends AppContent {
 
-  codeInput           = `${htmlElements.input}#attributeName`;
-  nameInput           = `${htmlElements.input}#attributeDescription`;
-  nestedAttributeType = `${htmlElements.select}#listNestedType`;
-  continueButton      = `${htmlElements.button}.btn.btn-primary.pull-right`;
+  codeInput           = `${htmlElements.input}[name=code]`;
+  nameInput           = `${htmlElements.input}[name="names.{lang}"]`;
+  nestedAttributeType = `${htmlElements.select}[name="nestedAttribute.type"]`;
+  continueButton      = `${htmlElements.button}.ContentTypeAttributeForm__continue-btn`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button, code) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'attributePageLoadingGET', `/Attribute/addAttribute.action?attributeTypeCode=${code}`));
+    cy.contentTypeAttributesController().then(controller => controller.intercept({ method: 'GET' }, `contentTypeAttributes-${code}-LoadingGET`, '?page=1&pageSize=0', 2));
     cy.get(button).click();
-    cy.wait('@attributePageLoadingGET');
+    cy.wait([`@contentTypeAttributes-${code}-LoadingGET`, `@contentTypeAttributes-${code}-LoadingGET`]);
   }
 
-  //FIXME AdminConsole is not built on REST APIs
-  static openPageFromEdit(button, code) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'attributePageLoadingGET', `/Attribute/editAttribute.action?attributeName=${code}`));
+  static openPageFromComposite(button, code) {
+    cy.contentTypeAttributesController().then(controller => controller.intercept({ method: 'GET' }, `contentTypeAttributes-${code}-LoadingGET`, '?page=1&pageSize=0', 1));
     cy.get(button).click();
-    cy.wait('@attributePageLoadingGET');
-  }
-
-  //FIXME AdminConsole is not built on REST APIs
-  static openPageFromComposite(button) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'POST' }, 'attributePageLoadingPOST', `/CompositeAttribute/saveCompositeAttribute.action`));
-    cy.get(button).click();
-    cy.wait('@attributePageLoadingPOST');
-  }
-
-  getContents() {
-    return this.get()
-               .find(`${htmlElements.form}[method="post"]`);
+    cy.wait(`@contentTypeAttributes-${code}-LoadingGET`);
   }
 
   getCodeInput() {
@@ -46,9 +32,9 @@ export default class AttributePage extends AdminContent {
                .find(this.codeInput);
   }
 
-  getNameInput() {
+  getNameInput(lang) {
     return this.getContents()
-               .find(this.nameInput);
+               .find(this.nameInput.replace('{lang}', lang));
   }
 
   getNestedAttributeType() {
@@ -61,23 +47,23 @@ export default class AttributePage extends AdminContent {
                .find(this.continueButton);
   }
 
-  continue(attribute = '', isComposite = false) {
+  continue(attribute = '', typeCode, isComposite = false) {
     this.getContinueButton().then(button => {
       switch (attribute) {
         case 'List':
         case 'Monolist':
-          NestedAttributePage.openPage(button);
-          return cy.wrap(new AdminPage(NestedAttributePage)).as('currentPage');
+          NestedAttributePage.openPage(button, typeCode, attribute);
+          return cy.wrap(new AppPage(NestedAttributePage)).as('currentPage');
         case 'Composite':
-          CompositeAttributePage.openPage(button);
-          return cy.wrap(new AdminPage(CompositeAttributePage)).as('currentPage');
+          CompositeAttributePage.openPage(button, typeCode);
+          return cy.wrap(new AppPage(CompositeAttributePage)).as('currentPage');
         default:
           if (isComposite) {
-            CompositeAttributePage.openPage(button);
-            return cy.wrap(new AdminPage(CompositeAttributePage)).as('currentPage');
+            CompositeAttributePage.openPage(button, typeCode);
+            return cy.wrap(new AppPage(CompositeAttributePage)).as('currentPage');
           } else {
-            EditPage.openPageFromAttribute(button);
-            return cy.wrap(new AdminPage(EditPage)).as('currentPage');
+            EditPage.openPageFromAttribute(button, typeCode);
+            return cy.wrap(new AppPage(EditPage)).as('currentPage');
           }
       }
     });
