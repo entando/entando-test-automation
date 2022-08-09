@@ -70,7 +70,7 @@ describe('Microfrontends and Widgets', () => {
               }));
       });
 
-      it([Tag.GTS, 'ENG-2515'], 'Add a widget with existing code widget', () => {
+      it([Tag.GTS, 'ENG-2515', 'ENG-4074'], 'Add a widget with existing code widget', () => {
         cy.get('@currentPage')
           .then(page => {
             page.getContent().fillWidgetForm(generateRandomId(), 'content_viewer');

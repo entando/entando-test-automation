@@ -169,7 +169,7 @@ describe('User Roles', () => {
       });
     });
 
-    it([Tag.GTS, 'ENG-2069'], 'Delete an unreferenced role', () => {
+    it([Tag.GTS, 'ENG-2069','ENG-4070'], 'Delete an unreferenced role', () => {
       cy.get('@sampleRole').then(sampleRole => {
         addRole(sampleRole.code, sampleRole.name);
 

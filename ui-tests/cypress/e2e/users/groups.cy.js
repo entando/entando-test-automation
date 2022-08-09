@@ -67,7 +67,7 @@ describe('Groups', () => {
     });
   });
 
-  it([Tag.GTS, 'ENG-2530'], 'Delete an existing group', function () {
+  it([Tag.GTS, 'ENG-2530', 'ENG-4071'], 'Delete an existing group', function () {
     addGroup(this.groupCode, this.groupName);
 
     openGroupsPage()

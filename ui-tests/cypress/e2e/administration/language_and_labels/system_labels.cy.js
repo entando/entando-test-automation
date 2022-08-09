@@ -307,7 +307,7 @@ describe('Labels', () => {
 
   describe('Error validation', () => {
 
-    it([Tag.ERROR, 'ENG-3238'], 'Error should be present when selecting but not filling a field in the add label page', () => {
+    it([Tag.ERROR, 'ENG-3238', 'ENG-4073'], 'Error should be present when selecting but not filling a field in the add label page', () => {
       openLabelsPage()
           .then(page => page.getContent().openAddLabel())
           .then(page => {
