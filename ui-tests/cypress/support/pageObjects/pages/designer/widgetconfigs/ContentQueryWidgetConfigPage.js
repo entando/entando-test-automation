@@ -8,7 +8,7 @@ export default class ContentQueryWidgetConfigPage extends WidgetConfigPage {
   ACCORD_EXTRAOPTIONS = 2;
   ACCORD_FRONTEND     = 3;
 
-  accordToggleButton = `${htmlElements.div}.SectionTitle[role=button]`;
+  accordToggleButton = `${htmlElements.div}[role=button]`;
   accordPanel        = `${htmlElements.div}.ReactCollapse--collapse`;
 
   static openPage(code) {

@@ -1190,7 +1190,6 @@ describe('Pages Designer', () => {
                 page.getContent().publishPageDesign(demoPage.code);
               })
               .then(page => {
-                cy.validateToast(page);
                 page.getContent().getPageStatusIcon()
                     .should('have.class', 'PageStatusIcon--published')
                     .and('have.attr', 'title').should('eq', 'Published');
@@ -1273,7 +1272,6 @@ describe('Pages Designer', () => {
                 page.getContent().publishPageDesign(demoPage.code);
               })
               .then(page => {
-                cy.validateToast(page);
                 page.getContent().getPageStatusIcon()
                     .should('have.class', 'PageStatusIcon--published')
                     .and('have.attr', 'title').should('eq', 'Published');
@@ -1401,7 +1399,6 @@ describe('Pages Designer', () => {
                 page.getContent().publishPageDesign(demoPage.code);
               })
               .then(page => {
-                cy.validateToast(page);
                 page.getContent().getPageStatusIcon()
                     .should('have.class', 'PageStatusIcon--published')
                     .and('have.attr', 'title').should('eq', 'Published');
@@ -1484,7 +1481,6 @@ describe('Pages Designer', () => {
                 page.getContent().publishPageDesign(demoPage.code);
               })
               .then(page => {
-                cy.validateToast(page);
                 page.getContent().getPageStatusIcon()
                     .should('have.class', 'PageStatusIcon--published')
                     .and('have.attr', 'title').should('eq', 'Published');
@@ -1553,6 +1549,7 @@ describe('Pages Designer', () => {
           .then(page => page.getContent().dragGridWidgetToFrame(demoPage, 1, 0, 1, 1))
           .then(page => {
             cy.wrap(5).as('widgetToBeRemovedFromPage');
+            cy.wait(1500);
             page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).should('have.class', 'EmptyFrame');
             page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                 .should(contents => expect(contents).to.have.prop('tagName').to.equal('SPAN'));

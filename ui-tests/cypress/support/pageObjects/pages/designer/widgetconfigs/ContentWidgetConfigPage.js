@@ -35,12 +35,12 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   modelIdSelect  = `${htmlElements.select}[name="modelId"]`;
 
   static openPage(code) {
-    cy.contentTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'contentModelsPageLoadingGET', '?*'));
-    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesPageLoadingGET', '?*'));
+    // cy.contentTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'contentModelsPageLoadingGET', '?*'));
+    // cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesPageLoadingGET', '?*'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
+    // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
     // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
-    cy.wait(['@contentModelsPageLoadingGET', '@contentTypesPageLoadingGET', '@pagePageLoadingGET', '@pageDraftWidgetsPageLoadingGET'/*, '@pagePublishedWidgetsPageLoadingGET'*/]);
+    cy.wait([/*'@contentModelsPageLoadingGET',*/ /*'@contentTypesPageLoadingGET',*/ '@pagePageLoadingGET'/*, '@pageDraftWidgetsPageLoadingGET'*//*, '@pagePublishedWidgetsPageLoadingGET'*/]);
   }
 
   static openDesignerWidgets(button, code) {
