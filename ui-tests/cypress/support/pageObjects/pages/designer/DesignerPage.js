@@ -70,11 +70,11 @@ export default class DesignerPage extends AppContent {
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
 
     // cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?*'));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
+    //cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
     // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
 
     cy.get(button).click();
-    cy.wait([/*'@languagesPageLoadingGET', '@myGroupsPageLoadingGET', */'@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', /*'@pagePublishedWidgetsPageLoadingGET'*/]);
+    cy.wait([/*'@languagesPageLoadingGET', '@myGroupsPageLoadingGET', */'@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET' /*'@widgetsPageLoadingGET',*/ /*'@pageDraftWidgetsPageLoadingGET',*/ /*'@pagePublishedWidgetsPageLoadingGET'*/]);
   }
 
   getMainContainer() {
@@ -264,7 +264,7 @@ export default class DesignerPage extends AppContent {
           } else {
             //TODO no API call is performed to populate the widget list in the sidebar
             cy.get(button).click();
-            cy.wait(1000);
+            cy.wait(3000);
           }
         });
     return cy.get('@currentPage');
