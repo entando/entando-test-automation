@@ -527,7 +527,7 @@ describe('UX Fragments', () => {
                 }));
       });
 
-      it([Tag.SANITY, 'ENG-3522'], 'Deleting a fragment', () => {
+      it([Tag.SANITY, 'ENG-3522', 'ENG-3952'], 'Deleting a fragment', () => {
         cy.get('@fragmentsToBeDeleted').then(fragments => fragments[0]).then(fragment =>
             openUXFragmentsPage()
                 .then(page => page.getContent().getKebabMenu(fragment.code).open().clickDelete())
@@ -535,6 +535,10 @@ describe('UX Fragments', () => {
                 .then(page => {
                   cy.validateToast(page, fragment.code);
                   page.getContent().getTableRows().should('not.contain', fragment.code);
+                  page.getContent().getPagination().getItemsCurrent().should('have.text', '1-10');
+                  cy.fixture('data/uxFragments.json').then(fragments => Object.entries(fragments))
+                    .then(fragments =>
+                  page.getContent().getPagination().getItemsTotal().should('have.text', `${fragments.length}`));
                   cy.deleteAlias('@fragmentsToBeDeleted', fragment);
                 }));
       });
