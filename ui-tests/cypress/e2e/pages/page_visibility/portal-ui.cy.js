@@ -90,7 +90,7 @@ describe('Page visibility in Portal UI', () => {
             const permission = (ownerGroup === 'free' || groupPermission === 'administrators');
             const visibility = permission ? ' ' : ' NOT ';
 
-            it([Tag.SANITY, 'ENG-3798', 'ENG-3889'], `A user with "${groupPermission}" permission SHOULD${visibility}be able to view a page with "${ownerGroup}" owner group and no join group`, () => checkPermission(permission));
+            it([Tag.SANITY, 'ENG-3798', 'ENG-3889', 'ENG-4089'], `A user with "${groupPermission}" permission SHOULD${visibility}be able to view a page with "${ownerGroup}" owner group and no join group`, () => checkPermission(permission));
           }
 
           TEST_GROUPS.filter(group => (group !== ownerGroup)).forEach(joinGroup => {
