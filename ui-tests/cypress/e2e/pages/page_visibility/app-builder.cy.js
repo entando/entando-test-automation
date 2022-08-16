@@ -38,14 +38,18 @@ describe('Page visibility in AppBuilder', () => {
   });
 
   after(() => {
-    cy.kcAuthorizationCodeLogin('login/user');
-    //FIXME deleted user, when re-created, retain user preferences
-    cy.fixture('users/details/user').then(user =>
-        cy.userPreferencesController().then(controller => controller.resetUserPreferences(user.username)));
-    cy.kcTokenLogout();
     cy.kcClientCredentialsLogin();
-    cy.fixture('users/details/user')
-      .then(user => cy.usersController().then(controller => controller.deleteUser(user.username)));
+    cy.fixture('users/details/user').then(user => {
+      cy.usersController().then(controller => controller.addAuthorities(user.username, 'administrators', 'admin'));
+      cy.kcAuthorizationCodeLogin('login/user');
+      //FIXME deleted user, when re-created, retain user preferences
+      cy.userPreferencesController().then(controller => controller.resetUserPreferences(user.username));
+      cy.kcTokenLogout();
+      cy.usersController().then(controller => {
+        controller.deleteAuthorities(user.username);
+        controller.deleteUser(user.username);
+      });
+    });
     TEST_GROUPS.filter(group => (group !== 'administrators' && group !== 'free')).forEach(group =>
         cy.groupsController().then(controller => controller.deleteGroup(group)));
   });
