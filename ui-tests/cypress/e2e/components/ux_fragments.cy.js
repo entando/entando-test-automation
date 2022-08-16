@@ -224,7 +224,7 @@ describe('UX Fragments', () => {
           });
     });
 
-    it([Tag.FEATURE, 'ENG-3522', 'ENG-3661'], 'Search with widget filter', () => {
+    it([Tag.FEATURE, 'ENG-3522', 'ENG-4110'], 'Search with widget filter', () => {
       cy.fixture('data/uxFragments.json').then(fragments => Object.entries(fragments))
         .then(fragments => fragments.filter(fragment => fragment[1].widgetType !== ''))
           //FIXME this two widget types are not listed in search select
