@@ -41,8 +41,8 @@ describe('Groups', () => {
     openGroupsPage()
       .then(page => page.getContent().openAddGroupPage())
       .then(page => {
+        page.getContent().getNameInput().then(input => page.getContent().type(input, generateRandomId()));
         page.getContent().getCodeInput().then(input => page.getContent().type(input, this.groupCode));
-        page.getContent().getNameInput().then(input => page.getContent().type(input, this.groupName));
         page.getContent(). getSaveButton().then(button => page.getContent().click(button));
         cy.validateToast(page, this.groupCode, false);
       });
