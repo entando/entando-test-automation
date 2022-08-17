@@ -307,6 +307,7 @@ describe('Page Management', () => {
         });
 
       });
+
       describe('Update when adding a language', () => {
 
         beforeEach(() => {
@@ -563,6 +564,7 @@ describe('Page Management', () => {
             cy.fixture('users/details/user').then(userJSON => {
               //FIXME deleted user, when re-created, retain user preferences
               cy.userPreferencesController().then(controller => controller.resetUserPreferences(userJSON.username));
+              cy.kcTokenLogout();
               cy.usersController().then(controller => {
                 controller.deleteAuthorities(userJSON.username);
                 controller.deleteUser(userJSON.username);
