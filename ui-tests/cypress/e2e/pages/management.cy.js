@@ -747,7 +747,7 @@ describe('Page Management', () => {
                             })))));
         });
 
-        it([Tag.GTS, 'ENG-2638'], 'Cloning a page should copy all attached widgets to the new page', () => {
+        it([Tag.GTS, 'ENG-2638', 'ENG-3986'], 'Cloning a page should copy all attached widgets to the new page', () => {
           cy.wrap({
             code: generateRandomId(),
             title: generateRandomId()
