@@ -6,6 +6,7 @@ export const htmlElements = {
   nav: 'nav',
   div: 'div',
   h1: 'h1',
+  h3: 'h3',
   h4: 'h4',
   p: 'p',
   span: 'span',

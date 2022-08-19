@@ -62,7 +62,7 @@ describe('Pages Designer', () => {
   describe('Change page status', () => {
 
     beforeEach(function () {
-      cy.wrap(this.pageToBeDeleted).then(demoPage => cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'draft')))
+      cy.wrap(this.pageToBeDeleted).then(demoPage => cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'draft')));
     });
 
     it([Tag.GTS, 'ENG-2244'], 'Publish a page', function () {
@@ -305,30 +305,16 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
-                .then(page => page.getContent().clickNewContentWith('Banner'))
+                .then(page => page.getContent().clickNewContentWith('BNR', 'Banner'))
                 .then(page => page.getContent().addContentFromContentWidgetConfig('Unpublish En Title', 'Unpublish It Title', 'Unpublish Sample Description', true))
                 .then(page => {
-                  page.getContent().getTableRow('Unpublish Sample Description').then(row => {
-                    cy.get(row).should('exist').and('be.visible');
-                    cy.get(row).children(htmlElements.td).eq(3).then(code => cy.unshiftAlias('@contentsToBeDeleted', code.text().trim()));
+                  page.getContent().getContentTitleArea().then(code => {
+                    const start = code.text().indexOf(':') + 1;
+                    const end   = code.text().indexOf('-');
+                    cy.unshiftAlias('@contentsToBeDeleted', code.text().substring(start, end).trim());
                   });
                   cy.then(() => page);
                 })
-                  // FIXME/TODO when coming from adminConsole not all the page loading API calls are performed
-                .then(page => page.getMenu().getPages().open().openDesigner(true))
-                .then(page => {
-                  cy.wait(1500);
-                  page.getContent().clickSidebarTab(1);
-                })
-                .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
-                .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
-                .then(page => {
-                  cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                  page.getContent().clickAddContentButton();
-                })
-                .then(page => page.getDialog().getBody().checkBoxFromTitle('Unpublish Sample Description'))
-                .then(page => page.getDialog().confirm())
                 .then(page => page.getContent().confirmConfig(demoPage.code))
                 .then(page => {
                   cy.wrap(4).as('widgetToBeRemovedFromPage');
@@ -366,30 +352,16 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
-                .then(page => page.getContent().clickNewContentWith('Banner'))
+                .then(page => page.getContent().clickNewContentWith('BNR', 'Banner'))
                 .then(page => page.getContent().addContentFromContentWidgetConfig('En Title', 'It Title', 'Sample Description', true))
                 .then(page => {
-                  page.getContent().getTableRow('Sample Description').then(row => {
-                    cy.get(row).should('exist').and('be.visible');
-                    cy.get(row).children(htmlElements.td).eq(3).then(code => cy.unshiftAlias('@contentsToBeDeleted', code.text().trim()));
+                  page.getContent().getContentTitleArea().then(code => {
+                    const start = code.text().indexOf(':') + 1;
+                    const end   = code.text().indexOf('-');
+                    cy.unshiftAlias('@contentsToBeDeleted', code.text().substring(start, end).trim());
                   });
                   cy.then(() => page);
                 })
-                  // FIXME/TODO when coming from adminConsole not all the page loading API calls are performed
-                .then(page => page.getMenu().getPages().open().openDesigner(true))
-                .then(page => {
-                  cy.wait(1500);
-                  page.getContent().clickSidebarTab(1);
-                })
-                .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
-                .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
-                .then(page => {
-                  cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                  page.getContent().clickAddContentButton();
-                })
-                .then(page => page.getDialog().getBody().checkBoxFromTitle('Sample Description'))
-                .then(page => page.getDialog().confirm())
                 .then(page => page.getContent().getModelIdSelect().then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
                 .then(page => page.getContent().confirmConfig(demoPage.code))
                 .then(page => {
@@ -1537,16 +1509,24 @@ describe('Pages Designer', () => {
 
   describe('Drag and drop widgets', () => {
 
-    it([Tag.GTS, 'ENG-2244'], 'Move widget to different frame', function () {
+    beforeEach(function () {
       cy.wrap(this.pageToBeDeleted).then(demoPage => {
         cy.pageWidgetsController(demoPage.code)
           .then(controller => controller.addWidget(4, 'NWS_Archive'))
-          .then(() => cy.wrap(4).as('widgetToBeDeleted'));
+          .then(() => cy.wrap(4).as('widgetToBeRemovedFromPage'));
+      });
+    });
+
+    it([Tag.GTS, 'ENG-2244'], 'Move widget to different frame', function () {
+      cy.wrap(this.pageToBeDeleted).then(demoPage => {
         cy.get('@currentPage')
           .then(page => page.getMenu().getPages().open().openDesigner())
           .then(page => page.getContent().clickSidebarTab(1))
           .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
-          .then(page => page.getContent().dragGridWidgetToFrame(demoPage, 1, 0, 1, 1))
+          .then(page => {
+            cy.wait(5000);
+            page.getContent().dragGridWidgetToFrame(demoPage, 1, 0, 1, 1)
+          })
           .then(page => {
             cy.wrap(5).as('widgetToBeRemovedFromPage');
             cy.wait(1500);

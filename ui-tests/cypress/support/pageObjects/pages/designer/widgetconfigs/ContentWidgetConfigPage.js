@@ -30,6 +30,7 @@ export class ContentListSelectModal extends DialogContent {
 export default class ContentWidgetConfigPage extends WidgetConfigPage {
 
   addButtonArea  = `${htmlElements.div}.SingleContentConfigFormBody__addButtons`;
+  contentTitle  = `${htmlElements.h3}.SingleContentConfigFormBody__contentTitle`;
   buttonClass    = `${htmlElements.button}.btn.btn-primary`;
   buttonDropdown = `${htmlElements.div}.dropdown.btn-group-primary`;
   modelIdSelect  = `${htmlElements.select}[name="modelId"]`;
@@ -52,6 +53,11 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   static settings(){
     cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentLoadingGET', `/?*`));
     cy.wait('@contentLoadingGET');
+    cy.wait(5000);
+  }
+
+  getContentTitleArea() {
+    return this.getInnerPanel().find(this.contentTitle);
   }
 
   getAddButtonsArea() {
@@ -74,9 +80,9 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
                .contains(ctype);
   }
 
-  clickNewContentWith(ctype) {
+  clickNewContentWith(contentTypeCode, contentTypeName) {
     this.getAddNewButtonDropdown().click();
-    this.getButtonAddByContentTypeName(ctype).then(button => AddContentPage.openPage(button));
+    this.getButtonAddByContentTypeName(contentTypeName).then(button => AddContentPage.openPage(button, contentTypeCode));
     return cy.wrap(new AppPage(AddContentPage)).as('currentPage');
   }
 

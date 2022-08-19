@@ -261,12 +261,13 @@ export default class AddPage extends AppContent {
   addContentFromContentWidgetConfig(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
     this.fillBasicContentFields({titleEn, titleIt, description, group}, append);
     if (useApprove) {
-      this.submitApproveForm();
+      this.getSaveApproveAction().click()
     } else {
-      this.submitForm();
+      this.getSaveAction().click();
     }
 
-    return new AppPage(ContentWidgetConfigPage);
+    cy.wait(3000);
+    return cy.wrap(new AppPage(ContentWidgetConfigPage)).as('currentPage');
   }
 
   addContent(titleEn, titleIt, description, useApprove = false, group = 'Free Access', append = false) {
