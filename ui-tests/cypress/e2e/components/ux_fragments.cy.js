@@ -561,7 +561,7 @@ describe('UX Fragments', () => {
 
   describe('Validations', () => {
 
-    it([Tag.ERROR, 'ENG-3522', 'ENG-4078'], 'Error is displayed when a code input is selected but not filled in AddPage', () => {
+    it([Tag.ERROR, 'ENG-3522'], 'Error is displayed when a code input is selected but not filled in AddPage', () => {
       openAddFragmentPage()
           .then(page => page.getContent().getCodeInput().then(input => {
             page.getContent().focus(input);
@@ -619,7 +619,7 @@ describe('UX Fragments', () => {
                 .then(page => page.getContent().getSaveOption().parent().should('have.class', 'disabled')));
       });
 
-      it([Tag.ERROR, 'ENG-3522'], 'Error is displayed when a code input is selected but not filled in cloning a fragment', () => {
+      it([Tag.ERROR, 'ENG-3522', 'ENG-4078'], 'Error is displayed when a code input is selected but not filled in cloning a fragment', () => {
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragment =>
             openCloneFragmentPage(fragment.code)
                 .then(page => page.getContent().getCodeInput().then(input => {
