@@ -329,7 +329,7 @@ describe('UX Fragments', () => {
           });
     });
 
-    it([Tag.FEATURE, 'ENG-3522', 'ENG-3974'], 'Search with non-existing fragment code', () => {
+    it([Tag.FEATURE, 'ENG-3522', 'ENG-4143'], 'Search with non-existing fragment code', () => {
       openUXFragmentsPage()
           .then(page => page.getContent().getSearchCodeInput().then(input => page.getContent().type(input, generateRandomId())))
           .then(page => page.getContent().clickSearchSubmitButton())
