@@ -204,7 +204,7 @@ describe('Users Management', () => {
         });
     });
 
-    it([Tag.GTS, 'ENG-2522'], 'Edit user profile page - save button to be disabled with invalid profile', () => {
+    it([Tag.GTS, 'ENG-2522', 'ENG-3980'], 'Edit user profile page - save button to be disabled with invalid profile', () => {
       openManagementPage()
         .then(page => {
           page.getContent().getTableRows().contains(htmlElements.td, USERNAME_ADMIN);
