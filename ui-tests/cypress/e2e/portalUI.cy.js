@@ -14,8 +14,9 @@ describe('Portal UI', () => {
     });
     cy.visit('/cypress.page', {portalUI: true, failOnStatusCode: false});
     cy.location().should((location) => {
-      expect(location.pathname).to.eq(`${baseURL}/notfound.page`);
+      expect(location.pathname).to.eq(`${baseURL}/cypress.page`);
     });
+    cy.get('h1').should('have.text', 'Page not found');
   });
 
 });
