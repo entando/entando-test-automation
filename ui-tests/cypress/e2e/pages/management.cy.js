@@ -343,7 +343,7 @@ describe('Page Management', () => {
                       .then(page => page.getContent().toggleRowSubPages(parentPage.titles.en))
                       .then(page => {
                         page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
-                        page.getContent().dragRow(testPage.titles.en, 'Home', 'top');
+                        page.getContent().dragRow(testPage.titles.en, 'Home', 'center');
                       })
                       .then(page => page.getDialog().confirm())
                       .then(page => {
