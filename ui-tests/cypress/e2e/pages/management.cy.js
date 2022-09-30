@@ -432,6 +432,146 @@ describe('Page Management', () => {
               }));
         });
 
+        it([Tag.SANITY, 'ENG-4242'], 'When moving a page in a new position in the page tree, the position is retained when refreshing the browser page', () => {
+          cy.fixture('data/demoPage.json').then(firstPage => {
+            cy.fixture('data/demoPage.json').then(secondPage => {
+              secondPage.code      = generateRandomId();
+              secondPage.titles.en = generateRandomId();
+              cy.seoPagesController().then(controller => controller.addNewPage(secondPage));
+              cy.pushAlias('@pagesToBeDeleted', secondPage.code);
+              cy.get('@pagesToBeDeleted').then(pages => cy.pagesController().then(controller => controller.intercept({method: 'PUT'}, 'pageMovedPUT', `/${pages[0]}/position`)));
+              cy.get('@currentPage')
+                .then(page => page.getMenu().getPages().open().openManagement())
+                .then(page => page.getContent().dragRow(firstPage.titles.en, secondPage.titles.en, 'bottom'))
+                .then(page => page.getDialog().confirm())
+                .then(page => {
+                  cy.wait('@pageMovedPUT');
+                  checkPagesRelativePosition(secondPage, firstPage);
+                  page.getContent().reloadPage();
+                  checkPagesRelativePosition(secondPage, firstPage);
+                });
+            });
+          });
+        });
+
+        it([Tag.SANITY, 'ENG-4242'], 'When moving a child page from a parent page to another parent page, the position is retained when refreshing the browser page', () => {
+          cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(parentPageCode =>
+            cy.fixture('data/demoPage.json').then(parentPage =>
+                cy.fixture('data/demoPage.json').then(childPage => {
+                  childPage.code       = generateRandomId();
+                  childPage.titles.en  = generateRandomId();
+                  childPage.parentCode = parentPageCode;
+                  cy.seoPagesController().then(controller => controller.addNewPage(childPage));
+                  cy.unshiftAlias('@pagesToBeDeleted', childPage.code);
+                  cy.get('@pagesToBeDeleted').then(pages => cy.pagesController().then(controller => controller.intercept({method: 'PUT'}, 'pageMovedPUT', `/${pages[0]}/position`)));
+                  cy.fixture('data/demoPage.json').then(testParentPage => {
+                    testParentPage.code      = generateRandomId();
+                    testParentPage.titles.en = generateRandomId();
+                    cy.seoPagesController().then(controller => controller.addNewPage(testParentPage));
+                    cy.pushAlias('@pagesToBeDeleted', testParentPage.code);
+                    cy.get('@currentPage')
+                      .then(page => page.getMenu().getPages().open().openManagement())
+                      .then(page => {
+                        page.getContent().toggleRowSubPages(parentPage.titles.en);
+                        page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
+                        page.getContent().dragRow(childPage.titles.en, testParentPage.titles.en, 'center');
+                      })
+                      .then(page => page.getDialog().confirm())
+                      .then(page => {
+                        cy.wait('@pageMovedPUT');
+                        page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.i}.fa`).eq(2)
+                            .should('have.class', 'fa-folder-o').and('not.have.class', 'fa-folder');
+                        page.getContent().getTableRow(testParentPage.titles.en).find(`${htmlElements.i}.fa`).eq(2)
+                            .should('have.class', 'fa-folder').and('not.have.class', 'fa-folder-o');
+                        checkPagesRelativePosition(testParentPage, childPage);
+                        page.getContent().reloadPage();
+                        checkPagesRelation(page, testParentPage, childPage);
+                        checkPagesRelativePosition(testParentPage, childPage);
+                      });
+                  });
+                })
+          ));
+        });
+
+        describe('User with "Free Access group" permission', () => {
+
+          beforeEach(() => {
+            cy.kcTokenLogout();
+            cy.kcClientCredentialsLogin();
+            cy.fixture('users/details/user').then(user => {
+              cy.usersController().then(controller => {
+                controller.addUser(user);
+                controller.updateUser(user);
+                controller.addAuthorities(user.username, 'free', 'admin');
+              });
+              cy.kcAuthorizationCodeLogin('login/user');
+              cy.userPreferencesController().then(controller => {
+                // FIXME the userPreferences are not immediately available after user creation, but are immediately created on GET
+                controller.getUserPreferences(user.username);
+                controller.updateUserPreferences(user.username, {wizard: false});
+              });
+              cy.kcTokenLogout();
+            })
+          });
+
+          afterEach(() => {
+            //FIXME deleted user, when re-created, retain user preferences
+            cy.fixture('users/details/user').then(user =>
+              cy.userPreferencesController().then(controller => controller.resetUserPreferences(user.username)));
+            cy.kcTokenLogout();
+            cy.kcClientCredentialsLogin();
+            cy.fixture('users/details/user')
+              .then(user => cy.usersController().then(controller => {
+                controller.deleteUser(user.username);
+                controller.deleteAuthorities(user.username);
+              }));
+          });
+
+          it([Tag.SANITY, 'ENG-4242'], 'When a user with "Free Access group" moves a "Free Access group" page from the top of the page tree to the bottom, and the second page in the page tree is a "Administrator group" page, the position is retained after refreshing the page', () => {
+            cy.kcClientCredentialsLogin();
+            cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(administratorPageCode =>
+              cy.fixture('data/demoPage.json').then(administratorPage => {
+                cy.pagesController().then(controller => controller.movePage(administratorPageCode, administratorPage.parentCode, 1));
+                cy.fixture('data/demoPage.json').then(freePage => {
+                  freePage.code       = generateRandomId();
+                  freePage.titles.en  = generateRandomId();
+                  freePage.ownerGroup = 'free';
+                  cy.seoPagesController().then(controller => controller.addNewPage(freePage));
+                  cy.unshiftAlias('@pagesToBeDeleted',freePage.code);
+                  cy.pagesController().then(controller => controller.movePage(freePage.code, freePage.parentCode, 1));
+                  cy.kcTokenLogout();
+                  cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
+                  cy.pagesController().then(controller => controller.intercept({method: 'PUT'}, 'pageMovedPUT', `/${freePage.code}/position`));
+                  cy.get('@currentPage')
+                    .then(page => page.getMenu().getPages().open().openManagement())
+                    .then(page => {
+                      page.getContent().getPageNameFromIndex(-1).then(lastPage => cy.wrap(lastPage.text()).as('lastPage'));
+                      cy.get('@lastPage').then(lastPage => page.getContent().dragRow(freePage.titles.en, lastPage, 'bottom'));
+                    })
+                    .then(page => page.getDialog().confirm())
+                    .then(page => {
+                      cy.wait('@pageMovedPUT');
+                      cy.get('@lastPage').then(lastPage => {
+                        checkPagesRelativePosition({titles: {en: lastPage}}, freePage);
+                        page.getContent().reloadPage();
+                        checkPagesRelativePosition({titles: {en: lastPage}}, freePage);
+                      })
+                    })
+                })
+              })
+            )
+          });
+        })
+
+        const checkPagesRelativePosition = (higherPage, lowerPage) => {
+          cy.get('@currentPage')
+            .then(page => 
+              page.getContent().getTableRow(higherPage.titles.en).invoke('index').then(higherPageIndex => {
+                page.getContent().getTableRow(lowerPage.titles.en).invoke('index').should('eq', higherPageIndex + 1);
+              })
+            );
+        }
+
         const checkPagesRelation = (currentPage, parentPage, testPage) => {
           cy.wrap(currentPage)
             .then(page => {

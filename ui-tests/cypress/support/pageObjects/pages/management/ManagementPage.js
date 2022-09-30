@@ -28,6 +28,13 @@ export default class ManagementPage extends AppContent {
     cy.wait('@searchPageLoadingGET');
   }
 
+  reloadPage() {
+    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepageChildrenPageLoadingGET', '?parentCode=homepage'));
+    cy.reload();
+    cy.wait('@homepageChildrenPageLoadingGET');
+    return cy.get('@currentPage');
+  }
+
   getSearchForm() {
     return this.getContents().find(`${htmlElements.form}.PageSearchForm`);
   }
@@ -91,6 +98,10 @@ export default class ManagementPage extends AppContent {
         .find(`${htmlElements.span}.PageTree__icons-label`)
         .click();
     return cy.get('@currentPage');
+  }
+
+  getPageNameFromIndex(index) {
+    return this.getTableRows().eq(index).find(`${htmlElements.span}.PageTree__page-name`);
   }
 
   dragRow(source, target, pos = 'top') {
