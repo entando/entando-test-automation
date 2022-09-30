@@ -25,4 +25,16 @@ export default class PagesController extends AbstractController {
     });
   }
 
+  movePage(id, parent, position) {
+    return this.request({
+      url: `${this.apiURL}/${id}/position`,
+      method: 'PUT',
+      body: {
+        code: id,
+        parentCode: parent,
+        position
+      }
+    })
+  }
+
 }
