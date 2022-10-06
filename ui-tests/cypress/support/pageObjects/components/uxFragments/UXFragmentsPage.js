@@ -141,6 +141,8 @@ class FragmentsKebabMenu extends KebabMenu {
 
   openClone(code) {
     this.getClone().then(button => FragmentsPage.openPage(button, code));
+    //FIXME / TODO the GUI code filed is not populated on load causing a refresh of the page
+    cy.wait(1000);
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 
