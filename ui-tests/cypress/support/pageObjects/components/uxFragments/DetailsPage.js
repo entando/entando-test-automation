@@ -2,8 +2,9 @@ import {htmlElements} from '../../WebElement.js';
 
 import AppContent from '../../app/AppContent.js';
 
-import AppPage       from '../../app/AppPage';
-import FragmentsPage from './FragmentsPage';
+import AppPage         from '../../app/AppPage';
+import FragmentsPage   from './FragmentsPage';
+import UXFragmentsPage from './UXFragmentsPage';
 
 export default class DetailsPage extends AppContent {
 
@@ -40,6 +41,11 @@ export default class DetailsPage extends AppContent {
 
   getReferencedWidgetTypes() {
     return this.getReferencedSection().eq(2);
+  }
+
+  goToFragmentsViaBreadCrumb() {
+    this.getBreadCrumb().children(htmlElements.li).eq(1).then(button => UXFragmentsPage.openPage(button));
+    return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
   openEdit(code) {
