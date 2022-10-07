@@ -183,6 +183,33 @@ describe('Labels', () => {
           });
     });
 
+    it([Tag.FEATURE, 'ENG-3238', 'ENG-4244'], 'Complete labels list must be displayed when an empty field search occours', () => {
+      let dataViewed = getDataTable();
+      cy.get('@currentPage')
+        .then(page =>
+            page.getContent().getLabelsTablePaginationFormLabelsTotal()
+                .then(LabelsTotal => {
+                  page.getContent().getLabelsTableDisplayedTable().should('exist').and('be.visible');
+                  page.getContent().getLabelsTablePaginationFormPageSizeDropdown().should('have.text', '10 ');
+                  page.getContent().getTableRows().should('have.length', 10);
+                  page.getContent().getLabelsTablePaginationFormPageSelector().should('have.value', 1);
+                  page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', LabelsTotal[0].innerText);
+                  cy.then(() => getKeysFromLabelsJSON()).then(labelsFromJson => labelsFromJson.slice(0, 10)).should('deep.equal', dataViewed);
+                  cy.get('@currentPage').then(page => {
+                    page.getContent().clickSearchSubmitButton()
+                        .then(page => {
+                          let dataViewedAfterAction = getDataTable();
+                          page.getContent().getLabelsTableDisplayedTable().should('exist').and('be.visible');
+                          page.getContent().getLabelsTablePaginationFormPageSizeDropdown().should('have.text', '10 ');
+                          page.getContent().getTableRows().should('have.length', 10);
+                          page.getContent().getLabelsTablePaginationFormPageSelector().should('have.value', 1);
+                          page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', LabelsTotal[0].innerText);
+                          cy.then(() => getKeysFromLabelsJSON()).then(labelsFromJson => labelsFromJson.slice(0, 10)).should('deep.equal', dataViewedAfterAction);
+                        });
+                  });
+                }));
+    });
+
     it([Tag.FEATURE, 'ENG-3238'], 'Verify the results of a search using the return key', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().getLabelSearchInput().then(input => page.getContent().type(input, 'ALL')))
