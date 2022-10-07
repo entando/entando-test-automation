@@ -163,7 +163,7 @@ describe('Labels', () => {
                 .each(row => cy.get(row).children(htmlElements.td).eq(0).should('contain', 'ALL')));
     });
 
-    it([Tag.SANITY, 'ENG-3238', 'ENG-4243'], 'Second page of filtered data has been loaded and visualized properly', () => {
+    it([Tag.SANITY, 'ENG-4243'], 'Second page of filtered data has been loaded and visualized properly', () => {
       generateDataFromJsonWithRandomCharacter()
           .then(dataReturned => {
             cy.get('@currentPage')
@@ -384,12 +384,11 @@ describe('Labels', () => {
 
   });
   const getKeysFromLabelsJSON = () => {
-    cy.fixture('data/labels.json').then(labels => Object.values(labels).map(label => label.key)).as('keysFromJSON');
-    return cy.get('@keysFromJSON');
+   return cy.fixture('data/labels.json').then(labels => Object.values(labels).map(label => label.key));
   };
 
   const generateDataFromJsonWithRandomCharacter = () => {
-    getKeysFromLabelsJSON().then(labels => {
+  return  getKeysFromLabelsJSON().then(labels => {
       let filteredLabels;
       let randomChar;
       do {
@@ -397,9 +396,8 @@ describe('Labels', () => {
         randomChar     = char;
         filteredLabels = labels.filter(label => label.includes(char));
       } while (filteredLabels.length < 11);
-      cy.then(() => [randomChar, filteredLabels]).as('dataReturned');
+      cy.then(() => [randomChar, filteredLabels])
     });
-    return cy.get('@dataReturned');
   };
 
   const getDataTable = () => {
