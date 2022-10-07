@@ -1,4 +1,4 @@
-import {generateRandomId} from '../../../support/utils';
+import {generateRandomId, generateRandomString} from '../../../support/utils.js';
 
 import {htmlElements} from '../../../support/pageObjects/WebElement';
 
@@ -161,6 +161,26 @@ describe('Labels', () => {
         .then(page =>
             page.getContent().getTableRows().should('have.length', 3)
                 .each(row => cy.get(row).children(htmlElements.td).eq(0).should('contain', 'ALL')));
+    });
+
+    it([Tag.SANITY, 'ENG-3238', 'ENG-4243'], 'Second page of filtered data has been loaded and visualized properly', () => {
+      generateDataFromJsonWithRandomCharacter()
+          .then(dataReturned => {
+            cy.get('@currentPage')
+              .then(page => page.getContent().getLabelSearchInput().then(input => page.getContent().type(input, dataReturned[0])))
+              .then(page => page.getContent().clickSearchSubmitButton());
+            cy.get('@currentPage')
+              .then(page => page.getContent().getLabelsTablePaginationFormLabelsTotal()
+                                .then(LabelsTotal => page.getContent().navigateToNextPage().then(page => {
+                                  page.getContent().getLabelsTablePaginationFormPageSelector().should('have.value', 2);
+                                  page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', LabelsTotal[0].innerText);
+                                  page.getContent().getTableRows().each(row => cy.get(row).children(htmlElements.td).eq(0).should('contain', dataReturned[0]));
+                                })))
+              .then(() => {
+                let dataViewedInPageTwo = getDataTable();
+                cy.then(() => dataReturned[1].slice(10, 20)).should('deep.equal', dataViewedInPageTwo);
+              });
+          });
     });
 
     it([Tag.FEATURE, 'ENG-3238'], 'Verify the results of a search using the return key', () => {
@@ -363,6 +383,31 @@ describe('Labels', () => {
     });
 
   });
+  const getKeysFromLabelsJSON = () => {
+    cy.fixture('data/labels.json').then(labels => Object.values(labels).map(label => label.key)).as('keysFromJSON');
+    return cy.get('@keysFromJSON');
+  };
+
+  const generateDataFromJsonWithRandomCharacter = () => {
+    getKeysFromLabelsJSON().then(labels => {
+      let filteredLabels;
+      let randomChar;
+      do {
+        let char       = generateRandomString(1);
+        randomChar     = char;
+        filteredLabels = labels.filter(label => label.includes(char));
+      } while (filteredLabels.length < 11);
+      cy.then(() => [randomChar, filteredLabels]).as('dataReturned');
+    });
+    return cy.get('@dataReturned');
+  };
+
+  const getDataTable = () => {
+    let members = [];
+    cy.get('@currentPage')
+      .then(page => page.getContent().getTableRows().each(row => cy.get(row).children(htmlElements.td).eq(0).then(el => members.push(el.text()))));
+    return members;
+  };
 
   const generateRandomLabel = () => {
     return cy.wrap({
