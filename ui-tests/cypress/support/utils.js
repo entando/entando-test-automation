@@ -11,12 +11,16 @@ export const getArrayRandomElement = (array) => {
 
 export const generateRandomId = () => uuidv4().substr(0, 10).replace(/-/g, '_');
 
-export const generateRandomTypeCode = () => {
+export const generateRandomString = (numberOfChars) => {
   let code = '';
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < numberOfChars; i++) {
     code += String.fromCharCode('A'.charCodeAt(0) + Math.random() * 26);
   }
   return code;
+};
+
+export const generateRandomTypeCode = () => {
+  return generateRandomString(3);
 };
 
 export const generateRandomNumericId = () => Math.floor(Math.random() * 1000000000);
