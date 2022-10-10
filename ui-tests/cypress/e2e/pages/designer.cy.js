@@ -881,7 +881,7 @@ describe('Pages Designer', () => {
           });
         });
 
-        it([Tag.GTS, 'ENG-2501', 'ENG-4082'], 'Basic edit with CMS Search Form widget', function () {
+        it([Tag.GTS, 'ENG-2501', 'ENG-4082', 'ENG-4280'], 'Basic edit with CMS Search Form widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -900,7 +900,7 @@ describe('Pages Designer', () => {
                 }));
         });
 
-        it([Tag.GTS, 'ENG-2501'], 'Open Widget Details from the dropped CMS Search Form widget', function () {
+        it([Tag.GTS, 'ENG-2501', 'ENG-4280'], 'Open Widget Details from the dropped CMS Search Form widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
