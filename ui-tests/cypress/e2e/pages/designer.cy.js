@@ -165,7 +165,7 @@ describe('Pages Designer', () => {
                 }));
         });
 
-        it([Tag.GTS, Tag.SMOKE, 'ENG-2496'], 'Editing widget in Settings (widget config)', function () {
+        it([Tag.GTS, Tag.SMOKE, 'ENG-2496', 'ENG-4277'], 'Editing widget in Settings (widget config)', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -204,7 +204,7 @@ describe('Pages Designer', () => {
           });
         });
 
-        it([Tag.GTS, Tag.SMOKE, 'ENG-2496'], 'Save As Widget', function () {
+        it([Tag.GTS, Tag.SMOKE, 'ENG-2496', 'ENG-4277'], 'Save As Widget', function () {
           cy.wrap(generateRandomId()).then(clonedWidgetCode =>
               cy.wrap(this.pageToBeDeleted).then(demoPage =>
                   cy.get('@currentPage')
@@ -511,7 +511,7 @@ describe('Pages Designer', () => {
                 }));
         });
 
-        it([Tag.GTS, Tag.SMOKE, 'ENG-2498'], 'Editing widget in Settings (widget config)', function () {
+        it([Tag.GTS, Tag.SMOKE, 'ENG-2498', 'ENG-4277'], 'Editing widget in Settings (widget config)', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -546,7 +546,7 @@ describe('Pages Designer', () => {
                 .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
         });
 
-        it([Tag.GTS, Tag.SMOKE, 'ENG-2498'], 'Save As Widget', function () {
+        it([Tag.GTS, Tag.SMOKE, 'ENG-2498', 'ENG-4277'], 'Save As Widget', function () {
           cy.wrap(generateRandomId()).then(clonedWidgetCode =>
               cy.wrap(this.pageToBeDeleted).then(demoPage =>
                   cy.get('@currentPage')
@@ -756,7 +756,7 @@ describe('Pages Designer', () => {
                 }));
         });
 
-        it([Tag.GTS, Tag.SMOKE, 'ENG-2500'], 'Editing widget in Settings (widget config)', function () {
+        it([Tag.GTS, Tag.SMOKE, 'ENG-2500', 'ENG-4277'], 'Editing widget in Settings (widget config)', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -795,7 +795,7 @@ describe('Pages Designer', () => {
                 .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
         });
 
-        it([Tag.GTS, Tag.SMOKE, 'ENG-2500'], 'Save As Widget', function () {
+        it([Tag.GTS, Tag.SMOKE, 'ENG-2500', 'ENG-4277'], 'Save As Widget', function () {
           cy.wrap(generateRandomId()).then(clonedWidgetCode =>
               cy.wrap(this.pageToBeDeleted).then(demoPage =>
                   cy.get('@currentPage')
