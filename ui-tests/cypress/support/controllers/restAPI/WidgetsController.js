@@ -26,32 +26,6 @@ export default class WidgetsController extends AbstractController {
     return this.request({
       url: `${this.apiURL}/${widget}`,
       method: 'GET'
-    }).then((response) => {
-      const {
-              code,
-              titles,
-              group,
-              configUi,
-              parentType,
-              widgetCategory,
-              icon,
-              config
-            }        = response.body.payload;
-      const formData = {
-        code,
-        titles,
-        group,
-        configUi,
-        parentType,
-        widgetCategory,
-        icon,
-        customUi: '',
-        config
-      };
-      if (response.body.payload.guiFragments.length > 0) {
-        formData.customUi = response.body.payload.guiFragments[0].customUi;
-      }
-      return {controller: this, response, formData};
     });
   }
 
