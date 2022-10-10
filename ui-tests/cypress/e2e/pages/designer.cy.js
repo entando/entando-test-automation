@@ -39,9 +39,9 @@ describe('Pages Designer', () => {
     });
     cy.get('@widgetToBeReverted').then(widgetToBeReverted => {
       if (widgetToBeReverted)
-        cy.widgetsController(widgetToBeReverted.code)
-          .then(controller => controller.getWidget())
-          .then(({controller, formData}) => controller.putWidget({...formData, ...widgetToBeReverted}));
+        cy.widgetsController(widgetToBeReverted.code).then(controller =>
+            controller.getWidget().then(response =>
+                controller.putWidget({...response.body.payload, ...widgetToBeReverted})));
     });
     cy.get('@contentsToBeDeleted').then(contentIDs => contentIDs
         .forEach(contentID => cy.contentsController().then(controller => controller.updateStatus(contentID, 'draft').then(() => controller.deleteContent(contentID)))));
@@ -62,7 +62,7 @@ describe('Pages Designer', () => {
   describe('Change page status', () => {
 
     beforeEach(function () {
-      cy.wrap(this.pageToBeDeleted).then(demoPage => cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'draft')))
+      cy.wrap(this.pageToBeDeleted).then(demoPage => cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'draft')));
     });
 
     it([Tag.GTS, 'ENG-2244'], 'Publish a page', function () {
@@ -1044,7 +1044,7 @@ describe('Pages Designer', () => {
           });
         });
 
-        xit([Tag.GTS, 'ENG-2503'], 'Basic edit with News Archive widget', function () {
+        it([Tag.GTS, 'ENG-2503'], 'Basic edit with News Archive widget', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
