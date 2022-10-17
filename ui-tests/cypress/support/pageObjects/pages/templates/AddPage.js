@@ -23,6 +23,8 @@ export default class AddPage extends AppContent {
     if (button) cy.get(button).click();
     else cy.realType('{enter}');
     cy.wait('@templateLoadingGET');
+    // FIXME page reloads immediately after loading the model, it is needed to wait otherwise cypress would lose focus on the element
+    cy.wait(1000);
   }
 
   static editAndContinue(button, code) {
