@@ -308,7 +308,7 @@ describe('Page Management', () => {
             .then(controller => controller.putLanguage('cs', 'Czech', false, false));
         });
 
-        it('ENG-2642', 'Avoid accept blank page titles in an inactive language tab', () => {
+        it(['ENG-2642', 'ENG-4283'], 'Avoid accept blank page titles in an inactive language tab', () => {
           cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(pageCode =>
               cy.fixture('data/demoPage.json').then(demoPage =>
                   cy.get('@currentPage')
@@ -565,7 +565,7 @@ describe('Page Management', () => {
 
         const checkPagesRelativePosition = (higherPage, lowerPage) => {
           cy.get('@currentPage')
-            .then(page => 
+            .then(page =>
               page.getContent().getTableRow(higherPage.titles.en).invoke('index').then(higherPageIndex => {
                 page.getContent().getTableRow(lowerPage.titles.en).invoke('index').should('eq', higherPageIndex + 1);
               })
