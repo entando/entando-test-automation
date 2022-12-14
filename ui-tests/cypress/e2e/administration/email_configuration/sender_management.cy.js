@@ -118,7 +118,8 @@ describe('Sender Management Functionalities', () => {
         .then(page => {
           cy.validateToast(page);
           cy.wrap(sender).as('senderToBeDeleted');
-          page.getContent().getSenderTableRow(sender.code).should('be.visible')
+          page.getContent().getSenderTableRows().should('have.length', 3);
+          page.getContent().getSenderTableRow(sender.code).should('exist')
               .children(htmlElements.td).then(cells =>
               cy.validateListTexts(cells, [sender.code, sender.email]));
         });

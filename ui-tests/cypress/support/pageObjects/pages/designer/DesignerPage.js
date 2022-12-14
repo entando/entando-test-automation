@@ -71,10 +71,11 @@ export default class DesignerPage extends AppContent {
 
     // cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?*'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
-    // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
+    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
 
     cy.get(button).click();
-    cy.wait([/*'@languagesPageLoadingGET',*/ '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pageModelPageLoadingGET', '@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET',*/ '@pageDraftWidgetsPageLoadingGET', /*'@pagePublishedWidgetsPageLoadingGET'*/]);
+    cy.wait([/*'@languagesPageLoadingGET',*/ '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', /*'@pageModelPageLoadingGET', */'@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET', '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET'*/]);
+    cy.wait(2000);
   }
 
   getMainContainer() {

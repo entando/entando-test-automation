@@ -75,6 +75,7 @@ describe('Groups', () => {
         page.getContent().getKebabMenu(this.groupCode).open().clickDelete();
         page.getDialog().getBody().getStateInfo().should('contain', this.groupCode);
         page.getDialog().confirm();
+        cy.validateToast(page, this.groupCode);
         page.getContent().getTableRows().should('not.contain', this.groupCode);
         cy.wrap(null).as('groupToBeDeleted');
       });

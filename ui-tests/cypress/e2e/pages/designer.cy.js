@@ -335,6 +335,7 @@ describe('Pages Designer', () => {
                   // FIXME/TODO content_viewer is slower and slower to load
                   cy.wait(1500);
                   cy.validateToast(page);
+                  cy.wait(1500);
                   page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                       .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                       .then(contents => {
@@ -1550,7 +1551,10 @@ describe('Pages Designer', () => {
           .then(page => page.getMenu().getPages().open().openDesigner())
           .then(page => page.getContent().clickSidebarTab(1))
           .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
-          .then(page => page.getContent().dragGridWidgetToFrame(demoPage, 1, 0, 1, 1))
+          .then(page => {
+            cy.wait(1500);
+            page.getContent().dragGridWidgetToFrame(demoPage, 1, 0, 1, 1);
+          })
           .then(page => {
             cy.wrap(5).as('widgetToBeRemovedFromPage');
             page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).should('have.class', 'EmptyFrame');

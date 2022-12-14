@@ -268,7 +268,7 @@ describe('Labels', () => {
               cy.validateUrlPathname('/labels-languages');
               page.getContent().getLabelsTableDisplayedTable().should('exist').and('be.visible');
               page.getContent().getTableRowByCode(label.key).should('exist');
-              page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', 145);
+              page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', 146);
             });
       });
     });
@@ -353,7 +353,7 @@ describe('Labels', () => {
           .then(page => {
             cy.validateUrlPathname('/labels-languages');
             page.getContent().getLabelsTablePaginationFormLabelsTotal()
-                .should('have.text', 144);
+                .should('have.text', 145);
           });
     });
 
