@@ -178,6 +178,7 @@ describe('User Roles', () => {
             page.getContent().getKebabMenu(sampleRole.code).open().clickDelete();
             page.getDialog().getBody().getStateInfo().should('contain', sampleRole.code);
             page.getDialog().confirm();
+            cy.wait(1000);
             page.getContent().getTableRows().should('not.contain', sampleRole.code);
             cy.wrap(null).as('roleToBeDeleted');
           });
