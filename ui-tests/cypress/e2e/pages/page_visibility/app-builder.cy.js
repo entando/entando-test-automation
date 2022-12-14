@@ -2,16 +2,19 @@ describe('Page visibility in AppBuilder', () => {
 
   const TEST_GROUPS = ['administrators', 'free', 'group1', 'group2'];
 
-  const checkPermission = (permission = true) => {
+  const checkPermission = (permission = true, readOnly = false) => {
     cy.kcAuthorizationCodeLoginAndOpenDashboard('login/user');
     cy.fixture('data/demoPage.json').then(demoPage => {
       cy.get('@currentPage')
         .then(page => page.getMenu().getPages().open().openManagement())
         .then(page => {
-          if (!permission) page.getContent().getTableRow(demoPage.titles.en).should('not.exist');
+          if (!permission && !readOnly) page.getContent().getTableRow(demoPage.titles.en).should('not.exist');
           else {
             page.getContent().getTableRow(demoPage.titles.en).should('exist');
-            page.getContent().getKebabMenu(demoPage.titles.en).open().openEdit(demoPage.code);
+            cy.wrap(page.getContent().getKebabMenu(demoPage.titles.en).open()).then(kebabMenu => {
+              if (permission) kebabMenu.openEdit(demoPage.code);
+              else kebabMenu.getEdit().should('have.class', 'disabled');
+            });
           }
         })
         .then(() => permission ? cy.validateUrlPathname(`/page/edit/${demoPage.code}`) : cy.validateUrlPathname('/page'));
@@ -21,7 +24,7 @@ describe('Page visibility in AppBuilder', () => {
   before(() => {
     cy.kcClientCredentialsLogin();
     TEST_GROUPS.filter(group => (group !== 'administrators' && group !== 'free')).forEach(group =>
-        cy.groupsController().then(controller => controller.addGroup(group, group)));
+      cy.groupsController().then(controller => controller.addGroup(group, group)));
     cy.fixture('users/details/user').then(user => {
       cy.usersController().then(controller => {
         controller.addUser(user);
@@ -31,7 +34,7 @@ describe('Page visibility in AppBuilder', () => {
       cy.userPreferencesController().then(controller => {
         // FIXME the userPreferences are not immediately available after user creation, but are immediately created on GET
         controller.getUserPreferences(user.username);
-        controller.updateUserPreferences(user.username, {wizard: false});
+        controller.updateUserPreferences(user.username, { wizard: false });
       });
       cy.kcTokenLogout();
     });
@@ -41,13 +44,13 @@ describe('Page visibility in AppBuilder', () => {
     cy.kcAuthorizationCodeLogin('login/user');
     //FIXME deleted user, when re-created, retain user preferences
     cy.fixture('users/details/user').then(user =>
-        cy.userPreferencesController().then(controller => controller.resetUserPreferences(user.username)));
+      cy.userPreferencesController().then(controller => controller.resetUserPreferences(user.username)));
     cy.kcTokenLogout();
     cy.kcClientCredentialsLogin();
     cy.fixture('users/details/user')
       .then(user => cy.usersController().then(controller => controller.deleteUser(user.username)));
     TEST_GROUPS.filter(group => (group !== 'administrators' && group !== 'free')).forEach(group =>
-        cy.groupsController().then(controller => controller.deleteGroup(group)));
+      cy.groupsController().then(controller => controller.deleteGroup(group)));
   });
 
   TEST_GROUPS.forEach(groupPermission => {
@@ -57,15 +60,15 @@ describe('Page visibility in AppBuilder', () => {
       before(() => {
         cy.kcClientCredentialsLogin();
         cy.fixture('users/details/user').then(user =>
-            cy.usersController().then(controller =>
-                controller.addAuthorities(user.username, groupPermission, 'admin')));
+          cy.usersController().then(controller =>
+            controller.addAuthorities(user.username, groupPermission, 'admin')));
       });
 
       after(() => {
         cy.kcClientCredentialsLogin();
         cy.fixture('users/details/user').then(user =>
-            cy.usersController().then(controller =>
-                controller.deleteAuthorities(user.username)));
+          cy.usersController().then(controller =>
+            controller.deleteAuthorities(user.username)));
       });
 
       TEST_GROUPS.forEach(ownerGroup => {
@@ -82,22 +85,22 @@ describe('Page visibility in AppBuilder', () => {
           });
 
           after(() =>
-              cy.fixture('data/demoPage.json').then(demoPage =>
-                  cy.pagesController().then(controller => {
-                    controller.setPageStatus(demoPage.code, 'draft');
-                    controller.deletePage(demoPage.code);
-                  })
-              ));
+            cy.fixture('data/demoPage.json').then(demoPage =>
+              cy.pagesController().then(controller => {
+                controller.setPageStatus(demoPage.code, 'draft');
+                controller.deletePage(demoPage.code);
+              })
+            ));
 
           afterEach(() => cy.kcTokenLogout());
 
           if (ownerGroup === groupPermission) {
-            it([Tag.SMOKE, 'ENG-3797'], `A user with "${groupPermission}" permission SHOULD be able to view a page with "${ownerGroup}" owner group and no join group`, () => checkPermission());
+            it([Tag.SMOKE, 'ENG-3797'], `A user with "${groupPermission}" permission SHOULD be able to manage a page with "${ownerGroup}" owner group and no join group`, () => checkPermission());
           } else {
             const permission = (groupPermission === 'administrators');
-            const visibility = permission ? ' ' : ' NOT ';
+            const manageability = permission ? ' ' : ' NOT ';
 
-            it([Tag.SANITY, 'ENG-3797'], `A user with "${groupPermission}" permission SHOULD${visibility}be able to view a page with "${ownerGroup}" owner group and no join group`, () => checkPermission(permission));
+            it([Tag.SANITY, 'ENG-3797'], `A user with "${groupPermission}" permission SHOULD${manageability}be able to manage a page with "${ownerGroup}" owner group and no join group`, () => checkPermission(permission));
           }
 
           TEST_GROUPS.filter(group => (group !== ownerGroup)).forEach(joinGroup => {
@@ -105,15 +108,16 @@ describe('Page visibility in AppBuilder', () => {
             if (groupPermission === ownerGroup || groupPermission === joinGroup) {
 
               const permission = (ownerGroup === groupPermission || groupPermission === 'administrators');
-              const visibility = permission ? ' ' : ' NOT ';
+              const readOnly = (groupPermission === joinGroup);
+              const manageability = permission ? ' ' : ' NOT ';
 
-              it([Tag.FEATURE, 'ENG-3797', 'ENG-3827'], `A user with "${groupPermission}" permission SHOULD${visibility}be able to view a page with "${ownerGroup}" owner group and "${joinGroup}" join group`, () => {
+              it([Tag.FEATURE, 'ENG-3797', 'ENG-3827'], `A user with "${groupPermission}" permission SHOULD${manageability}be able to manage a page with "${ownerGroup}" owner group and "${joinGroup}" join group`, () => {
                 cy.fixture('data/demoPage.json').then(demoPage => {
                   cy.kcClientCredentialsLogin();
                   demoPage.ownerGroup = ownerGroup;
                   cy.seoPagesController().then(controller => controller.setPageJoinGroups(demoPage, [joinGroup]));
                   cy.pagesController().then(controller => controller.setPageStatus(demoPage.code, 'published'));
-                  checkPermission(permission);
+                  checkPermission(permission, readOnly);
                 });
               });
 
