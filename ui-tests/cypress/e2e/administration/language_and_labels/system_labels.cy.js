@@ -267,8 +267,10 @@ describe('Labels', () => {
               cy.wrap(label).as('labelToBeDeleted');
               cy.validateUrlPathname('/labels-languages');
               page.getContent().getLabelsTableDisplayedTable().should('exist').and('be.visible');
-              page.getContent().getTableRowByCode(label.key).should('exist');
+              //TODO: find a better way to wait for the table to finish updating (API request listening isn't enough)
+              cy.wait(500);
               page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', 146);
+              page.getContent().getTableRowByCode(label.key).should('exist');
             });
       });
     });
