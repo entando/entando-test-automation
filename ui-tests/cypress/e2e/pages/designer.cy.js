@@ -85,7 +85,7 @@ describe('Pages Designer', () => {
 
       const widgetType = 'content_viewer';
 
-      it([Tag.GTS, Tag.SMOKE, 'ENG-2496'], 'Basic add with widget settings', function () {
+      it([Tag.GTS, Tag.SMOKE, 'ENG-2496', 'ENG-4448'], 'Basic add with widget settings', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -103,7 +103,7 @@ describe('Pages Designer', () => {
               .then(page => {
                 cy.wrap(4).as('widgetToBeRemovedFromPage');
                 // FIXME/TODO content_viewer is slower to load
-                cy.wait(1000);
+                //cy.wait(1000);
                 cy.validateToast(page);
                 page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                     .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
@@ -268,7 +268,7 @@ describe('Pages Designer', () => {
                 .then(page => {
                   cy.wrap(4).as('widgetToBeRemovedFromPage');
                   // FIXME/TODO content_viewer is slower to load
-                  cy.wait(1000);
+                  //cy.wait(1000);
                   cy.validateToast(page);
                   page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                       .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
@@ -297,7 +297,7 @@ describe('Pages Designer', () => {
           });
         });
 
-        it([Tag.GTS, 'ENG-2497'], 'add a new no published content with a content type and content template, fill in all mandatory fields, save the content, then save the widget configuration', function () {
+        it([Tag.GTS, 'ENG-2497', 'ENG-4448'], 'add a new no published content with a content type and content template, fill in all mandatory fields, save the content, then save the widget configuration', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -333,7 +333,7 @@ describe('Pages Designer', () => {
                 .then(page => {
                   cy.wrap(4).as('widgetToBeRemovedFromPage');
                   // FIXME/TODO content_viewer is slower and slower to load
-                  cy.wait(1500);
+                  //cy.wait(1500);
                   cy.validateToast(page);
                   cy.wait(1500);
                   page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
@@ -396,7 +396,7 @@ describe('Pages Designer', () => {
                 .then(page => {
                   cy.wrap(4).as('widgetToBeRemovedFromPage');
                   // FIXME/TODO content_viewer is slower and slower to load
-                  cy.wait(1500);
+                  //cy.wait(1500);
                   cy.validateToast(page);
                   page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                       .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
@@ -429,7 +429,7 @@ describe('Pages Designer', () => {
 
       const widgetType = 'row_content_viewer_list';
 
-      it([Tag.GTS, Tag.SMOKE, 'ENG-2498'], 'Basic add with widget settings', function () {
+      it([Tag.GTS, Tag.SMOKE, 'ENG-2498', 'ENG-4448'], 'Basic add with widget settings', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
             cy.get('@currentPage')
               .then(page => page.getMenu().getPages().open().openDesigner())
@@ -449,7 +449,7 @@ describe('Pages Designer', () => {
               .then(page => {
                 cy.wrap(4).as('widgetToBeRemovedFromPage');
                 // FIXME/TODO row_content_viewer_list is slower to load
-                cy.wait(1000);
+                //cy.wait(1000);
                 cy.validateToast(page);
                 page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                     .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
@@ -512,7 +512,7 @@ describe('Pages Designer', () => {
                 }));
         });
 
-        it([Tag.GTS, Tag.SMOKE, 'ENG-2498', 'ENG-4277'], 'Editing widget in Settings (widget config)', function () {
+        it([Tag.GTS, Tag.SMOKE, 'ENG-2498', 'ENG-4277', 'ENG-4448'], 'Editing widget in Settings (widget config)', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -585,7 +585,7 @@ describe('Pages Designer', () => {
 
       describe('Extended', () => {
 
-        it([Tag.GTS, 'ENG-2499'], 'Add all existing published OOTB contents', function () {
+        it([Tag.GTS, 'ENG-2499', 'ENG-4448'], 'Add all existing published OOTB contents', function () {
           cy.wrap(this.pageToBeDeleted).then(demoPage =>
               cy.get('@currentPage')
                 .then(page => page.getMenu().getPages().open().openDesigner())
@@ -623,7 +623,7 @@ describe('Pages Designer', () => {
                 }));
         });
 
-        it([Tag.GTS, 'ENG-2499'], 'Add new existing published contents', function () {
+        it([Tag.GTS, 'ENG-2499', 'ENG-4448'], 'Add new existing published contents', function () {
           cy.wrap(generateRandomId()).then(firstContentDescription => {
             cy.wrap(generateRandomId()).then(secondContentDescription => {
               cy.fixture('data/testContent.json').then(testContent =>
@@ -698,7 +698,7 @@ describe('Pages Designer', () => {
               .then(page => {
                 cy.wrap(4).as('widgetToBeRemovedFromPage');
                 // FIXME/TODO content_viewer_list is slower to load
-                cy.wait(1000);
+                //cy.wait(1000);
                 cy.validateToast(page);
                 page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                     .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
