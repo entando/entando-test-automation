@@ -369,6 +369,7 @@ describe('Page Management', () => {
                   .then(page => page.getDialog().confirm())
                   .then(page => {
                     page.getContent().getTableRow(testPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
+                    cy.wait(500);
                     page.getContent().toggleRowSubPages(parentPage.titles.en);
                   })
                   .then(page => checkPagesRelation(page, parentPage, testPage));
