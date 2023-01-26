@@ -5,12 +5,12 @@ describe('Page visibility in Portal UI', () => {
   const checkPermission = (permission = true) => {
     cy.kcAuthorizationCodeLogin('login/user');
     cy.fixture('data/demoPage.json').then(demoPage => {
-      cy.intercept({url: 'http://cypress713.gke1-22.eng-entando.com/entando-de-app/en/demopage.page', method: 'GET'}).as('portalUIVisit');
+      const baseURL = Cypress.config('portalUIPath');
+      const pageURL = '/demopage.page';
+      cy.intercept({url: baseURL + pageURL, method: 'GET'}).as('portalUIVisit');
       cy.visit(`/${demoPage.code}.page`, {portalUI: true, failOnStatusCode: false});
       if (permission) cy.validateUrlPathname(`/${demoPage.code}.page`, {portalUI: true});
-      else {
-        cy.wait('@portalUIVisit').then(response => cy.wrap(response.response).should('have.property', 'statusCode', 302));
-      }
+      else cy.wait('@portalUIVisit').then(response => cy.wrap(response.response).should('have.property', 'statusCode', 302));
     });
   };
 
