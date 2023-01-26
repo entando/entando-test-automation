@@ -1,14 +1,15 @@
 {
-  "baseUrl": "http://cypress713.gke1-22.eng-entando.com",
+  "_instructions": "Replace {YOUR_ENTANDO_BASE_URL} in baseUrl, restAPI, and auth_base_url with the base URL of your Entando environment. Replace {YOUR_API_CLIENT_ID} and {YOUR_API_CLIENT_SECRET} with your Api client ID and secret respectively.",
+  "baseUrl": "http://{YOUR_ENTANDO_BASE_URL}",
   "basePath": "/app-builder",
   "portalUIPath": "/entando-de-app/en",
-  "restAPI": "http://cypress713.gke1-22.eng-entando.com/entando-de-app/api",
-  "adminConsolePath": "http://cypress713.gke1-22.eng-entando.com/entando-de-app/do",
+  "restAPI": "http://{YOUR_ENTANDO_BASE_URL}/entando-de-app/api",
+  "adminConsolePath": "http://{YOUR_ENTANDO_BASE_URL}/entando-de-app/do",
   "env": {
-    "auth_base_url": "http://cypress713.gke1-22.eng-entando.com/auth",
+    "auth_base_url": "http://{YOUR_ENTANDO_BASE_URL}/auth",
     "auth_realm": "entando",
     "auth_client_id": "entando-web",
-    "api_client_id": "cypress713-de",
-    "api_client_secret": "HLlOCPY73XH3kvAMm4eQ9gk9bWu7bk20"
+    "api_client_id": "{YOUR_API_CLIENT_ID}",
+    "api_client_secret": "{YOUR_API_CLIENT_SECRET}"
   }
 }
