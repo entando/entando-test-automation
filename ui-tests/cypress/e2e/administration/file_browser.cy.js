@@ -319,7 +319,10 @@ describe('File browser', () => {
         cy.get('@currentPage')
           .then(page => page.getMenu().getAdministration().open().openFileBrowser())
           .then(page => page.getContent().openPublicFolder())
-          .then(page => page.getContent().openCreateTextFilePage())
+          .then(page => {
+            page.getContent().getTableRows().then(rows => cy.wrap(rows.length).as('previousRows'));
+            page.getContent().openCreateTextFilePage();
+          })
           .then(page => page.getContent().getNameInput().then(input => page.getContent().type(input, file)))
           .then(page => page.getContent().getTextArea().then(textArea => page.getContent().type(textArea, loremIpsum())))
           .then(page => page.getContent().save())
@@ -327,7 +330,9 @@ describe('File browser', () => {
             cy.unshiftAlias('@filesToBeDeleted', `/${file}.txt`);
             cy.validateUrlPathname('/file-browser');
             cy.validateToast(page);
+            cy.wait(500);
             page.getContent().getFilesTable().should('exist').and('be.visible');
+            cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows+1));
             page.getContent().getRowLink(`${file}.txt`).should('exist').and('be.visible');
             page.getContent().getKebabMenu(`${file}.txt`).open().get().should('exist').and('be.visible');
           });
