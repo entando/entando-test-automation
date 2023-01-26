@@ -144,7 +144,7 @@ describe('Labels', () => {
     it([Tag.SANITY, 'ENG-3238'], 'Last page button', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().navigateToLastPage())
-        .then(page => page.getContent().getLabelsTablePaginationFormPageSelector().should('have.value', 15));
+        .then(page => page.getContent().getLabelsTablePaginationFormPageTotal().then(total => page.getContent().getLabelsTablePaginationFormPageSelector().should('have.value', total.text())))
     });
 
   });
@@ -258,7 +258,10 @@ describe('Labels', () => {
     it([Tag.SANITY, 'ENG-3238'], 'List should be updated when a new label is added', () => {
       generateRandomLabel().then(label => {
         openLabelsPage()
-            .then(page => page.getContent().openAddLabel())
+            .then(page => {
+              page.getContent().getLabelsTablePaginationFormLabelsTotal().then(total => cy.wrap(+total.text()).as('previousTotal'));
+              page.getContent().openAddLabel();
+            })
             .then(page => page.getContent().getCodeInput().then(input => page.getContent().type(input, label.key)))
             .then(page => page.getContent().getLanguageTextArea('en').then(textArea => page.getContent().type(textArea, label.name.en)))
             .then(page => page.getContent().getLanguageTextArea('it').then(textArea => page.getContent().type(textArea, label.name.it)))
@@ -269,7 +272,7 @@ describe('Labels', () => {
               page.getContent().getLabelsTableDisplayedTable().should('exist').and('be.visible');
               //TODO: find a better way to wait for the table to finish updating (API request listening isn't enough)
               cy.wait(500);
-              page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', 146);
+              cy.get('@previousTotal').then(previousTotal => page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', previousTotal+1));
               page.getContent().getTableRowByCode(label.key).should('exist');
             });
       });
@@ -350,12 +353,15 @@ describe('Labels', () => {
 
     it([Tag.FEATURE, 'ENG-3238'], 'No label added when navigating out of the add form using breadcrumb', () => {
       openLabelsPage()
-          .then(page => page.getContent().openAddLabel())
+          .then(page => {
+            page.getContent().getLabelsTablePaginationFormLabelsTotal().then(total => cy.wrap(+total.text()).as('previousTotal'));
+            page.getContent().openAddLabel();
+          })
           .then(page => page.getContent().navigateToLanguagesAndLabelsFromBreadcrumb())
           .then(page => {
             cy.validateUrlPathname('/labels-languages');
-            page.getContent().getLabelsTablePaginationFormLabelsTotal()
-                .should('have.text', 145);
+            cy.get('@previousTotal').then(previousTotal => page.getContent().getLabelsTablePaginationFormLabelsTotal()
+                                                               .should('have.text', previousTotal));
           });
     });
 
