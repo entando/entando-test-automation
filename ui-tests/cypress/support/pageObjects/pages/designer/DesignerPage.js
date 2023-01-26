@@ -230,9 +230,9 @@ export default class DesignerPage extends AppContent {
   }
 
   dragGridWidgetToFrame(page, oriGridRow, oriGridCol, newGridRow, newGridCol) {
-    this.getDesignerGridFrame(newGridRow, newGridCol).children(htmlElements.div)
+    this.getDesignerGridFrame(newGridRow, newGridCol)
         .then(frame =>
-            this.getDesignerGridFrame(oriGridRow, oriGridCol).children(htmlElements.div).then(widget => {
+            this.getDesignerGridFrame(oriGridRow, oriGridCol).then(widget => {
               cy.pagesController().then((controller => controller.intercept({method: 'PUT'}, 'widgetAddedToPage', `/${page.code}/widgets/*`)));
               cy.get(widget).drag(frame, {position: 'center'});
               cy.wait('@widgetAddedToPage');
