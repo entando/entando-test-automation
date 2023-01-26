@@ -22,6 +22,7 @@ export default class SystemLabelsPage extends LanguagesAndLabelsPage {
   labelsPaginationFormCurrentPageRange = `${htmlElements.span}.pagination-pf-items-current`;
   labelsPaginationFormLabelsTotal      = `${htmlElements.span}.pagination-pf-items-total`;
   labelsPaginationFormPageSelector     = `${htmlElements.input}[type=text].pagination-pf-page`;
+  labelsPaginationFormPageTotal        = `${htmlElements.span}.pagination-pf-pages`;
   labelsPaginationFormForwardButtons   = `${htmlElements.ul}.pagination-pf-forward`;
   labelsPaginationFormPreviousButtons  = `${htmlElements.ul}.pagination-pf-back`;
 
@@ -151,6 +152,11 @@ export default class SystemLabelsPage extends LanguagesAndLabelsPage {
   getLabelsTablePaginationFormPageSelector() {
     return this.getLabelsTablePaginationForm()
                .find(this.labelsPaginationFormPageSelector);
+  }
+
+  getLabelsTablePaginationFormPageTotal() {
+    return this.getLabelsTablePaginationForm()
+               .find(this.labelsPaginationFormPageTotal);
   }
 
   getLabelsTablePaginationFormForwardButtons() {
