@@ -65,6 +65,10 @@ export default class Pagination extends WebElement {
     return this.getNextButtonsArea().find(`${htmlElements.a}[title="Last page"]`);
   }
 
+  getPagesTotal() {
+    return this.getRightArea().find(`${htmlElements.span}.pagination-pf-pages`);
+  }
+
   navigateToFirstPage() {
     this.getFirstPageButton().then(button => this.paginationPage.changePage(button));
     return cy.wrap(new AppPage(this.paginationPage)).as('currentPage');
