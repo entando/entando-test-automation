@@ -15,6 +15,8 @@
 
 import 'cypress-real-events/support';
 import 'cypress-mochawesome-reporter/register';
+import {registerCommand} from 'cypress-wait-for-stable-dom';
+registerCommand({ pollInterval: 1000, timeout: 10000 });
 
 import './command/command';
 import './command/validation-commands';
