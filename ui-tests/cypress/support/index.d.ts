@@ -1,4 +1,5 @@
 /// <reference types='cypress-tags' />
+/// <reference types="cypress-wait-for-stable-dom" />
 
 import AssetsController                from './controllers/restAPI/AssetsController';
 import CategoriesController            from './controllers/restAPI/CategoriesController';
