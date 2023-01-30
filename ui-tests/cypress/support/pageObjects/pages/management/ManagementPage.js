@@ -97,6 +97,7 @@ export default class ManagementPage extends AppContent {
     this.getTableRow(pageTitle)
         .find(`${htmlElements.span}.PageTree__icons-label`)
         .click();
+    cy.waitForStableDOM();
     return cy.get('@currentPage');
   }
 

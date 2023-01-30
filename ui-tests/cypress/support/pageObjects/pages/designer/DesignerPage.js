@@ -56,26 +56,12 @@ export default class DesignerPage extends AppContent {
     }
   };
 
-  //TODO understand when commented calls are performed
   static openPage(button, code = 'homepage') {
-    //cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-
-    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupsPageLoadingGET', '/myGroups'));
-    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupsPageLoadingGET', '?*'));
-
-    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'pageModelsPageLoadingGET', '?*'));
-    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'pageModelPageLoadingGET', '/*'));
-
     cy.seoPagesController().then(controller => controller.intercept({method: 'GET'}, 'seoPagesPageLoadingGET', `/${code}`));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
-
-    // cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?*'));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
-
     cy.get(button).click();
-    cy.wait([/*'@languagesPageLoadingGET',*/ '@myGroupsPageLoadingGET', '@groupsPageLoadingGET', '@pageModelsPageLoadingGET', /*'@pageModelPageLoadingGET', */'@seoPagesPageLoadingGET', '@pagePageLoadingGET', /*'@widgetsPageLoadingGET', '@pageDraftWidgetsPageLoadingGET', '@pagePublishedWidgetsPageLoadingGET'*/]);
-    cy.wait(2000);
+    cy.wait(['@seoPagesPageLoadingGET', '@pagePageLoadingGET']);
+    cy.waitForStableDOM();
   }
 
   getMainContainer() {
@@ -263,10 +249,9 @@ export default class DesignerPage extends AppContent {
             cy.get(button).click();
             cy.wait(['@homepagePageLoadingGET', '@homepageChildrenPageLoadingGET']);
           } else {
-            //TODO no API call is performed to populate the widget list in the sidebar
             cy.get(button).click();
-            cy.wait(1000);
           }
+          cy.waitForStableDOM();
         });
     return cy.get('@currentPage');
   }
