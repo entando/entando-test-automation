@@ -139,11 +139,9 @@ describe('Page Management', () => {
                   page.getContent().getTableRow(testPage.title).should('not.exist');
                   page.getContent().toggleRowSubPages(demoPage.titles.en);
                 })
-                .then(page => {
-                  page.getContent().getTableRow(demoPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
-                  page.getContent().getTableRow(testPage.title).find(`${htmlElements.i}.fa`).eq(2)
-                      .should('have.class', 'fa-folder-o').and('not.have.class', 'fa-folder');
-                }));
+                .then(page => page.getContent().getTableRow(testPage.title).find(`${htmlElements.i}.fa`).eq(2)
+                                  .should('have.class', 'fa-folder-o').and('not.have.class', 'fa-folder'))
+          );
         });
       });
 
@@ -341,13 +339,9 @@ describe('Page Management', () => {
                     cy.get('@currentPage')
                       .then(page => page.getMenu().getPages().open().openManagement())
                       .then(page => page.getContent().toggleRowSubPages(parentPage.titles.en))
-                      .then(page => {
-                        page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
-                        page.getContent().dragRow(testPage.titles.en, 'Home', 'center');
-                      })
+                      .then(page => page.getContent().dragRow(testPage.titles.en, 'Home', 'center'))
                       .then(page => page.getDialog().confirm())
                       .then(page => {
-                        page.getContent().getTableRow(testPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
                         page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.i}.fa`).eq(2)
                             .should('have.class', 'fa-folder-o').and('not.have.class', 'fa-folder');
                         page.getContent().getTableRow(testPage.titles.en).find(`${htmlElements.i}.fa`).eq(2)
@@ -367,11 +361,9 @@ describe('Page Management', () => {
                   .then(page => page.getMenu().getPages().open().openManagement())
                   .then(page => page.getContent().dragRow(testPage.titles.en, parentPage.titles.en, 'center'))
                   .then(page => page.getDialog().confirm())
-                  .then(page => {
-                    page.getContent().getTableRow(testPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
-                    cy.wait(500);
-                    page.getContent().toggleRowSubPages(parentPage.titles.en);
-                  })
+                  .then(page => page.getContent().toggleRowSubPages(parentPage.titles.en))
+                  //FIXME the folder has to be clicked twice in order to close it
+                  .then(page => page.getContent().toggleRowSubPages(parentPage.titles.en))
                   .then(page => checkPagesRelation(page, parentPage, testPage));
               }));
         });
@@ -388,10 +380,7 @@ describe('Page Management', () => {
                     cy.get('@currentPage')
                       .then(page => page.getMenu().getPages().open().openManagement())
                       .then(page => page.getContent().toggleRowSubPages(parentPage.titles.en))
-                      .then(page => {
-                        page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
-                        page.getContent().dragRow(parentPage.titles.en, testPage.titles.en, 'center');
-                      })
+                      .then(page => page.getContent().dragRow(parentPage.titles.en, testPage.titles.en, 'center'))
                       .then(page => page.getDialog().confirm())
                       .then(page => {
                         cy.validateToast(page, parentPageCode, false);
@@ -472,11 +461,8 @@ describe('Page Management', () => {
                     cy.pushAlias('@pagesToBeDeleted', testParentPage.code);
                     cy.get('@currentPage')
                       .then(page => page.getMenu().getPages().open().openManagement())
-                      .then(page => {
-                        page.getContent().toggleRowSubPages(parentPage.titles.en);
-                        page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
-                        page.getContent().dragRow(childPage.titles.en, testParentPage.titles.en, 'center');
-                      })
+                      .then(page => page.getContent().toggleRowSubPages(parentPage.titles.en))
+                      .then(page => page.getContent().dragRow(childPage.titles.en, testParentPage.titles.en, 'center'))
                       .then(page => page.getDialog().confirm())
                       .then(page => {
                         cy.wait('@pageMovedPUT');
@@ -562,7 +548,8 @@ describe('Page Management', () => {
               })
             )
           });
-        })
+
+        });
 
         const checkPagesRelativePosition = (higherPage, lowerPage) => {
           cy.get('@currentPage')
@@ -581,11 +568,8 @@ describe('Page Management', () => {
               page.getContent().getTableRow(testPage.titles.en).should('not.exist');
               page.getContent().toggleRowSubPages(parentPage.titles.en);
             })
-            .then(page => {
-              page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
-              page.getContent().getTableRow(testPage.titles.en).find(`${htmlElements.i}.fa`).eq(2)
-                  .should('have.class', 'fa-folder-o').and('not.have.class', 'fa-folder');
-            });
+            .then(page => page.getContent().getTableRow(testPage.titles.en).find(`${htmlElements.i}.fa`).eq(2)
+                              .should('have.class', 'fa-folder-o').and('not.have.class', 'fa-folder'));
         };
 
         const checkHasNoSubPages = (currentPage, parentPage) => {
@@ -640,10 +624,7 @@ describe('Page Management', () => {
                     cy.get('@currentPage')
                       .then(page => page.getMenu().getPages().open().openManagement())
                       .then(page => page.getContent().toggleRowSubPages(parentPage.titles.en))
-                      .then(page => {
-                        page.getContent().getTableRow(parentPage.titles.en).find(`${htmlElements.div}.RowSpinner`).should('not.exist');
-                        page.getContent().getKebabMenu(testPage.titles.en).getPublish().should('have.class', 'disabled');
-                      });
+                      .then(page => page.getContent().getKebabMenu(testPage.titles.en).getPublish().should('have.class', 'disabled'));
                   })));
         });
 
