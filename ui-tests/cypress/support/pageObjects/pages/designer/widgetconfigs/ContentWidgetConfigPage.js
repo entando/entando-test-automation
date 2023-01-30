@@ -38,9 +38,7 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
     cy.contentTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'contentModelsPageLoadingGET', '?*'));
     cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesPageLoadingGET', '?*'));
     cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pageDraftWidgetsPageLoadingGET', `/${code}/widgets?status=draft`));
-    // cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePublishedWidgetsPageLoadingGET', `/${code}/widgets?status=published`));
-    cy.wait(['@contentModelsPageLoadingGET', '@contentTypesPageLoadingGET', '@pagePageLoadingGET', '@pageDraftWidgetsPageLoadingGET'/*, '@pagePublishedWidgetsPageLoadingGET'*/]);
+    cy.wait(['@contentModelsPageLoadingGET', '@contentTypesPageLoadingGET', '@pagePageLoadingGET', '@pagePageLoadingGET']);
   }
 
   static openDesignerWidgets(button, code) {

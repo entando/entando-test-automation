@@ -313,12 +313,8 @@ describe('Pages Designer', () => {
                   });
                   cy.then(() => page);
                 })
-                  // FIXME/TODO when coming from adminConsole not all the page loading API calls are performed
                 .then(page => page.getMenu().getPages().open().openDesigner(true))
-                .then(page => {
-                  cy.wait(1500);
-                  page.getContent().clickSidebarTab(1);
-                })
+                .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
@@ -332,7 +328,6 @@ describe('Pages Designer', () => {
                 .then(page => {
                   cy.wrap(4).as('widgetToBeRemovedFromPage');
                   cy.validateToast(page);
-                  cy.wait(1500);
                   page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                       .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                       .then(contents => {
@@ -373,12 +368,8 @@ describe('Pages Designer', () => {
                   });
                   cy.then(() => page);
                 })
-                  // FIXME/TODO when coming from adminConsole not all the page loading API calls are performed
                 .then(page => page.getMenu().getPages().open().openDesigner(true))
-                .then(page => {
-                  cy.wait(1500);
-                  page.getContent().clickSidebarTab(1);
-                })
+                .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
@@ -432,11 +423,7 @@ describe('Pages Designer', () => {
               .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
               .then(page => page.getContent().clickSidebarTab(0))
               .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 4, 1, 0, widgetType))
-              .then(page => {
-                // FIXME/TODO waiting for REST API calls is not enough
-                cy.wait(1000);
-                page.getContent().clickAddButtonFromTableRowWithTitle('Sample - About Us');
-              })
+              .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Sample - About Us'))
               .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Sample Banner'))
               .then(page => page.getContent().getModelIdDropdownByIndex(0).then(select => page.getContent().select(select, '2-column-content')))
               .then(page => page.getContent().getModelIdDropdownByIndex(1).then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
@@ -591,8 +578,6 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 4, 1, 0, widgetType))
                 .then(page => {
                   cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                  // FIXME/TODO waiting for REST API calls is not enough
-                  cy.wait(1000);
                   page.getContent().clickAddButtonFromTableRowWithTitle('Sample - About Us');
                 })
                 .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Why You Need a Micro Frontend Platform for Kubernetes'))
@@ -644,7 +629,6 @@ describe('Pages Designer', () => {
                   .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 4, 1, 0, widgetType))
                   .then(page => {
                     cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                    cy.wait(1000);
                     page.getContent().clickAddButtonFromTableRowWithTitle(firstContentDescription);
                   })
                   .then(page => page.getContent().clickAddButtonFromTableRowWithTitle(secondContentDescription, true))
@@ -1374,7 +1358,6 @@ describe('Pages Designer', () => {
                     code: widgetType,
                     customUi: CUSTOM_UI.replaceAll('{enter}', '\n').replaceAll('{}', '')
                   }).as('widgetToBeReverted');
-                  cy.wait(2000);
                   cy.visit(`/${demoPage.code}.page`, {portalUI: true});
                   cy.get(`${htmlElements.img}[role="logo"]`).should('have.attr', 'src')
                     .should('not.include', CURRENT_LOGO)
@@ -1572,10 +1555,7 @@ describe('Pages Designer', () => {
           .then(page => page.getMenu().getPages().open().openDesigner())
           .then(page => page.getContent().clickSidebarTab(1))
           .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
-          .then(page => {
-            cy.wait(1500);
-            page.getContent().dragGridWidgetToFrame(demoPage, 1, 0, 1, 1);
-          })
+          .then(page => page.getContent().dragGridWidgetToFrame(demoPage, 1, 0, 1, 1))
           .then(page => {
             cy.wrap(5).as('widgetToBeRemovedFromPage');
             page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).should('have.class', 'EmptyFrame');
