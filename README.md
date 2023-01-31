@@ -15,7 +15,6 @@ The Cypress test suite uses the login information found in `entando-test-automat
 If your Entando environment's admin account has a user/password pair different from `username: admin`/`password: adminadmin`:
 - Go to `entando-test-automation/ui-tests/cypress/fixtures/users/login/`
 - Edit the `admin.json` file and change the `password` value to the password your admin account uses
-- **N.B.: Make sure you have logged in at least once in App Builder to change/confirm your password on your first login before running tests, or the tests will get stuck on that prompt**
 ### Run the Cypress tests
 The following commands to run the tests have to be run from inside the `entando-test-automation/ui-tests` folder:
 - `./node_modules/.bin/cypress run --env configFile=configs/7.1.json`: this command runs the entire test suite using the configuration file in `configs/7.1.json`

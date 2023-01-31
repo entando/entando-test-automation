@@ -69,6 +69,13 @@ const setWizard = (option) => {
 }
 
 before(() => {
+  cy.kcClientCredentialsLogin();
+  cy.fixture('users/details/admin').then(admin => {
+    cy.usersController().then(controller =>
+      controller.getUser(admin).then(adminData => {
+        if(adminData.body.payload.credentialsNotExpired === false) controller.updateUser(admin);
+      }));
+  });
   setWizard(false);
 });
 
