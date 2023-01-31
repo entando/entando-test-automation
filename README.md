@@ -16,9 +16,6 @@ If your Entando environment's admin account has a user/password pair different f
 - Go to `entando-test-automation/ui-tests/cypress/fixtures/users/login/`
 - Edit the `admin.json` file and change the `password` value to the password your admin account uses
 - **N.B.: Make sure you have logged in at least once in App Builder to change/confirm your password on your first login before running tests, or the tests will get stuck on that prompt**
-### Disable the Welcome Wizard
-The Cypress test suite assumes the Welcome Wizard in App Builder to be disabled. If the Welcome Wizard is not disabled yet in your environment:
-- Login to App Builder and disable the Welcome Wizard from your profile preferences or by checking the `Don't show next time` checkbox after logging in
 ### Run the Cypress tests
 The following commands to run the tests have to be run from inside the `entando-test-automation/ui-tests` folder:
 - `./node_modules/.bin/cypress run --env configFile=configs/7.1.json`: this command runs the entire test suite using the configuration file in `configs/7.1.json`
@@ -36,6 +33,7 @@ acceptance
 - `CYPRESS_INCLUDE_TAGS={TAG} npx cypress run --env configFile=configs/7.1.json`: runs all tests with the specified tag
 - `CYPRESS_INCLUDE_TAGS={TAG1},{TAG2} npx cypress run --env configFile=configs/7.1.json`: runs all tests with either one of the specified tags
 - `CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS={TAG1},{TAG2} npx cypress run --env configFile=configs/7.1.json`: runs only the tests that have **both** of the specified tags
+
 The tags currently used for the above commands are:
 ```
 WIP

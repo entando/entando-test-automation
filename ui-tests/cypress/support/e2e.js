@@ -57,3 +57,21 @@ import './controllers/cmsActions/ContentTemplatesAdminConsoleController';
 import './controllers/cmsActions/ContentTypesAdminConsoleController';
 import './controllers/cmsActions/ContentTypesJacmsAdminConsoleController';
 import './controllers/cmsActions/VersioningAdminConsoleController';
+
+const setWizard = (option) => {
+  cy.kcAuthorizationCodeLogin('login/admin');
+  cy.userPreferencesController().then(controller => {
+    // FIXME the userPreferences are not immediately available after user creation, but are immediately created on GET
+    controller.getUserPreferences('admin');
+    controller.updateUserPreferences('admin', { wizard: option });
+  });
+  cy.kcTokenLogout();
+}
+
+before(() => {
+  setWizard(false);
+});
+
+after(() => {
+  setWizard(true);
+});
