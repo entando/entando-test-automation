@@ -10,6 +10,13 @@ Cypress.Commands.add('usersController', () => {
 
 export default class UsersController extends AbstractController {
 
+  getUser(user) {
+    return this.request({
+      url: `${this.apiURL}/${user.username}`,
+      method: 'GET'
+    });
+  }
+
   addUser(user) {
     return this.request({
       method: 'POST',
