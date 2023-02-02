@@ -13,7 +13,6 @@ export default class ContentAppMenu extends SubMenu {
 
   open() {
     this.click();
-    cy.wait(1000);
     return this;
   }
 

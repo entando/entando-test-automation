@@ -12,7 +12,6 @@ export default class UsersAppMenu extends SubMenu {
 
   open() {
     this.click();
-    cy.wait(1000);
     return this;
   }
 
