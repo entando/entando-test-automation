@@ -11,7 +11,6 @@ export default class PagesAppMenu extends SubMenu {
 
   open() {
     this.click();
-    cy.wait(1000);
     return this;
   }
 

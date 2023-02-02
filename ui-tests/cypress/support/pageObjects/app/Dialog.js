@@ -75,6 +75,7 @@ export class Dialog extends WebElement {
         return cy.wrap(new body.appOrAdmin(body.loadOnConfirm)).as('currentPage');
       } else {
         cy.get(button).click();
+        cy.waitForStableDOM();
         return cy.get('@currentPage');
       }
     });
