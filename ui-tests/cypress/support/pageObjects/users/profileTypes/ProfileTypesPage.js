@@ -17,6 +17,7 @@ export default class ProfileTypesPage extends AppContent {
     cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'profileTypesStatusLoadingGET', 'Status'));
     cy.get(button).click();
     cy.wait(['@profileTypesPageLoadingGET', '@profileTypesStatusLoadingGET']);
+    cy.waitForStableDOM();
   }
 
   getTable() {
