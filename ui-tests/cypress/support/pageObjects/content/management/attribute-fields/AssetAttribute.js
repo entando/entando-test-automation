@@ -151,6 +151,7 @@ export default class AssetAttribute extends AttributeFormField {
         this.openAssetPage()
             .then(page => page.getContent().getKebabMenu(actionMenuId).openDropdown().clickUse());
       } else {
+        cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'uploadAssetPOST', `/Resource/upload`));
         this.openAssetPage()
             .then(page => {
               page.getContent().getAddButton().click();
@@ -159,11 +160,11 @@ export default class AssetAttribute extends AttributeFormField {
             .then(page => {
               page.getContent().selectFiles(upload.file);
               page.getContent().get().find(`${htmlElements.input}#submit`).click();
-              cy.wait(2000);
+              cy.wait('@uploadAssetPOST');
             });
       }
     }
-    cy.wait(500);
+    cy.waitForStableDOM();
     if (metadata) {
       this.fillMetadata(metadata, true);
     }
