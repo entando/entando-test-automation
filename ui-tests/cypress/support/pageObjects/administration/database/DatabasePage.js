@@ -75,8 +75,7 @@ export default class DatabasePage extends AppContent {
     this.getRowDeleteButton(code).click();
     this.parent.getDialog().setBody(DeleteDialog);
     this.parent.getDialog().getBody().setLoadOnConfirm(DatabasePage);
-    // FIXME page reloads immediately after loading the modal, it is needed to wait otherwise cypress would lose focus on the element
-    cy.wait(1000);
+    cy.waitForStableDOM();
     return cy.get('@currentPage');
   }
 

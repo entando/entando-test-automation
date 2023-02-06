@@ -270,8 +270,7 @@ describe('Labels', () => {
               cy.wrap(label).as('labelToBeDeleted');
               cy.validateUrlPathname('/labels-languages');
               page.getContent().getLabelsTableDisplayedTable().should('exist').and('be.visible');
-              //TODO: find a better way to wait for the table to finish updating (API request listening isn't enough)
-              cy.wait(500);
+              cy.waitForStableDOM();
               cy.get('@previousTotal').then(previousTotal => page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', previousTotal+1));
               page.getContent().getTableRowByCode(label.key).should('exist');
             });
