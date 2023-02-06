@@ -149,10 +149,11 @@ describe('Database', () => {
 
   //FIXME have to perform a GET request because the POST request doesn't return the backup code
   const getLatestBackupCode = () => {
-    //FIXME the added backup is not immediately available via the getBackupList
-    cy.wait(1000);
     return cy.databaseController().then(controller => controller.getBackupList())
-             .then(response => cy.wrap(response.body.payload[response.body.payload.length - 1]).as('backupToBeDeleted'));
+             .then(response => {
+              if (response.body.payload.length !== 0) cy.wrap(response.body.payload[response.body.payload.length - 1]).as('backupToBeDeleted');
+              else getLatestBackupCode();
+             });
   };
 
   const openDatabasePage = () => {

@@ -330,7 +330,6 @@ describe('File browser', () => {
             cy.unshiftAlias('@filesToBeDeleted', `/${file}.txt`);
             cy.validateUrlPathname('/file-browser');
             cy.validateToast(page);
-            cy.wait(500);
             page.getContent().getFilesTable().should('exist').and('be.visible');
             cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows+1));
             page.getContent().getRowLink(`${file}.txt`).should('exist').and('be.visible');

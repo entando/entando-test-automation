@@ -19,6 +19,7 @@ export default class BrowserPage extends FilesBrowserPage {
     });
     cy.get(button).click();
     cy.wait('@fileBrowserPageLoadingGET');
+    cy.waitForStableDOM();
   }
 
   constructor(parent) {
