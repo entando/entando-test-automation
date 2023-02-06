@@ -106,10 +106,8 @@ export default class UXFragmentsPage extends AppContent {
 
 class FragmentsKebabMenu extends KebabMenu {
 
-  // FIXME/TODO cypress keeps highlighting the element as detached;
-  //  it might be due to the fact app-builder "sometimes" refresh the page to perform additional API calls
   open() {
-    cy.wait(500);
+    cy.waitForStableDOM();
     this.get().children(htmlElements.button).then(button => cy.get(button).click());
     return this;
   }
@@ -141,8 +139,7 @@ class FragmentsKebabMenu extends KebabMenu {
 
   openClone(code) {
     this.getClone().then(button => FragmentsPage.openPage(button, code));
-    //FIXME / TODO the GUI code filed is not populated on load causing a refresh of the page
-    cy.wait(1000);
+    cy.waitForStableDOM();
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 
