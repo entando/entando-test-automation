@@ -19,8 +19,9 @@ export default class DatabasePage extends AppContent {
 
   static openPage(button) {
     cy.databaseController().then(controller => controller.intercept({method: 'GET'}, 'databasePageLoadingGET', '?*'));
+    cy.databaseController().then(controller => controller.intercept({method: 'GET'}, 'databaseStatusGET', '/status'));
     cy.get(button).click();
-    cy.wait(['@databasePageLoadingGET', '@databasePageLoadingGET']);
+    cy.wait(['@databasePageLoadingGET', '@databasePageLoadingGET', '@databaseStatusGET']);
   }
 
   getCreateBackupButton() {
