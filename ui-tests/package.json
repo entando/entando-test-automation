@@ -10,7 +10,9 @@
     "cypress:feature": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=FEATURE npx cypress run",
     "cypress:error": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=ERROR npx cypress run",
     "cypress:edge": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=EDGE npx cypress run",
-    "cypress:acceptance": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=ACCEPTANCE npx cypress run"
+    "cypress:acceptance": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=ACCEPTANCE npx cypress run",
+    "cypress:gts": "CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS=GTS npx cypress run",
+    "cypress:all": "npx cypress run"
   },
   "author": "",
   "license": "ISC",
