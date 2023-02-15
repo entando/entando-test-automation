@@ -41,6 +41,12 @@ export default defineConfig({
                             resolve(null);
                         });
                     });
+                },
+                readFileMaybe(filename) {
+                    if (fs.existsSync(filename)) {
+                      return fs.readFileSync(filename, 'utf8');
+                    }
+                    return null;
                 }
             });
 

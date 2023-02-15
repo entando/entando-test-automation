@@ -71,6 +71,11 @@ const setWizard = (option) => {
 }
 
 before(() => {
+  cy.task('readFileMaybe', 'cypress/fixtures/icon/Entando.svg').then((textOrNull) => {
+    if (textOrNull === null) {
+      cy.readFile('cypress/fixtures/icon/Entando.txt').then(text => cy.writeFile('cypress/fixtures/icon/Entando.svg', text))
+    }
+  });
   cy.kcClientCredentialsLogin();
   cy.fixture('users/details/admin').then(admin => {
     cy.usersController().then(controller =>
