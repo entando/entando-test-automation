@@ -1,4 +1,4 @@
-const apiURL = Cypress.config('restAPI');
+const apiURL = Cypress.config('baseUrl') + Cypress.config('restAPI');
 
 export const categoriesAPIURL            = `${apiURL}/categories`;
 export const databaseAPIURL              = `${apiURL}/database`;
@@ -36,7 +36,7 @@ export const SMTPServerAPIURL = `${emailSettingsURL}/SMTPServer`;
 const seoURL                = `${pluginsURL}/seo`;
 export const seoPagesAPIURL = `${seoURL}/pages`;
 
-const adminConsoleURL = Cypress.config('adminConsolePath');
+const adminConsoleURL = Cypress.config('baseUrl') + Cypress.config('adminConsolePath');
 
 export const categoriesURL   = `${adminConsoleURL}/Category`;
 export const contentTypesURL = `${adminConsoleURL}/Entity`;

@@ -3,12 +3,12 @@ import HomePage  from '../support/pageObjects/HomePage';
 
 describe('Keycloak', () => {
 
-  const authBaseUrl = Cypress.env('auth_base_url').split('/');
-  const origin      = `${authBaseUrl[0]}//${authBaseUrl[2]}`;
+  const authBaseUrl = Cypress.env('auth_base_url');
+  const origin      = Cypress.config('baseUrl');
 
   const realm              = Cypress.env('auth_realm');
-  const pathName           = `/${authBaseUrl[3]}/realms/${realm}/protocol/openid-connect/auth`;
-  const passwordUpdatePath = `/${authBaseUrl[3]}/realms/${realm}/login-actions/required-action`;
+  const pathName           = `${authBaseUrl}/realms/${realm}/protocol/openid-connect/auth`;
+  const passwordUpdatePath = `${authBaseUrl}/realms/${realm}/login-actions/required-action`;
 
   beforeEach(() => {
     cy.wrap(null).as('userToBeDeleted');

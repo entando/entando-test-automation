@@ -55,6 +55,9 @@ export default defineConfig({
             if (!configFilePath) throw new Error('You must specify a configuration file with the environment setup\nUse --env configFile to specify it');
             const configFile = (configFilePath && fs.readJson(path.join(__dirname, './', configFilePath)));
             return configFile || config;
+        },
+        env: {
+            configFile: "configs/configs.json"
         }
     }
 });
