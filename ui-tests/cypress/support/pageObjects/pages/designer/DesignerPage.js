@@ -372,6 +372,7 @@ class GridFrameKebabMenu extends KebabMenu {
   openSettings(widgetCode) {
     this.getSettings().click();
     const WidgetConfigPage = this.gatherWidgetSettings(widgetCode);
+    cy.waitForStableDOM();
     return cy.wrap(new AppPage(WidgetConfigPage)).as('currentPage');
   }
 

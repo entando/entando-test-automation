@@ -42,6 +42,7 @@ export default class Content extends WebElement {
 
   select(input, value) {
     cy.get(input).select(value);
+    cy.waitForStableDOM();
     return cy.get('@currentPage');
   }
 
