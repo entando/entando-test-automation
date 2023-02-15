@@ -27,6 +27,8 @@ feature
 error
 edge
 acceptance
+gts
+all
 ```
 **N.B.: the command above runs a premade script. The complete commands to run tests with specific tags are:**
 - `CYPRESS_INCLUDE_TAGS={TAG} npx cypress run`: runs all tests with the specified tag
