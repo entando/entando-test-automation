@@ -6,8 +6,8 @@
 - `npm install`
 ### Define your Entando environment in the configuration file
 - `cd configs`
-- Edit the `7.1.json` file and change the following values:
-1) in `baseURL`, `restAPI`, `adminConsolePath` and `auth_base_url`: replace {YOUR_ENTANDO_BASE_URL} with the base URL of your Entando environment
+- Edit the `configs.json` file and change the following values:
+1) in `baseURL`: replace {YOUR_ENTANDO_BASE_URL} with the base URL of your Entando environment
 2) in `api_client_id`: replace {YOUR_API_CLIENT_ID} with your API client ID
 3) in `api_client_secret`: replace {YOUR_API_CLIENT_SECRET} with your API client secret
 ### Change the set password for the admin user
@@ -17,9 +17,9 @@ If your Entando environment's admin account has a user/password pair different f
 - Edit the `admin.json` file and change the `password` value to the password your admin account uses
 ### Run the Cypress tests
 The following commands to run the tests have to be run from inside the `entando-test-automation/ui-tests` folder:
-- `./node_modules/.bin/cypress run --env configFile=configs/7.1.json`: this command runs the entire test suite using the configuration file in `configs/7.1.json`
-- `./node_modules/.bin/cypress run --env configFile=configs/7.1.json --spec "./cypress/e2e/{PATH}/{FILE_NAME}.cy.js"`: this command runs a specific test spec file
-- `npm run cypress:{TAG} -- --env configFile=configs/7.1.json`: this command runs only the tests that have a certain tag. These are the currently used tags:
+- `npx cypress run`: this command runs the entire test suite
+- `npx cypress run --spec "./cypress/e2e/{PATH}/{FILE_NAME}.cy.js"`: this command runs a specific test spec file
+- `npm run cypress:{TAG}`: this command runs only the tests that have a certain tag. These are the currently used tags:
 ```
 smoke
 sanity
@@ -29,9 +29,9 @@ edge
 acceptance
 ```
 **N.B.: the command above runs a premade script. The complete commands to run tests with specific tags are:**
-- `CYPRESS_INCLUDE_TAGS={TAG} npx cypress run --env configFile=configs/7.1.json`: runs all tests with the specified tag
-- `CYPRESS_INCLUDE_TAGS={TAG1},{TAG2} npx cypress run --env configFile=configs/7.1.json`: runs all tests with either one of the specified tags
-- `CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS={TAG1},{TAG2} npx cypress run --env configFile=configs/7.1.json`: runs only the tests that have **both** of the specified tags
+- `CYPRESS_INCLUDE_TAGS={TAG} npx cypress run`: runs all tests with the specified tag
+- `CYPRESS_INCLUDE_TAGS={TAG1},{TAG2} npx cypress run`: runs all tests with either one of the specified tags
+- `CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS={TAG1},{TAG2} npx cypress run`: runs only the tests that have **both** of the specified tags
 
 The tags currently used for the above commands are:
 ```
@@ -45,7 +45,7 @@ EDGE
 ACCEPTANCE
 ```
 For debugging and to run tests while still writing them, it can be useful to run them using the Cypress open feature:
-- `./node_modules/.bin/cypress open --env configFile=configs/7.1.json`: this command opens an interface where specific spec files can be run individually in the browser and can be seen and examined as they go, including "time travel" once the test is over, to examine the state of the page at the time of each given command (to learn more: [Cypress App documentation](https://docs.cypress.io/guides/core-concepts/cypress-app))
+- `npx cypress open`: this command opens an interface where specific spec files can be run individually in the browser and can be seen and examined as they go, including "time travel" once the test is over, to examine the state of the page at the time of each given command (to learn more: [Cypress App documentation](https://docs.cypress.io/guides/core-concepts/cypress-app))
 ### Check test results
 When running the tests with any of the `run` commands, a `results` folder will be created in `entando-test-automation/ui-tests/cypress`, which contains an `index.html` file which can be opened to check the results of the test. For each failed test, a screenshot will also be present.
 
