@@ -22,12 +22,12 @@ describe('Assets', () => {
     it([Tag.GTS, 'ENG-2524'], 'Add asset', () => {
       openAssetsPage()
           .then(page => page.getContent().openAddAssets())
-          .then(page => page.getContent().selectFiles('cypress/fixtures/upload/image1.JPG'))
+          .then(page => page.getContent().selectFiles('cypress/fixtures/upload/image1.jpg'))
           .then(page => page.getContent().getGroupSelect().then(select => page.getContent().select(select, 'administrators')))
           .then(page => page.getContent().submit())
           .then(page =>
               page.getContent().getAssetsBody().then(rows =>
-                  cy.wrap(rows).children(htmlElements.div).should('contain.text', 'image1.JPG')));
+                  cy.wrap(rows).children(htmlElements.div).should('contain.text', 'image1.jpg')));
       cy.assetsController().then(controller =>
           controller.getAssetsList().then(response =>
               cy.wrap(response.body.payload[0]).as('assetToBeDeleted')));
@@ -49,7 +49,7 @@ describe('Assets', () => {
             .then(page => page.getContent().getKebabMenu(testFileInfo.name).openDropdown().clickDelete())
             .then(page => page.getContent().submit())
             .then(page => page.getContent().getAssetsBody().then(rows =>
-                cy.wrap(rows).children(htmlElements.div).should('not.contain.text', 'image1.JPG')));
+                cy.wrap(rows).children(htmlElements.div).should('not.contain.text', 'image1.jpg')));
         cy.wrap(null).as('assetToBeDeleted');
       });
 
@@ -160,7 +160,7 @@ describe('Assets', () => {
 
   });
 
-  const testFileInfo = {path: 'upload/image1.JPG', name: 'image1.JPG', type: 'image/jpeg'};
+  const testFileInfo = {path: 'upload/image1.jpg', name: 'image1.jpg', type: 'image/jpeg'};
   const testMetadata = {group: 'administrators', categories: [], type: 'image'};
 
   const openAssetsPage = () => cy.get('@currentPage').then(page => page.getMenu().getContent().open().openAssets());
