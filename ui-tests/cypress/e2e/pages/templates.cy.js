@@ -291,7 +291,10 @@ describe('Page Templates', () => {
 
     it([Tag.SANITY, 'ENG-3525'], 'Creating a new template', () => {
       openPageTemplateMgmtPage()
-        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().getTableRows().then(rows => cy.wrap(rows.length).as('previousRows'));
+          page.getContent().openAddPage();
+        })
         .then(page => {
           page.getContent().fillForm(sampleData);
           page.getContent().submitForm();
@@ -300,11 +303,8 @@ describe('Page Templates', () => {
           cy.wrap([sampleData.code]).as('templatesToBeDeleted');
           cy.validateToast(page, sampleData.code);
           cy.validateUrlPathname('/page-template');
-          page.getContent().getTable().should('exist').and('be.visible')
-              .then(table => {
-                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
-                  .should('have.length', defaultTemplates.length + 1);
-              });
+          page.getContent().getTable().should('exist').and('be.visible');
+          cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows+1));
           page.getContent().getTableRow(sampleData.code).should('exist').children(htmlElements.td).eq(2).should('have.text', sampleData.descr);
           page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length+1);
         });
@@ -450,7 +450,10 @@ describe('Page Templates', () => {
       addPageTemplate(sampleData);
 
       openPageTemplateMgmtPage()
-        .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openClone())
+        .then(page => {
+          page.getContent().getTableRows().then(rows => cy.wrap(rows.length).as('previousRows'));
+          page.getContent().getKebabMenuByCode(sampleData.code).open().openClone();
+        })
         .then(page => {
           page.getContent().typeCode(this.editedDataCode);
           page.getContent().typeName(this.editedDataDescr);
@@ -461,11 +464,7 @@ describe('Page Templates', () => {
           cy.validateToast(page, this.editedDataCode);
           cy.validateUrlPathname('/page-template');
           page.getContent().getTable().should('exist').and('be.visible');
-          page.getContent().getTable().should('exist').and('be.visible')
-              .then(table => {
-                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
-                  .should('have.length', defaultTemplates.length + 2);
-              });
+          cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows+1));
           page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length+2);
           page.getContent().getTableRow(sampleData.code).should('exist').children(htmlElements.td).eq(2).should('have.text', sampleData.descr);
           page.getContent().getTableRow(this.editedDataCode).should('exist').children(htmlElements.td).eq(2).should('have.text', this.editedDataDescr);
@@ -511,15 +510,13 @@ describe('Page Templates', () => {
 
       openPageTemplateMgmtPage()
         .then(page => {
+          page.getContent().getTableRows().then(rows => cy.wrap(rows.length).as('previousRows'));
           page.getContent().getKebabMenuByCode(sampleData.code).open().clickDelete();
           page.getDialog().confirm();
           page.getDialog().get().should('not.exist');
           cy.validateToast(page);
-          page.getContent().getTable().should('exist').and('be.visible')
-              .then(table => {
-                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
-                  .should('have.length', defaultTemplates.length);
-              });
+          page.getContent().getTable().should('exist').and('be.visible');
+          cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows-1));
           page.getContent().getTableRows().find(`button#${sampleData.code}-actions`).should('not.exist');
           cy.wrap(null).as('templatesToBeDeleted');
           page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length);
@@ -531,14 +528,12 @@ describe('Page Templates', () => {
 
       openPageTemplateMgmtPage()
         .then(page => {
+          page.getContent().getTableRows().then(rows => cy.wrap(rows.length).as('previousRows'));
           page.getContent().getKebabMenuByCode(sampleData.code).open().clickDelete();
           page.getDialog().cancel();
           page.getDialog().get().should('not.exist');
-          page.getContent().getTable().should('exist').and('be.visible')
-              .then(table => {
-                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
-                  .should('have.length', defaultTemplates.length+1);
-              });
+          page.getContent().getTable().should('exist').and('be.visible');
+          cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows));
           page.getContent().getTableRow(sampleData.code).should('exist').and('be.visible');
           page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length+1);
         });
@@ -550,17 +545,17 @@ describe('Page Templates', () => {
 
     it([Tag.FEATURE, 'ENG-3525'], 'When navigating out of add template page, no template is added', () => {
       openPageTemplateMgmtPage()
-        .then(page => page.getContent().openAddPage())
+        .then(page => {
+          page.getContent().getTableRows().then(rows => cy.wrap(rows.length).as('previousRows'));
+          page.getContent().openAddPage();
+        })
         .then(page => {
           page.getContent().fillForm(sampleData);
           page.getContent().openTemplatesUsingBreadCrumb();
         })
         .then(page => {
           page.getContent().getTable().should('exist').and('be.visible')
-              .then(table => {
-                cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
-                  .should('have.length', defaultTemplates.length);
-              });
+          cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows));
           page.getContent().getTableRows().find(`button#${sampleData.code}-actions`).should('not.exist');
           page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length);
         });
