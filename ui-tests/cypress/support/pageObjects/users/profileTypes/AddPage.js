@@ -13,9 +13,7 @@ export default class AddPage extends AppContent {
   saveButton = `${htmlElements.button}.ProfileTypeForm__save-btn`;
 
   static openPage(button) {
-    cy.profileTypeAttributesController().then(controller => controller.intercept({method: 'GET'}, 'addPageLoadingGET', '?page=1&pageSize=0'));
-    cy.get(button).click();
-    cy.wait('@addPageLoadingGET');
+    super.loadPage(button, '/profiletype/add');
   }
 
   getCodeInput() {

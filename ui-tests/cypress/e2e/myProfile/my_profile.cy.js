@@ -12,13 +12,7 @@ describe('My Profile', () => {
     beforeEach(() => {
       cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
       cy.get('@currentPage')
-        .then(page => page.getNavbar().openUserMenu().openProfile())
-        .then(page => {
-          cy.validateUrlPathname('/myProfile');
-          page.getContent().getTitle()
-              .should('be.visible')
-              .and('have.text', 'My profile');
-        });
+        .then(page => page.getNavbar().openUserMenu().openProfile());
     });
 
     it([Tag.GTS, 'ENG-2026'], 'Account', () => {

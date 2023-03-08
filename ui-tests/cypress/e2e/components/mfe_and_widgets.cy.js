@@ -59,12 +59,10 @@ describe('Microfrontends and Widgets', () => {
         cy.wrap(generateRandomId()).then(widgetID =>
             cy.get('@currentPage')
               .then(page => {
-                cy.validateUrlPathname('/widget/add');
                 page.getContent().fillWidgetForm(generateRandomId(), widgetID);
                 page.getContent().submitForm();
               })
               .then(page => {
-                cy.validateUrlPathname('/widget');
                 page.getContent().getListArea().should('contain', widgetID);
                 cy.wrap({code: widgetID}).as('widgetToBeDeleted');
               }));
@@ -76,10 +74,7 @@ describe('Microfrontends and Widgets', () => {
             page.getContent().fillWidgetForm(generateRandomId(), 'content_viewer');
             page.getContent().clickSave();
           })
-          .then(page => {
-            cy.validateUrlPathname('/widget/add');
-            cy.validateToast(page, 'content_viewer', false);
-          });
+          .then(page => cy.validateToast(page, 'content_viewer', false));
       });
 
       it([Tag.GTS, 'ENG-2244'], 'Add a widget with invalid code', () => {
@@ -123,7 +118,6 @@ describe('Microfrontends and Widgets', () => {
                 cy.get('@currentPage')
                   .then(page => page.getContent().openEditFromKebabMenu(widget.code))
                   .then(page => {
-                    cy.validateUrlPathname(`/widget/edit/${widget.code}`);
                     page.getContent().getTitleInput().should('have.value', widget.titles.en);
                     page.getContent().editFormFields({
                       name: editedName,
@@ -132,14 +126,8 @@ describe('Microfrontends and Widgets', () => {
                     });
                     page.getContent().submitContinueForm(widget.code);
                   })
-                  .then(page => {
-                    cy.validateUrlPathname(`/widget/edit/${widget.code}`);
-                    page.getMenu().getComponents().open().openMFEAndWidgets();
-                  })
-                  .then(page => {
-                    cy.validateUrlPathname('/widget');
-                    page.getContent().getListArea().should('contain', editedName);
-                  })));
+                  .then(page => page.getMenu().getComponents().open().openMFEAndWidgets())
+                  .then(page => page.getContent().getListArea().should('contain', editedName))));
       });
 
       it([Tag.GTS, 'ENG-2517'], 'Editing a used widget via widget list modifying all mandatory fields', () => {
@@ -148,7 +136,6 @@ describe('Microfrontends and Widgets', () => {
                 cy.get('@currentPage')
                   .then(page => page.getContent().openEditFromKebabMenu(widget.code))
                   .then(page => {
-                    cy.validateUrlPathname(`/widget/edit/${widget.code}`);
                     page.getContent().getTitleInput().should('have.value', widget.titles.en);
                     page.getContent().editFormFields({
                       iconUpload,
@@ -157,10 +144,7 @@ describe('Microfrontends and Widgets', () => {
                     });
                     page.getContent().submitForm();
                   })
-                  .then(page => {
-                    cy.validateUrlPathname('/widget');
-                    page.getContent().getListArea().should('contain', editedName);
-                  })));
+                  .then(page => page.getContent().getListArea().should('contain', editedName))));
       });
 
     });
@@ -187,7 +171,6 @@ describe('Microfrontends and Widgets', () => {
                     page.getContent().getDesignerGridFrameKebabMenu(2, 0, widget.code).open().openEdit();
                   })
                   .then(page => {
-                    cy.validateUrlPathname(`/widget/edit/${widget.code}`);
                     page.getContent().getTitleInput().should('have.value', widget.titles.en);
                     page.getContent().editFormFields({
                       name: editedName,
@@ -196,10 +179,7 @@ describe('Microfrontends and Widgets', () => {
                     });
                     page.getContent().submitForm();
                   })
-                  .then(page => {
-                    cy.validateUrlPathname('/widget');
-                    page.getContent().getListArea().should('contain', editedName);
-                  });
+                  .then(page => page.getContent().getListArea().should('contain', editedName));
               });
             }));
       });

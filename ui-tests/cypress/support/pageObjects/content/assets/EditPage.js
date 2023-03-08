@@ -13,17 +13,11 @@ export default class EditPage extends AdminContent {
   dropdown         = `${htmlElements.div}.dropdown`;
 
   static openPage(button) {
-    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editPageLoadingGet', '/edit.action?*'));
-    cy.get(button).click();
-    cy.wait('@editPageLoadingGet');
+    super.loadPage(button, '/jacms/Resource/edit.action');
   }
 
   submit() {
-    this.get().find(this.addButton).then(button => {
-      cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
-      this.click(button);
-      cy.wait('@interceptedPOST');
-    });
+    this.get().find(this.addButton).then(button => AssetsPage.openPage(button));
     return cy.wrap(new AdminPage(AssetsPage)).as('currentPage');
   }
 

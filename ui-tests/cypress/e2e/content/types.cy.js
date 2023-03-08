@@ -134,12 +134,12 @@ describe('Content Types', () => {
           cy.contentTypeAttributesController(contentType.code).then(controller => controller.addAttribute(testAttribute));
           openContentTypesPage()
             .then(page => page.getContent().getKebabMenu(contentType.code).open().openEdit())
-            .then(page => page.getContent().getKebabMenu(testAttribute.code).open().openEdit(testAttribute.code))
+            .then(page => page.getContent().getKebabMenu(testAttribute.code).open().openEdit())
             .then(page => {
               page.getContent().getNameInput().then(input => page.getContent().type(input, newAttributeName));
               page.getContent().continue();
             })
-            .then(page => page.getContent().getKebabMenu(testAttribute.code).open().openEdit(testAttribute.code))
+            .then(page => page.getContent().getKebabMenu(testAttribute.code).open().openEdit())
             .then(page => page.getContent().getNameInput().should('have.value', newAttributeName));
         });
       });
@@ -213,7 +213,7 @@ describe('Content Types', () => {
             cy.wrap(generateRandomId()).then(attribute => {
               postBasicAttribute(this.contentType, attribute, type);
               editAttributeName(type, updatedAttributeName, this.contentType, attribute)
-                .then(page => page.getContent().getKebabMenu(attribute).open().openEdit(attribute))
+                .then(page => page.getContent().getKebabMenu(attribute).open().openEdit())
                 .then(page => page.getContent().getNameInput().should('have.value', updatedAttributeName));
             })
           });
@@ -485,7 +485,7 @@ describe('Content Types', () => {
 
     const openEditAttribute = (contentTypeCode, attribute) => {
       return openEditContentTypePage(contentTypeCode)
-               .then(page => page.getContent().getKebabMenu(attribute).open().openEdit(attribute));
+               .then(page => page.getContent().getKebabMenu(attribute).open().openEdit());
     };
 
     const editAttributeName = (attributeType, updatedAttributeName, contentTypeCode, attribute) => {
@@ -522,7 +522,7 @@ describe('Content Types', () => {
             .then(page => page.getContent().continue())
             .then(page => {
               cy.log('check if new name of list attribute exists');
-              page.getContent().getKebabMenu(attributeCode).open().openEdit(attributeCode)
+              page.getContent().getKebabMenu(attributeCode).open().openEdit()
             })
             .then(page => page.getContent().getNameInput().should('have.value', updatedAttributeName));
         });

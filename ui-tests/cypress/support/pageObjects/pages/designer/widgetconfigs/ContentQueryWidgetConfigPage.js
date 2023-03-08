@@ -11,18 +11,8 @@ export default class ContentQueryWidgetConfigPage extends WidgetConfigPage {
   accordToggleButton = `${htmlElements.div}.SectionTitle[role=button]`;
   accordPanel        = `${htmlElements.div}.ReactCollapse--collapse`;
 
-  static openPage(code) {
-    cy.categoriesController().then(controller => controller.intercept({method: 'GET'}, 'categoriesPageLoadingGET', '?parentCode=home'));
-    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesPageLoadingGET', '?*'));
-    cy.categoriesController().then(controller => controller.intercept({method: 'GET'}, 'homeCategoriesPageLoadingGET', '/home'));
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'searchPagesPageLoadingGET', '/search?*'));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
-    cy.wait(['@categoriesPageLoadingGET', '@contentTypesPageLoadingGET', '@homeCategoriesPageLoadingGET', '@languagesPageLoadingGET', '@searchPagesPageLoadingGET', '@pagePageLoadingGET']);
-  }
-  static settings(){
-    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentLoadingGET', `/?*`));
-    cy.wait('@contentLoadingGET');
+  static openPage(code, page, pos) {
+    super.loadPage(null, `/widget/config/${code}/page/${page}/frame/${pos+1}`, false, true);
   }
 
   getContentTypeField() {

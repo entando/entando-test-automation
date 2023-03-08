@@ -21,7 +21,6 @@ describe('Users Management', () => {
     it([Tag.GTS, 'ENG-2522'], 'Users management page', () => {
       openManagementPage()
         .then(page => {
-          cy.validateUrlPathname('/user');
           page.getContent().getTitle()
               .should('be.visible')
               .and('have.text', 'Users');
@@ -52,7 +51,6 @@ describe('Users Management', () => {
           openEdit(USERNAME_ADMIN);
         })
         .then(page => {
-          cy.validateUrlPathname(`/user/edit/${USERNAME_ADMIN}`);
           page.getContent().getTitle()
               .should('be.visible')
               .and('have.text', 'Edit');
@@ -91,7 +89,6 @@ describe('Users Management', () => {
           page.getContent().getKebabMenu(USERNAME_ADMIN).open().openEditProfile(PROFILE_TYPE_CODE);
         })
         .then(page => {
-          cy.validateUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
           page.getContent().getTitle()
               .should('be.visible')
               .and('have.text', 'Edit');
@@ -133,7 +130,6 @@ describe('Users Management', () => {
           page.getContent().getKebabMenu(USERNAME_ADMIN).open().openViewProfile();
         })
         .then(page => {
-          cy.validateUrlPathname(`/user/view/${USERNAME_ADMIN}`);
           page.getContent().getTitle()
               .should('be.visible')
               .and('have.text', 'Details');
@@ -164,7 +160,6 @@ describe('Users Management', () => {
           page.getContent().getKebabMenu(USERNAME_ADMIN).open().openManageAuth();
         })
         .then(page => {
-          cy.validateUrlPathname(`/authority/${USERNAME_ADMIN}`);
           page.getContent().getTitle()
               .should('be.visible')
               .and('have.text', `Authorizations for ${USERNAME_ADMIN}`);
@@ -189,7 +184,7 @@ describe('Users Management', () => {
           page.getContent().getSaveButton()
               .should('be.visible')
               .and('have.text', 'Save');
-          page.getContent().addAuthorization();
+          page.getContent().addAuthorization(USERNAME_ADMIN);
           page.getDialog().getTitle()
               .should('be.visible')
               .and('have.text', 'New authorizations');
@@ -211,7 +206,6 @@ describe('Users Management', () => {
           page.getContent().getKebabMenu(USERNAME_ADMIN).open().openEditProfile(PROFILE_TYPE_CODE);
         })
         .then(page => {
-          cy.validateUrlPathname(`/userprofile/${USERNAME_ADMIN}`);
           page.getContent().getFullNameInput().then(input => page.getContent().type(input, 'Test'));
           page.getContent().getEmailInput().then(input => page.getContent().type(input, 'test@entando.com'));
           page.getContent().getProfileTypeSelect().then(input => page.getContent().select(input, ''));
@@ -226,7 +220,6 @@ describe('Users Management', () => {
     it([Tag.GTS, 'ENG-2522'], 'Users management page - to not have "User without a profile" filter', () => {
       openManagementPage()
         .then(page => {
-          cy.validateUrlPathname('/user');
           page.getContent().getSearchForm().contains('User without a profile')
               .should('have.length', 0);
         });
@@ -253,7 +246,6 @@ describe('Users Management', () => {
         .then(page => page.getContent().openAddUserPage())
         .then(() => addUserUI(this.username, this.password, PROFILE_TYPE_CODE))
         .then(page => {
-          cy.validateUrlPathname('/user');
           page.getContent().getTableRow(this.username).children(htmlElements.td)
               .then(cells => cy.validateListTexts(cells, [this.username]));
         });
@@ -330,7 +322,7 @@ describe('Users Management', () => {
         })
         .then(page => {
           page.getContent().getTitle().should('contain', this.username);
-          page.getContent().addAuthorization();
+          page.getContent().addAuthorization(this.username);
           page.getDialog().getBody().getGroup().then(input => page.getContent().select(input, GROUP.ID));
           page.getDialog().getBody().getRole().then(input => page.getContent().select(input, ROLE.ID));
           page.getDialog().confirm();

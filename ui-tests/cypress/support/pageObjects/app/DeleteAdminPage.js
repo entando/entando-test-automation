@@ -7,32 +7,20 @@ export default class DeleteAdminPage extends AdminContent {
   closeButton  = `${htmlElements.a}`;
   cancelButton = `${htmlElements.button}[type="submit"]`;
 
-  //FIXME AdminConsole is not built on REST APIs
-  static openDeleteContentTemplatePage(button, code) {
-    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'deleteContentTemplatePageLoadingGET', `/trash.action?modelId=${code}`));
-    cy.get(button).click();
-    cy.wait('@deleteContentTemplatePageLoadingGET');
+  static openDeleteContentTemplatePage(button) {
+    super.loadPage(button, '/jacms/ContentModel/trash.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
   static openDeleteCategoryPage(button) {
-    cy.categoriesAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'deleteCategoryPageLoadingPOST', `/viewTree.action`));
-    cy.get(button).click();
-    cy.wait('@deleteCategoryPageLoadingPOST');
+    super.loadPage(button, '/Category/viewTree.action', false, true);
   }
 
-  //FIXME AdminConsole is not built on REST APIs
-  static openDeleteContentTypePage(button, code) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'deleteContentTypePageLoadingGET', `/trashEntityType.action?entityManagerName=jacmsContentManager&entityTypeCode=${code}`));
-    cy.get(button).click();
-    cy.wait('@deleteContentTypePageLoadingGET');
+  static openDeleteContentTypePage(button) {
+    super.loadPage(button, '/Entity/trashEntityType.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
   static openDeleteAssetsPage(button){
-    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'deleteAssetsPageLoadingGET', `/trash.action?*`));
-    cy.get(button).click();
-    cy.wait('@deleteAssetsPageLoadingGET');
+    super.loadPage(button, '/jacms/Resource/trash.action');
   }
 
   getForm() {
@@ -50,7 +38,7 @@ export default class DeleteAdminPage extends AdminContent {
                .children(htmlElements.a);
   }
 
-  getCancelButton() {
+  getDeleteButton() {
     return this.getForm()
                .find(`${htmlElements.button}[type="submit"]`);
   }
@@ -60,7 +48,7 @@ export default class DeleteAdminPage extends AdminContent {
   }
 
   submit() {
-    this.getCancelButton().then(button => this.click(button));
+    this.getDeleteButton().then(button => this.click(button));
     return cy.wrap(this.origin).as('currentPage');
   }
 

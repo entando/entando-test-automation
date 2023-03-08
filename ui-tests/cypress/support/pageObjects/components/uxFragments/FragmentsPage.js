@@ -7,10 +7,8 @@ import UXFragmentsPage from './UXFragmentsPage.js';
 
 export default class FragmentsPage extends AppContent {
 
-  static openPage(button, code) {
-    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'actionsPageLoadingGET', `/${code}`));
-    cy.get(button).click();
-    cy.wait('@actionsPageLoadingGET');
+  static openPage(button, code = null, action = null, waitDOM = false) {
+    !code ? super.loadPage(button, '/fragment/add', false, waitDOM) : super.loadPage(button, `/fragment/${action}/${code}`, false, waitDOM);
   }
 
   getCodeInput() {
@@ -47,7 +45,7 @@ export default class FragmentsPage extends AppContent {
   }
 
   goToFragmentsViaBreadCrumb() {
-    this.getBreadCrumb().children(htmlElements.li).eq(1).then(button => UXFragmentsPage.openPage(button));
+    this.getBreadCrumb().children(htmlElements.li).eq(1).then(button => UXFragmentsPage.openPage(button, false));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
@@ -68,14 +66,9 @@ export default class FragmentsPage extends AppContent {
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
-  saveAndContinue(code = null) {
+  saveAndContinue(code) {
     this.getSaveButton().click();
-    this.getSaveAndContinueOption().then(button => {
-      if (code) cy.fragmentsController().then(controller => controller.intercept({method: 'PUT'}, 'fragmentsPageLoading', `/${code}`));
-      else cy.fragmentsController().then(controller => controller.intercept({method: 'POST'}, 'fragmentsPageLoading'));
-      cy.get(button).click();
-      cy.wait('@fragmentsPageLoading');
-    });
+    this.getSaveAndContinueOption().then(button => FragmentsPage.openPage(button, code, 'edit'));
     return cy.get('@currentPage');
   }
 

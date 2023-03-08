@@ -57,7 +57,6 @@ describe('Labels', () => {
       openLabelsPage()
           .then(page => page.getContent().openAddLabel())
           .then(page => {
-            cy.validateUrlPathname('/labels-languages/add');
             page.getContent().getForm().should('exist').and('be.visible');
             page.getContent().getCodeInput().should('exist').and('be.visible');
             page.getContent().getLanguageTextArea('en').should('exist').and('be.visible');
@@ -82,7 +81,6 @@ describe('Labels', () => {
         openLabelsPage()
             .then(page => page.getContent().getKebabMenu(label.key).open().openEdit())
             .then(page => {
-              cy.validateUrlPathname(`/labels-languages/edit/${label.key}`);
               page.getContent().getForm().should('exist').and('be.visible');
               page.getContent().getCodeInput().should('exist').and('be.visible');
               page.getContent().getLanguageTextArea('en').should('exist').and('be.visible');
@@ -268,9 +266,7 @@ describe('Labels', () => {
             .then(page => page.getContent().save())
             .then(page => {
               cy.wrap(label).as('labelToBeDeleted');
-              cy.validateUrlPathname('/labels-languages');
               page.getContent().getLabelsTableDisplayedTable().should('exist').and('be.visible');
-              cy.waitForStableDOM();
               cy.get('@previousTotal').then(previousTotal => page.getContent().getLabelsTablePaginationFormLabelsTotal().should('have.text', previousTotal+1));
               page.getContent().getTableRowByCode(label.key).should('exist');
             });
@@ -285,7 +281,6 @@ describe('Labels', () => {
             .then(page => page.getContent().getLanguageTextArea('en').then(textArea => page.getContent().type(textArea, editedName)))
             .then(page => page.getContent().save())
             .then(page => {
-              cy.validateUrlPathname('/labels-languages');
               page.getContent().getTableRowByCode(label.key)
                   .children(htmlElements.td).eq(1)
                   .should('not.have.text', label.titles.en)
@@ -358,7 +353,6 @@ describe('Labels', () => {
           })
           .then(page => page.getContent().navigateToLanguagesAndLabelsFromBreadcrumb())
           .then(page => {
-            cy.validateUrlPathname('/labels-languages');
             cy.get('@previousTotal').then(previousTotal => page.getContent().getLabelsTablePaginationFormLabelsTotal()
                                                                .should('have.text', previousTotal));
           });
@@ -373,7 +367,6 @@ describe('Labels', () => {
               .then(page => page.getContent().getLanguageTextArea('en').then(textArea => page.getContent().type(textArea, editedName)))
               .then(page => page.getContent().navigateToLanguagesAndLabelsFromBreadcrumb())
               .then(page => {
-                cy.validateUrlPathname('/labels-languages');
                 page.getContent().getTableRowByCode(label.key)
                     .children(htmlElements.td).eq(1)
                     .should('not.have.text', editedName)

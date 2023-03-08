@@ -31,10 +31,7 @@ describe('UX Fragments', () => {
 
     it([Tag.SMOKE, 'ENG-3522'], 'AddPage is displayed', () => {
       openAddFragmentPage()
-          .then(page => {
-            cy.validateUrlPathname('/fragment/add');
-            fragmentPageStructureValidation(page);
-          });
+          .then(page => fragmentPageStructureValidation(page));
     });
 
     describe('Existing fragment', () => {
@@ -79,7 +76,6 @@ describe('UX Fragments', () => {
             openEditFragmentPage(fragment.code)
                 .then(page => {
                   if (!Cypress.env('INCLUDE_TAGS') || Cypress.env('INCLUDE_TAGS').split(',').includes('SMOKE')) {
-                    cy.validateUrlPathname(`/fragment/edit/${fragment.code}`);
                     fragmentPageStructureValidation(page);
                   }
                   if (!Cypress.env('INCLUDE_TAGS') || Cypress.env('INCLUDE_TAGS').split(',').includes('FEATURE')) {
@@ -96,7 +92,6 @@ describe('UX Fragments', () => {
             openCloneFragmentPage(fragment.code)
                 .then(page => {
                   if (!Cypress.env('INCLUDE_TAGS') || Cypress.env('INCLUDE_TAGS').split(',').includes('SMOKE')) {
-                    cy.validateUrlPathname(`/fragment/clone/${fragment.code}`);
                     fragmentPageStructureValidation(page);
                   }
                   if (!Cypress.env('INCLUDE_TAGS') || Cypress.env('INCLUDE_TAGS').split(',').includes('FEATURE')) {
@@ -109,7 +104,6 @@ describe('UX Fragments', () => {
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragment =>
             openFragmentDetailsPage(fragment.code)
                 .then(page => {
-                  cy.validateUrlPathname(`/fragment/view/${fragment.code}`);
                   page.getContent().getFragmentTable()
                       .should('exist').and('be.visible');
                   page.getContent().getEditButton()
@@ -359,8 +353,7 @@ describe('UX Fragments', () => {
 
     it([Tag.FEATURE, 'ENG-3522'], 'Breadcrumb in add Page', () => {
       openAddFragmentPage()
-          .then(page => page.getContent().goToFragmentsViaBreadCrumb())
-          .then(() => cy.validateUrlPathname('/fragment'));
+          .then(page => page.getContent().goToFragmentsViaBreadCrumb());
     });
 
     describe('Existing fragment', () => {
@@ -382,22 +375,19 @@ describe('UX Fragments', () => {
       it([Tag.FEATURE, 'ENG-3522'], 'Breadcrumb in edit Page', () => {
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragment =>
             openEditFragmentPage(fragment.code)
-                .then(page => page.getContent().goToFragmentsViaBreadCrumb())
-                .then(() => cy.validateUrlPathname('/fragment')));
+                .then(page => page.getContent().goToFragmentsViaBreadCrumb()));
       });
 
       it([Tag.FEATURE, 'ENG-3522'], 'BreadCrumb in clone page', () => {
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragment =>
             openCloneFragmentPage(fragment.code)
-                .then(page => page.getContent().goToFragmentsViaBreadCrumb())
-                .then(() => cy.validateUrlPathname('/fragment')));
+                .then(page => page.getContent().goToFragmentsViaBreadCrumb()));
       });
 
       it([Tag.FEATURE, 'ENG-3522', 'ENG-4077'], 'BreadCrumb in details page', () => {
         cy.wrap(Cypress.env('fragmentToBeDeleted')).then(fragment =>
             openFragmentDetailsPage(fragment.code)
-                .then(page => page.getContent().goToFragmentsViaBreadCrumb())
-                .then(() => cy.validateUrlPathname('/fragment')));
+                .then(page => page.getContent().goToFragmentsViaBreadCrumb()));
       });
 
     });
@@ -430,11 +420,10 @@ describe('UX Fragments', () => {
           openAddFragmentPage()
               .then(page => page.getContent().getCodeInput().then(input => page.getContent().type(input, fragment.code)))
               .then(page => page.getContent().getGuiCodeInput().then(input => page.getContent().type(input, fragment.guiCode)))
-              .then(page => page.getContent().saveAndContinue())
+              .then(page => page.getContent().saveAndContinue(fragment.code))
               .then(page => {
                 cy.unshiftAlias('@fragmentsToBeDeleted', fragment);
                 cy.validateToast(page);
-                cy.validateUrlPathname(`/fragment/edit/${fragment.code}`);
                 page.getMenu().getComponents().open().openUXFragments();
               })
               .then(page => page.getContent().getTableRow(fragment.code).should('be.visible')
@@ -477,7 +466,6 @@ describe('UX Fragments', () => {
                 .then(page => page.getContent().saveAndContinue(fragment.code))
                 .then(page => {
                   cy.validateToast(page);
-                  cy.validateUrlPathname(`/fragment/edit/${fragment.code}`);
                   page.getMenu().getComponents().open().openUXFragments();
                 })
                 .then(page => page.getContent().getTableRow(fragment.code).should('be.visible')
@@ -505,11 +493,10 @@ describe('UX Fragments', () => {
                 openCloneFragmentPage(originalFragment.code)
                     .then(page => page.getContent().getCodeInput().then(input => page.getContent().type(input, fragment.code)))
                     .then(page => page.getContent().getGuiCodeInput().then(input => page.getContent().type(input, fragment.guiCode)))
-                    .then(page => page.getContent().saveAndContinue())
+                    .then(page => page.getContent().saveAndContinue(fragment.code))
                     .then(page => {
                       cy.unshiftAlias('@fragmentsToBeDeleted', fragment);
                       cy.validateToast(page);
-                      cy.validateUrlPathname(`/fragment/edit/${fragment.code}`);
                       page.getMenu().getComponents().open().openUXFragments();
                     })
                     .then(page => page.getContent().getTableRow(fragment.code).should('be.visible')

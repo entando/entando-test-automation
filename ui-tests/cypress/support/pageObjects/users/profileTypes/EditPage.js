@@ -13,10 +13,7 @@ export default class EditPage extends AppContent {
   saveButton = `${htmlElements.button}.ProfileTypeForm__save-btn`;
 
   static openPage(button, code) {
-    cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'editPageLoadingGET', `/${code}`));
-    cy.profileTypeAttributesController().then(controller => controller.intercept({method: 'GET'}, 'profileTypeAttributesLoadingGET', '?page=1&pageSize=0'));
-    cy.get(button).click();
-    cy.wait(['@editPageLoadingGET', '@profileTypeAttributesLoadingGET']);
+    super.loadPage(button, `/profiletype/edit/${code}`);
   }
 
   getCodeInput() {

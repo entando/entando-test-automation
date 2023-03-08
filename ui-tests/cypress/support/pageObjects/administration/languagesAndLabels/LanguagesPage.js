@@ -12,14 +12,13 @@ export default class LanguagesPage extends LanguagesAndLabelsPage {
   languageForm  = `${htmlElements.form}.LanguageForm`;
   languageTable = `${htmlElements.table}.ActiveLangTable__table`;
 
-  openSystemLabels() {
-    this.getSystemLabelsTab().click();
-    return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
+  static openPage(button) {
+    super.loadPage(button, '/labels-languages', false, true);
   }
 
-  openLanguages() {
-    this.getLanguagesTab().click();
-    return cy.wrap(new AppPage(LanguagesPage)).as('currentPage');
+  openSystemLabels() {
+    this.getSystemLabelsTab().then(button => SystemLabelsPage.openPage(button));
+    return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
   }
 
   getAddLanguageForm() {

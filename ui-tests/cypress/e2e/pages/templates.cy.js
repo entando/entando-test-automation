@@ -1,4 +1,3 @@
-import TemplatesPage      from "../../support/pageObjects/pages/templates/TemplatesPage";
 import {htmlElements}     from "../../support/pageObjects/WebElement";
 import {generateRandomId} from "../../support/utils";
 import defaultTemplates   from "../../fixtures/data/defaultTemplates.json";
@@ -52,7 +51,6 @@ describe('Page Templates', () => {
     it([Tag.SMOKE, 'ENG-3525'], 'Templates section', () => {
       openPageTemplateMgmtPage()
         .then(page => {
-          cy.validateUrlPathname('/page-template');
           page.getContent().getTable().should('exist').and('be.visible')
               .then(table => {
                 cy.wrap(table.children(htmlElements.thead).find(htmlElements.th))
@@ -68,7 +66,6 @@ describe('Page Templates', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().openAddPage())
         .then(page => {
-          cy.validateUrlPathname('/page-template/add');
           page.getContent().getFormArea().should('exist').and('be.visible')
               .then(form => cy.wrap(form).find(htmlElements.label)
               .then(labels => cy.validateListTexts(labels, ['Code ', 'Name ', 'JSON configuration ', 'Template ', 'Template preview'])));
@@ -99,7 +96,6 @@ describe('Page Templates', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openEdit())
         .then(page => {
-          cy.validateUrlPathname(`/page-template/edit/${sampleData.code}`);
           page.getContent().getCodeInput().should('exist').and('be.visible');
           page.getContent().getNameInput().should('exist').and('be.visible');
           page.getContent().getJsonConfigInput().should('exist').and('be.visible');
@@ -124,7 +120,6 @@ describe('Page Templates', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openClone())
         .then(page => {
-          cy.validateUrlPathname(`/page-template/clone/${sampleData.code}`);
           page.getContent().getCodeInput().should('exist').and('be.visible');
           page.getContent().getNameInput().should('exist').and('be.visible');
           page.getContent().getJsonConfigInput().should('exist').and('be.visible');
@@ -147,7 +142,6 @@ describe('Page Templates', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openDetails())
         .then(page => {
-          cy.validateUrlPathname(`/page-template/view/${sampleData.code}`);
           page.getContent().getTemplateDetailsTable().should('exist').and('be.visible')
               .then(table => cy.wrap(table).find(htmlElements.th)
                                            .then(headers => cy.validateListTexts(headers, ['Name', 'Code', 'Plugin code', 'JSON configuration', 'Template', 'Template preview'])));
@@ -164,7 +158,6 @@ describe('Page Templates', () => {
         .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openDetails())
         .then(page => page.getContent().openEditTemplate(sampleData.code))
         .then(page => {
-          cy.validateUrlPathname(`/page-template/edit/${sampleData.code}`);
           page.getContent().getCodeInput().should('exist').and('be.visible').and('have.value', sampleData.code);
           page.getContent().getNameInput().should('exist').and('be.visible').and('have.value', sampleData.descr);
           page.getContent().getCancelButton().should('exist').and('be.visible');
@@ -184,7 +177,6 @@ describe('Page Templates', () => {
     it([Tag.SANITY, 'ENG-3525'], 'Default page templates', () => {
       openPageTemplateMgmtPage()
         .then(page => {
-          cy.validateUrlPathname('/page-template');
           page.getContent().getTable().should('exist').and('be.visible')
               .then(table => {
                 cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
@@ -198,7 +190,6 @@ describe('Page Templates', () => {
 
       openPageTemplateMgmtPage()
         .then(page => {
-          cy.validateUrlPathname('/page-template');
           page.getContent().getTable().should('exist').and('be.visible')
               .then(table => {
                 cy.wrap(table.children(htmlElements.tbody).find(htmlElements.tr))
@@ -232,8 +223,8 @@ describe('Page Templates', () => {
 
       it([Tag.SANITY, 'ENG-3525'], 'Next page button', () => {
         openPageTemplateMgmtPage()
+          .then(page => page.getContent().getPagination().navigateToNextPage())
           .then(page => {
-            page.getContent().getPagination().getNextButton().then(button => TemplatesPage.openPage(button));
             page.getContent().getPagination().getInput().should('have.value', 2);
             page.getContent().getPagination().getItemsCurrent().should('have.text', '11-20');
           });
@@ -241,10 +232,8 @@ describe('Page Templates', () => {
 
       it([Tag.SANITY, 'ENG-3525'], 'Page field navigation', () => {
         openPageTemplateMgmtPage()
+          .then(page => page.getContent().getPagination().navigateToPage(3))
           .then(page => {
-            page.getContent().getPagination().getInput()
-                .then(input => page.getContent().type(input, 3));
-            TemplatesPage.openPage();
             page.getContent().getPagination().getInput().should('have.value', 3);
             page.getContent().getPagination().getItemsCurrent().should('have.text', '21-21');
           });
@@ -252,11 +241,9 @@ describe('Page Templates', () => {
 
       it([Tag.SANITY, 'ENG-3525'], 'Previous page button', () => {
         openPageTemplateMgmtPage()
+          .then(page => page.getContent().getPagination().navigateToPage(3))
+          .then(page => page.getContent().getPagination().navigateToPreviousPage())
           .then(page => {
-            page.getContent().getPagination().getInput()
-                .then(input => page.getContent().type(input, 3));
-            TemplatesPage.openPage();
-            page.getContent().getPagination().getPreviousButton().then(button => TemplatesPage.openPage(button));
             page.getContent().getPagination().getInput().should('have.value', 2);
             page.getContent().getPagination().getItemsCurrent().should('have.text', '11-20');
           });
@@ -264,11 +251,9 @@ describe('Page Templates', () => {
 
       it([Tag.SANITY, 'ENG-3525'], 'First page button', () => {
         openPageTemplateMgmtPage()
+          .then(page => page.getContent().getPagination().navigateToPage(3))
+          .then(page => page.getContent().getPagination().navigateToFirstPage())
           .then(page => {
-            page.getContent().getPagination().getInput()
-                .then(input => page.getContent().type(input, 3));
-            TemplatesPage.openPage();
-            page.getContent().getPagination().getFirstPageButton().then(button => TemplatesPage.openPage(button));
             page.getContent().getPagination().getInput().should('have.value', 1);
             page.getContent().getPagination().getItemsCurrent().should('have.text', '1-10');
           });
@@ -276,8 +261,8 @@ describe('Page Templates', () => {
 
       it([Tag.SANITY, 'ENG-3525'], 'Last page button', () => {
         openPageTemplateMgmtPage()
+          .then(page => page.getContent().getPagination().navigateToLastPage())
           .then(page => {
-            page.getContent().getPagination().getLastPageButton().then(button => TemplatesPage.openPage(button));
             page.getContent().getPagination().getInput().should('have.value', 3);
             page.getContent().getPagination().getItemsCurrent().should('have.text', '21-21');
           });
@@ -302,7 +287,6 @@ describe('Page Templates', () => {
         .then(page => {
           cy.wrap([sampleData.code]).as('templatesToBeDeleted');
           cy.validateToast(page, sampleData.code);
-          cy.validateUrlPathname('/page-template');
           page.getContent().getTable().should('exist').and('be.visible');
           cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows+1));
           page.getContent().getTableRow(sampleData.code).should('exist').children(htmlElements.td).eq(2).should('have.text', sampleData.descr);
@@ -320,7 +304,6 @@ describe('Page Templates', () => {
         .then(page => {
           cy.wrap([sampleData.code]).as('templatesToBeDeleted');
           cy.validateToast(page, sampleData.code);
-          cy.validateUrlPathname(`/page-template/edit/${sampleData.code}`);
           page.getContent().getCodeInput().should('be.disabled').and('have.value', sampleData.code);
           page.getContent().getNameInput().should('have.value', sampleData.descr);
           page.getContent().getJsonConfigValue().then(value => expect(value.replaceAll('\n', '').replaceAll(' ', '')).to.equal(sampleData.configuration.replaceAll(' ', '')));
@@ -358,23 +341,24 @@ describe('Page Templates', () => {
         .then(page => page.getContent().openAddPage())
         .then(page => {
           page.getContent().fillForm(sampleData);
-          page.getContent().getSaveDropdownButton().click();
-          page.getContent().getRegularSaveButton().click();
-          cy.validateUrlPathname('/page-template/add');
-          cy.validateToast(page, sampleData.code, false);
-        });
+          page.getContent().submitForm(true);
+        })
+        .then(page => cy.validateToast(page, sampleData.code, false));
     });
 
     it([Tag.ERROR, 'ENG-3525'], 'When creating a template not setting any frame in the JSON configuration, an error toast notification is displayed', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().openAddPage())
         .then(page => {
-          page.getContent().fillForm({code: sampleData.code, descr: sampleData.descr, configuration: '{"frames": []}', template: sampleData.template});
-          page.getContent().getSaveDropdownButton().click();
-          page.getContent().getRegularSaveButton().click();
-          cy.validateUrlPathname('/page-template/add');
-          cy.validateToast(page, 'frame', false);
-        });
+          page.getContent().fillForm({
+            code: sampleData.code,
+            descr: sampleData.descr,
+            configuration: '{"frames": []}',
+            template: sampleData.template
+          });
+          page.getContent().submitForm(true);
+        })
+        .then(page => cy.validateToast(page, 'frame', false));
     });
 
     it([Tag.ERROR, 'ENG-3525'], 'When creating a template and a frame has the wrong index, an error is displayed for the field', () => {
@@ -390,24 +374,30 @@ describe('Page Templates', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().openAddPage())
         .then(page => {
-          page.getContent().fillForm({code: sampleData.code, descr: sampleData.descr, configuration: '{"frames": [{"pos": 0, "mainFrame": false, "defaultWidget": {"code": "logo","properties": null}, "sketch": {"x1": 0, "y1": 0, "x2": 2, "y2": 0}}]}', template: sampleData.template});
-          page.getContent().getSaveDropdownButton().click();
-          page.getContent().getRegularSaveButton().click();
-          cy.validateUrlPathname('/page-template/add');
-          cy.validateToast(page, 'description', false);
-        });
+          page.getContent().fillForm({
+            code: sampleData.code,
+            descr: sampleData.descr,
+            configuration: '{"frames": [{"pos": 0, "mainFrame": false, "defaultWidget": {"code": "logo","properties": null}, "sketch": {"x1": 0, "y1": 0, "x2": 2, "y2": 0}}]}',
+            template: sampleData.template
+          });
+          page.getContent().submitForm(true);
+        })
+        .then(page => cy.validateToast(page, 'description', false));
     });
 
     it([Tag.ERROR, 'ENG-3525'], 'When creating a template and a frame does not have coordinates, an error toast notification is displayed', () => {
       openPageTemplateMgmtPage()
         .then(page => page.getContent().openAddPage())
         .then(page => {
-          page.getContent().fillForm({code: sampleData.code, descr: sampleData.descr, configuration: '{"frames": [{"pos": 0, "descr": "Logo", "mainFrame": false, "defaultWidget": {"code": "logo","properties": null}}]}', template: sampleData.template});
-          page.getContent().getSaveDropdownButton().click();
-          page.getContent().getRegularSaveButton().click();
-          cy.validateUrlPathname('/page-template/add');
-          cy.validateToast(page, 'sketch', false);
-        });
+          page.getContent().fillForm({
+            code: sampleData.code,
+            descr: sampleData.descr,
+            configuration: '{"frames": [{"pos": 0, "descr": "Logo", "mainFrame": false, "defaultWidget": {"code": "logo","properties": null}}]}',
+            template: sampleData.template
+          });
+          page.getContent().submitForm(true);
+        })
+        .then(page => cy.validateToast(page, 'sketch', false));
     });
 
     it([Tag.SANITY, 'ENG-3525'], 'Editing a template', function () {
@@ -422,7 +412,6 @@ describe('Page Templates', () => {
         })
         .then(page => {
           cy.validateToast(page, sampleData.code);
-          cy.validateUrlPathname('/page-template');
           page.getContent().getTable().should('exist').and('be.visible');
           page.getContent().getTableRow(sampleData.code).children(htmlElements.td).eq(2).should('have.text', this.editedDataDescr)
                                                                                         .and('not.have.text', sampleData.descr);
@@ -441,7 +430,6 @@ describe('Page Templates', () => {
         })
         .then(page => {
           cy.validateToast(page, sampleData.code);
-          cy.validateUrlPathname(`/page-template/edit/${sampleData.code}`);
           page.getContent().getNameInput().should('have.value', this.editedDataDescr);
         });
     });
@@ -462,7 +450,6 @@ describe('Page Templates', () => {
         .then(page => {
           cy.pushAlias('@templatesToBeDeleted', this.editedDataCode);
           cy.validateToast(page, this.editedDataCode);
-          cy.validateUrlPathname('/page-template');
           page.getContent().getTable().should('exist').and('be.visible');
           cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows+1));
           page.getContent().getPagination().getItemsTotal().should('have.text', defaultTemplates.length+2);
@@ -484,7 +471,6 @@ describe('Page Templates', () => {
         .then(page => {
           cy.pushAlias('@templatesToBeDeleted', this.editedDataCode);
           cy.validateToast(page, this.editedDataCode);
-          cy.validateUrlPathname(`/page-template/edit/${this.editedDataCode}`);
           page.getContent().getNameInput().should('have.value', this.editedDataDescr);
           page.getContent().getCodeInput().should('be.disabled').and('have.value', this.editedDataCode);
         });
@@ -584,10 +570,7 @@ describe('Page Templates', () => {
 
       openPageTemplateMgmtPage()
         .then(page => page.getContent().getKebabMenuByCode(sampleData.code).open().openDetails())
-        .then(page => {
-          cy.validateUrlPathname(`/page-template/view/${sampleData.code}`);
-          page.getContent().openTemplatesUsingBreadCrumb();
-        })
+        .then(page => page.getContent().openTemplatesUsingBreadCrumb())
         .then(page => {
           page.getContent().getTable().should('exist').and('be.visible');
           page.getContent().getTableRow(sampleData.code).should('exist').children(htmlElements.td).eq(2).should('have.text', sampleData.descr);

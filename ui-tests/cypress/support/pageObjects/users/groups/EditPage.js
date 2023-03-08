@@ -14,9 +14,7 @@ export default class EditPage extends AppContent {
   saveButton   = `${htmlElements.button}[type=submit].btn-primary`;
 
   static openPage(button, code) {
-    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'editGroupPageLoadingGET', `/${code}`));
-    cy.get(button).click();
-    cy.wait('@editGroupPageLoadingGET');
+    super.loadPage(button, `/group/edit/${code}`);
   }
 
   getNameInput() {

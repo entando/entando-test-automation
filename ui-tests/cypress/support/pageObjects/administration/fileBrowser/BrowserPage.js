@@ -10,16 +10,8 @@ import CreateTextFilePage from './CreateTextFilePage';
 
 export default class BrowserPage extends FilesBrowserPage {
 
-  static openPage(button, isProtected = null, path = null) {
-    cy.fileBrowserController().then(controller => {
-      let queryParams = '?';
-      if (isProtected !== null) queryParams += `protectedFolder=${isProtected}`;
-      if (path) queryParams += `&currentPath=${path}`;
-      controller.intercept({method: 'GET'}, 'fileBrowserPageLoadingGET', queryParams);
-    });
-    cy.get(button).click();
-    cy.wait('@fileBrowserPageLoadingGET');
-    cy.waitForStableDOM();
+  static openPage(button, waitDOM = false) {
+    super.loadPage(button, '/file-browser', false, waitDOM);
   }
 
   constructor(parent) {
@@ -71,7 +63,7 @@ export default class BrowserPage extends FilesBrowserPage {
     this.getTableRow('public')
         .children(htmlElements.td).eq(0)
         .children(htmlElements.a)
-        .then(button => BrowserPage.openPage(button, false));
+        .then(button => BrowserPage.openPage(button));
     return cy.get('@currentPage');
   }
 
@@ -79,15 +71,12 @@ export default class BrowserPage extends FilesBrowserPage {
     this.getTableRow('protected')
         .children(htmlElements.td).eq(0)
         .children(htmlElements.a)
-        .then(button => BrowserPage.openPage(button, true));
+        .then(button => this.browserPage.openPage(button));
     return cy.get('@currentPage');
   }
 
   goUpFolder() {
-    this.getUpButton()
-        .then(button => this.getBreadCrumbsFirstLevelFolder().then(firstLevelFolder =>
-            this.getBreadCrumbsElement(-2).then(upperLevelFolder =>
-                BrowserPage.openPage(button, firstLevelFolder.text() === 'protected', upperLevelFolder))));
+    this.getUpButton().then(button => this.browserPage.openPage(button));
     return cy.get('@currentPage');
   }
 
@@ -95,8 +84,7 @@ export default class BrowserPage extends FilesBrowserPage {
     this.getTableRow(path)
         .children(htmlElements.td).eq(0)
         .children(htmlElements.a)
-        .then(button => this.getBreadCrumbsFirstLevelFolder().then(firstLevelFolder =>
-            BrowserPage.openPage(button, firstLevelFolder.text() === 'protected', path)));
+        .then(button => this.browserPage.openPage(button));
     return cy.get('@currentPage');
   }
 

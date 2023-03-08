@@ -9,23 +9,7 @@ import ManagementPage from './ManagementPage.js';
 export default class AddPage extends AppContent {
 
   static openPage(button, code = null) {
-    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupsPageLoadingGET', '?*'));
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupsPageLoadingGET', '/myGroups'));
-    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'pageModelsPageLoadingGET', '?*'));
-    if (code) {
-      cy.seoPagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}`));
-    } else {
-      cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepagePageLoadingGET', '/homepage?status=draft'));
-      cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupPermissionsPageLoadingGET', '/myGroupPermissions'));
-      cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepageChildrenPageLoadingGET', '?parentCode=homepage'));
-    }
-    cy.get(button).click();
-    if (code) {
-      cy.wait(['@groupsPageLoadingGET', '@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@pageModelsPageLoadingGET', '@pagePageLoadingGET']);
-    } else {
-      cy.wait(['@groupsPageLoadingGET', '@homepagePageLoadingGET', '@homepagePageLoadingGET', '@languagesPageLoadingGET', '@myGroupPermissionsPageLoadingGET', '@myGroupsPageLoadingGET', '@pageModelsPageLoadingGET', '@homepageChildrenPageLoadingGET']);
-    }
+    !code ? super.loadPage(button, '/page/add') : super.loadPage(button, `/page/edit/${code}`);
   }
 
   getSeoContainer() {
@@ -110,9 +94,15 @@ export default class AddPage extends AppContent {
     return this.getContents().find(`${htmlElements.button}.PageForm__save-btn`);
   }
 
-  clickSaveButton() {
-    this.getSaveButton().then(button => ManagementPage.openPage(button));
-    return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
+  clickSaveButton(forbidden = false) {
+    if (!forbidden) {
+      this.getSaveButton().then(button => ManagementPage.openPage(button));
+      return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
+    }
+    else {
+      this.getSaveButton().then(button => AddPage.openPage(button));
+      return cy.get('@currentPage');
+    }
   }
 
   clickMetaTagAddButton() {

@@ -18,10 +18,7 @@ export default class DatabasePage extends AppContent {
   deleteButton      = `${htmlElements.button}.UserAuthorityTable__delete-tag-btn`;
 
   static openPage(button) {
-    cy.databaseController().then(controller => controller.intercept({method: 'GET'}, 'databasePageLoadingGET', '?*'));
-    cy.databaseController().then(controller => controller.intercept({method: 'GET'}, 'databaseStatusGET', '/status'));
-    cy.get(button).click();
-    cy.wait(['@databasePageLoadingGET', '@databasePageLoadingGET', '@databaseStatusGET']);
+    super.loadPage(button, '/database');
   }
 
   getCreateBackupButton() {
@@ -76,7 +73,6 @@ export default class DatabasePage extends AppContent {
     this.getRowDeleteButton(code).click();
     this.parent.getDialog().setBody(DeleteDialog);
     this.parent.getDialog().getBody().setLoadOnConfirm(DatabasePage);
-    cy.waitForStableDOM();
     return cy.get('@currentPage');
   }
 

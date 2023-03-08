@@ -13,9 +13,7 @@ export default class ReportPage extends AppContent {
   dataSourceTables   = `${htmlElements.table}.ReportDatabaseDataSource__table`;
 
   static openPage(button, code) {
-    cy.databaseController().then(controller => controller.intercept({method: 'GET'}, 'reportPageLoadingGET', `/report/${code}`));
-    cy.get(button).click();
-    cy.wait('@reportPageLoadingGET');
+    super.loadPage(button, `/database/report/${code}`);
   }
 
   getDescriptionList() {

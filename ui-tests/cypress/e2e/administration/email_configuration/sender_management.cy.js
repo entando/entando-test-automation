@@ -25,7 +25,6 @@ describe('Sender Management Functionalities', () => {
 
     it([Tag.SMOKE, 'ENG-3299'], 'Table and Button are visible', () => {
       cy.get('@currentPage').then(page => page.getContent().openSenderManagement());
-      cy.validateUrlPathname('/email-config/senders');
 
       cy.get('@currentPage')
         .then(page => {
@@ -61,7 +60,6 @@ describe('Sender Management Functionalities', () => {
       cy.get('@currentPage')
         .then(page => page.getContent().openSenderManagement())
         .then(page => page.getContent().openAddSender());
-      cy.validateUrlPathname('/email-config/senders/add');
 
       cy.get('@currentPage')
         .then(page => {
@@ -82,7 +80,6 @@ describe('Sender Management Functionalities', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openSenderManagement())
           .then(page => page.getContent().getKebabMenu(sender.code).open().openEdit());
-        cy.validateUrlPathname(`/email-config/senders/edit/${sender.code}`);
 
         cy.get('@currentPage')
           .then(page => {
@@ -132,7 +129,10 @@ describe('Sender Management Functionalities', () => {
           cy.get('@currentPage')
             .then(page => page.getContent().openSenderManagement())
             .then(page => page.getContent().getKebabMenu(sender.code).open().openEdit())
-            .then(page => page.getContent().getEmailInput().then(input => page.getContent().type(input, editedEmail)))
+            .then(page => {
+              page.getContent().getEmailInput().should('have.value', sender.email);
+              page.getContent().getEmailInput().then(input => page.getContent().type(input, editedEmail));
+            })
             .then(page => page.getContent().save())
             .then(page => {
               cy.validateToast(page);

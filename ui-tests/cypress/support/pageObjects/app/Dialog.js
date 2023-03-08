@@ -71,11 +71,10 @@ export class Dialog extends WebElement {
     this.body = null;
     this.getConfirmButton().then(button => {
       if (body.loadOnConfirm) {
-        body.loadOnConfirm.openPage(button);
+        !body.code ? body.loadOnConfirm.openPage(button) : body.loadOnConfirm.openPage(button, body.code);
         return cy.wrap(new body.appOrAdmin(body.loadOnConfirm)).as('currentPage');
       } else {
         cy.get(button).click();
-        cy.waitForStableDOM();
         return cy.get('@currentPage');
       }
     });
@@ -88,15 +87,17 @@ export class DialogContent extends WebElement {
   body = `${htmlElements.div}.modal-body`;
   loadOnConfirm = null;
   appOrAdmin = null;
+  code = null;
 
   get() {
     return this.parent.get()
                .find(this.body);
   }
 
-  setLoadOnConfirm(loadOnConfirm, appOrAdmin = AppPage) {
+  setLoadOnConfirm(loadOnConfirm, appOrAdmin = AppPage, code = null) {
     this.loadOnConfirm = loadOnConfirm;
     this.appOrAdmin = appOrAdmin;
+    this.code = code;
   }
 
 }

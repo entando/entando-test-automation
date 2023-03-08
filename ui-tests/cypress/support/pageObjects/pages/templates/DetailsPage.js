@@ -11,10 +11,7 @@ export default class DetailsPage extends AppContent {
   editButton              = `${htmlElements.button}.PageTemplateDetailPage__edit-btn`;
 
   static openPage(button, code) {
-    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'templateDetailsGET', `/${code}/**`));
-    if (button) cy.get(button).click();
-    else cy.realType('{enter}');
-    cy.wait('@templateDetailsGET');
+    super.loadPage(button, `/page-template/view/${code}`);
   }
 
   getTemplateDetailsTable() {
@@ -34,12 +31,12 @@ export default class DetailsPage extends AppContent {
   }
 
   openTemplatesUsingBreadCrumb() {
-    this.getBreadCrumb().children(htmlElements.li).eq(1).then(element => TemplatesPage.openPage(element));
+    this.getBreadCrumb().children(htmlElements.li).eq(1).then(element => TemplatesPage.openPage(element, false));
     return cy.wrap(new AppPage(TemplatesPage));
   }
 
   openEditTemplate(code) {
-    this.getEditButton().then(button => AddPage.openEditClonePage(button, code));
+    this.getEditButton().then(button => AddPage.openPage(button, code, 'edit'));
     return cy.wrap(new AppPage(AddPage));
   }
 

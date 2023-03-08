@@ -17,9 +17,7 @@ export default class AddPage extends AppContent {
   otherButtons         = `${htmlElements.button}[type=button].UserForm__action-button`;
 
   static openPage(button) {
-    cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'addPageLoadingGET', `?page=1&pageSize=0`));
-    cy.get(button).click();
-    cy.wait('@addPageLoadingGET');
+    super.loadPage(button, '/user/add');
   }
 
   getUsernameInput() {
@@ -71,7 +69,7 @@ export default class AddPage extends AppContent {
   }
 
   submitForm() {
-    this.getSaveButton().then(button => ManagementPage.openPage(button, true));
+    this.getSaveButton().then(button => ManagementPage.openPage(button));
     return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 

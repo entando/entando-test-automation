@@ -33,13 +33,7 @@ export default class MFEWidgetForm extends AppContent {
   formLabelSpan         = `${htmlElements.span}.FormLabel`;
 
   static openPage(button, code = null) {
-    if (code) cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetPageLoadingGET', `/${code}`));
-    else cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupPermissionsPageLoadingGET', '/myGroupPermissions'));
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupsPageLoadingGET', '/myGroups'));
-    cy.get(button).click();
-    if (code) cy.wait(['@widgetPageLoadingGET', '@languagesPageLoadingGET', '@myGroupsPageLoadingGET']);
-    else cy.wait(['@myGroupPermissionsPageLoadingGET', '@languagesPageLoadingGET', '@myGroupsPageLoadingGET']);
+    !code ? super.loadPage(button, '/widget/add') : super.loadPage(button, `/widget/edit/${code}`);
   }
 
   get isCloneMode() {
@@ -105,8 +99,8 @@ export default class MFEWidgetForm extends AppContent {
                .find(this.saveReplaceButton);
   }
 
-  submitCloneWidget() {
-    this.getSaveReplaceButton().then(button => DesignerPage.openPage(button));
+  submitCloneWidget(code) {
+    this.getSaveReplaceButton().then(button => DesignerPage.openPage(button, code));
     return cy.wrap(new AppPage(DesignerPage)).as('currentPage');
   }
 
@@ -245,11 +239,7 @@ export default class MFEWidgetForm extends AppContent {
   submitContinueForm(code) {
     this.getSaveDropdownButton().click();
     this.getContinueSaveButton()
-        .then(button => {
-          cy.widgetsController().then(controller => controller.intercept({method: 'PUT'}, 'widgetPageLoadingPUT', `/${code}`));
-          cy.get(button).click();
-          cy.wait('@widgetPageLoadingPUT');
-        });
+        .then(button => MFEWidgetForm.openPage(button, code));
     return cy.get('@currentPage');
   }
 }

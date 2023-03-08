@@ -2,7 +2,7 @@ import {htmlElements} from '../../WebElement';
 
 import AppContent from '../../app/AppContent';
 
-import AppPage from '../../app/AppPage';
+import AppPage         from '../../app/AppPage';
 
 export default class FilesBrowserPage extends AppContent {
 
@@ -73,17 +73,17 @@ export default class FilesBrowserPage extends AppContent {
   }
 
   openUploadFilesPage() {
-    this.getUploadFilesOperationButton().click();
+    this.getUploadFilesOperationButton().then(button => this.uploadFilesPage.openPage(button));
     return cy.wrap(new AppPage(this.uploadFilesPage)).as('currentPage');
   }
 
   openCreateFolderPage() {
-    this.getCreateFolderOperationButton().click();
+    this.getCreateFolderOperationButton().then(button => this.createFolderPage.openPage(button));
     return cy.wrap(new AppPage(this.createFolderPage)).as('currentPage');
   }
 
   openCreateTextFilePage() {
-    this.getCreateTextFileOperationButton().click();
+    this.getCreateTextFileOperationButton().then(button => this.createTextFilePage.openPage(button));
     return cy.wrap(new AppPage(this.createTextFilePage)).as('currentPage');
   }
 

@@ -7,11 +7,8 @@ import ManagementPage from './ManagementPage';
 
 export default class ClonePage extends AppContent {
 
-  static openPage(button, code) {
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
-    cy.get(button).click();
-    cy.wait(['@languagesPageLoadingGET', '@pagePageLoadingGET']);
+  static openPage(button) {
+    super.loadPage(button, `/page/clone`);
   }
 
   getTitleInput(lang) {

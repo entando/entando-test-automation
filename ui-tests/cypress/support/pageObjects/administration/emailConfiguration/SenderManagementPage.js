@@ -13,9 +13,7 @@ export default class SenderManagementPage extends EmailConfigurationPage {
   senderAddButton = `${htmlElements.a}[type=button]`;
 
   static openPage(button) {
-    cy.senderController().then(controller => controller.intercept({method: 'GET'}, 'senderManagementPageLoadingGET'));
-    cy.get(button).click();
-    cy.wait('@senderManagementPageLoadingGET');
+    super.loadPage(button, '/email-config/senders');
   }
 
   openSenderManagement() {
@@ -63,7 +61,7 @@ export default class SenderManagementPage extends EmailConfigurationPage {
   }
 
   openAddSender() {
-    this.getAddButton().click();
+    this.getAddButton().then(button => SenderPage.openPage(button));
     return cy.wrap(new AppPage(SenderPage)).as('currentPage');
   }
 
@@ -97,6 +95,7 @@ class SenderKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDelete().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(SenderManagementPage);
     return cy.get('@currentPage');
   }
 

@@ -13,11 +13,8 @@ export default class TypesPage extends AdminContent {
 
   addButton = `${htmlElements.a}.btn.btn-primary.pull-right.mb-5`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'typesPageLoadingGET', '/initViewEntityTypes.action?entityManagerName=jacmsContentManager'));
-    cy.get(button).click();
-    cy.wait('@typesPageLoadingGET');
+    super.loadPage(button, '/Entity/initViewEntityTypes.action');
   }
 
   getTable() {
@@ -80,12 +77,12 @@ class TypesKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getEdit().then(button => EditPage.openPage(button, this.code));
+    this.getEdit().then(button => EditPage.openPage(button));
     return cy.wrap(new AdminPage(EditPage)).as('currentPage');
   }
 
   clickDelete() {
-    this.getDelete().then(button => DeleteAdminPage.openDeleteContentTypePage(button, this.code));
+    this.getDelete().then(button => DeleteAdminPage.openDeleteContentTypePage(button));
     const deletePage = new AdminPage(DeleteAdminPage);
     deletePage.getContent().setOrigin(this.parent.parent);
     deletePage.getContent().setForm('removeEntityType');

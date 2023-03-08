@@ -16,9 +16,7 @@ export default class SMTPServerPage extends EmailConfigurationPage {
   toolButton = `${htmlElements.div}.btn-toolbar.pull-right`;
 
   static openPage(button) {
-    cy.smtpServerController().then(controller => controller.intercept({method: 'GET'}, 'smtpServerPageLoadingGET'));
-    cy.get(button).click();
-    cy.wait('@smtpServerPageLoadingGET');
+    super.loadPage(button, '/email-config');
   }
 
   openSenderManagement() {

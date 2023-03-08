@@ -18,19 +18,12 @@ export default class AddPage extends AppContent {
   continueSaveButton    = `${htmlElements.a}#continueSaveButton`;
   previewGrid           = `${htmlElements.div}.PageConfigGridCol.PageConfigGridCol--container`;
 
-  static openEditClonePage(button, code) {
-    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'templateLoadingGET', `/${code}`));
-    if (button) cy.get(button).click();
-    else cy.realType('{enter}');
-    cy.wait('@templateLoadingGET');
-    cy.waitForStableDOM();
+  static openPage(button, code = null, action = null, waitDOM = false) {
+    !code ? super.loadPage(button, '/page-template/add', true, waitDOM) : super.loadPage(button, `/page-template/${action}/${code}`, false, waitDOM);
   }
 
   static editAndContinue(button, code) {
-    cy.pageTemplatesController().then(controller => controller.intercept({method: 'PUT'}, 'templateEditedPUT', `/${code}`));
-    if (button) cy.get(button).click();
-    else cy.realType('{enter}');
-    cy.wait('@templateEditedPUT');
+    this.openPage(button, code, 'edit');
   }
 
   getFormArea() {
@@ -191,15 +184,21 @@ export default class AddPage extends AppContent {
                .find(this.continueSaveButton);
   }
 
-  submitForm() {
+  submitForm(forbidden = false) {
     this.getSaveDropdownButton().click();
-    this.getRegularSaveButton().then(button => TemplatesPage.openPage(button));
-    return cy.wrap(new AppPage(TemplatesPage));
+    if (!forbidden) {
+      this.getRegularSaveButton().then(button => TemplatesPage.openPage(button));
+      return cy.wrap(new AppPage(TemplatesPage));
+    } else {
+      this.getRegularSaveButton().then(button => AddPage.openPage(button));
+      return cy.get('@currentPage');
+    }
+
   }
 
   submitFormAndContinue(code) {
     this.getSaveDropdownButton().click();
-    this.getContinueSaveButton().then(button => AddPage.openEditClonePage(button, code));
+    this.getContinueSaveButton().then(button => AddPage.openPage(button, code, 'edit'));
     return cy.get('@currentPage');
   }
 
@@ -210,7 +209,7 @@ export default class AddPage extends AppContent {
   }
 
   openTemplatesUsingBreadCrumb() {
-    this.getBreadCrumb().children(htmlElements.li).eq(1).then(element => TemplatesPage.openPage(element));
+    this.getBreadCrumb().children(htmlElements.li).eq(1).then(element => TemplatesPage.openPage(element, false));
     return cy.wrap(new AppPage(TemplatesPage));
   }
 
