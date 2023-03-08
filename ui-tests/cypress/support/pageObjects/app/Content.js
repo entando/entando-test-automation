@@ -1,12 +1,24 @@
 import {htmlElements, WebElement} from '../WebElement.js';
+import {generateRandomNumericId}  from '../../utils';
 
 export default class Content extends WebElement {
 
   static loadPage(button, pathname, force = false, waitDOM = false) {
-    if (button) cy.get(button).click({force: force});
-    else cy.realType('{enter}');
-    Object.getPrototypeOf(this.prototype).constructor.name === 'AdminContent' ? cy.validateUrlPathname(pathname, {adminConsole: true}) : cy.validateUrlPathname(pathname);
-    if (waitDOM) cy.waitForStableDOM();
+    cy.get('@currentPage').then(page => {
+      const randomLabel = generateRandomNumericId();
+      cy.time(randomLabel);
+      if (button) cy.get(button).click({force: force});
+      else cy.realType('{enter}');
+      Object.getPrototypeOf(this.prototype).constructor.name === 'AdminContent' ? cy.validateUrlPathname(pathname, {adminConsole: true}) : cy.validateUrlPathname(pathname);
+      if (waitDOM) cy.waitForStableDOM();
+      cy.timeEnd(randomLabel).then(entry => {
+        cy.log(`Loaded in ${entry.duration} ms`);
+        cy.addToReport(() => ({
+          title: this.name === page.content.constructor.name ? `Load time of ${this.name} after action` : `Load time from ${page.content.constructor.name} to ${this.name}`,
+          value: `${entry.duration} ms`
+        }));
+      });
+    });
   }
 
   getInputError(input) {

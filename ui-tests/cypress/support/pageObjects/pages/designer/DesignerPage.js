@@ -10,6 +10,7 @@ import ContentListWidgetConfigPage  from './widgetconfigs/ContentListWidgetConfi
 import ContentQueryWidgetConfigPage from './widgetconfigs/ContentQueryWidgetConfigPage';
 import MFEWidgetForm                from '../../components/mfeWidgets/MFEWidgetForm';
 import DetailsPage                  from '../../components/mfeWidgets/DetailsPage';
+import {generateRandomNumericId}    from '../../../utils';
 
 export default class DesignerPage extends AppContent {
 
@@ -62,10 +63,19 @@ export default class DesignerPage extends AppContent {
 
   static confirmConfig(button, code = 'homepage') {
     cy.get('@currentPage').then(page => {
+      const randomLabel = generateRandomNumericId();
+      cy.time(randomLabel);
       cy.get(button).click();
       cy.validateUrlPathname(`/page/configuration/${code}`);
       cy.validateToast(page);
       cy.waitForStableDOM();
+      cy.timeEnd(randomLabel).then(entry => {
+        cy.log(`Loaded in ${entry.duration} ms`);
+        cy.addToReport(() => ({
+          title: this.name === page.content.constructor.name ? `Load time of ${this.name} after action` : `Load time from ${page.content.constructor.name} to ${this.name}`,
+          value: `${entry.duration} ms`
+        }));
+      });
     });
   }
 
