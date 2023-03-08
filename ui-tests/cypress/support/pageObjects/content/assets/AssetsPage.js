@@ -23,9 +23,11 @@ export default class AssetsPage extends AdminContent {
   resultInfoItemCount      = `${htmlElements.span}`;
 
   static openPage(button) {
-    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'assetsPageLoadingGet', '/list.action?*'));
-    cy.get(button).click();
-    cy.wait('@assetsPageLoadingGet');
+    super.loadPage(button, '/jacms/Resource/list.action');
+  }
+
+  static search(button) {
+    super.loadPage(button, '/jacms/Resource/search.action');
   }
 
   getAddButton() {
@@ -61,11 +63,7 @@ export default class AssetsPage extends AdminContent {
   }
 
   submitSearch() {
-    this.getSearchButton().then(button => {
-      cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'submitSearch', '/search.action'));
-      this.click(button);
-      cy.wait('@submitSearch');
-    });
+    this.getSearchButton().then(button => AssetsPage.search(button));
     return cy.get('@currentPage');
   }
 

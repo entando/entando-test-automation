@@ -16,18 +16,12 @@ export default class EditPage extends AdminContent {
   attributeTypeSelect = `${htmlElements.select}#attributeTypeCode`;
   addAttributeButton  = `${htmlElements.button}[name="entandoaction:addAttribute"]`;
 
-  //FIXME AdminConsole is not built on REST APIs
-  static openPage(button, code) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'editContentTypePageLoadingGET', `/initEditEntityType.action?entityManagerName=jacmsContentManager&entityTypeCode=${code}`));
-    cy.get(button).click();
-    cy.wait('@editContentTypePageLoadingGET');
+  static openPage(button) {
+    super.loadPage(button, '/Entity/initEditEntityType.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPageFromAttribute(button) {
-    cy.contentTypesJacmsAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'editContentTypePageLoadingGET', '/entryEntityType.action'));
-    cy.get(button).click();
-    cy.wait('@editContentTypePageLoadingGET');
+    super.loadPage(button, '/jacms/Entity/entryEntityType.action');
   }
 
   getCodeInput() {
@@ -77,7 +71,7 @@ export default class EditPage extends AdminContent {
 
   openAddAttributePage(attributeCode) {
     this.getAttributeTypeSelect().then(input => this.select(input, attributeCode));
-    this.getAddAttributeButton().then(button => AttributePage.openPage(button, attributeCode));
+    this.getAddAttributeButton().then(button => AttributePage.openPage(button));
     return cy.wrap(new AdminPage(AttributePage)).as('currentPage');
   }
 
@@ -120,8 +114,8 @@ class AttributeKebabMenu extends KebabMenu {
                .find(this.delete);
   }
 
-  openEdit(code) {
-    this.getEdit().then(button => AttributePage.openPageFromEdit(button, code));
+  openEdit() {
+    this.getEdit().then(button => AttributePage.openPageFromEdit(button));
     return cy.wrap(new AdminPage(AttributePage)).as('currentPage');
   }
 

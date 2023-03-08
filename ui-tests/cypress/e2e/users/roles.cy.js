@@ -21,7 +21,6 @@ describe('User Roles', () => {
     it([Tag.GTS, 'ENG-2069'], 'Roles page', () => {
       openRolesPage()
         .then(page => {
-          cy.validateUrlPathname('/role');
           page.getContent().getTitle()
               .should('be.visible')
               .and('have.text', 'Roles');
@@ -43,7 +42,6 @@ describe('User Roles', () => {
       openRolesPage()
         .then(page => page.getContent().openAddRolePage())
         .then(page => {
-          cy.validateUrlPathname('/role/add');
           page.getContent().getTitle()
               .should('be.visible')
               .and('have.text', 'Add');
@@ -71,7 +69,6 @@ describe('User Roles', () => {
       openRolesPage()
         .then(page => page.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openEdit())
         .then(page => {
-          cy.validateUrlPathname(`/role/edit/${ROLE_CODE_ADMIN}`);
           page.getContent().getTitle()
               .should('be.visible')
               .and('have.text', 'Edit');
@@ -100,7 +97,6 @@ describe('User Roles', () => {
       openRolesPage()
         .then(page => page.getContent().getKebabMenu(ROLE_CODE_ADMIN).open().openDetails())
         .then(page => {
-          cy.validateUrlPathname(`/role/view/${ROLE_CODE_ADMIN}`);
           page.getContent().getTitle()
               .should('be.visible')
               .and('have.text', 'Details');

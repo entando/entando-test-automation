@@ -9,9 +9,7 @@ import UXFragmentsPage from './UXFragmentsPage';
 export default class DetailsPage extends AppContent {
 
   static openPage(button, code) {
-    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'actionsPageLoadingGET', `/${code}`));
-    cy.get(button).click();
-    cy.wait('@actionsPageLoadingGET');
+    super.loadPage(button, `/fragment/view/${code}`, false, true);
   }
 
   getMain() {
@@ -44,12 +42,12 @@ export default class DetailsPage extends AppContent {
   }
 
   goToFragmentsViaBreadCrumb() {
-    this.getBreadCrumb().children(htmlElements.li).eq(1).then(button => UXFragmentsPage.openPage(button));
+    this.getBreadCrumb().children(htmlElements.li).eq(1).then(button => UXFragmentsPage.openPage(button, false));
     return cy.wrap(new AppPage(UXFragmentsPage)).as('currentPage');
   }
 
   openEdit(code) {
-    this.getEditButton().then(button => FragmentsPage.openPage(button, `${code}`));
+    this.getEditButton().then(button => FragmentsPage.openPage(button, `${code}`, 'edit'));
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 

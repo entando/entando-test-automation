@@ -12,29 +12,21 @@ import DetailsPage   from '../../components/uxFragments/DetailsPage.js';
 
 export default class UXFragmentsPage extends AppContent {
 
-  static openPage(button) {
-    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
-    cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetsPageLoadingGET', '?*'));
-    cy.get(button).click();
-    cy.wait(['@fragmentsPageLoadingGET', '@fragmentsPageLoadingGET', '@widgetsPageLoadingGET']);
+  static openPage(button, waitDOM = true) {
+    super.loadPage(button, '/fragment', false, waitDOM);
   }
 
   static goToPage(page) {
-    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
-    cy.realType(`${page}{enter}`);
-    cy.wait(['@fragmentsPageLoadingGET']);
+    cy.realType(`${page}`);
+    this.openPage(null, true);
   }
 
   static changePage(button) {
-    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'fragmentsPageLoadingGET', '?*'));
-    cy.get(button).click();
-    cy.wait(['@fragmentsPageLoadingGET']);
+    this.openPage(button, true);
   }
 
   static searchButton(button) {
-    cy.fragmentsController().then(controller => controller.intercept({method: 'GET'}, 'resultsLoadingGET', '?sort*'));
-    cy.get(button).click();
-    cy.wait('@resultsLoadingGET');
+    this.openPage(button, true);
   }
 
   getSearchForm() {
@@ -98,19 +90,13 @@ export default class UXFragmentsPage extends AppContent {
   }
 
   openAddFragmentPage() {
-    this.getAddButton().click();
+    this.getAddButton().then(button => FragmentsPage.openPage(button));
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 
 }
 
 class FragmentsKebabMenu extends KebabMenu {
-
-  open() {
-    cy.waitForStableDOM();
-    this.get().children(htmlElements.button).then(button => cy.get(button).click());
-    return this;
-  }
 
   getEdit() {
     return this.getDropdown()
@@ -133,13 +119,12 @@ class FragmentsKebabMenu extends KebabMenu {
   }
 
   openEdit(code) {
-    this.getEdit().then(button => FragmentsPage.openPage(button, code));
+    this.getEdit().then(button => FragmentsPage.openPage(button, code, 'edit'));
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 
   openClone(code) {
-    this.getClone().then(button => FragmentsPage.openPage(button, code));
-    cy.waitForStableDOM();
+    this.getClone().then(button => FragmentsPage.openPage(button, code, 'clone', true));
     return cy.wrap(new AppPage(FragmentsPage)).as('currentPage');
   }
 
@@ -151,6 +136,7 @@ class FragmentsKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDelete().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(UXFragmentsPage);
     return cy.get('@currentPage');
   }
 

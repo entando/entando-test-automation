@@ -34,22 +34,8 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   buttonDropdown = `${htmlElements.div}.dropdown.btn-group-primary`;
   modelIdSelect  = `${htmlElements.select}[name="modelId"]`;
 
-  static openPage(code) {
-    cy.contentTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'contentModelsPageLoadingGET', '?*'));
-    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentTypesPageLoadingGET', '?*'));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
-    cy.wait(['@contentModelsPageLoadingGET', '@contentTypesPageLoadingGET', '@pagePageLoadingGET', '@pagePageLoadingGET']);
-  }
-
-  static openDesignerWidgets(button, code) {
-    cy.widgetsController().then(controller => controller.intercept({method: 'GET'}, 'widgetPageLoadingGET', `/${code}`));
-    cy.get(button).click();
-    cy.wait('@widgetPageLoadingGET');
-  }
-
-  static settings(){
-    cy.contentTypesController().then(controller => controller.intercept({method: 'GET'}, 'contentLoadingGET', `/?*`));
-    cy.wait('@contentLoadingGET');
+  static openPage(code, page, pos) {
+    super.loadPage(null, `/widget/config/${code}/page/${page}/frame/${pos+2}`, false, true);
   }
 
   getAddButtonsArea() {
@@ -81,6 +67,7 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   clickAddContentButton() {
     this.getAddContentButton().click();
     this.setDialogBodyWithClass(ContentListSelectModal);
+    cy.waitForStableDOM();
     return cy.get('@currentPage');
   }
 
@@ -96,6 +83,7 @@ export default class ContentWidgetConfigPage extends WidgetConfigPage {
   clickChangeContentButton() {
     this.getChangeContentButton().click();
     this.setDialogBodyWithClass(ContentListSelectModal);
+    cy.waitForStableDOM();
     return cy.get('@currentPage');
   }
 

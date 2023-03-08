@@ -17,18 +17,12 @@ export default class TemplateForm extends AdminContent {
   submitButton      = `${htmlElements.button}[type='submit'][class="btn btn-primary pull-right"]`;
   cancelButton      = `${htmlElements.button}[type='button'].AddContentTypeFormBody__cancel--btn.btn-default`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addContentTemplatePageLoadingGET', '/new.action'));
-    cy.get(button).click();
-    cy.wait('@addContentTemplatePageLoadingGET');
+    super.loadPage(button, '/jacms/ContentModel/new.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
-  static openEdit(button, code) {
-    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editContentTemplatePageLoadingGET', `/edit.action?modelId=${code}`));
-    cy.get(button).click();
-    cy.wait('@editContentTemplatePageLoadingGET');
+  static openEdit(button) {
+    super.loadPage(button, '/jacms/ContentModel/edit.action');
   }
 
   getFormArea() {
@@ -110,7 +104,7 @@ export default class TemplateForm extends AdminContent {
   }
 
   submitForm() {
-    this.getSaveButton().then(button => this.click(button));
+    this.getSaveButton().then(button => TemplatesPage.openPage(button));
     return cy.wrap(new AdminPage(TemplatesPage)).as('currentPage');
   }
 

@@ -7,11 +7,7 @@ export default class DetailsPage extends AppContent {
   description = `${htmlElements.dl}.DetailRole__detail-list`;
 
   static openPage(button, code) {
-    cy.rolesController().then(controller => controller.intercept({method: 'GET'}, 'detailsPageLoadingGET', `/${code}`));
-    cy.rolesController().then(controller => controller.intercept({method: 'GET'}, 'rolesReferencesLoadingGET', `/${code}/userreferences?page=1&pageSize=10`));
-    cy.permissionsController().then(controller => controller.intercept({method: 'GET'}, 'permissionsLoadingGET', '?page=1&pageSize=0'));
-    cy.get(button).click();
-    cy.wait(['@detailsPageLoadingGET', '@rolesReferencesLoadingGET', '@permissionsLoadingGET']);
+    super.loadPage(button, `/role/view/${code}`);
   }
 
   getDetailsDescription() {

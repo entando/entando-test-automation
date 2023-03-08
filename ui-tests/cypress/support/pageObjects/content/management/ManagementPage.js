@@ -14,25 +14,16 @@ export default class ManagementPage extends AdminContent {
   contentsKebabMenuButton = `${htmlElements.button}`;
   contentsKebabMenuAction = `${htmlElements.li}`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'contentManagementPageLoadingGET', '/list.action'));
-    cy.get(button).click();
-    cy.wait('@contentManagementPageLoadingGET');
+    super.loadPage(button, '/jacms/Content/list.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
   static openSearchPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'contentManagementSearchPOST', '/search.action'));
-    cy.get(button).click();
-    cy.wait('@contentManagementSearchPOST');
+    super.loadPage(button, '/jacms/Content/search.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
   static savePage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'contentManagementPageLoadingGET', '/results.action'));
-    cy.get(button).click();
-    cy.wait('@contentManagementPageLoadingGET');
+    super.loadPage(button, '/jacms/Content/results.action');
   }
 
   getContents() {
@@ -147,7 +138,7 @@ export default class ManagementPage extends AdminContent {
 
   openAddContentPage(contentType) {
     this.getAddButton().click()
-        .then(() => this.getAddOption(contentType).then(button => AddPage.openPage(button)));
+        .then(() => this.getAddOption(contentType.name).then(button => AddPage.openPage(button)));
     return cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
 
@@ -183,8 +174,8 @@ class ManagementKebabMenu extends KebabMenu {
                .contains(`Edit`);
   }
 
-  openEdit() {
-    this.getEdit().then(button => AddPage.editPage(button, this.code));
+  openEdit(force = false) {
+    this.getEdit().then(button => AddPage.editPage(button, force));
     return cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
 }

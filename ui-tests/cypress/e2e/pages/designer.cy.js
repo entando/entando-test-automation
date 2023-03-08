@@ -83,7 +83,8 @@ describe('Pages Designer', () => {
 
     describe('CMS Content Widget', () => {
 
-      const widgetType = 'content_viewer';
+      const widgetType   = 'content_viewer';
+      const widgetConfig = 'viewerConfig';
 
       it([Tag.GTS, Tag.SMOKE, 'ENG-2496', 'ENG-4448'], 'Basic add with widget settings', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
@@ -92,17 +93,13 @@ describe('Pages Designer', () => {
               .then(page => page.getContent().clickSidebarTab(1))
               .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
               .then(page => page.getContent().clickSidebarTab(0))
-              .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
-              .then(page => {
-                cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                page.getContent().clickAddContentButton();
-              })
+              .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 2, 1, 0, widgetType))
+              .then(page => page.getContent().clickAddContentButton())
               .then(page => page.getDialog().getBody().checkBoxFromTitle('Sample - About Us'))
               .then(page => page.getDialog().confirm())
               .then(page => page.getContent().confirmConfig(demoPage.code))
               .then(page => {
                 cy.wrap(4).as('widgetToBeRemovedFromPage');
-                cy.validateToast(page);
                 page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                     .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                     .then(contents => {
@@ -153,14 +150,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -201,7 +196,6 @@ describe('Pages Designer', () => {
               .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
               .then(page => page.getContent().clickSidebarTab(0))
               .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails());
-            cy.validateUrlPathname(`/widget/detail/${widgetType}`);
           });
         });
 
@@ -213,20 +207,18 @@ describe('Pages Designer', () => {
                     .then(page => page.getContent().clickSidebarTab(1))
                     .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                     .then(page => page.getContent().clickSidebarTab(0))
-                    .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openSaveAs())
+                    .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openSaveAs(4, demoPage.code, widgetConfig))
                     .then(page => {
-                      cy.validateUrlPathname(`/page/${demoPage.code}/clone/4/widget/${widgetType}/viewerConfig`);
                       page.getContent().fillWidgetForm('Mio Widget', clonedWidgetCode, '', 'Free Access');
                       page.getContent().getConfigTabConfiguration().should('exist');
                       page.getContent().clickConfigTabConfiguration();
                     })
                     .then(page => {
                       page.getContent().getFormBody().contains('Change content').should('exist');
-                      page.getContent().submitCloneWidget();
+                      page.getContent().submitCloneWidget(demoPage.code);
                     })
                     .then(page => {
                       cy.wrap(clonedWidgetCode).as('widgetToBeDeleted');
-                      cy.validateUrlPathname(`/page/configuration/${demoPage.code}`);
                       page.getContent().getPageStatusIcon()
                           .should('have.class', 'PageStatusIcon--draft')
                           .and('have.attr', 'title').should('eq', 'Published, with pending changes');
@@ -257,18 +249,14 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
-                .then(page => {
-                  cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                  page.getContent().clickAddContentButton();
-                })
+                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 2, 1, 0, widgetType))
+                .then(page => page.getContent().clickAddContentButton())
                 .then(page => page.getDialog().getBody().checkBoxFromTitle('Sample Banner'))
                 .then(page => page.getDialog().confirm())
                 .then(page => page.getContent().getModelIdSelect().then(select => page.getContent().select(select, contentTemplate.descr)))
                 .then(page => page.getContent().confirmConfig(demoPage.code))
                 .then(page => {
                   cy.wrap(4).as('widgetToBeRemovedFromPage');
-                  cy.validateToast(page);
                   page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                       .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                       .then(contents => {
@@ -303,7 +291,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
+                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 2, 1, 0, widgetType))
                 .then(page => page.getContent().clickNewContentWith('Banner'))
                 .then(page => page.getContent().addContentFromContentWidgetConfig('Unpublish En Title', 'Unpublish It Title', 'Unpublish Sample Description', true))
                 .then(page => {
@@ -317,17 +305,13 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
-                .then(page => {
-                  cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                  page.getContent().clickAddContentButton();
-                })
+                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 2, 1, 0, widgetType))
+                .then(page => page.getContent().clickAddContentButton())
                 .then(page => page.getDialog().getBody().checkBoxFromTitle('Unpublish Sample Description'))
                 .then(page => page.getDialog().confirm())
                 .then(page => page.getContent().confirmConfig(demoPage.code))
                 .then(page => {
                   cy.wrap(4).as('widgetToBeRemovedFromPage');
-                  cy.validateToast(page);
                   page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                       .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                       .then(contents => {
@@ -358,7 +342,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
+                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 2, 1, 0, widgetType))
                 .then(page => page.getContent().clickNewContentWith('Banner'))
                 .then(page => page.getContent().addContentFromContentWidgetConfig('En Title', 'It Title', 'Sample Description', true))
                 .then(page => {
@@ -372,18 +356,14 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage, 0, 2, 1, 0, widgetType))
-                .then(page => {
-                  cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                  page.getContent().clickAddContentButton();
-                })
+                .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 2, 1, 0, widgetType))
+                .then(page => page.getContent().clickAddContentButton())
                 .then(page => page.getDialog().getBody().checkBoxFromTitle('Sample Description'))
                 .then(page => page.getDialog().confirm())
                 .then(page => page.getContent().getModelIdSelect().then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
                 .then(page => page.getContent().confirmConfig(demoPage.code))
                 .then(page => {
                   cy.wrap(4).as('widgetToBeRemovedFromPage');
-                  cy.validateToast(page);
                   page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                       .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                       .then(contents => {
@@ -413,7 +393,8 @@ describe('Pages Designer', () => {
 
     describe('CMS Content List Widget', () => {
 
-      const widgetType = 'row_content_viewer_list';
+      const widgetType   = 'row_content_viewer_list';
+      const widgetConfig = 'rowListViewerConfig';
 
       it([Tag.GTS, Tag.SMOKE, 'ENG-2498', 'ENG-4448'], 'Basic add with widget settings', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
@@ -430,7 +411,6 @@ describe('Pages Designer', () => {
               .then(page => page.getContent().confirmConfig(demoPage.code))
               .then(page => {
                 cy.wrap(4).as('widgetToBeRemovedFromPage');
-                cy.validateToast(page);
                 page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                     .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                     .then(contents => {
@@ -482,14 +462,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -527,7 +505,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+          );
         });
 
         it([Tag.GTS, Tag.SMOKE, 'ENG-2498', 'ENG-4277'], 'Save As Widget', function () {
@@ -538,20 +516,18 @@ describe('Pages Designer', () => {
                     .then(page => page.getContent().clickSidebarTab(1))
                     .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                     .then(page => page.getContent().clickSidebarTab(0))
-                    .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openSaveAs())
+                    .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openSaveAs(4, demoPage.code, widgetConfig))
                     .then(page => {
-                      cy.validateUrlPathname(`/page/${demoPage.code}/clone/4/widget/${widgetType}/rowListViewerConfig`);
                       page.getContent().fillWidgetForm('Mio Widget', clonedWidgetCode, '', 'Free Access');
                       page.getContent().getConfigTabConfiguration().should('exist');
                       page.getContent().clickConfigTabConfiguration();
                     })
                     .then(page => {
                       page.getContent().getFormBody().contains('Content List').should('exist');
-                      page.getContent().submitCloneWidget();
+                      page.getContent().submitCloneWidget(demoPage.code);
                     })
                     .then(page => {
                       cy.wrap(clonedWidgetCode).as('widgetToBeDeleted');
-                      cy.validateUrlPathname(`/page/configuration/${demoPage.code}`);
                       page.getContent().getPageStatusIcon()
                           .should('have.class', 'PageStatusIcon--draft')
                           .and('have.attr', 'title').should('eq', 'Published, with pending changes');
@@ -576,10 +552,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 4, 1, 0, widgetType))
-                .then(page => {
-                  cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                  page.getContent().clickAddButtonFromTableRowWithTitle('Sample - About Us');
-                })
+                .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Sample - About Us'))
                 .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Why You Need a Micro Frontend Platform for Kubernetes'))
                 .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Entando and JHipster: How It Works'))
                 .then(page => page.getContent().clickAddButtonFromTableRowWithTitle('Sample Banner'))
@@ -627,11 +600,8 @@ describe('Pages Designer', () => {
                   .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                   .then(page => page.getContent().clickSidebarTab(0))
                   .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 4, 1, 0, widgetType))
-                  .then(page => {
-                    cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                    page.getContent().clickAddButtonFromTableRowWithTitle(firstContentDescription);
-                  })
-                  .then(page => page.getContent().clickAddButtonFromTableRowWithTitle(secondContentDescription, true))
+                  .then(page => page.getContent().clickAddButtonFromTableRowWithTitle(firstContentDescription))
+                  .then(page => page.getContent().clickAddButtonFromTableRowWithTitle(secondContentDescription))
                   .then(page => page.getContent().getModelIdDropdownByIndex(0).then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
                   .then(page => page.getContent().getModelIdDropdownByIndex(1).then(select => page.getContent().select(select, 'Banner - Text, Image, CTA')))
                   .then(page => page.getContent().confirmConfig(demoPage.code))
@@ -658,7 +628,8 @@ describe('Pages Designer', () => {
 
     describe('CMS Content Search Query Widget', () => {
 
-      const widgetType = 'content_viewer_list';
+      const widgetType   = 'content_viewer_list';
+      const widgetConfig = 'listViewerConfig';
 
       it([Tag.GTS, Tag.SMOKE, 'ENG-2500'], 'Basic add with widget settings', function () {
         cy.wrap(this.pageToBeDeleted).then(demoPage =>
@@ -669,7 +640,6 @@ describe('Pages Designer', () => {
               .then(page => page.getContent().clickSidebarTab(0))
               .then(page => page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 0, 3, 1, 0, widgetType))
               .then(page => {
-                cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
                 page.getContent().getContentTypeField().then(select => page.getContent().select(select, 'Banner'));
                 page.getContent().getPublishSettingsAccordButton().click();
                 page.getContent().getMaxTotalElemDropdown().then(select => page.getContent().select(select, '10'));
@@ -677,7 +647,6 @@ describe('Pages Designer', () => {
               .then(page => page.getContent().confirmConfig(demoPage.code))
               .then(page => {
                 cy.wrap(4).as('widgetToBeRemovedFromPage');
-                cy.validateToast(page);
                 page.getContent().getDesignerGridFrame(1, 0).children(htmlElements.div).children()
                     .should(contents => expect(contents).to.have.prop('tagName').to.equal('DIV'))
                     .then(contents => {
@@ -725,14 +694,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -746,10 +713,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openSettings(widgetType))
-                .then(page => {
-                  cy.validateUrlPathname(`/widget/config/${widgetType}/page/${demoPage.code}/frame/4`);
-                  page.getContent().publishSettings();
-                })
+                .then(page => page.getContent().publishSettings())
                 .then(page => page.getContent().getMaxElemForItemDropdown().then(select => page.getContent().select(select, '6')))
                 .then(page => page.getContent().getMaxTotalElemDropdown().then(select => page.getContent().select(select, '10')))
                 .then(page => page.getContent().confirmConfig(demoPage.code))
@@ -773,8 +737,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails()));
         });
 
         it([Tag.GTS, Tag.SMOKE, 'ENG-2500', 'ENG-4277'], 'Save As Widget', function () {
@@ -785,20 +748,18 @@ describe('Pages Designer', () => {
                     .then(page => page.getContent().clickSidebarTab(1))
                     .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                     .then(page => page.getContent().clickSidebarTab(0))
-                    .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openSaveAs())
+                    .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openSaveAs(4, demoPage.code, widgetConfig))
                     .then(page => {
-                      cy.validateUrlPathname(`/page/${demoPage.code}/clone/4/widget/${widgetType}/listViewerConfig`);
                       page.getContent().fillWidgetForm('Mio Widget', clonedWidgetCode, '', 'Free Access');
                       page.getContent().getConfigTabConfiguration().should('exist');
                       page.getContent().clickConfigTabConfiguration();
                     })
                     .then(page => {
                       page.getContent().getFormBody().contains('Publishing settings').should('exist');
-                      page.getContent().submitCloneWidget();
+                      page.getContent().submitCloneWidget(demoPage.code);
                     })
                     .then(page => {
                       cy.wrap(clonedWidgetCode).as('widgetToBeDeleted');
-                      cy.validateUrlPathname(`/page/configuration/${demoPage.code}`);
                       page.getContent().getPageStatusIcon()
                           .should('have.class', 'PageStatusIcon--draft')
                           .and('have.attr', 'title').should('eq', 'Published, with pending changes');
@@ -872,14 +833,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -892,8 +851,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails()));
         });
 
       });
@@ -957,14 +915,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -977,8 +933,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails()));
         });
 
       });
@@ -1041,14 +996,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -1061,8 +1014,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails()));
         });
 
       });
@@ -1125,14 +1077,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -1145,8 +1095,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails()));
         });
 
       });
@@ -1211,14 +1160,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -1231,8 +1178,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails()));
         });
 
       });
@@ -1297,14 +1243,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -1317,8 +1261,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails()));
         });
 
       });
@@ -1427,14 +1370,12 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(0))
                 .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
                 .then(page => {
-                  cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                   page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                   page.getContent().editFormFields({group: 'Administrator'});
                   page.getContent().submitForm();
                 })
                 .then(() => {
                   cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                  cy.validateUrlPathname('/widget');
                   cy.widgetsController(widgetType).then(controller =>
                     controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
                 }));
@@ -1447,8 +1388,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails()));
         });
 
       });
@@ -1513,14 +1453,12 @@ describe('Pages Designer', () => {
               .then(page => page.getContent().clickSidebarTab(0))
               .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openEdit())
               .then(page => {
-                cy.validateUrlPathname(`/widget/edit/${widgetType}`);
                 page.getContent().getGroupDropdown().find(htmlElements.input).should('have.value', 'Free Access');
                 page.getContent().editFormFields({group: 'Administrator'});
                 page.getContent().submitForm();
               })
               .then(() => {
                 cy.wrap({code: widgetType, group: 'free'}).as('widgetToBeReverted');
-                cy.validateUrlPathname('/widget');
                 cy.widgetsController(widgetType).then(controller =>
                   controller.getWidget().then(response => expect(response.body.payload.group).to.eq('administrators')));
               });
@@ -1534,8 +1472,7 @@ describe('Pages Designer', () => {
                 .then(page => page.getContent().clickSidebarTab(1))
                 .then(page => page.getContent().designPageFromSidebarPageTreeTable(demoPage.code))
                 .then(page => page.getContent().clickSidebarTab(0))
-                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails())
-                .then(() => cy.validateUrlPathname(`/widget/detail/${widgetType}`)));
+                .then(page => page.getContent().getDesignerGridFrameKebabMenu(1, 0, widgetType).open().openDetails()));
         });
 
       });

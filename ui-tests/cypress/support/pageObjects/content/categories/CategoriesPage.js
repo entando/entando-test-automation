@@ -10,11 +10,8 @@ export default class CategoriesPage extends AdminContent {
 
   categoriesTree = `${htmlElements.table}[id="categoryTree"]`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.categoriesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'categoriesPageLoadingGET', '/viewTree.action*'));
-    cy.get(button).click();
-    cy.wait('@categoriesPageLoadingGET');
+    super.loadPage(button, '/Category/viewTree.action');
   }
 
   getContents() {

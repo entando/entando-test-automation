@@ -22,13 +22,8 @@ export default class ManagementPage extends AppContent {
   table        = `${htmlElements.table}.UserListTable__table`;
   tableAlert   = `${htmlElements.div}.alert`;
 
-  static openPage(button, fromAddPage = false) {
-    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'usersManagementPageLoadingGET', '?page=1&pageSize=10'));
-    cy.get(button).click();
-    cy.wait('@usersManagementPageLoadingGET');
-    if (fromAddPage) {
-      cy.wait(['@usersManagementPageLoadingGET', '@usersManagementPageLoadingGET', '@usersManagementPageLoadingGET']);
-    }
+  static openPage(button, waitDOM = true) {
+    super.loadPage(button, '/user', false, waitDOM);
   }
 
   getSearchForm() {
@@ -95,9 +90,7 @@ export default class ManagementPage extends AppContent {
   }
 
   submitSearch() {
-    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'userSearchGET', '?sort=*'));
-    this.getSearchButton().then(button => this.click(button));
-    cy.wait('@userSearchGET');
+    this.getSearchButton().then(button => ManagementPage.openPage(button));
     return cy.get('@currentPage');
   }
 
@@ -150,8 +143,8 @@ class UsersKebabMenu extends KebabMenu {
     return cy.wrap(new AppPage(AuthorizationPage)).as('currentPage');
   }
 
-  openEditProfile(profileType) {
-    this.getEditProfile().then(button => EditProfilePage.openPage(button, profileType));
+  openEditProfile() {
+    this.getEditProfile().then(button => EditProfilePage.openPage(button, this.code));
     return cy.wrap(new AppPage(EditProfilePage)).as('currentPage');
   }
 
@@ -160,10 +153,10 @@ class UsersKebabMenu extends KebabMenu {
     return cy.wrap(new AppPage(ViewProfilePage)).as('currentPage');
   }
 
-  clickDelete(loadOnConfirm = true) {
+  clickDelete() {
     this.getDelete().then(button => this.parent.click(button));
     this.parent.parent.getDialog().setBody(DeleteDialog);
-    if (loadOnConfirm) this.parent.parent.getDialog().getBody().setLoadOnConfirm(ManagementPage);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(ManagementPage);
     return cy.get('@currentPage');
   }
 

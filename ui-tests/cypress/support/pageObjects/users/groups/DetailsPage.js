@@ -5,11 +5,7 @@ import AppContent from '../../app/AppContent.js';
 export default class DetailsPage extends AppContent {
 
   static openPage(button, code) {
-    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupDetailsLoadingGET', `/${code}`));
-    cy.groupsController().then(controller => controller.intercept({method: 'GET'}, 'groupDetailsReferencesGET', `/${code}/references/PageManager`));
-    cy.get(button).click();
-    cy.wait('@groupDetailsLoadingGET')
-    cy.wait('@groupDetailsReferencesGET');
+    super.loadPage(button, `/group/view/${code}`);
   }
 
   getDetailsTable() {

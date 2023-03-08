@@ -10,11 +10,8 @@ export default class NestedAttributePage extends AdminContent {
 
   continueButton = `${htmlElements.button}[type="submit"][value="Submit"].btn.btn-primary.pull-right`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'nestedAttributePageLoadingGET', `/ListAttribute/configureListElement.action`));
-    cy.get(button).click();
-    cy.wait('@nestedAttributePageLoadingGET');
+    super.loadPage(button, '/Entity/ListAttribute/configureListElement.action');
   }
 
   getContinueButton() {

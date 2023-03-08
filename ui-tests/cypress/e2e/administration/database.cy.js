@@ -19,7 +19,6 @@ describe('Database', () => {
     createBackup().then(backup =>
         openDatabasePage()
             .then(page => {
-              cy.validateUrlPathname('/database');
               page.getContent().getCreateBackupButton().should('exist').and('be.visible');
               page.getContent().getDatabaseListTable().should('exist').and('be.visible');
               page.getContent().getTableHeaders().children(htmlElements.th).should('have.length', 4)
@@ -33,7 +32,6 @@ describe('Database', () => {
         openDatabasePage()
             .then(page => page.getContent().openRowDetails(backup.code))
             .then(page => {
-              cy.validateUrlPathname(`/database/report/${backup.code}`);
               page.getContent().getDescriptionDataTitles().should('have.length', 2)
                   .then(elements => cy.validateListTexts(elements, ['Date', 'Required time']));
               page.getContent().getComponentTable().should('exist').and('be.visible');
@@ -45,7 +43,6 @@ describe('Database', () => {
     openDatabasePage()
         .then(page => page.getContent().openCreateBackup())
         .then(page => {
-          cy.validateUrlPathname('/database/add');
           page.getContent().getTablesList().should('exist').and('be.visible');
           page.getContent().getTablesList().children(htmlElements.li).should('have.length', 9);
           page.getContent().getBackupNowButton().should('exist').and('be.visible');
@@ -67,7 +64,6 @@ describe('Database', () => {
           .then(page => page.getContent().createBackup())
           .then(page =>
               getLatestBackupCode().then(backup => {
-                cy.validateUrlPathname('/database');
                 page.getContent().getDatabaseListTable().should('exist').and('be.visible');
                 page.getContent().getTableRow(backup.code).should('exist').and('be.visible');
               }));

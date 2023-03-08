@@ -28,7 +28,6 @@ describe('File browser', () => {
       cy.get('@currentPage')
         .then(page => page.getMenu().getAdministration().open().openFileBrowser())
         .then(page => {
-          cy.validateUrlPathname('/file-browser');
           page.getContent().getFilesTable().should('exist').and('be.visible');
           page.getContent().getTableRows().should('have.length', 2);
           page.getContent().getTableRow('public').should('exist').and('be.visible');
@@ -80,7 +79,6 @@ describe('File browser', () => {
         .then(page => page.getContent().openUploadFilesPage())
         .then(page => {
           if (!Cypress.env('INCLUDE_TAGS') || Cypress.env('INCLUDE_TAGS').split(',').includes('SMOKE')) {
-            cy.validateUrlPathname('/file-browser/upload');
             page.getContent().getUploadFilesForm().should('exist').and('be.visible');
             page.getContent().getUploadFilesInput().should('exist').and('be.visible');
             page.getContent().getCancelButton().should('exist').and('be.visible');
@@ -99,7 +97,6 @@ describe('File browser', () => {
         .then(page => page.getContent().openCreateFolderPage())
         .then(page => {
           if (!Cypress.env('INCLUDE_TAGS') || Cypress.env('INCLUDE_TAGS').split(',').includes('SMOKE')) {
-            cy.validateUrlPathname('/file-browser/create-folder');
             page.getContent().getCreateFolderForm().should('exist').and('be.visible');
             page.getContent().getNameInput().should('exist').and('be.visible');
             page.getContent().getCancelButton().should('exist').and('be.visible');
@@ -118,7 +115,6 @@ describe('File browser', () => {
         .then(page => page.getContent().openCreateTextFilePage())
         .then(page => {
           if (!Cypress.env('INCLUDE_TAGS') || Cypress.env('INCLUDE_TAGS').split(',').includes('SMOKE')) {
-            cy.validateUrlPathname('/file-browser/create-text-file');
             page.getContent().getCreateTextFileForm().should('exist').and('be.visible');
             page.getContent().getNameInput().should('exist').and('be.visible');
             page.getContent().getExtensionSelector().should('exist').and('be.visible');
@@ -232,7 +228,6 @@ describe('File browser', () => {
           .then(page => page.getContent().selectFiles(`cypress/fixtures/upload/${FILE}`))
           .then(page => page.getContent().cancelUpload())
           .then(page => {
-            cy.validateUrlPathname('/file-browser');
             page.getContent().getFilesTable().should('exist').and('be.visible');
             page.getContent()
                 .getTableRows().children(htmlElements.td).contains(FILE)
@@ -249,7 +244,6 @@ describe('File browser', () => {
           .then(page => page.getContent().confirmUpload())
           .then(page => {
             cy.unshiftAlias('@filesToBeDeleted', `/${FILE}`);
-            cy.validateUrlPathname('/file-browser');
             cy.validateToast(page);
             page.getContent().getFilesTable().should('exist').and('be.visible');
             page.getContent().getRowLink(FILE).should('exist').and('be.visible');
@@ -267,7 +261,6 @@ describe('File browser', () => {
           .then(page => page.getContent().getNameInput().then(input => page.getContent().type(input, folder)))
           .then(page => page.getContent().cancel())
           .then(page => {
-            cy.validateUrlPathname('/file-browser');
             page.getContent().getFilesTable().should('exist').and('be.visible');
             page.getContent()
                 .getTableRows().children(htmlElements.td).contains(folder)
@@ -286,7 +279,6 @@ describe('File browser', () => {
           .then(page => page.getContent().save())
           .then(page => {
             cy.unshiftAlias('@foldersToBeDeleted', `/${folder}`);
-            cy.validateUrlPathname('/file-browser');
             cy.validateToast(page);
             page.getContent().getFilesTable().should('exist').and('be.visible');
             page.getContent().getRowLink(folder).should('exist').and('be.visible');
@@ -305,7 +297,6 @@ describe('File browser', () => {
           .then(page => page.getContent().getTextArea().then(textArea => page.getContent().type(textArea, loremIpsum())))
           .then(page => page.getContent().cancel())
           .then(page => {
-            cy.validateUrlPathname('/file-browser');
             page.getContent().getFilesTable().should('exist').and('be.visible');
             page.getContent()
                 .getTableRows().children(htmlElements.td).contains(file)
@@ -328,7 +319,6 @@ describe('File browser', () => {
           .then(page => page.getContent().save())
           .then(page => {
             cy.unshiftAlias('@filesToBeDeleted', `/${file}.txt`);
-            cy.validateUrlPathname('/file-browser');
             cy.validateToast(page);
             page.getContent().getFilesTable().should('exist').and('be.visible');
             cy.get('@previousRows').then(previousRows => page.getContent().getTableRows().should('have.length', previousRows+1));
@@ -403,7 +393,6 @@ describe('File browser', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().goUpFolder())
           .then(page => {
-            cy.validateUrlPathname('/file-browser');
             page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public');
           });
       });
@@ -413,7 +402,6 @@ describe('File browser', () => {
           .then(page => page.getContent().openUploadFilesPage())
           .then(page => page.getContent().goToRootViaBreadCrumbs())
           .then(page => {
-            cy.validateUrlPathname('/file-browser');
             page.getContent().getBreadCrumbsFirstLevelFolder().should('not.exist');
           });
       });
@@ -422,50 +410,35 @@ describe('File browser', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openUploadFilesPage())
           .then(page => page.getContent().goToFirstLevelViaBreadCrumbs())
-          .then(page => {
-            cy.validateUrlPathname('/file-browser');
-            page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public');
-          });
+          .then(page => page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public'));
       });
 
       it([Tag.FEATURE, 'ENG-3297'], 'Navigating out of create folder page to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openCreateFolderPage())
           .then(page => page.getContent().goToRootViaBreadCrumbs())
-          .then(page => {
-            cy.validateUrlPathname('/file-browser');
-            page.getContent().getBreadCrumbsFirstLevelFolder().should('not.exist');
-          });
+          .then(page => page.getContent().getBreadCrumbsFirstLevelFolder().should('not.exist'));
       });
 
       it([Tag.FEATURE, 'ENG-3297', 'ENG-3376'], 'Navigating out of create folder page NOT to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openCreateFolderPage())
           .then(page => page.getContent().goToFirstLevelViaBreadCrumbs())
-          .then(page => {
-            cy.validateUrlPathname('/file-browser');
-            page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public');
-          });
+          .then(page => page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public'));
       });
 
       it([Tag.FEATURE, 'ENG-3297'], 'Navigating out of create text file page to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openCreateTextFilePage())
           .then(page => page.getContent().goToRootViaBreadCrumbs())
-          .then(page => {
-            cy.validateUrlPathname('/file-browser');
-            page.getContent().getBreadCrumbsFirstLevelFolder().should('not.exist');
-          });
+          .then(page => page.getContent().getBreadCrumbsFirstLevelFolder().should('not.exist'));
       });
 
       it([Tag.FEATURE, 'ENG-3297', 'ENG-3376'], 'Navigating out of create text file page NOT to root using breadcrumb', () => {
         cy.get('@currentPage')
           .then(page => page.getContent().openCreateTextFilePage())
           .then(page => page.getContent().goToFirstLevelViaBreadCrumbs())
-          .then(page => {
-            cy.validateUrlPathname('/file-browser');
-            page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public');
-          });
+          .then(page => page.getContent().getBreadCrumbsFirstLevelFolder().should('have.text', 'public'));
       });
 
     });

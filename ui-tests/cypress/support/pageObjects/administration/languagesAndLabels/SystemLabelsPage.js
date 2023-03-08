@@ -26,27 +26,21 @@ export default class SystemLabelsPage extends LanguagesAndLabelsPage {
   labelsPaginationFormForwardButtons   = `${htmlElements.ul}.pagination-pf-forward`;
   labelsPaginationFormPreviousButtons  = `${htmlElements.ul}.pagination-pf-back`;
 
+  static openPage(button) {
+    super.loadPage(button, '/labels-languages', false, true);
+  }
+
   static changePage(page) {
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.labelsController().then(controller => controller.intercept({method: 'GET'}, 'systemLabelsPageLoadingGET', '?*'));
-    cy.realType(`${page}{enter}`);
-    cy.wait(['@languagesPageLoadingGET', '@systemLabelsPageLoadingGET']);
+    cy.realType(`${page}`);
+    this.openPage(null, true);
   }
 
-  static searchPage(button, search) {
-    cy.labelsController().then(controller => controller.intercept({method: 'GET'}, 'systemLabelsPageLoadingGET', `?filters%5B0%5D.attribute=key&filters%5B0%5D.operator=like&filters%5B0%5D.value=${search}*`));
-    if (button) cy.get(button).click();
-    else cy.realType('{enter}');
-    cy.wait('@systemLabelsPageLoadingGET');
-  }
-
-  openSystemLabels() {
-    this.getSystemLabelsTab().click();
-    return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
+  static searchPage(button) {
+    this.openPage(button, true);
   }
 
   openLanguages() {
-    this.getLanguagesTab().click();
+    this.getLanguagesTab().then(button => LanguagesPage.openPage(button));
     return cy.wrap(new AppPage(LanguagesPage)).as('currentPage');
   }
 
@@ -174,14 +168,12 @@ export default class SystemLabelsPage extends LanguagesAndLabelsPage {
   }
 
   clickSearchSubmitButton() {
-    this.getLabelSearchInput().invoke('val')
-        .then(search => this.getSearchSubmitButton().then(button => SystemLabelsPage.searchPage(button, search)));
+    this.getSearchSubmitButton().then(button => SystemLabelsPage.searchPage(button));
     return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
   }
 
   performLabelSearchInput() {
-    this.getLabelSearchInput().invoke('val')
-        .then(search => SystemLabelsPage.searchPage(null, search));
+    SystemLabelsPage.searchPage(null);
     return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
   }
 
@@ -191,12 +183,12 @@ export default class SystemLabelsPage extends LanguagesAndLabelsPage {
   }
 
   navigateToFirstPage() {
-    this.getLabelsTablePaginationFormFirstButton().then(button => LanguagesAndLabelsPage.openPage(button));
+    this.getLabelsTablePaginationFormFirstButton().then(button => LanguagesAndLabelsPage.openPage(button, true));
     return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
   }
 
   navigateToPreviousPage() {
-    this.getLabelsTablePaginationFormPreviousButton().then(button => LanguagesAndLabelsPage.openPage(button));
+    this.getLabelsTablePaginationFormPreviousButton().then(button => LanguagesAndLabelsPage.openPage(button, true));
     return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
   }
 
@@ -207,12 +199,12 @@ export default class SystemLabelsPage extends LanguagesAndLabelsPage {
   }
 
   navigateToNextPage() {
-    this.getLabelsTablePaginationFormNextButton().then(button => LanguagesAndLabelsPage.openPage(button));
+    this.getLabelsTablePaginationFormNextButton().then(button => LanguagesAndLabelsPage.openPage(button, true));
     return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
   }
 
   navigateToLastPage() {
-    this.getLabelsTablePaginationFormLastButton().then(button => LanguagesAndLabelsPage.openPage(button));
+    this.getLabelsTablePaginationFormLastButton().then(button => LanguagesAndLabelsPage.openPage(button, true));
     return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
   }
 
@@ -243,6 +235,7 @@ class LabelsKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDelete().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(SystemLabelsPage);
     return cy.get('@currentPage');
   }
 

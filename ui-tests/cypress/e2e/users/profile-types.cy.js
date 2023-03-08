@@ -25,19 +25,14 @@ describe('Profile Types', () => {
         cy.log(`Add profile type with code ${profileType.code}`);
         page.getContent().openAddProfileTypePage();
       })
+      .then(page => page.getContent().addAndSaveProfileType(profileType.code, profileType.name))
       .then(page => {
-        cy.validateUrlPathname('/profiletype/add');
-        page.getContent().addAndSaveProfileType(profileType.code, profileType.name);
-      })
-      .then(page => {
-        cy.validateUrlPathname(`/profiletype/edit/${profileType.code}`);
         cy.wrap(profileType.code).as('profileTypeToBeDeleted');
         page.getContent().getCodeInput().should('have.value', profileType.code).and('be.disabled');
         page.getContent().getNameInput().should('have.value', profileType.name);
         page.getContent().save();
       })
       .then(page => {
-        cy.validateUrlPathname('/profiletype');
         page.getContent().getTableRow(profileType.code).find(htmlElements.td).eq(0).should('contain.text', profileType.name);
         page.getContent().getTableRow(profileType.code).find(htmlElements.td).eq(1).should('contain.text', profileType.code);
       });
@@ -55,14 +50,10 @@ describe('Profile Types', () => {
           page.getContent().getKebabMenu(profileType.code).open().openEdit();
         })
         .then(page => {
-          cy.validateUrlPathname(`/profiletype/edit/${profileType.code}`);
           page.getContent().getNameInput().then(input => page.getContent().type(input, newProfileTypeName));
           page.getContent().save();
         })
-        .then(page => {
-          cy.validateUrlPathname('/profiletype');
-          page.getContent().getTableRow(profileType.code).find(htmlElements.td).eq(0).should('contain.text', newProfileTypeName);
-        });
+        .then(page => page.getContent().getTableRow(profileType.code).find(htmlElements.td).eq(0).should('contain.text', newProfileTypeName));
       });
     });
   });

@@ -15,11 +15,12 @@ export default class TemplatesPage extends AdminContent {
   filterRow = `${htmlElements.form}[class="form-horizontal"]`;
   searchBtn = `${htmlElements.button}[class="btn btn-primary"]`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'contentTemplatesPageLoadingGET', '/list.action'));
-    cy.get(button).click();
-    cy.wait('@contentTemplatesPageLoadingGET');
+    super.loadPage(button, '/jacms/ContentModel/list.action');
+  }
+
+  static searchTemplate(button) {
+    super.loadPage(button, '/jacms/ContentModel/search.action');
   }
 
   getMain() {
@@ -85,11 +86,7 @@ export default class TemplatesPage extends AdminContent {
   }
 
   clickSearch() {
-    this.getSearchButton().then(button => {
-      cy.contentTemplatesAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'contentTemplatesSearchPOST', '/search.action'));
-      this.click(button);
-      cy.wait('@contentTemplatesSearchPOST');
-    });
+    this.getSearchButton().then(button => TemplatesPage.searchTemplate(button));
     return cy.get('@currentPage');
   }
 
@@ -125,12 +122,12 @@ class TemplatesKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getEdit().then(button => TemplateForm.openEdit(button, this.code));
+    this.getEdit().then(button => TemplateForm.openEdit(button));
     return cy.wrap(new AdminPage(TemplateForm)).as('currentPage');
   }
 
   clickDelete() {
-    this.getDelete().then(button => DeleteAdminPage.openDeleteContentTemplatePage(button, this.code));
+    this.getDelete().then(button => DeleteAdminPage.openDeleteContentTemplatePage(button));
     const deletePage = new AdminPage(DeleteAdminPage);
     deletePage.getContent().setOrigin(this.parent.parent);
     return cy.wrap(deletePage).as('currentPage');

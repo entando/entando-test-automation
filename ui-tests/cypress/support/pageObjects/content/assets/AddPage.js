@@ -11,9 +11,7 @@ export default class AddPage extends AdminContent {
   groupSelector = `${htmlElements.select}[id="mainGroup"]`;
 
   static openPage(button) {
-    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addPageLoadingGet', '/new.action?*'));
-    cy.get(button).click();
-    cy.wait('@addPageLoadingGet');
+    super.loadPage(button, '/jacms/Resource/new.action');
   }
 
   getFileInput() {
@@ -32,13 +30,7 @@ export default class AddPage extends AdminContent {
   }
 
   submit() {
-    this.get()
-        .find(this.addButton)
-        .then(button => {
-          cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'interceptedPOST', '/save.action'));
-          this.click(button);
-          cy.wait('@interceptedPOST');
-        });
+    this.get().find(this.addButton).then(button => AssetsPage.openPage(button));
     return cy.wrap(new AdminPage(AssetsPage)).as('currentPage');
   }
 

@@ -9,7 +9,7 @@ export default class HomePage extends AppPage {
   }
 
   static openPage() {
-    cy.waitForStableDOM();
+    cy.validateUrlPathname('/dashboard');
   }
 
 }

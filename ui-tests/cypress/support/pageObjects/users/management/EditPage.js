@@ -16,9 +16,7 @@ export default class EditPage extends AppContent {
   cancelButton         = `${htmlElements.button}[type=button].btn-default`;
 
   static openPage(button, code) {
-    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'editUserPageLoadingGET', `/${code}`));
-    cy.get(button).click();
-    cy.wait('@editUserPageLoadingGET');
+    super.loadPage(button, `/user/edit/${code}`);
   }
 
   getUsernameInput() {
@@ -53,7 +51,7 @@ export default class EditPage extends AppContent {
   }
 
   submitForm() {
-    this.getSaveButton().then(button => ManagementPage.openPage(button));
+    this.getSaveButton().then(button => ManagementPage.openPage(button, false));
     return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 

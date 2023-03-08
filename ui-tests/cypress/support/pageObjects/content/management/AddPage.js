@@ -29,26 +29,12 @@ export default class AddPage extends AdminContent {
   contentAttrItPane       = `${htmlElements.div}#it_tab`;
   stickyToolbar           = `${htmlElements.div}#sticky-toolbar`;
 
-
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addContentPageLoadingGET', '/createNew.action?*'));
-    cy.get(button).click();
-    cy.wait('@addContentPageLoadingGET');
+    super.loadPage(button, '/jacms/Content/entryContent.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
-  static reloadPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'addContentPageReloadingPOST', '/entryContent.action'));
-    cy.get(button).click();
-    cy.wait('@addContentPageReloadingPOST');
-  }
-
-  //FIXME AdminConsole is not built on REST APIs
-  static editPage(button, code) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'editContentPageReloadingGET', `/edit.action?contentId=${code}`));
-    cy.get(button).click({force: true});
-    cy.wait('@editContentPageReloadingGET');
+  static editPage(button, force = false) {
+    super.loadPage(button, '/jacms/Content/edit.action', force);
   }
 
   getContents() {
@@ -140,7 +126,7 @@ export default class AddPage extends AdminContent {
   }
 
   clickOwnerGroupSetGroupButton() {
-    this.getOwnerGroupSetGroupButton().then(button => AddPage.reloadPage(button));
+    this.getOwnerGroupSetGroupButton().then(button => AddPage.openPage(button));
     return cy.wrap(new AdminPage(AddPage)).as('currentPage');
   }
 

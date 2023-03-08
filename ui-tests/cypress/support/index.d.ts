@@ -116,10 +116,16 @@ declare namespace Cypress {
         validateListTexts(list, values): void;
 
         /**
+         * Validate if the page document has completed state
+         */
+        checkDocumentReadyState(): void;
+
+        /**
          * Validate if the url pathname is as expected
          * @param pathname - the expected url
+         * @param options - facultative options
          */
-        validateUrlPathname(pathname): void;
+        validateUrlPathname(pathname, options?): void;
 
         /**
          * Validate if the toast notification and its message are visible

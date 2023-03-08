@@ -15,10 +15,7 @@ export default class EditPage extends AppContent {
   saveButton   = `${htmlElements.button}[type=submit].btn-primary`;
 
   static openPage(button, code) {
-    cy.rolesController().then(controller => controller.intercept({method: 'GET'}, 'editPageLoadingGET', `/${code}`));
-    cy.permissionsController().then(controller => controller.intercept({method: 'GET'}, 'permissionsLoadingGET', '?page=1&pageSize=0'));
-    cy.get(button).click();
-    cy.wait(['@editPageLoadingGET', '@permissionsLoadingGET']);
+    super.loadPage(button, `/role/edit/${code}`);
   }
 
   getNameInput() {
@@ -61,7 +58,7 @@ export default class EditPage extends AppContent {
   }
 
   submitForm() {
-    this.getSaveButton().then(button => RolesPage.openPage(button));
+    this.getSaveButton().then(button => RolesPage.openPage(button, false));
     return cy.wrap(new AppPage(RolesPage)).as('currentPage');
   }
 

@@ -14,6 +14,10 @@ export default class CreateFolderPage extends FilesBrowserPage {
     super(parent, BrowserPage, UploadFilesPage, CreateFolderPage, CreateTextFilePage);
   }
 
+  static openPage(button) {
+    super.loadPage(button, '/file-browser/create-folder');
+  }
+
   getCreateFolderForm() {
     return this.getContents().find(`${htmlElements.form}.FileBrowserCreateFolder`);
   }
@@ -31,12 +35,12 @@ export default class CreateFolderPage extends FilesBrowserPage {
   }
 
   cancel() {
-    this.getCancelButton().click();
+    this.getCancelButton().then(button => this.browserPage.openPage(button, false));
     return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
   save() {
-    this.getSaveButton().then(button => BrowserPage.openPage(button));
+    this.getSaveButton().then(button => this.browserPage.openPage(button));
     return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 

@@ -14,11 +14,8 @@ export default class CompositeAttributePage extends AdminContent {
   submitButton       = `${htmlElements.button}[type=submit][value="Submit"]`;
   attributeSelect    = `${htmlElements.select}#attributeTypeCode`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'compositeAttributePageLoadingGET', `/CompositeAttribute/entryCompositeAttribute.action`));
-    cy.get(button).click();
-    cy.wait('@compositeAttributePageLoadingGET');
+    super.loadPage(button, '/Entity/CompositeAttribute/entryCompositeAttribute.action');
   }
 
   getAttributeTypeSelect() {

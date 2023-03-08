@@ -12,11 +12,8 @@ export default class AddPage extends AdminContent {
   nameInput  = `${htmlElements.input}#entityTypeDescription`;
   saveButton = `${htmlElements.button}[name="entandoaction:saveEntityType"]`;
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPage(button) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'addContentTypePageLoadingGET', '/initAddEntityType.action?entityManagerName=jacmsContentManager'));
-    cy.get(button).click();
-    cy.wait('@addContentTypePageLoadingGET');
+    super.loadPage(button, '/Entity/initAddEntityType.action');
   }
 
   getCodeInput() {
