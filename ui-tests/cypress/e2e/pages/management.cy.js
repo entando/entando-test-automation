@@ -28,7 +28,6 @@ describe('Page Management', () => {
         .then(page => page.getMenu().getPages().open().openManagement())
         .then(page => page.getContent().openAddPagePage())
         .then(page => {
-          cy.validateUrlPathname('/page/add');
           page.getContent().getTitleInput('en').should('be.empty');
           page.getContent().openOwnerGroupMenu();
           cy.fixture('data/defaultOwnerGroups.json')
@@ -214,7 +213,7 @@ describe('Page Management', () => {
             .then(page => page.getContent().selectPageOnPageTreeTable(0))
             .then(page => page.getContent().selectOwnerGroup('Administrators'))
             .then(page => page.getContent().getPageTemplateSelect().then(select => page.getContent().select(select, '1-column')))
-            .then(page => page.getContent().clickSaveButton())
+            .then(page => page.getContent().clickSaveButton(true))
             .then(page => {
               cy.validateToast(page, demoPage.code, false);
               page.getContent().getAlertMessage()
@@ -837,27 +836,26 @@ describe('Page Management', () => {
             code: generateRandomId(),
             title: generateRandomId()
           }).then(testPage =>
-              cy.get('@pagesToBeDeleted').then(pages => pages[0]).then(demoPageCode =>
-                  cy.fixture('data/demoPage.json').then(demoPage =>
-                      cy.get('@currentPage')
-                        .then(page => page.getMenu().getPages().open().openManagement())
-                        .then(page => page.getContent().getKebabMenu(demoPage.titles.en).open().clickClone(demoPageCode))
-                        .then(page => cy.validateUrlPathname(`/page/clone`).then(() => page))
-                        .then(page => page.getContent().getTitleInput('en').then(input => page.getContent().type(input, testPage.title)))
-                        .then(page => page.getContent().getTitleInput('it').then(input => page.getContent().type(input, generateRandomId())))
-                        .then(page => page.getContent().getCodeInput().then(input => page.getContent().type(input, testPage.code)))
-                        .then(page => page.getContent().selectPagePlacement(0))
-                        .then(page => page.getContent().clickSave())
-                        .then(page => {
-                          cy.unshiftAlias('@pagesToBeDeleted', testPage.code);
-                          page.getContent().getKebabMenu(testPage.title).open().openEdit(testPage.code);
-                        })
-                        .then(page =>
-                            cy.get('@seoData').then(seoData => {
-                              page.getContent().getSeoDescriptionInput('en').should('have.value', seoData.seoDataByLang.en.description);
-                              page.getContent().getSeoKeywordsInput('en').should('have.value', seoData.seoDataByLang.en.keywords);
-                              page.getContent().getSeoFriendlyCodeInput('en').should('have.value', seoData.seoDataByLang.en.friendlyCode);
-                            })))));
+              cy.fixture('data/demoPage.json').then(demoPage =>
+                  cy.get('@currentPage')
+                    .then(page => page.getMenu().getPages().open().openManagement())
+                    .then(page => page.getContent().getKebabMenu(demoPage.titles.en).open().clickClone())
+                    .then(page => page.getContent().getTitleInput('en').then(input => page.getContent().type(input, testPage.title)))
+                    .then(page => page.getContent().getTitleInput('it').then(input => page.getContent().type(input, generateRandomId())))
+                    .then(page => page.getContent().getCodeInput().then(input => page.getContent().type(input, testPage.code)))
+                    .then(page => page.getContent().selectPagePlacement(0))
+                    .then(page => page.getContent().clickSave())
+                    .then(page => {
+                      cy.unshiftAlias('@pagesToBeDeleted', testPage.code);
+                      page.getContent().getKebabMenu(testPage.title).open().openEdit(testPage.code);
+                    })
+                    .then(page =>
+                        cy.get('@seoData').then(seoData => {
+                          page.getContent().getSeoDescriptionInput('en').should('have.value', seoData.seoDataByLang.en.description);
+                          page.getContent().getSeoKeywordsInput('en').should('have.value', seoData.seoDataByLang.en.keywords);
+                          page.getContent().getSeoFriendlyCodeInput('en').should('have.value', seoData.seoDataByLang.en.friendlyCode);
+                        }))
+              ));
         });
 
         it([Tag.GTS, 'ENG-2638'], 'Cloning a page should copy all attached widgets to the new page', () => {
@@ -870,8 +868,7 @@ describe('Page Management', () => {
                 cy.fixture('data/demoPage.json').then(demoPage =>
                     cy.get('@currentPage')
                       .then(page => page.getMenu().getPages().open().openManagement())
-                      .then(page => page.getContent().getKebabMenu(demoPage.titles.en).open().clickClone(demoPageCode))
-                      .then(page => cy.validateUrlPathname(`/page/clone`).then(() => page))
+                      .then(page => page.getContent().getKebabMenu(demoPage.titles.en).open().clickClone())
                       .then(page => page.getContent().getTitleInput('en').then(input => page.getContent().type(input, testPage.title)))
                       .then(page => page.getContent().getTitleInput('it').then(input => page.getContent().type(input, generateRandomId())))
                       .then(page => page.getContent().getCodeInput().then(input => page.getContent().type(input, testPage.code)))

@@ -164,7 +164,7 @@ export default class AssetAttribute extends AttributeFormField {
             });
       }
     }
-    cy.waitForStableDOM();
+    cy.waitForStableDOM({pollInterval: 1000});
     if (metadata) {
       this.fillMetadata(metadata, true);
     }

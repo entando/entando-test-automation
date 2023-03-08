@@ -14,8 +14,7 @@ export default class AddPage extends AppContent {
   saveButton   = `${htmlElements.button}[type=submit].btn-primary`;
 
   static openPage(button) {
-    cy.get(button).click();
-    cy.validateUrlPathname('/group/add');
+    super.loadPage(button, '/group/add');
   }
 
   getNameInput() {

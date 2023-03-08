@@ -13,15 +13,11 @@ export default class CategoriesForm extends AdminContent {
   saveButton        = `${htmlElements.button}[type="submit"]`;
 
   static openAddPage(button) {
-    cy.categoriesAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'addCategoryPageLoadingGET', '/new.action'));
-    cy.get(button).click();
-    cy.wait('@addCategoryPageLoadingGET');
+    super.loadPage(button, '/Category/new.action');
   }
 
   static openEditPage(button) {
-    cy.categoriesAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'editCategoryPageLoadingPOST', '/viewTree.action'));
-    cy.get(button).click();
-    cy.wait('@editCategoryPageLoadingPOST');
+    super.loadPage(button, '/Category/viewTree.action', false, true);
   }
 
   getTitleItInput() {

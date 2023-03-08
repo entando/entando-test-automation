@@ -15,25 +15,16 @@ export default class AttributePage extends AdminContent {
   nestedAttributeType = `${htmlElements.select}#listNestedType`;
   continueButton      = `${htmlElements.button}.btn.btn-primary.pull-right`;
 
-  //FIXME AdminConsole is not built on REST APIs
-  static openPage(button, code) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'attributePageLoadingGET', `/Attribute/addAttribute.action?attributeTypeCode=${code}`));
-    cy.get(button).click();
-    cy.wait('@attributePageLoadingGET');
+  static openPage(button) {
+    super.loadPage(button, '/Entity/Attribute/addAttribute.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
-  static openPageFromEdit(button, code) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'GET' }, 'attributePageLoadingGET', `/Attribute/editAttribute.action?attributeName=${code}`));
-    cy.get(button).click();
-    cy.wait('@attributePageLoadingGET');
+  static openPageFromEdit(button) {
+    super.loadPage(button, '/Entity/Attribute/editAttribute.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
   static openPageFromComposite(button) {
-    cy.contentTypesAdminConsoleController().then(controller => controller.intercept({ method: 'POST' }, 'attributePageLoadingPOST', `/CompositeAttribute/saveCompositeAttribute.action`));
-    cy.get(button).click();
-    cy.wait('@attributePageLoadingPOST');
+    super.loadPage(button, '/Entity/CompositeAttribute/saveCompositeAttribute.action');
   }
 
   getContents() {

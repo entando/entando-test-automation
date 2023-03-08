@@ -3,18 +3,12 @@ import AdminPage    from '../../app/AdminPage';
 
 export default class ResultsPage extends AdminContent {
 
-  //FIXME AdminConsole is not built on REST APIs
   static openConfirmActionPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'viewActionPOST', '/search.action'));
-    cy.get(button).click();
-    cy.wait('@viewActionPOST');
+    super.loadPage(button, '/jacms/Content/search.action');
   }
 
-  //FIXME AdminConsole is not built on REST APIs
-  static openViewResultsPage(button) {
-    cy.contentsAdminConsoleController().then(controller => controller.intercept({method: 'POST'}, 'resultsLoadingPOST', '/Bulk/*'));
-    cy.get(button).click();
-    cy.wait('@resultsLoadingPOST');
+  static openViewResultsPage(button, action) {
+    super.loadPage(button, `/jacms/Content/Bulk/${action}.action`);
   }
 
   getActionOnContent() {
@@ -22,8 +16,8 @@ export default class ResultsPage extends AdminContent {
                .find(`.blank-slate-pf-main-action > .btn`);
   }
 
-  submit() {
-    this.getActionOnContent().then(button => ResultsPage.openViewResultsPage(button));
+  submit(action) {
+    this.getActionOnContent().then(button => ResultsPage.openViewResultsPage(button, action));
     return cy.wrap(new AdminPage(ResultsPage)).as('currentPage');
   }
 

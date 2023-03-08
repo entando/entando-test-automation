@@ -53,7 +53,7 @@ export default class AdministrationAppMenu extends SubMenu {
   }
 
   openFileBrowser() {
-    this.getFileBrowser().then(button => BrowserPage.openPage(button));
+    this.getFileBrowser().then(button => BrowserPage.openPage(button, false));
     return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
@@ -68,7 +68,7 @@ export default class AdministrationAppMenu extends SubMenu {
   }
 
   openReloadConfiguration() {
-    this.getReloadConfiguration().click();
+    this.getReloadConfiguration().then(button => ReloadConfigurationPage.openPage(button));
     return cy.wrap(new AppPage(ReloadConfigurationPage)).as('currentPage');
   }
 

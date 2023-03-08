@@ -49,12 +49,7 @@ export default class Profile extends AppContent {
   settingsSaveBtn                = `${htmlElements.button}[type=submit]`;
 
   static openPage(button) {
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.usersController().then(controller => controller.intercept({method: 'GET'}, 'myGroupsPageLoadingGET', '/myGroups'));
-    cy.myProfileTypeController().then(controller => controller.intercept({method: 'GET'}, 'myProfileTypePageLoadingGET'));
-    cy.myUserProfileController().then(controller => controller.intercept({method: 'GET'}, 'myUserProfilePageLoadingGET'));
-    cy.get(button).click();
-    cy.wait(['@languagesPageLoadingGET', '@myGroupsPageLoadingGET', '@myProfileTypePageLoadingGET', '@myUserProfilePageLoadingGET']);
+    super.loadPage(button, '/myProfile');
   }
 
   getContents() {

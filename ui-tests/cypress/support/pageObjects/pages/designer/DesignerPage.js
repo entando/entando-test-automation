@@ -57,11 +57,16 @@ export default class DesignerPage extends AppContent {
   };
 
   static openPage(button, code = 'homepage') {
-    cy.seoPagesController().then(controller => controller.intercept({method: 'GET'}, 'seoPagesPageLoadingGET', `/${code}`));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'pagePageLoadingGET', `/${code}?status=draft`));
-    cy.get(button).click();
-    cy.wait(['@seoPagesPageLoadingGET', '@pagePageLoadingGET']);
-    cy.waitForStableDOM();
+    super.loadPage(button, `/page/configuration/${code}`, false, true);
+  }
+
+  static confirmConfig(button, code = 'homepage') {
+    cy.get('@currentPage').then(page => {
+      cy.get(button).click();
+      cy.validateUrlPathname(`/page/configuration/${code}`);
+      cy.validateToast(page);
+      cy.waitForStableDOM();
+    });
   }
 
   getMainContainer() {
@@ -235,6 +240,7 @@ export default class DesignerPage extends AppContent {
           cy.pagesController().then((controller => controller.intercept({method: 'PUT'}, 'pageStatusChanged', `/${code}/status`)));
           cy.get(button).click();
           cy.wait('@pageStatusChanged');
+          cy.waitForStableDOM();
         });
     return cy.get('@currentPage');
   }
@@ -243,14 +249,7 @@ export default class DesignerPage extends AppContent {
     this.getSidebarTabs()
         .children(htmlElements.li).eq(tabPos)
         .then(button => {
-          if (tabPos === 1) {
-            cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepagePageLoadingGET', '/homepage?status=draft'));
-            cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepageChildrenPageLoadingGET', '?parentCode=homepage'));
-            cy.get(button).click();
-            cy.wait(['@homepagePageLoadingGET', '@homepageChildrenPageLoadingGET']);
-          } else {
-            cy.get(button).click();
-          }
+          cy.get(button).click();
           cy.waitForStableDOM();
         });
     return cy.get('@currentPage');
@@ -275,24 +274,24 @@ export default class DesignerPage extends AppContent {
     return cy.get('@currentPage');
   }
 
-  dragConfigurableWidgetToGrid(pageCode, widgetSection, widgetPos, gridRow, gridCol, widgetCode) {
+  dragConfigurableWidgetToGrid(page, widgetSection, widgetPos, gridRow, gridCol, widgetCode) {
     this.dragWidgetToGrid(widgetSection, widgetPos, gridRow, gridCol);
-    const WidgetConfigPage = this.gatherWidgetConfigPage(pageCode, widgetCode);
+    const WidgetConfigPage = this.gatherWidgetConfigPage(page, widgetCode, widgetPos);
     return cy.wrap(new AppPage(WidgetConfigPage)).as('currentPage');
   }
 
-  gatherWidgetConfigPage(pageCode, widgetCode) {
+  gatherWidgetConfigPage(pageCode, widgetCode, widgetPos) {
     const {CMS_WIDGETS} = DesignerPage;
     switch (widgetCode) {
       case CMS_WIDGETS.CONTENT_LIST.code:
-        ContentListWidgetConfigPage.openPage(pageCode);
+        ContentListWidgetConfigPage.openPage(widgetCode, pageCode, widgetPos);
         return ContentListWidgetConfigPage;
       case CMS_WIDGETS.CONTENT_QUERY.code:
-        ContentQueryWidgetConfigPage.openPage(pageCode);
+        ContentQueryWidgetConfigPage.openPage(widgetCode, pageCode, widgetPos);
         return ContentQueryWidgetConfigPage;
       case CMS_WIDGETS.CONTENT.code:
       default:
-        ContentWidgetConfigPage.openPage(pageCode);
+        ContentWidgetConfigPage.openPage(widgetCode, pageCode, widgetPos);
         return ContentWidgetConfigPage;
     }
   }
@@ -348,19 +347,17 @@ class GridFrameKebabMenu extends KebabMenu {
     const {CMS_WIDGETS} = DesignerPage;
     switch (widgetCode) {
       case CMS_WIDGETS.CONTENT_LIST.code:
-        ContentListWidgetConfigPage.settings();
         return ContentListWidgetConfigPage;
       case CMS_WIDGETS.CONTENT_QUERY.code:
-        ContentQueryWidgetConfigPage.settings();
         return ContentQueryWidgetConfigPage;
       case CMS_WIDGETS.CONTENT.code:
       default:
-        ContentWidgetConfigPage.settings();
         return ContentWidgetConfigPage;
     }
   }
+
   openDetails() {
-    this.getDetails().then(button => DetailsPage.openPage(button));
+    this.getDetails().then(button => DetailsPage.openPage(button, this.widgetCode));
     return cy.wrap(new AppPage(DetailsPage)).as('currentPage');
   }
 
@@ -376,8 +373,8 @@ class GridFrameKebabMenu extends KebabMenu {
     return cy.wrap(new AppPage(WidgetConfigPage)).as('currentPage');
   }
 
-  openSaveAs() {
-    this.getSaveAs().then(button => MFEWidgetForm.openPage(button, this.widgetCode));
+  openSaveAs(widgetPos, pageCode, widgetConfig) {
+    this.getSaveAs().then(button => MFEWidgetForm.openPage(button, this.widgetCode, pageCode, widgetPos, widgetConfig));
     return cy.wrap(new AppPage(MFEWidgetForm)).as('currentPage');
   }
 

@@ -4,34 +4,26 @@ import AppContent from '../../app/AppContent.js';
 
 import AppPage from '../../app/AppPage.js';
 
-import AddPage      from './AddPage.js';
-import DeleteDialog from '../../app/DeleteDialog';
-import KebabMenu    from '../../app/KebabMenu';
-import ClonePage    from './ClonePage';
-import DesignerPage from '../designer/DesignerPage';
+import AddPage         from './AddPage.js';
+import DeleteDialog    from '../../app/DeleteDialog';
+import KebabMenu       from '../../app/KebabMenu';
+import ClonePage       from './ClonePage';
+import DesignerPage    from '../designer/DesignerPage';
+import {DialogContent} from '../../app/Dialog';
 
 export default class ManagementPage extends AppContent {
 
   static openPage(button) {
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepagePageLoadingGET', '/homepage?status=draft'));
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepageChildrenPageLoadingGET', '?parentCode=homepage'));
-    cy.get(button).click();
-    cy.wait(['@languagesPageLoadingGET', '@homepagePageLoadingGET', '@homepageChildrenPageLoadingGET']);
+    super.loadPage(button, '/page', false, true);
   }
 
-  static searchPage(button, searchType, value) {
-    if (searchType === 'code') cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'searchPageLoadingGET', `/search?sort=code&direction=ASC&pageCodeToken=${value}&page=1&pageSize=100`));
-    else if (searchType === 'name') cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'searchPageLoadingGET', `/search?sort=code&direction=ASC&title=${value.replace(' ', '+')}&page=1&pageSize=100`));
-    else throw new Error('Specify a valid search type!');
-    cy.get(button).click();
-    cy.wait('@searchPageLoadingGET');
+  static searchPage(button) {
+    this.openPage(button);
   }
 
   reloadPage() {
-    cy.pagesController().then(controller => controller.intercept({method: 'GET'}, 'homepageChildrenPageLoadingGET', '?parentCode=homepage'));
     cy.reload();
-    cy.wait('@homepageChildrenPageLoadingGET');
+    ManagementPage.openPage();
     return cy.get('@currentPage');
   }
 
@@ -88,8 +80,8 @@ export default class ManagementPage extends AppContent {
     return cy.get('@currentPage');
   }
 
-  clickSearchButton(searchType, value) {
-    this.getSearchButton().then(button => ManagementPage.searchPage(button, searchType, value));
+  clickSearchButton() {
+    this.getSearchButton().then(button => ManagementPage.searchPage(button));
     return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
@@ -111,7 +103,8 @@ export default class ManagementPage extends AppContent {
           .children(htmlElements.td).eq(0)
           .children(`${htmlElements.button}.PageTree__drag-handle`)
           .drag(row, {force: true, position: pos});
-      this.parent.getDialog().setBody(DeleteDialog); //TODO validate for what else this dialog is used and rename it accordingly
+      this.parent.getDialog().setBody(DialogContent);
+      this.parent.getDialog().getBody().setLoadOnConfirm(ManagementPage);
     });
     return cy.get('@currentPage');
   }
@@ -194,26 +187,29 @@ class PagesKebabMenu extends KebabMenu {
     return cy.wrap(new AppPage(DesignerPage)).as('currentPage');
   }
 
-  clickClone(code) {
-    this.getClone().then(button => ClonePage.openPage(button, code));
+  clickClone() {
+    this.getClone().then(button => ClonePage.openPage(button));
     return cy.wrap(new AppPage(ClonePage)).as('currentPage');
   }
 
   clickPublish() {
     this.getPublish().click();
-    this.parent.parent.getDialog().setBody(DeleteDialog); //TODO validate for what else this dialog is used and rename it accordingly
+    this.parent.parent.getDialog().setBody(DialogContent);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(ManagementPage);
     return cy.get('@currentPage');
   }
 
   clickUnpublish() {
     this.getUnpublish().click();
-    this.parent.parent.getDialog().setBody(DeleteDialog); //TODO validate for what else this dialog is used and rename it accordingly
+    this.parent.parent.getDialog().setBody(DialogContent);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(ManagementPage);
     return cy.get('@currentPage');
   }
 
   clickDelete() {
     this.getDelete().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(ManagementPage);
     return cy.get('@currentPage');
   }
 

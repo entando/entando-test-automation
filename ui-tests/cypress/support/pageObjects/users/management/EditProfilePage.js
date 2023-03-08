@@ -15,10 +15,8 @@ export default class EditProfilePage extends AppContent {
   profilePictureInput = `${htmlElements.input}[name=profilepicture]#profilepicture`;
   saveButton          = `${htmlElements.button}[type=submit].btn-primary`;
 
-  static openPage(button, profileType) {
-    cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'editProfilePageLoadingGET', `/${profileType}`));
-    cy.get(button).click();
-    cy.wait('@editProfilePageLoadingGET');
+  static openPage(button, code) {
+    super.loadPage(button, `/userprofile/${code}`);
   }
 
   getProfileTypeSelect() {
@@ -52,14 +50,12 @@ export default class EditProfilePage extends AppContent {
   }
 
   selectProfileType(value) {
-    cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'selectProfileTypeLoadingGET', `/${value}`));
     this.getProfileTypeSelect().then(input => this.select(input, value));
-    cy.wait('@selectProfileTypeLoadingGET');
     return cy.get('@currentPage');
   }
 
   submitForm() {
-    this.getSaveButton().then(button => ManagementPage.openPage(button));
+    this.getSaveButton().then(button => ManagementPage.openPage(button, false));
     return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 

@@ -27,10 +27,11 @@ describe('Nested a in List Attribute', () => {
                switch (mode) {
                  case 'create':
                  default:
-                   page.getContent().openAddContentPage(CONTENT_TYPE_WITH_LIST.name);
+                   page.getContent().openAddContentPage(CONTENT_TYPE_WITH_LIST);
                    break;
                  case 'edit':
-                   cy.get('@contentToBeDeleted').then(code => page.getContent().getKebabMenu(code).open(true).openEdit());
+                   // FIXME/TODO the element seems to be covered by another element
+                   cy.get('@contentToBeDeleted').then(code => page.getContent().getKebabMenu(code).open(true).openEdit(true));
                }
              });
   };

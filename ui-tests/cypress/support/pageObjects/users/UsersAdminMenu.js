@@ -44,12 +44,12 @@ export default class UsersAdminMenu extends SubMenu {
   }
 
   openManagement() {
-    this.getManagement().then(button => ManagementPage.openPage(button));
+    this.getManagement().then(button => ManagementPage.openPage(button, false));
     return cy.wrap(new AppPage(ManagementPage)).as('currentPage');
   }
 
   openRoles() {
-    this.getRoles().then(button => RolesPage.openPage(button));
+    this.getRoles().then(button => RolesPage.openPage(button, false));
     return cy.wrap(new AppPage(RolesPage)).as('currentPage');
   }
 

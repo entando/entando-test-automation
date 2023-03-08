@@ -6,9 +6,14 @@ Cypress.Commands.add('validateListTexts', (list, values) => {
   }
 });
 
-Cypress.Commands.add('validateUrlPathname', (pathname, options = {portalUI: false}) => {
-  const path = options.portalUI ? 'portalUIPath' : 'basePath';
+Cypress.Commands.add('checkDocumentReadyState', () => {
+  cy.window().its('document.readyState').should('equal', 'complete');
+});
+
+Cypress.Commands.add('validateUrlPathname', (pathname, options = {portalUI: false, adminConsole: false}) => {
+  const path = options.portalUI ? 'portalUIPath' : options.adminConsole ? 'adminConsolePath' : 'basePath';
   cy.location('pathname').should('eq', Cypress.config(path) + pathname);
+  cy.checkDocumentReadyState();
 });
 
 Cypress.Commands.add('validateToast', (page, text = null, isOk = true) => {

@@ -15,9 +15,7 @@ export default class AddPage extends AppContent {
   saveButton   = `${htmlElements.button}[type=submit].btn-primary`;
 
   static openPage(button) {
-    cy.permissionsController().then(controller => controller.intercept({method: 'GET'}, 'addPageLoadingGET', '?page=1&pageSize=0'));
-    cy.get(button).click();
-    cy.wait('@addPageLoadingGET');
+    super.loadPage(button, '/role/add');
   }
 
   getNameInput() {

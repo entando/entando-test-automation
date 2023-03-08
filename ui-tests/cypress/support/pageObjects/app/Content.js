@@ -2,6 +2,13 @@ import {htmlElements, WebElement} from '../WebElement.js';
 
 export default class Content extends WebElement {
 
+  static loadPage(button, pathname, force = false, waitDOM = false) {
+    if (button) cy.get(button).click({force: force});
+    else cy.realType('{enter}');
+    Object.getPrototypeOf(this.prototype).constructor.name === 'AdminContent' ? cy.validateUrlPathname(pathname, {adminConsole: true}) : cy.validateUrlPathname(pathname);
+    if (waitDOM) cy.waitForStableDOM();
+  }
+
   getInputError(input) {
     return cy.get(input)
              .parent().parent()

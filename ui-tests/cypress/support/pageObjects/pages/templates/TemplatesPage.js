@@ -12,11 +12,17 @@ import DetailsPage  from './DetailsPage.js';
 export default class TemplatesPage extends AppContent {
   filterRow = `${htmlElements.div}.row`;
 
-  static openPage(button) {
-    cy.pageTemplatesController().then(controller => controller.intercept({method: 'GET'}, 'templatesPageLoadingGET', '?*'));
-    if (button) cy.get(button).click();
-    else cy.realType('{enter}');
-    cy.wait('@templatesPageLoadingGET');
+  static openPage(button, waitDOM = true) {
+    super.loadPage(button, '/page-template', false, waitDOM);
+  }
+
+  static changePage(button) {
+    this.openPage(button, true);
+  }
+
+  static goToPage(page) {
+    cy.realType(`${page}`);
+    this.openPage(null, true);
   }
 
   getTable() {
@@ -54,7 +60,7 @@ export default class TemplatesPage extends AppContent {
   }
 
   openAddPage() {
-    this.getAddButton().click({ force: true });
+    this.getAddButton().then(button => AddPage.openPage(button));
     return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 }
@@ -110,12 +116,12 @@ class TemplatesKebabMenu extends KebabMenu {
   }
 
   openEdit() {
-    this.getEditButton().then(button => AddPage.openEditClonePage(button, this.code));
+    this.getEditButton().then(button => AddPage.openPage(button, this.code, 'edit'));
     return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
   openClone() {
-    this.getCloneButton().then(button => AddPage.openEditClonePage(button, this.code));
+    this.getCloneButton().then(button => AddPage.openPage(button, this.code, 'clone', true));
     return cy.wrap(new AppPage(AddPage)).as('currentPage');
   }
 
@@ -127,6 +133,7 @@ class TemplatesKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDeleteButton().click();
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(TemplatesPage);
     return cy.get('@currentPage');
   }
 }

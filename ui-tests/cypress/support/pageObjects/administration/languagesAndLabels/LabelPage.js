@@ -10,12 +10,7 @@ import LanguagesAndLabelsPage from './LanguagesAndLabelsPage';
 export default class LabelPage extends AppContent {
 
   static openPage(button, code = null) {
-    if (code) cy.labelsController().then(controller => controller.intercept({method: 'GET'}, 'addLabelPageLoadingGET', `/${code}`));
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.labelsController().then(controller => controller.intercept({method: 'GET'}, 'systemLabelsPageLoadingGET', '?*'));
-    cy.get(button).click();
-    if (code) cy.wait(['@addLabelPageLoadingGET', '@languagesPageLoadingGET', '@systemLabelsPageLoadingGET']);
-    else cy.wait(['@languagesPageLoadingGET', '@systemLabelsPageLoadingGET']);
+    !code ? super.loadPage(button, '/labels-languages/add') : super.loadPage(button, `/labels-languages/edit/${code}`);
   }
 
   getForm() {
@@ -46,7 +41,7 @@ export default class LabelPage extends AppContent {
   }
 
   save() {
-    this.getSaveButton().then(button => LanguagesAndLabelsPage.openPage(button));
+    this.getSaveButton().then(button => LanguagesAndLabelsPage.openPage(button, true));
     return cy.wrap(new AppPage(SystemLabelsPage)).as('currentPage');
   }
 

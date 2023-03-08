@@ -18,10 +18,8 @@ export default class RolesPage extends AppContent {
   pageCol  = `${htmlElements.div}.col-md-12`;
   pageLink = `${htmlElements.a}`;
 
-  static openPage(button) {
-    cy.rolesController().then(controller => controller.intercept({method: 'GET'}, 'rolesPageLoadingGET', '?page=1&pageSize=10'));
-    cy.get(button).click();
-    cy.wait('@rolesPageLoadingGET');
+  static openPage(button, waitDOM = true) {
+    super.loadPage(button, '/role', false, waitDOM);
   }
 
   getRolesTable() {
@@ -107,6 +105,7 @@ class RolesKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDelete().then(button => this.parent.click(button));
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(RolesPage);
     return cy.get('@currentPage');
   }
 

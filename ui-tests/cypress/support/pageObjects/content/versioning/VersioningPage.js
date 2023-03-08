@@ -7,11 +7,11 @@ export default class VersioningPage extends AdminContent {
   searchDescInput = `${htmlElements.input}.form-control`;
 
   static openPage(button) {
-    cy.versioningController()
-      .then(controller =>
-          controller.intercept({method: 'GET'}, 'contentVersioningPageLoadingGET', '/list.action'));
-    cy.get(button).click();
-    cy.wait('@contentVersioningPageLoadingGET');
+    super.loadPage(button, '/jpversioning/Content/Versioning/list.action');
+  }
+
+  static search(button) {
+    super.loadPage(button, '/jpversioning/Content/Versioning/search.action');
   }
 
   getSearchForm() {
@@ -30,14 +30,7 @@ export default class VersioningPage extends AdminContent {
   }
 
   submitSearch() {
-    this.getSearchSubmitButton()
-        .then(button => {
-          cy.versioningController()
-            .then(controller =>
-                controller.intercept({method: 'POST'}, 'submitSearch', '/search.action'));
-          cy.get(button).click();
-          cy.wait('@submitSearch');
-        });
+    this.getSearchSubmitButton().then(button => VersioningPage.search(button));
     return cy.get('@currentPage');
   }
 

@@ -15,9 +15,7 @@ export default class AddDatabasePage extends AppContent {
   goBackButton      = `${htmlElements.button}.AddDatabaseListTable__goto-list`;
 
   static openPage(button) {
-    cy.databaseController().then(controller => controller.intercept({method: 'GET'}, 'addDatabasePageLoadingGET', '/initBackup'));
-    cy.get(button).click();
-    cy.wait('@addDatabasePageLoadingGET');
+    super.loadPage(button, '/database/add');
   }
 
   getTablesList() {

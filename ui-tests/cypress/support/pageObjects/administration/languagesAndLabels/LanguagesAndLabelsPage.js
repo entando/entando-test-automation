@@ -6,13 +6,8 @@ export default class LanguagesAndLabelsPage extends AppContent {
 
   languageAndLabelsTabList = `${htmlElements.ul}.nav-tabs`;
 
-  //FIXME it should not load both pages landing on a single tab
-  static openPage(button) {
-    cy.languagesController().then(controller => controller.intercept({method: 'GET'}, 'languagesPageLoadingGET', '?*'));
-    cy.labelsController().then(controller => controller.intercept({method: 'GET'}, 'systemLabelsPageLoadingGET', '?*'));
-    if (button) cy.get(button).click();
-    else cy.realType('{enter}');
-    cy.wait(['@languagesPageLoadingGET', '@systemLabelsPageLoadingGET']);
+  static openPage(button, waitDOM = false) {
+    super.loadPage(button, '/labels-languages', false, waitDOM);
   }
 
   getLanguagesTab() {

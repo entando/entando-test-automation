@@ -5,9 +5,7 @@ import AdminContent from '../../app/AdminContent';
 export default class CrossReferencePage extends AdminContent {
 
   static openPage(button) {
-    cy.assetsAdminConsoleController().then(controller => controller.intercept({method: 'GET'}, 'deletePageLoadingGet', '/trash.action?*'));
-    cy.get(button).click();
-    cy.wait('@deletePageLoadingGet');
+    super.loadPage(button, '/jacms/Resource/trash.action');
   }
 
   getAlert() {

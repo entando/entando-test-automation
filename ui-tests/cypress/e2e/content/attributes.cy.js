@@ -28,17 +28,17 @@ describe('Content Type Attributes', () => {
         cy.assetsController().then(controller => controller.deleteAsset(assetId));
       }
     });
-    cy.kcTokenLogout();
-  });
-
-  after(() => {
-    cy.kcClientCredentialsLogin();
     //FIXME/TODO needed as autosave might create unwanted contents
     cy.contentsController()
       .then(controller => controller.getContentList()).then(response =>
         response.body.payload.filter(content => content.typeCode === CONTENT_TYPE.code).forEach(content =>
             cy.contentsController().then(controller => controller.updateStatus(content.id, 'draft').then(() =>
                 controller.deleteContent(content.id)))));
+    cy.kcTokenLogout();
+  });
+
+  after(() => {
+    cy.kcClientCredentialsLogin();
     cy.contentTypesController()
       .then(controller => controller.deleteContentType(CONTENT_TYPE.code));
   });
@@ -800,8 +800,9 @@ describe('Content Type Attributes', () => {
   };
 
   const openContentManagement = () => cy.get('@currentPage').then(page => page.getMenu().getContent().open().openManagement());
-  const openAddPage           = () => openContentManagement().then(page => page.getContent().openAddContentPage(CONTENT_TYPE.name));
-  const openEditPage          = (code) => openContentManagement().then(page => page.getContent().getKebabMenu(code).open(true).openEdit());
+  const openAddPage           = () => openContentManagement().then(page => page.getContent().openAddContentPage(CONTENT_TYPE));
+  // FIXME/TODO the element seems to be covered by another element
+  const openEditPage          = (code) => openContentManagement().then(page => page.getContent().getKebabMenu(code).open(true).openEdit(true));
 
   const getContent                   = (contentId) => {
     return cy.contentsController()

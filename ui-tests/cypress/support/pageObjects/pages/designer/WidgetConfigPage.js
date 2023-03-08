@@ -38,7 +38,7 @@ export default class WidgetConfigPage extends AppContent {
   }
 
   confirmConfig(code) {
-    this.getSaveButton().then(button => DesignerPage.openPage(button, code));
+    this.getSaveButton().then(button => DesignerPage.confirmConfig(button, code));
     return cy.wrap(new AppPage(DesignerPage)).as('currentPage');
   }
 

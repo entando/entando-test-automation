@@ -13,11 +13,7 @@ export default class ProfileTypesPage extends AppContent {
   addButton = `${htmlElements.button}.ProfileType__add`;
 
   static openPage(button) {
-    cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'profileTypesPageLoadingGET', `?sort=name&page=1&pageSize=10`));
-    cy.profileTypesController().then(controller => controller.intercept({method: 'GET'}, 'profileTypesStatusLoadingGET', 'Status'));
-    cy.get(button).click();
-    cy.wait(['@profileTypesPageLoadingGET', '@profileTypesStatusLoadingGET']);
-    cy.waitForStableDOM();
+    super.loadPage(button, '/profiletype', false, true);
   }
 
   getTable() {
@@ -82,6 +78,7 @@ class ProfileTypesKebabMenu extends KebabMenu {
   clickDelete() {
     this.getDelete().then(button => this.parent.click(button));
     this.parent.parent.getDialog().setBody(DeleteDialog);
+    this.parent.parent.getDialog().getBody().setLoadOnConfirm(ProfileTypesPage);
     return cy.get('@currentPage');
   }
 

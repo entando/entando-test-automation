@@ -71,7 +71,7 @@ describe('Contents', () => {
           .then(page => {
             cy.get('@contentToBeDeleted').then(content => {
               // FIXME/TODO the element seems to be covered by another element
-              page.getContent().getKebabMenu(content).open(true).openEdit()
+              page.getContent().getKebabMenu(content).open(true).openEdit(true)
                   .then(page => page.getContent().getContentDescriptionInput().then(input => {
                     page.getContent().clear(input);
                     page.getContent().type(input, updatedDescription);
@@ -88,7 +88,7 @@ describe('Contents', () => {
                 page.getContent().getContentCheckBox(content).check({force: true});
                 page.getContent().clickDelete();
               })
-              .then(page => page.getContent().submit())
+              .then(page => page.getContent().submit('applyRemove'))
               .then(page => page.getContent().getStatus().should('exist').and('be.visible'));
             cy.wrap(null).as('contentToBeDeleted');
           });
@@ -111,7 +111,7 @@ describe('Contents', () => {
                   page.getContent().getContentCheckBox(content).check({force: true});
                   page.getContent().clickDelete();
                 })
-                .then(page => page.getContent().submit())
+                .then(page => page.getContent().submit('applyRemove'))
                 .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible').and('contain', `${testContent.description}`));
             });
       });
@@ -130,14 +130,14 @@ describe('Contents', () => {
                 page.getContent().getContentCheckBox(content).check({force: true});
                 page.getContent().clickUnPublish();
               }))
-          .then(page => page.getContent().submit())
+          .then(page => page.getContent().submit('applyOffline'))
           .then(page => page.getContent().getAlertDanger().should('exist').and('be.visible').and('contain', `${content.description}`));
       cy.wrap(null).as('contentToBeDeleted');
     });
   });
 
   const DEFAULT_GROUP        = 'Free Access';
-  const DEFAULT_CONTENT_TYPE = 'Banner';
+  const DEFAULT_CONTENT_TYPE = {name: 'Banner', code: 'BNR'};
   const contentTypeCode      = generateRandomTypeCode();
   const contentTypeName      = generateRandomId();
   const content              = {

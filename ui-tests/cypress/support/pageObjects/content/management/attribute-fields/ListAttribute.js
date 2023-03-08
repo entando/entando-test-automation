@@ -152,7 +152,6 @@ export default class ListAttribute extends AttributeFormField {
   }
 
   setValue(values, editMode = false) {
-    cy.log('edit mode è '+editMode);
     cy.wrap(0).as('toAddItem');
     if (editMode) {
       cy.wrap(0).as('toMinusItem');

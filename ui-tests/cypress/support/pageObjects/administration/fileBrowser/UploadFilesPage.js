@@ -14,6 +14,10 @@ export default class UploadFilesPage extends FilesBrowserPage {
     super(parent, BrowserPage, UploadFilesPage, CreateFolderPage, CreateTextFilePage);
   }
 
+  static openPage(button) {
+    super.loadPage(button, '/file-browser/upload');
+  }
+
   getUploadFilesForm() {
     return this.get().find(`${htmlElements.form}.UploadFileBrowserForm`);
   }
@@ -40,12 +44,12 @@ export default class UploadFilesPage extends FilesBrowserPage {
   }
 
   cancelUpload() {
-    this.getCancelButton().click();
+    this.getCancelButton().then(button => this.browserPage.openPage(button, false));
     return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
   confirmUpload() {
-    this.getUploadButton().then(button => BrowserPage.openPage(button));
+    this.getUploadButton().then(button => this.browserPage.openPage(button));
     return cy.wrap(new AppPage(BrowserPage)).as('currentPage');
   }
 
