@@ -15,13 +15,15 @@ export default class AbstractController {
     options.url  = options.url || this.apiURL;
     options.auth = {bearer: this.accessToken};
     return cy.request(options).then(response => {
-      cy.addToReport(() => ({
-        title: caller,
-        value: {
-          request: {...options},
-          response: response
-        }
-      }));
+      if (!(response.status >= 200 && response.status < 300)) {
+        cy.addToReport(() => ({
+          title: caller,
+          value: {
+            request: {...options},
+            response: response
+          }
+        }));
+      }
       return cy.then(() => response);
     });
   }
