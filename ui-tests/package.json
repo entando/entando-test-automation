@@ -29,10 +29,11 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
-    "husky": "^8.0.1",
-    "eslint": "^8.17.0",
     "@babel/eslint-parser": "^7.18.2",
+    "cypress-time": "^1.0.0",
+    "cypress-wait-for-stable-dom": "^0.1.0",
+    "eslint": "^8.17.0",
     "eslint-plugin-cypress": "^2.12.1",
-    "cypress-wait-for-stable-dom": "^0.1.0"
+    "husky": "^8.0.1"
   }
 }
