@@ -1,0 +1,6 @@
+{
+  "customElement": "my-widget-config",
+  "resources": [
+    "my-widget-config/static/js/test.js"
+  ]
+}

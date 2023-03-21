@@ -24,7 +24,8 @@ export default class MFEWidgetForm extends AppContent {
   itTitleInput          = `${htmlElements.input}[name="titles.it"]`;
   codeInput             = `${htmlElements.input}[name="code"]`;
   groupInput            = `${htmlElements.div}.DropdownTypeahead ${htmlElements.div}.rbt`;
-  customUiInput         = `textarea[name="customUi"].RenderTextAreaInput-textarea`;
+  customUiInput         = `${htmlElements.textarea}[name="customUi"].RenderTextAreaInput-textarea`;
+  configUiInput         = `${htmlElements.div}.CodeMirror`;
   saveDropdownContainer = `${htmlElements.div}.FragmentForm__dropdown`;
   saveDropdownButton    = `${htmlElements.button}#saveopts`;
   saveReplaceButton     = `${htmlElements.button}[type=submit]`;
@@ -34,9 +35,9 @@ export default class MFEWidgetForm extends AppContent {
 
   static openPage(button, code = null, pageCode = null, widgetPos = null, widgetConfig = null) {
     if (!pageCode) {
-      !code ? super.loadPage(button, '/widget/add') : super.loadPage(button, `/widget/edit/${code}`);
+      !code ? super.loadPage(button, '/widget/add') : super.loadPage(button, `/widget/edit/${code}`, false, true);
     } else {
-      super.loadPage(button, `/page/${pageCode}/clone/${widgetPos}/widget/${code}/${widgetConfig}`);
+      super.loadPage(button, `/page/${pageCode}/clone/${widgetPos}/widget/${code}/${widgetConfig}`, false, true);
     }
   }
 
@@ -135,7 +136,8 @@ export default class MFEWidgetForm extends AppContent {
 
   getConfigTabConfiguration() {
     return this.getConfigTabs()
-               .find(htmlElements.li).eq(1);
+               .find(`${htmlElements.a}#basic-tabs-tab-4`)
+               .parent();
   }
 
   clickConfigTabConfiguration(){
@@ -143,9 +145,20 @@ export default class MFEWidgetForm extends AppContent {
     return cy.get('@currentPage');
   }
 
-  getConfigTabConfigUI() {
+  getConfigTabConfigUi() {
     return this.getConfigTabs()
-               .find(htmlElements.li).eq(0);
+               .find(`${htmlElements.a}#basic-tabs-tab-2`)
+               .parent();
+  }
+
+  clickConfigTabConfigUi() {
+    this.getConfigTabConfigUi().click();
+    cy.waitForStableDOM();
+    return cy.get('@currentPage');
+  }
+
+  getConfigUiCodeMirror() {
+    return this.getFormConfigSection().find(this.configUiInput);
   }
 
   getIconUpload() {
@@ -168,7 +181,7 @@ export default class MFEWidgetForm extends AppContent {
   editFormFields(payload) {
     const fields = Object.keys(payload);
     fields.forEach((field) => {
-      if (payload[field] === '') return;
+      if ((payload[field] ?? '') === '') return;
       switch (field) {
         case 'name':
           this.getTitleInput().clear();
@@ -205,23 +218,35 @@ export default class MFEWidgetForm extends AppContent {
               .get().find(this.iconList).contains(payload[field]).click();
           this.parent.getDialog().confirm();
           break;
+        case 'configUi':
+          this.clickConfigTabConfigUi();
+          this.getConfigUiCodeMirror().then(input => this.type(input, payload[field], true, false));
+          break;
       }
     });
   }
 
-  fillWidgetForm(name = 'My Widget', code = 'my_widget', customUi = '<h1>Just a basic widget</h1>', group = 'Administrators') {
-    this.editFormFields({iconUpload: 'cypress/fixtures/icon/Entando.svg', name, code, group, customUi});
+  fillWidgetForm(name = 'My Widget', code = 'my_widget', customUi = '<h1>Just a basic widget</h1>', group = 'Administrators', configUi = null) {
+    this.editFormFields({iconUpload: 'cypress/fixtures/icon/Entando.svg', name, code, group, customUi, configUi});
   }
 
   getParentTypeLabel() {
-    this.getFormInfoArea()
-        .contains('Parent Type');
+    return this.getFormInfoArea()
+               .contains('Parent Type');
   }
 
   getParentType() {
-    this.getParentTypeLabel()
-        .closest(htmlElements.div)
-        .next().children(this.formLabelSpan).innerText;
+    return this.getParentTypeLabel()
+               .closest(htmlElements.div)
+               .next().children(this.formLabelSpan).innerText;
+  }
+
+  getConfigUiValue() {
+    return this.getConfigUiCodeMirror()
+               .first()
+               .then((editor) => {
+                 return editor[0].CodeMirror.getValue();
+               });
   }
 
   clickSave() {

@@ -98,6 +98,39 @@ describe('Microfrontends and Widgets', () => {
           });
       });
 
+      it([Tag.FEATURE, 'ENG-4708', 'ENG-4694'], 'When creating a widget with a configUI, the property should be saved and retained', () => {
+        cy.widgetsController().then(controller => controller.intercept({method: 'POST'}, 'widgetPOST', ''));
+        cy.fixture('data/testConfigUi.json').then(configUi => {
+          cy.wrap(generateRandomId()).then(widgetID => {
+            cy.get('@currentPage')
+              .then(page => {
+                page.getContent().fillWidgetForm(generateRandomId(), widgetID, '<h1>Just a basic widget</h1>', 'Administrators', JSON.stringify(configUi));
+                page.getContent().submitForm();
+              })
+              .then(page => {
+                cy.wait('@widgetPOST').then(res => {
+                  cy.wrap(res.response.body.payload.configUi).should('not.eq', null);
+                  cy.wrap(res.response.body.payload.configUi.customElement).should('eq', configUi.customElement);
+                  cy.wrap(res.response.body.payload.configUi.resources[0]).should('eq', configUi.resources[0]);
+                });
+                page.getContent().getListArea().should('contain', widgetID);
+                cy.wrap({code: widgetID}).as('widgetToBeDeleted');
+                cy.widgetsController().then(controller => controller.getWidget(widgetID)).then(response => {
+                  cy.wrap(response.body.payload.configUi).should('not.eq', null);
+                  cy.wrap(response.body.payload.configUi.customElement).should('eq', configUi.customElement);
+                  cy.wrap(response.body.payload.configUi.resources[0]).should('eq', configUi.resources[0]);
+                });
+                cy.closeAllToasts(page);
+                page.getContent().openEditFromKebabMenu(widgetID);
+              })
+              .then(page => {
+                page.getContent().clickConfigTabConfigUi();
+                page.getContent().getConfigUiValue().should(value => expect(value.replaceAll('\n', '').replaceAll(' ', '')).to.equal(JSON.stringify(configUi).replaceAll(' ', '')));
+              });
+          });
+        });
+      });
+
     });
 
     describe('Edit widget', () => {
