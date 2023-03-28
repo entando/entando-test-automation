@@ -45,6 +45,7 @@ import './controllers/restAPI/PermissionsController';
 import './controllers/restAPI/ProfileTypeAttributesController';
 import './controllers/restAPI/ProfileTypesController';
 import './controllers/restAPI/ReloadConfigurationController';
+import './controllers/restAPI/RepositoriesController';
 import './controllers/restAPI/RolesController';
 import './controllers/restAPI/SenderController';
 import './controllers/restAPI/SeoPagesController';
@@ -88,5 +89,6 @@ before(() => {
 });
 
 after(() => {
+  cy.kcClientCredentialsLogin();
   setWizard(true);
 });

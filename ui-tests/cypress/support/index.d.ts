@@ -22,6 +22,7 @@ import PageWidgetsController           from './controllers/restAPI/PageWidgetsCo
 import PermissionsController           from './controllers/restAPI/PermissionsController';
 import ProfileTypeAttributesController from './controllers/restAPI/ProfileTypeAttributesController';
 import ProfileTypesController          from './controllers/restAPI/ProfileTypesController';
+import RepositoriesController          from './controllers/restAPI/RepositoriesController';
 import RolesController                 from './controllers/restAPI/RolesController';
 import SenderController                from './controllers/restAPI/SenderController';
 import SeoPagesController              from './controllers/restAPI/SeoPagesController';
@@ -46,7 +47,8 @@ export const enum Tag {
     FEATURE,
     ERROR,
     EDGE,
-    ACCEPTANCE
+    ACCEPTANCE,
+    BUNDLE
 }
 
 declare namespace Cypress {
@@ -241,6 +243,11 @@ declare namespace Cypress {
          * Returns a new instance of a profile types controller
          */
         profileTypesController(): Chainable<ProfileTypesController>;
+
+        /**
+         * Returns a new instance of a repositories controller
+         */
+        repositoriesController(): Chainable<RepositoriesController>;
 
         /**
          * Returns a new instance of a roles controller
