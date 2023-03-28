@@ -19,7 +19,7 @@ If your Entando environment's admin account has a user/password pair different f
 The following commands to run the tests have to be run from inside the `entando-test-automation/ui-tests` folder:
 - `npx cypress run`: this command runs the entire test suite
 - `npx cypress run --spec "./cypress/e2e/{PATH}/{FILE_NAME}.cy.js"`: this command runs a specific test spec file
-- `npm run cypress:{TAG}`: this command runs only the tests that have a certain tag. These are the currently used tags:
+- `npm run cypress:{TAG}`: this command runs a script that selects only certain tests to run. These are the currently used tags for the script:
 ```
 smoke
 sanity
@@ -28,12 +28,15 @@ error
 edge
 acceptance
 gts
+bundle
+excludebundle
 all
 ```
-**N.B.: the command above runs a premade script. The complete commands to run tests with specific tags are:**
+**The complete commands to run tests with specific tags are:**
 - `CYPRESS_INCLUDE_TAGS={TAG} npx cypress run`: runs all tests with the specified tag
 - `CYPRESS_INCLUDE_TAGS={TAG1},{TAG2} npx cypress run`: runs all tests with either one of the specified tags
 - `CYPRESS_INCLUDE_USE_BOOLEAN_AND=true CYPRESS_INCLUDE_TAGS={TAG1},{TAG2} npx cypress run`: runs only the tests that have **both** of the specified tags
+- `CYPRESS_EXCLUDE_TAGS={TAG} npx cypress run`: runs all tests except the ones with the specified tag
 
 The tags currently used for the above commands are:
 ```
@@ -45,7 +48,10 @@ FEATURE
 ERROR
 EDGE
 ACCEPTANCE
+BUNDLE
 ```
+References and additional information on the tag commands -> [cypress-tags](https://github.com/infosum/cypress-tags)
+
 For debugging and to run tests while still writing them, it can be useful to run them using the Cypress open feature:
 - `npx cypress open`: this command opens an interface where specific spec files can be run individually in the browser and can be seen and examined as they go, including "time travel" once the test is over, to examine the state of the page at the time of each given command (to learn more: [Cypress App documentation](https://docs.cypress.io/guides/core-concepts/cypress-app))
 ### Check test results

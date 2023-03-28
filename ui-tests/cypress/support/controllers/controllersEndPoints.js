@@ -50,3 +50,5 @@ export const contentManagementURL = `${cmsAdminConsoleURL}/Content`;
 export const contentModelsURL     = `${cmsAdminConsoleURL}/ContentModel`;
 export const contentTypesJacmsURL = `${cmsAdminConsoleURL}/Entity`;
 export const assetsURL            = `${cmsAdminConsoleURL}/Resource`;
+
+export const digitalExchangeURL   = Cypress.config('baseUrl') + '/digital-exchange';

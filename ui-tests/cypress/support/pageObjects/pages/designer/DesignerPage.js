@@ -8,6 +8,7 @@ import AppPage from '../../app/AppPage';
 import ContentWidgetConfigPage      from './widgetconfigs/ContentWidgetConfigPage';
 import ContentListWidgetConfigPage  from './widgetconfigs/ContentListWidgetConfigPage';
 import ContentQueryWidgetConfigPage from './widgetconfigs/ContentQueryWidgetConfigPage';
+import UserWidgetConfigPage         from './widgetconfigs/UserWidgetConfigPage';
 import MFEWidgetForm                from '../../components/mfeWidgets/MFEWidgetForm';
 import DetailsPage                  from '../../components/mfeWidgets/DetailsPage';
 import {generateRandomNumericId}    from '../../../utils';
@@ -61,13 +62,13 @@ export default class DesignerPage extends AppContent {
     super.loadPage(button, `/page/configuration/${code}`, false, true);
   }
 
-  static confirmConfig(button, code = 'homepage') {
+  static confirmConfig(button, code = 'homepage', toast = true) {
     cy.get('@currentPage').then(page => {
       const randomLabel = generateRandomNumericId();
       cy.time(randomLabel);
       cy.get(button).click();
       cy.validateUrlPathname(`/page/configuration/${code}`);
-      cy.validateToast(page);
+      if (toast) cy.validateToast(page);
       cy.waitForStableDOM();
       cy.timeEnd(randomLabel).then(entry => {
         cy.log(`Loaded in ${entry.duration} ms`);
@@ -300,9 +301,11 @@ export default class DesignerPage extends AppContent {
         ContentQueryWidgetConfigPage.openPage(widgetCode, pageCode, widgetPos);
         return ContentQueryWidgetConfigPage;
       case CMS_WIDGETS.CONTENT.code:
-      default:
         ContentWidgetConfigPage.openPage(widgetCode, pageCode, widgetPos);
         return ContentWidgetConfigPage;
+      default:
+        UserWidgetConfigPage.openPage(widgetCode, pageCode, widgetPos);
+        return UserWidgetConfigPage;
     }
   }
 
