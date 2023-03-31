@@ -34,4 +34,11 @@ export default class DatabaseController extends AbstractController {
     });
   }
 
+  restoreBackup(code) {
+    return this.request({
+      url: `${this.apiURL}/restoreBackup/${code}`,
+      method: 'PUT'
+    });
+  }
+
 }

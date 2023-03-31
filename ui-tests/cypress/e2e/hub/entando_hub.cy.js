@@ -7,6 +7,7 @@ describe('Entando Hub', () => {
 
   beforeEach(() => {
     cy.wrap(null).as('registryToBeDeleted');
+    cy.wrap(null).as('backupToBeRestored');
     cy.wrap([]).as('bundlesToBeUndeployed');
     cy.wrap([]).as('bundlesToBeUninstalled');
     cy.wrap([]).as('pagesToBeDeleted');
@@ -128,11 +129,69 @@ describe('Entando Hub', () => {
     });
   });
 
-  const createPage = (code = null, published = true) => {
+  describe('Standard Banking Demo', () => {
+
+    beforeEach(() => {
+      createBackup();
+    });
+
+    //FIXME it's not possible to undeploy and uninstall all the Standard Banking Demo bundles, so currently we restore the backup created in the beforeEach hook and then create pages with the page codes expected by the bundle uninstallation
+    afterEach(() => {
+      cy.kcClientCredentialsLogin();
+      cy.get('@backupToBeRestored').then(backup => {
+        if (backup) cy.databaseController().then(controller => {
+          controller.restoreBackup(backup.code);
+          controller.deleteBackup(backup.code);
+        });
+      });
+      cy.get('@bundlesToBeUninstalled').then(bundles => {
+        if(bundles.length === 4) {
+          cy.fixture('data/standardBankingDemo.json').then(SBD => {
+            SBD.pages.forEach(SBDpage => {
+              createPage(SBDpage, false).then(page => cy.deleteAlias('@pagesToBeDeleted', page));
+            });
+          });
+        }
+      });
+    });
+
+    it([Tag.FEATURE, Tag.BUNDLE, 'ENG-4724'], 'Installation of Standard Banking Demo', () => {
+      cy.fixture('data/standardBankingDemo.json').then(SBD => {
+        addAndAccessEntandoHubRegistry()
+            .then(page => {
+              page.getContent().getSearchForm().click();
+              page.getContent().clickBundleGroup('Standard Banking Demo');
+              SBD.bundles.forEach(bundle => {
+                deployAndInstallBundle(bundle.bundleName);
+                page.getContent().getBundle(bundle.bundleName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED');
+              });
+              page.getContent().getKebabMenu().open().openRegistry('Local Hub');
+            })
+            .then(page => {
+              SBD.bundles.forEach(bundle => page.getContent().getBundle(bundle.localName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED'));
+              page.getMenu().getComponents().open().openMFEAndWidgets();
+            })
+            .then(page => {
+              SBD.components.forEach(componentCode => page.getContent().getListArea().should('contain', componentCode));
+              page.getMenu().getPages().open().openManagement();
+            })
+            .then(page => {
+              SBD.pages.forEach(SBDpage => SBDpage.toOpen ? page.getContent().toggleRowSubPages(SBDpage.name) : page.getContent().getTableRow(SBDpage.name).should('exist').and('be.visible'))
+              SBD.pages.forEach(SBDpage => {
+                cy.visit(`/${SBDpage.code}.page`, {portalUI: true});
+                cy.validateUrlPathname(`/${SBDpage.code}.page`, {portalUI: true});
+              });
+            });
+      });
+    });
+
+  });
+
+  const createPage = (newPage = null, published = true) => {
     return cy.fixture('data/demoPage.json').then(page => {
-      if (code) {
-        page.code = code;
-        page.titles.en = code;
+      if (newPage) {
+        page.code = newPage.code;
+        page.titles.en = newPage.name;
       } else page.code = generateRandomId();
       page.pageModel = '1-2-column';
       cy.seoPagesController().then(controller => controller.addNewPage(page));
@@ -142,9 +201,32 @@ describe('Entando Hub', () => {
     });
   }
 
+  const createBackup = () => {
+    return cy.databaseController()
+             .then(controller => controller.addBackup())
+             .then(() => getLatestBackupCode());
+  };
+
+  //FIXME have to perform a GET request because the POST request doesn't return the backup code
+  const getLatestBackupCode = () => {
+    return cy.databaseController().then(controller => controller.getBackupList())
+             .then(response => {
+               if (response.body.payload.length !== 0) cy.wrap(response.body.payload[response.body.payload.length - 1]).as('backupToBeRestored');
+               else getLatestBackupCode();
+             });
+  };
+
   const waitForInstallationCompletion = (bundleName) => {
     cy.wait(`@bundle'${bundleName}'Installation`, {timeout: 10000}).then(res => {
       cy.wrap(res.response.body.payload).then(payload => {
+        // FIXME: the uninstall leaves behind traces that cause conflicts, so there could be a need to confirm the update
+        if (Object.hasOwn(payload, 'hasConflicts')) {
+          if (payload.hasConflicts === true) {
+            cy.get(`${htmlElements.ul}.InstallationPlanModal__bulk-actions`).find(htmlElements.button).eq(0).click();
+            cy.get(`${htmlElements.button}#InstallationPlanModal__button-ok`).click();
+            return waitForInstallationCompletion(bundleName);
+          }
+        }
         if (payload.status === 'INSTALL_COMPLETED') {
           cy.pushAlias('@bundlesToBeUninstalled', payload.componentId);
           cy.waitForStableDOM();

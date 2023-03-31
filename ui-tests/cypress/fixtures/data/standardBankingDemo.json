@@ -1,0 +1,84 @@
+{
+  "bundles": [
+    {
+      "bundleName": "standard-demo-banking-bundle",
+      "localName": "sd-banking"
+    },
+    {
+      "bundleName": "standard-demo-customer-bundle",
+      "localName": "sd-customer"
+    },
+    {
+      "bundleName": "standard-demo-manage-users-bundle",
+      "localName": "sd-manage-users"
+    },
+    {
+      "bundleName": "standard-demo-content-bundle",
+      "localName": "standard-demo"
+    }
+  ],
+  "components": [
+    "Brand-Logo",
+    "Breadcrumb",
+    "Login_buttons",
+    "apply_form_banner",
+    "back_to_seed",
+    "brand_insurance",
+    "find-atm",
+    "footer",
+    "footer-insurance",
+    "insurance_login",
+    "language_choose",
+    "sd_alert_bar_icon",
+    "sd_manage_users",
+    "sd_seeds_card",
+    "sd_seeds_card_ng",
+    "sd_seeds_card_transaction_table",
+    "sd_user_form"
+  ],
+  "pages": [
+    {
+      "code": "homepagesd",
+      "name": "Home SD",
+      "toOpen": "yes"
+    },
+    {
+      "code": "dashboard",
+      "name": "My dashboard"
+    },
+    {
+      "code": "sign_up",
+      "name": "Sign up"
+    },
+    {
+      "code": "credit_card",
+      "name": "Credit card"
+    },
+    {
+      "code": "interest",
+      "name": "Interest Checking"
+    },
+    {
+      "code": "manage_users",
+      "name": "Manage Users"
+    },
+    {
+      "code": "seed_insurances",
+      "name": "Seed insurances",
+      "toOpen": "yes"
+    },
+    {
+      "code": "products",
+      "name": "Products",
+      "toOpen": "yes"
+    },
+    {
+      "code": "product_details",
+      "name": "Product Details"
+    },
+    {
+      "code": "my_portal",
+      "name": "My Portal"
+    }
+  ]
+}
