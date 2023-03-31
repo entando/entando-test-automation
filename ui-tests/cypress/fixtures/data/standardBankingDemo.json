@@ -1,20 +1,33 @@
 {
+  "bundleGroup": "Standard Banking Demo",
   "bundles": [
     {
       "bundleName": "standard-demo-banking-bundle",
-      "localName": "sd-banking"
+      "localName": "sd-banking",
+      "gitRepoAddress": "https://github.com/entando-samples/standard-demo-banking-bundle.git",
+      "bundleId": "3",
+      "installCode": "sd-banking-343826ca"
     },
     {
       "bundleName": "standard-demo-customer-bundle",
-      "localName": "sd-customer"
+      "localName": "sd-customer",
+      "gitRepoAddress": "https://github.com/entando-samples/standard-demo-customer-bundle.git",
+      "bundleId": "4",
+      "installCode": "sd-customer-3cd5f745"
     },
     {
       "bundleName": "standard-demo-manage-users-bundle",
-      "localName": "sd-manage-users"
+      "localName": "sd-manage-users",
+      "gitRepoAddress": "https://github.com/entando-samples/standard-demo-manage-users-bundle.git",
+      "bundleId": "5",
+      "installCode": "sd-manage-users-beb4f141"
     },
     {
       "bundleName": "standard-demo-content-bundle",
-      "localName": "standard-demo"
+      "localName": "standard-demo",
+      "gitRepoAddress": "https://github.com/entando-samples/standard-demo-content-bundle.git",
+      "bundleId": "6",
+      "installCode": "standard-demo-119254c9"
     }
   ],
   "components": [

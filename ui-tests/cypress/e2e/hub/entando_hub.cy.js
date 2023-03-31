@@ -35,28 +35,28 @@ describe('Entando Hub', () => {
 
   it([Tag.FEATURE, Tag.BUNDLE, 'ENG-4710'], 'Installation of a simple configurable MFE', () => {
     createPage().then(demoPage => {
-      cy.fixture('data/simpleConfigurableMFE.json').then(component => {
+      cy.fixture('data/simpleConfigurableMFE.json').then(bundle => {
         addAndAccessEntandoHubRegistry()
             .then(page => {
               page.getContent().getSearchForm().click();
-              page.getContent().getSearchForm().find(htmlElements.li).should('contain', component.bundleGroup[0].name);
-              page.getContent().clickBundleGroup(component.bundleGroup[0].name);
-              deployAndInstallBundle(component.bundleName);
-              page.getContent().getBundle(component.bundleName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED');
+              page.getContent().getSearchForm().find(htmlElements.li).should('contain', bundle.bundleGroup);
+              page.getContent().clickBundleGroup(bundle.bundleGroup);
+              deployAndInstallBundle(bundle.bundleName);
+              page.getContent().getBundle(bundle.bundleName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED');
               page.getContent().getKebabMenu().open().openRegistry('Local Hub');
             })
             .then(page => {
-              page.getContent().getBundle(component.bundleName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED');
+              page.getContent().getBundle(bundle.bundleName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED');
               page.getMenu().getComponents().open().openMFEAndWidgets();
             })
             .then(page => {
-              page.getContent().getListArea().should('contain', component.componentCode);
-              page.getContent().openEditFromKebabMenu(component.componentCode);
+              page.getContent().getListArea().should('contain', bundle.componentCode);
+              page.getContent().openEditFromKebabMenu(bundle.componentCode);
             })
             .then(page => {
-              page.getContent().getCustomUiInput().invoke('val').then(value => expect(value.replaceAll('\n', '').replaceAll(' ', '')).to.equal(component.customUi.replaceAll(' ', '')));
+              page.getContent().getCustomUiInput().invoke('val').then(value => expect(value.replaceAll('\n', '').replaceAll(' ', '')).to.equal(bundle.customUi.replaceAll(' ', '')));
               page.getContent().clickConfigTabConfigUi();
-              page.getContent().getConfigUiValue().should(value => expect(value.replaceAll('\n', '').replaceAll(' ', '')).to.equal(component.configUi.replaceAll(' ', '')));
+              page.getContent().getConfigUiValue().should(value => expect(value.replaceAll('\n', '').replaceAll(' ', '')).to.equal(bundle.configUi.replaceAll(' ', '')));
               page.getMenu().getPages().open().openDesigner();
             })
             .then(page => page.getContent().clickSidebarTab(1))
@@ -64,12 +64,12 @@ describe('Entando Hub', () => {
             .then(page => page.getContent().clickSidebarTab(0))
             .then(page => {
               page.getContent().getSidebarWidgetSection(5).click();
-              page.getContent().getSidebarWidgets().contains(component.name).should('exist');
-              page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 5, 0, 1, 0, component.componentCode);
+              page.getContent().getSidebarWidgets().contains(bundle.name).should('exist');
+              page.getContent().dragConfigurableWidgetToGrid(demoPage.code, 5, 0, 1, 0, bundle.componentCode);
             })
             .then(page => {
-              page.getContent().getUserWidgetConfigurations(`${component.componentName}-config`).find(`${htmlElements.input}#name`).should('exist').and('be.empty');
-              page.getContent().getUserWidgetConfigurations(`${component.componentName}-config`).find(`${htmlElements.input}#name`).type(component.testInput);
+              page.getContent().getUserWidgetConfigurations(`${bundle.componentName}-config`).find(`${htmlElements.input}#name`).should('exist').and('be.empty');
+              page.getContent().getUserWidgetConfigurations(`${bundle.componentName}-config`).find(`${htmlElements.input}#name`).type(bundle.testInput);
               page.getContent().confirmConfig(demoPage.code);
             })
             .then(page => {
@@ -79,7 +79,7 @@ describe('Entando Hub', () => {
                   .then(contents => {
                     cy.wrap(contents).children()
                       .should('have.length', 3)
-                      .should(content => expect(content.eq(2)).to.have.text(component.name));
+                      .should(content => expect(content.eq(2)).to.have.text(bundle.name));
                   });
               cy.then(() => page);
             })
@@ -97,34 +97,31 @@ describe('Entando Hub', () => {
             })
             .then(() => {
               cy.visit(`/${demoPage.code}.page`, {portalUI: true});
-              cy.get(`${component.componentName}`).should('contain', component.testInput);
+              cy.get(`${bundle.componentName}`).should('contain', bundle.testInput);
             })
       });
     });
   });
 
   it([Tag.FEATURE, Tag.BUNDLE, 'ENG-4710'], 'Uninstall and undeploy MFE bundle', () => {
-    cy.fixture('data/simpleConfigurableMFE.json').then(component => {
-      cy.repositoriesController().then(controller => {
-        controller.deployBundle(component).then(res => cy.pushAlias('@bundlesToBeUndeployed', res.body.payload.code));
-        controller.installBundle(component).then(componentId => cy.pushAlias('@bundlesToBeUninstalled', componentId));
-      });
+    cy.fixture('data/simpleConfigurableMFE.json').then(bundle => {
+      deployAndInstallBundleAPI(bundle);
       openRepositoryPage()
           .then(page => {
-            page.getContent().getBundle(component.bundleName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED');
-            page.getContent().clickBundle(component.bundleName);
+            page.getContent().getBundle(bundle.bundleName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED');
+            page.getContent().clickBundle(bundle.bundleName);
           })
           .then(page => {
-            cy.repositoriesController().then(controller => controller.intercept({}, `bundle'${component.bundleName}'Uninstallation`, `/components/${component.installCode}/uninstall`));
+            cy.repositoriesController().then(controller => controller.intercept({}, `bundle'${bundle.bundleName}'Uninstallation`, `/components/${bundle.installCode}/uninstall`));
             page.getDialog().clickUninstallButton();
             page.getDialog().confirmUninstall();
-            waitForUninstallationCompletion(component.bundleName);
+            waitForUninstallationCompletion(bundle.bundleName);
             page.getDialog().getDeployButton().should('exist').and('be.visible').and('contain', 'Undeploy');
             page.getDialog().undeployBundle();
           })
           .then(page => {
-            page.getContent().getBundle(component.bundleName).should('not.exist');
-            cy.deleteAlias('@bundlesToBeUndeployed', component.installCode);
+            page.getContent().getBundle(bundle.bundleName).should('not.exist');
+            cy.deleteAlias('@bundlesToBeUndeployed', bundle.installCode);
           });
     });
   });
@@ -140,18 +137,18 @@ describe('Entando Hub', () => {
       cy.kcClientCredentialsLogin();
       cy.get('@backupToBeRestored').then(backup => {
         if (backup) cy.databaseController().then(controller => {
-          controller.restoreBackup(backup.code);
+          cy.get('@bundlesToBeUninstalled').then(bundles => {
+            if(bundles.length === 4) {
+              controller.restoreBackup(backup.code);
+              cy.fixture('data/standardBankingDemo.json').then(SBD => {
+                SBD.pages.forEach(SBDpage => {
+                  createPage(SBDpage, false).then(page => cy.deleteAlias('@pagesToBeDeleted', page));
+                });
+              });
+            }
+          });
           controller.deleteBackup(backup.code);
         });
-      });
-      cy.get('@bundlesToBeUninstalled').then(bundles => {
-        if(bundles.length === 4) {
-          cy.fixture('data/standardBankingDemo.json').then(SBD => {
-            SBD.pages.forEach(SBDpage => {
-              createPage(SBDpage, false).then(page => cy.deleteAlias('@pagesToBeDeleted', page));
-            });
-          });
-        }
       });
     });
 
@@ -160,7 +157,7 @@ describe('Entando Hub', () => {
         addAndAccessEntandoHubRegistry()
             .then(page => {
               page.getContent().getSearchForm().click();
-              page.getContent().clickBundleGroup('Standard Banking Demo');
+              page.getContent().clickBundleGroup(SBD.bundleGroup);
               SBD.bundles.forEach(bundle => {
                 deployAndInstallBundle(bundle.bundleName);
                 page.getContent().getBundle(bundle.bundleName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED');
@@ -184,6 +181,31 @@ describe('Entando Hub', () => {
             });
       });
     });
+
+    it([Tag.FEATURE, Tag.BUNDLE, 'ENG-4724'], 'Uninstall and undeploy Standard Banking Demo', () => {
+      cy.fixture('data/standardBankingDemo.json').then(SBD => {
+        SBD.bundles.forEach(bundle => deployAndInstallBundleAPI(bundle));
+        openRepositoryPage()
+            .then(page => {
+              SBD.bundles.forEach(bundle => {
+                page.getContent().getBundle(bundle.localName).parent().find(`${htmlElements.span}.ComponentList__version`).should('contain', 'INSTALLED');
+                page.getContent().clickBundle(bundle.localName)
+                    .then(page => {
+                      cy.repositoriesController().then(controller => controller.intercept({}, `bundle'${bundle.bundleName}'Uninstallation`, `/components/${bundle.installCode}/uninstall`));
+                      page.getDialog().clickUninstallButton();
+                      page.getDialog().confirmUninstall();
+                      waitForUninstallationCompletion(bundle.bundleName);
+                      page.getDialog().getDeployButton().should('exist').and('be.visible').and('contain', 'Undeploy');
+                      page.getDialog().undeployBundle();
+                    })
+                    .then(page => {
+                      page.getContent().getBundle(bundle.localName).should('not.exist');
+                      cy.deleteAlias('@bundlesToBeUndeployed', bundle.installCode);
+                    })
+              })
+            })
+      });
+    })
 
   });
 
@@ -228,7 +250,7 @@ describe('Entando Hub', () => {
           }
         }
         if (payload.status === 'INSTALL_COMPLETED') {
-          cy.pushAlias('@bundlesToBeUninstalled', payload.componentId);
+          cy.unshiftAlias('@bundlesToBeUninstalled', payload.componentId);
           cy.waitForStableDOM();
           return cy.get('@currentPage');
         }
@@ -275,7 +297,7 @@ describe('Entando Hub', () => {
               cy.repositoriesController().then(controller => controller.intercept({method: 'POST'}, `bundle${bundleName}DeployedPOST`, '/components'));
               page.getDialog().deployBundle();
               cy.wait(`@bundle${bundleName}DeployedPOST`).then(res => {
-                cy.pushAlias('@bundlesToBeUndeployed', res.response.body.payload.code);
+                cy.unshiftAlias('@bundlesToBeUndeployed', res.response.body.payload.code);
                 cy.repositoriesController().then(controller => controller.intercept({}, `bundle'${bundleName}'Installation`, `/components/${res.response.body.payload.code}/installplans`));
               });
               cy.validateToast(page, 'Deployed');
@@ -300,6 +322,13 @@ describe('Entando Hub', () => {
               page.getDialog().close();
               cy.waitForStableDOM();
             });
+  }
+
+  const deployAndInstallBundleAPI = (bundle) => {
+    cy.repositoriesController().then(controller => {
+      controller.deployBundle(bundle).then(res => cy.unshiftAlias('@bundlesToBeUndeployed', res.body.payload.code));
+      controller.installBundle(bundle).then(bundleId => cy.unshiftAlias('@bundlesToBeUninstalled', bundleId));
+    });
   }
 
 });

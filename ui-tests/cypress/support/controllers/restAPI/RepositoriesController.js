@@ -33,11 +33,8 @@ export default class RepositoriesController extends AbstractController {
       url: `${this.apiURL}/components`,
       method: 'POST',
       body: {
-        bundleGroups: bundle.bundleGroups,
         bundleId: bundle.bundleId,
-        descriptionImage: bundle.descriptionImage,
-        gitRepoAddress: bundle.gitRepoAddress,
-        name: bundle.bundleName
+        gitRepoAddress: bundle.gitRepoAddress
       }
     });
   }
@@ -81,6 +78,19 @@ export default class RepositoriesController extends AbstractController {
     return this.request({
       url: `${this.apiURL}/components/${code}/uninstall`,
       method: 'POST'
+    }).then(() => {
+      const checkUninstall = () => {
+        this.request({
+          url: `${this.apiURL}/components/${code}/uninstall`,
+          method: 'GET'
+        }).then(res => {
+          if (res.body.payload.status !== 'UNINSTALL_COMPLETED') {
+            cy.wait(1000);
+            checkUninstall();
+          }
+        })
+      }
+      checkUninstall();
     });
   }
 
