@@ -14,13 +14,14 @@
     "cypress:gts": "CYPRESS_INCLUDE_TAGS=GTS npx cypress run",
     "cypress:bundle": "CYPRESS_INCLUDE_TAGS=BUNDLE npx cypress run",
     "cypress:excludebundle": "CYPRESS_EXCLUDE_TAGS=BUNDLE npx cypress run",
-    "cypress:all": "npx cypress run"
+    "cypress:all": "npx cypress run",
+    "cypress:wip": "CYPRESS_INCLUDE_TAGS=WIP npx cypress run"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "typescript": "^4.7.3",
-    "cypress": "^10.2.0",
+    "cypress": "^10.11.0",
     "cypress-mochawesome-reporter": "^3.1.0",
     "cypress-tags": "^0.3.0",
     "@4tw/cypress-drag-drop": "^1.8.1",
@@ -32,10 +33,12 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.18.2",
+    "cypress-social-logins": "^1.14.0",
     "cypress-time": "^1.0.0",
     "cypress-wait-for-stable-dom": "^0.1.0",
     "eslint": "^8.17.0",
     "eslint-plugin-cypress": "^2.12.1",
+    "gmail-tester": "^1.3.8",
     "husky": "^8.0.1"
   }
 }

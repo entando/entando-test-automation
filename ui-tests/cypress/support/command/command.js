@@ -5,8 +5,10 @@ import addContext from 'mochawesome/addContext';
 
 import HomePage from '../pageObjects/HomePage';
 
-Cypress.Commands.overwrite('visit', (originalFn, url, options = {portalUI: false}) => {
-  url = options.portalUI ? Cypress.config('portalUIPath') + url : Cypress.config('basePath') + url;
+Cypress.Commands.overwrite('visit', (originalFn, url, options = {portalUI: false, administrationConsole: false, external: false}) => {
+  if (options.portalUI) url = Cypress.config('portalUIPath') + url;
+  else if (options.administrationConsole) url = Cypress.env('auth_base_url') + url;
+  else if (!options.external) url = Cypress.config('basePath') + url;
   return originalFn(url, options);
 });
 
@@ -168,3 +170,24 @@ Cypress.Commands.add('kcTokenLogout', () => {
     });
   });
 });
+
+Cypress.Commands.add('getGithubCodeFromEmail', () => {
+  return cy.task('gmail:get-messages', {
+    options: {
+      from: 'noreply@github.com',
+      subject: '[GitHub] Please verify your device',
+      include_body: true,
+      before: new Date(Date.now() + 60000),
+      after: new Date(Date.now() - 60000)
+    }
+  }).then(emails => {
+    if(!emails || emails.length === 0) return null;
+    else cy.wrap(emails[0].body.text).then(text => {
+          const start_index = text.indexOf("Verification code: ") + "Verification code: ".length;
+          const end_index = text.indexOf("\n", start_index);
+          const verification_code = text.slice(start_index, end_index);
+          return verification_code;
+    });
+  });
+});
+

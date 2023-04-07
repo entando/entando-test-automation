@@ -123,6 +123,11 @@ declare namespace Cypress {
         checkDocumentReadyState(): void;
 
         /**
+         * Gets the GitHub confirmation code from a confirmation email
+         */
+        getGithubCodeFromEmail(): string;
+
+        /**
          * Validate if the url pathname is as expected
          * @param pathname - the expected url
          * @param options - facultative options
