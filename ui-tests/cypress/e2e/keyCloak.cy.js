@@ -77,10 +77,23 @@ describe('Keycloak', () => {
           .then(page => {
             page.login(userData);
             checkLocation(origin, passwordUpdatePath);
+
+            cy.intercept({
+              url: `${authBaseUrl}/realms/${realm}/protocol/openid-connect/token`,
+              method: 'POST'
+            }).as('loginPOST');
+
             page.confirmPassword(userData);
             checkLocation(Cypress.config('baseUrl'), Cypress.config('basePath') + '/dashboard');
 
-            cy.kcLogout();
+            cy.wait('@loginPOST').then(res => {
+              cy.logout({
+                root: Cypress.config('baseUrl'),
+                realm: Cypress.env('auth_realm'),
+                post_logout_redirect_uri: Cypress.config('baseUrl') + Cypress.env('auth_base_url'),
+                id_token_hint: res.response.body.id_token
+              });
+            })
 
             cy.visit('/');
             checkLocation(origin, pathName);

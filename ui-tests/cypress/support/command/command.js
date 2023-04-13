@@ -1,5 +1,6 @@
 require('@4tw/cypress-drag-drop');
 require('cy-verify-downloads').addCustomCommand();
+require('cypress-keycloak');
 
 import addContext from 'mochawesome/addContext';
 
@@ -131,25 +132,10 @@ const performAuthorizationCodeLogin = (user) => {
                });
              })
              .then(response => {
-               if (response.status !== 200) {
-                 cy.log('Not logged in, retrying');
-                 cy.kcLogout();
-                 return performAuthorizationCodeLogin(user);
-               }
                return cy.then(() => response);
              });
   });
 };
-
-Cypress.Commands.add('kcLogout', () => {
-  Cypress.log({name: 'Logout'});
-  const authBaseUrl = Cypress.config('baseUrl') + Cypress.env('auth_base_url');
-  const realm       = Cypress.env('auth_realm');
-  return cy.request({
-    url: authBaseUrl + '/realms/' + realm + '/protocol/openid-connect/logout',
-    method: 'GET'
-  });
-});
 
 Cypress.Commands.add('kcTokenLogout', () => {
   Cypress.log({name: 'Logout'});

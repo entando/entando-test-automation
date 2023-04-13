@@ -32,6 +32,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.18.2",
+    "cypress-keycloak": "^2.0.0",
     "cypress-time": "^1.0.0",
     "cypress-wait-for-stable-dom": "^0.1.0",
     "eslint": "^8.17.0",
