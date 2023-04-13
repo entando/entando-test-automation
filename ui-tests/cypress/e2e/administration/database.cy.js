@@ -44,7 +44,7 @@ describe('Database', () => {
         .then(page => page.getContent().openCreateBackup())
         .then(page => {
           page.getContent().getTablesList().should('exist').and('be.visible');
-          page.getContent().getTablesList().children(htmlElements.li).should('have.length', 9);
+          page.getContent().getTablesList().children(htmlElements.li).should('have.length', 11);
           page.getContent().getBackupNowButton().should('exist').and('be.visible');
           page.getContent().getGoBackButton().should('exist').and('be.visible');
         });
