@@ -102,11 +102,6 @@ declare namespace Cypress {
          * Perform the logout of the user associated with the stored value UITokens
          */
         kcTokenLogout(): void;
-
-        /**
-         * Perform the logout associated with the cookie session
-         */
-        kcLogout(): void;
     }
 
     interface Chainable<Subject> {
