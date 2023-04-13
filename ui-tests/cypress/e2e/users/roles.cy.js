@@ -198,7 +198,7 @@ describe('User Roles', () => {
              .then(page => {
               page.getContent().getPermissionsGrid().should('not.have.class', 'spinner');
               page.getContent().getPermissionsGrid().children(htmlElements.div)
-                  .should('have.length', 12)
+                  .should('have.length', 11)
                   .then(elements => cy.validateListTexts(elements,
                      [
                        'Content EditingON OFF',
@@ -209,7 +209,6 @@ describe('User Roles', () => {
                        'Operations on CategoriesON OFF',
                        'Operations on PagesON OFF',
                        'Asset EditingON OFF',
-                       'Review ManagementON OFF',
                        'All functionsON OFF',
                        'Content SupervisionON OFF',
                        'View Users and ProfilesON OFF'
