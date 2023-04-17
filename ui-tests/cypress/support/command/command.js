@@ -5,8 +5,10 @@ import addContext from 'mochawesome/addContext';
 
 import HomePage from '../pageObjects/HomePage';
 
-Cypress.Commands.overwrite('visit', (originalFn, url, options = {portalUI: false}) => {
-  url = options.portalUI ? Cypress.config('portalUIPath') + url : Cypress.config('basePath') + url;
+Cypress.Commands.overwrite('visit', (originalFn, url, options = {portalUI: false, administrationConsole: false, external: false}) => {
+  if (options.portalUI) url = Cypress.config('portalUIPath') + url;
+  else if (options.administrationConsole) url = Cypress.env('auth_base_url') + url;
+  else if (!options.external) url = Cypress.config('basePath') + url;
   return originalFn(url, options);
 });
 
