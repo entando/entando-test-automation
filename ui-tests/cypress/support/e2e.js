@@ -50,3 +50,29 @@ import './controllers/restAPI/UserPreferencesController';
 import './controllers/restAPI/UsersController';
 import './controllers/restAPI/VersioningController';
 import './controllers/restAPI/WidgetsController';
+
+const setWizard = (option) => {
+  cy.kcAuthorizationCodeLogin('login/admin');
+  cy.userPreferencesController().then(controller => {
+    // FIXME the userPreferences are not immediately available after user creation, but are immediately created on GET
+    controller.getUserPreferences('admin');
+    controller.updateUserPreferences('admin', { wizard: option });
+  });
+  cy.kcTokenLogout();
+  }
+  
+before(() => {
+  cy.kcClientCredentialsLogin();
+  cy.fixture('users/details/admin').then(admin => {
+  cy.usersController().then(controller =>
+    controller.getUser(admin).then(adminData => {
+      if(adminData.body.payload.credentialsNotExpired === false) controller.updateUser(admin);
+    }));
+  });
+  setWizard(false);
+  });
+  
+after(() => {
+  cy.kcClientCredentialsLogin();
+  setWizard(true);
+});

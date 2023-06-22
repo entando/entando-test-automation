@@ -1,9 +1,0 @@
-{
-  "baseUrl": "http://localhost:3000",
-  "restAPI": "http://localhost:8080/entando-de-app/api",
-  "env": {
-    "auth_base_url": "http://localhost:8081/auth",
-    "auth_realm": "entando",
-    "auth_client_id": "entando-web"
-  }
-}

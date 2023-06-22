@@ -118,6 +118,7 @@ describe('Sender Management Functionalities', () => {
         .then(page => {
           cy.validateToast(page);
           cy.pushAlias('@sendersToBeDeleted', sender);
+          cy.wait(500);
           page.getContent().getSenderTableRow(sender.code).should('be.visible')
             .children(htmlElements.td).then(cells =>
               cy.validateListTexts(cells, [sender.code, sender.email]));

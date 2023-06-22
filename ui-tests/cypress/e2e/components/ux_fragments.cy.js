@@ -230,8 +230,9 @@ describe('UX Fragments', () => {
           //FIXME this two widget types are not listed in search select
         .then(fragments => fragments.filter(fragment => fragment[1].widgetType !== 'userprofile_editCurrentUser_password' && fragment[1].widgetType !== 'userprofile_editCurrentUser_profile'))
         .then(fragments => {
+          const widgetTypeCode = getArrayRandomElement(fragments)[1].widgetType;
           cy.fixture('data/uxFragmentsWidgetTypes.json')
-            .then(widgetTypes => widgetTypes.find(widgetType => widgetType.code === getArrayRandomElement(fragments)[1].widgetType))
+            .then(widgetTypes => widgetTypes.find(widgetType => widgetType.code === widgetTypeCode))
             .then(widgetType =>
                 openUXFragmentsPage()
                     .then(page => page.getContent().getWidgetFilter().then(select => page.getContent().select(select, widgetType.name)))
@@ -250,9 +251,9 @@ describe('UX Fragments', () => {
       cy.fixture('data/uxFragments.json').then(fragments => Object.entries(fragments))
         .then(fragments => fragments.filter(fragment => fragment[1].plugin !== ''))
         .then(fragments => {
-          cy.log(fragments);
+          const pluginCode = getArrayRandomElement(fragments)[1].plugin;
           cy.fixture('data/uxFragmentsPlugins.json')
-            .then(plugins => plugins.find(plugin => plugin.code === getArrayRandomElement(fragments)[1].plugin))
+            .then(plugins => plugins.find(plugin => plugin.code === pluginCode))
             .then(plugin =>
                 openUXFragmentsPage()
                     .then(page => page.getContent().getPluginFilter().then(select => page.getContent().select(select, plugin.name)))

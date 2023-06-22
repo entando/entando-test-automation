@@ -50,7 +50,7 @@ Cypress.Commands.add('addToReport', (context) => {
 
 Cypress.Commands.add('kcClientCredentialsLogin', () => {
   Cypress.log({name: 'Login via client credentials'});
-  const authBaseUrl   = Cypress.env('auth_base_url');
+  const authBaseUrl   = Cypress.config('baseUrl') + Cypress.env('auth_base_url');
   const realm         = Cypress.env('auth_realm');
   const client_id     = Cypress.env('api_client_id');
   const client_secret = Cypress.env('api_client_secret');
@@ -80,7 +80,7 @@ Cypress.Commands.add('kcAuthorizationCodeLoginAndOpenDashboard', user => {
 const performAuthorizationCodeLogin = (user) => {
   Cypress.log({name: 'Login via user authorization code'});
   return cy.fixture('users/' + user).then(userData => {
-    const authBaseUrl = Cypress.env('auth_base_url');
+    const authBaseUrl = Cypress.config('baseUrl') + Cypress.env('auth_base_url');
     const realm       = Cypress.env('auth_realm');
     const client_id   = Cypress.env('auth_client_id');
     return cy.request({
@@ -143,7 +143,7 @@ const performAuthorizationCodeLogin = (user) => {
 
 Cypress.Commands.add('kcLogout', () => {
   Cypress.log({name: 'Logout'});
-  const authBaseUrl = Cypress.env('auth_base_url');
+  const authBaseUrl = Cypress.config('baseUrl') + Cypress.env('auth_base_url');
   const realm       = Cypress.env('auth_realm');
   return cy.request({
     url: authBaseUrl + '/realms/' + realm + '/protocol/openid-connect/logout',
@@ -153,7 +153,7 @@ Cypress.Commands.add('kcLogout', () => {
 
 Cypress.Commands.add('kcTokenLogout', () => {
   Cypress.log({name: 'Logout'});
-  const authBaseUrl = Cypress.env('auth_base_url');
+  const authBaseUrl = Cypress.config('baseUrl') + Cypress.env('auth_base_url');
   const realm       = Cypress.env('auth_realm');
   const client_id   = Cypress.env('auth_client_id');
   return cy.get('@UITokens').then(tokens => {
