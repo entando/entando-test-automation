@@ -1,4 +1,4 @@
-const apiURL = Cypress.config('restAPI');
+const apiURL = Cypress.config('baseUrl') + Cypress.config('restAPI');
 
 export const categoriesAPIURL            = `${apiURL}/categories`;
 export const databaseAPIURL              = `${apiURL}/database`;

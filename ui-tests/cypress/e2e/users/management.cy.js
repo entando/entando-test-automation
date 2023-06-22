@@ -254,6 +254,7 @@ describe('Users Management', () => {
         .then(() => addUserUI(this.username, this.password, PROFILE_TYPE_CODE))
         .then(page => {
           cy.validateUrlPathname('/user');
+          cy.wait(500);
           page.getContent().getTableRow(this.username).children(htmlElements.td)
               .then(cells => cy.validateListTexts(cells, [this.username]));
         });

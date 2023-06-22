@@ -1,13 +1,31 @@
 import LoginPage from '../support/pageObjects/keycloak/LoginPage.js';
 import HomePage  from '../support/pageObjects/HomePage';
 
-describe([Tag.SMOKE], 'Keycloack', () => {
+describe([Tag.SMOKE], 'Keycloak', () => {
 
-  const authBaseUrl = Cypress.env('auth_base_url').split('/');
-  const origin      = `${authBaseUrl[0]}//${authBaseUrl[2]}`;
+  const authBaseUrl = Cypress.env('auth_base_url');
+  const origin      = Cypress.config('baseUrl');
 
   const realm    = Cypress.env('auth_realm');
-  const pathName = `/${authBaseUrl[3]}/realms/${realm}/protocol/openid-connect/auth`;
+  const pathName = `${authBaseUrl}/realms/${realm}/protocol/openid-connect/auth`;
+  const passwordUpdatePath = `${authBaseUrl}/realms/${realm}/login-actions/required-action`;
+
+  beforeEach(() => {
+    cy.wrap(null).as('userToBeDeleted');
+  });
+
+  afterEach(() => {
+    cy.get('@userToBeDeleted').then(user => {
+      if (user) cy.usersController().then(controller => controller.deleteUser(user));
+    });
+  });
+
+  const checkLocation = (origin, pathname) => {
+    cy.location().should((location) => {
+      expect(location.origin).to.eq(origin);
+      expect(location.pathname).to.eq(pathname);
+    });
+  };
 
   it('Login via API client_credentials', () => {
     cy.kcClientCredentialsLogin();
@@ -15,45 +33,61 @@ describe([Tag.SMOKE], 'Keycloack', () => {
 
   it('Login/Logout via API authorization_code', () => {
     cy.kcAuthorizationCodeLoginAndOpenDashboard('login/admin');
-    cy.location().should((location) => {
-      expect(location.origin).to.eq(Cypress.config('baseUrl'));
-      expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
-    });
+    checkLocation(Cypress.config('baseUrl'), Cypress.config('basePath') + '/dashboard');
 
     cy.kcTokenLogout();
 
     cy.visit('/');
-    cy.location().should((location) => {
-      expect(location.origin).to.eq(origin);
-      expect(location.pathname).to.eq(pathName);
-    });
+    checkLocation(origin, pathName);
   });
 
   it('Login/Logout via UI', () => {
     cy.visit('/');
-    cy.location().should((location) => {
-      expect(location.origin).to.eq(origin);
-      expect(location.pathname).to.eq(pathName);
-    });
+    checkLocation(origin, pathName);
 
     cy.fixture(`users/login/admin`)
       .then(userData =>
           cy.wrap(new LoginPage())
             .then(page => page.login(userData)));
-    cy.location().should((location) => {
-      expect(location.origin).to.eq(Cypress.config('baseUrl'));
-      expect(location.pathname).to.eq(Cypress.config('basePath') + '/dashboard');
-    });
+    checkLocation(Cypress.config('baseUrl'), Cypress.config('basePath') + '/dashboard');
 
     cy.wrap(new HomePage())
       .then(page => {
         HomePage.openPage();
         page.getNavbar().openUserMenu().logout();
       });
-    cy.location().should((location) => {
-      expect(location.origin).to.eq(origin);
-      expect(location.pathname).to.eq(pathName);
+    checkLocation(origin, pathName);
+  });
+
+  it([Tag.FEATURE, 'ENG-4525'], 'A new user should be required to update the password only on first login', () => {
+    cy.kcClientCredentialsLogin();
+    cy.fixture('users/details/user').then(user => {
+      cy.usersController().then(controller => {
+        controller.addUser(user).then(() => cy.wrap(user.username).as('userToBeDeleted'));
+        controller.addAuthorities(user.username, 'administrators', 'admin');
+      });
     });
+
+    cy.visit('/');
+    checkLocation(origin, pathName);
+
+    cy.fixture(`users/login/user`)
+      .then(userData => {
+        cy.wrap(new LoginPage())
+          .then(page => {
+            page.login(userData);
+            checkLocation(origin, passwordUpdatePath);
+            page.confirmPassword(userData);
+            checkLocation(Cypress.config('baseUrl'), Cypress.config('basePath') + '/dashboard');
+
+            cy.kcLogout();
+
+            cy.visit('/');
+            checkLocation(origin, pathName);
+            page.login(userData);
+            checkLocation(Cypress.config('baseUrl'), Cypress.config('basePath') + '/dashboard');
+          });
+      });
   });
 
 });
