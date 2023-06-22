@@ -1,0 +1,9 @@
+{
+  "username": "admin",
+  "password": "adminadmin",
+  "passwordConfirm": "adminadmin",
+  "profileType": "PFL",
+  "status": "active",
+  "accountNotExpired": true,
+  "credentialsNotExpired": true
+}

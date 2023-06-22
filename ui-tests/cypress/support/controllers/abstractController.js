@@ -12,17 +12,9 @@ export default class AbstractController {
   }
 
   request(options) {
-    const caller = this.getCallerName();
     options.url  = options.url || this.apiURL;
     options.auth = {bearer: this.accessToken};
     return cy.request(options).then(response => {
-      cy.addToReport(() => ({
-        title: caller,
-        value: {
-          request: {...options},
-          response: response
-        }
-      }));
       return cy.then(() => response);
     });
   }
@@ -88,16 +80,6 @@ export default class AbstractController {
                    }
                  })
              );
-  }
-
-  getCallerName() {
-    try {
-      throw new Error();
-    } catch (e) {
-      const stackTraceFunctions = e.stack.match(/at \w+\.(\w+)/g);
-      const callerFunction = stackTraceFunctions[2];
-      return callerFunction.substring(callerFunction.indexOf('.') + 1);
-    }
   }
 
 }

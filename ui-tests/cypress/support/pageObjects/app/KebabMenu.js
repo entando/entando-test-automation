@@ -19,6 +19,7 @@ export default class KebabMenu extends WebElement {
   }
 
   open(force = false) {
+    cy.wait(500);
     this.get()
         .children(htmlElements.button)
         .click({force: force});
